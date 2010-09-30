@@ -1,0 +1,84 @@
+TODOs or Issues which have been identified
+==========================================
+
+Author: Eilif, Andrew
+
+- Augment expr_parse with condtional_parse which does something
+  similar for conditions.
+
+- Make Transitions no longer RegimeElements, and
+  act as if Transitions are "ever present and immediate", with
+  code-generation implications:
+
+	for iterative-solver(including adaptive time-step)
+	code-generators: implies we need a method which determines
+	those nodes of the Regime after which the condition state could
+	change, and should be checked.
+
+  - Think about condition=None transitions ... these should only be
+    used if the regime is a Union at the top level, otherwise
+   consistancy would dictate returning immediately.
+
+- XML parsing: Support transitions as sub-elements of regime, or not.
+
+- Py API: Support transitions as kwarg to regime (expect Transition
+  from_=None), or not, In which case the Transition should inform
+  Regime on construction that it is now a member of it.
+
+- Change Component constructor to accept regime list or transition
+  list, internally lets keep the regimes as fundamental, not
+  transitions. Agree: Initial regime is a "initial state" problem, not a
+  model problem.
+
+- Regime can declare Events with conditions, much like transitions,
+  they are "ever present and immediate", but do not break Regime
+  execution by Transitioning to another regime, unless of course a
+  Transition is defined which occurs when an event comes in.  
+
+
+- Change "On" to something like:
+
+  def On(cond, do):
+	return Transition(condition=cond, to=Sequence(*do))
+
+  Regime(... transition=On(condition, to))
+
+
+- Keep conditional blocks in mind ... remove for now ... 
+
+
+- Heaviside and Delta functions for regimeless spiking neurons
+  (No GPU warp/wavefront divergence)
+
+subthreshold_regime = nineml.Union(
+ "dV/dt = 0.04*V*V + 5*V + 140.0 - U + Isyn + delta(V-theta)*(c-V)",
+ "dU/dt = a*(b*V - U) + delta(V-theta)*d",
+ name="subthreshold_regime",
+ events = [nineml.SpikeOutputEvent("V>theta")]
+)
+
+or less beautiful but more implementation friendly:
+
+subthreshold_regime = nineml.Union(
+ "dV/dt = 0.04*V*V + 5*V + 140.0 - U + Isyn",
+ "dU/dt = a*(b*V - U)",
+ "V+=H(V-theta)*(c-V)",
+ "U+=H(V-theta)*d",
+ name="subthreshold_regime",
+ events = [nineml.SpikeOutputEvent("V>theta")]
+)
+
+
+
+On Thu, 30 Sep 2010 22:24:56 +0200
+Andrew Davison <andrewpdavison@gmail.com> wrote:
+
+> On 30 Sep 2010, at 21:37, emuller <eilif.mueller@epfl.ch> wrote:
+>
+
+> > BTW, I thought of a reason why regimes should stay the primary list
+> > and initialization arg in a Component and not transitions as it was
+> > before: One can define a component with a regime and no
+> > transitions ... a plausible example would be low pass filter.  
+> 
+> Good point. We should come up with a list of issues I can present in
