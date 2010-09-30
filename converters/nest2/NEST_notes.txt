@@ -1,0 +1,116 @@
+# Bindings are just recalculated on resetting user parameters
+# so loop over them after user setting of parameters
+# Expose them in param getting for testing if $model.debug=True.
+
+Need an integer state var for neuron and each synapse which tells what regime we are in.
+
+enums at the top:
+
+typedef enum {
+REGIME_NMDA_PSR_inter_event_regime,
+REGIME_NMDA_PSR_on_event_regime
+}
+
+i.e.
+
+int regime_
+int syn_$synmodel_regime
+
+
+
+
+
+
+Then a big switch/case statement one the regime for each synapse and neuron
+execute Regime code, then evaluate transition which assigns new regime enum
+
+Handle condition=None for nmda -> Always switch after first code execution.
+i.e. condition=None maps to condition="true"
+#transition2 = Transition(on_event_regime, inter_event_regime, condition=None)
+
+
+
+
+class NestModel:
+
+      nest_classname
+      header_name // name of .h file
+      long_description
+      short_description
+      parameters
+      state_vars
+      binds
+      
+      debug // get variables/bindings @ GetStatus
+      
+      regimes
+      initial_regime
+      
+
+class Regime
+      steps //assignments+ODEs in sequence, 
+            // unions place members in arbitrary order on the sequence, 
+            // but preserving internal order if a member is union or sequence.
+
+      
+      transitions
+
+
+class Transition
+
+      condition
+      assignments
+      to_regime
+
+NB: conditions, assignments needs to have symbol remappings, see below.
+      
+
+class Assignment
+      lhs
+      expression
+
+class ODE
+      var
+      rhs
+      
+Throw exception for 2nd var != "t"
+Map i.e. V to S_.V
+
+
+NB: lhs and expression needs to have symbol remappings, see below.
+
+class StateVar
+      unit
+      Ctype
+      symbol
+
+class Bind
+      Ctype
+      symbol
+      expression
+
+NB: expression needs to have symbol remappings, see below. 
+      
+
+
+class Parameter
+      notes
+      unit
+      Ctype
+      symbol
+      
+
+NB: w.r.t. all expressions, assignments, conditions, 
+
+* All expressions will need to be search replaced with:
+symbol -> P_.symbol for parameters
+       -> V_.symbol for binds
+       -> S_.symbol for statevars
+
+
+* All Assignments in a regime need state vars for lhs.
+
+* TODO: debugging information for expressions, check validity with pycparser or Cython?
+
+
+TODO: synapses in update

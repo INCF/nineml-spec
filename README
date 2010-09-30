@@ -1,0 +1,10 @@
+This repository contains code related to the 9ML language being developed by the
+INCF Task Force for a Standard Language in Neural Network Modeling
+(http://www.incf.org/core/programs/modeling).
+
+The repository is structured as follows:
+
+- catalog:    contains abstraction layer definition files
+- converters: contains tools for converting abstraction layer files to other formats
+- lib9ml:     contains code for reading, writing and generally working with 9ML
+              abstraction- and user-layer files.

@@ -1,0 +1,14 @@
+To convert a 9ML xml file to NMODL, run
+$ python 9ml2nmodl.py filename.xml
+This will produce filename.mod
+This may then be compiled using nrnivmodl, and then tested using one of the test scripts, e.g.
+$ python test_Izhikevich.py
+which will pop-up a graph (if you have pylab installed) showing the membrane potential trace.
+
+WARNING: this script is not yet working properly. The Izhikevich model seems to work fine, but for the LeakyIAF the refractory regime is not observed.
+
+Dependencies:
+  lxml - http://codespeak.net/lxml/
+  MathDOM - http://mathdom.sourceforge.net/
+  NEURON - http://www.neuron.yale.edu/neuron/
+  Python >= 2.5

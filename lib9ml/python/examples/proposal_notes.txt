@@ -1,0 +1,42 @@
+Author: Eilif Muller, Andrew Davison
+
+Needed new concepts:
+
+0) Ports, Events and Names Concept: 
+   - AnalogPorts and Events are subclasses of Ports
+   - AnalogPorts: local analog variables are bound (not a binding though) to nineml.names (V, Isyn, SynapticWeight)
+   - AnalogPorts: can be read-only ('r'), read-write ('rw'), write-only ('w').
+   - Names are globally recognized names, V, Isyn, SynapticWeight
+   - Events: nineml.SpikeInputPort, nineml.SpikeOutputPort
+   
+0.1) Component has "ports" kwarg.  
+
+1) MakeTransition -> a new regime element to trigger a transition
+
+2) Transition condition can be an Event port, thus the event will trigger the transition
+   if we are in the "from_" regime at the time of the event.
+
+   -> NB: The test suite must check that the implementation can handle multiple events per time step.
+
+
+3) Transition kwarg "generate_event" so that a Transition can trigger generation of an event
+   i.e. an action potential
+
+   -> NB: The test suite must check that the implementation handles
+   generate_event where the event is the condition for another
+   transition.  In this case, the state for the event triggered
+   transition is defined as the regime after the top Transition (with
+   "generate_event").  I.e. the two transitions will effectively be
+   chained.  Transitions which are triggered by events which are not
+   with from_=="to" of the Transition which did the generate_event
+   should not be not be triggered.
+
+4) nineml.AddInplace, like nineml.Assignment but can be performed on write-only ports to increment
+   likewise: nineml.SubInplace, nineml.MulInplace, nineml.DivInplace
+
+
+
+
+
+
+A collection of tests for the test suite is in testsuite_notes.txt

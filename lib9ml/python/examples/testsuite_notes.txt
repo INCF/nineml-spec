@@ -1,0 +1,16 @@
+Author: Eilif Muller, Andrew Davison
+
+1) Test suite should check that implementation throws exception when building component
+that tries to assign to parameters or read-only ports
+
+2) For events that trigger transitions, the test suite must check that
+the implementation can handle multiple events per time step.
+
+3) The test suite must check that the implementation handles
+generate_event where the event is the condition for another
+transition.  In this case, the state for the event triggered
+transition is defined as the regime after the top Transition (with
+"generate_event").  I.e. the two transitions will effectively be
+chained.  Transitions which are triggered by events which are not with
+from_=="to" of the Transition which did the generate_event should not
+be not be triggered.

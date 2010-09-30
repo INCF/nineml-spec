@@ -1,0 +1,8 @@
+Installation:
+
+python setup.py install
+
+
+Dependencies:
+
+lxml - see http://codespeak.net/lxml/
