@@ -50,6 +50,12 @@ try:
     # This case is used in the test suite for examples.
     c1.write(f)
 except NameError:
-    c1.write("nmda.xml")
-    c2 = parse("nmda.xml")
+    import os
+
+    base = "nmda"
+    c1.write(base+".xml")
+    c2 = parse(base+".xml")
     assert c1==c2
+
+    c1.to_dot(base+".dot")
+    os.system("dot -Tpng %s -o %s" % (base+".dot",base+".png"))

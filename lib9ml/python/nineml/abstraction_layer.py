@@ -35,6 +35,23 @@ except ImportError:
             result = [x+[y] for x in result for y in pool]
         for prod in result:
             yield tuple(prod)
+
+
+def dot_escape(s):
+
+    dot_escape_table = {
+    "&": "&amp;",
+    '"': "&quot;",
+    "'": "&apos;",
+    ">": "&gt;",
+    "<": "&lt;",
+    "(": "&#40;",
+    ")": "&#41;",
+    }
+
+    return "".join(dot_escape_table.get(c,c) for c in s)
+
+
     
 class RegimeElement(object):
     """ Base class for all things that can be elements of a regime """
@@ -149,6 +166,11 @@ class ODE(Equation):
                              self.bound_variable == other.bound_variable,
                              self.rhs == other.rhs))
 
+    def as_expr(self):
+        return "d%s/d%s = %s" % (self.dependent_variable,
+                                 self.bound_variable,
+                                 self.rhs)
+
     def to_xml(self):
         return E(self.element_name,
                  E("math-inline", self.rhs),
@@ -178,6 +200,10 @@ class Assignment(Equation):
 
     def __repr__(self):
         return "Assignment('%s', '%s')" % (self.to, self.expr)
+
+    def as_expr(self):
+        return "%s = %s" % (self.to,
+                            self.expr)
 
     def __eq__(self, other):
         if not isinstance(other, self.__class__):
@@ -226,6 +252,10 @@ class Inplace(Equation):
 
     def __repr__(self):
         return "Inplace('%s', '%s', '%s')" % (self.to,self.op,self.expr)
+
+    def as_expr(self):
+        return "%s %s %s" % (self.to,self.op, self.expr)
+
 
     def __eq__(self, other):
         if not isinstance(other, self.__class__):
@@ -504,6 +534,38 @@ class Regime(RegimeElement):
             kwargs = {"name": name}
         return cls(*nodes, **kwargs)
 
+
+    def dot_content(self,level=0):
+
+        # template & namespace
+        ns = {'level':level}
+        t = '<tr><td align="left" port="n_%(level)d_%(node_id)s">%(node_content)s</td></tr>\\\n\t\t'
+
+        # header
+        level_pad = ''.join(['  ']*level)
+        ns['node_id'] = 'root'
+        ns['node_content'] = level_pad+self.__class__.__name__+dot_escape('(name="%s"'%self.name)
+        contents = [t % ns]
+
+        node_id = 0
+        for n in self.nodes:
+            if isinstance(n,Regime):
+                contents +=[n.dot_content(level+1)]
+            else:
+                # render node contents
+                ns['node_id'] = str(node_id)
+                node_id+=1
+                ns['node_content'] = level_pad+'  '+dot_escape(n.as_expr())
+                contents += [t % ns]
+
+        # footer
+        ns['node_id'] = 'tail'
+        ns['node_content'] = level_pad+dot_escape(')')
+        contents += [t % ns]
+
+        return ''.join(contents)
+
+
 class Sequence(Regime):
     element_name = "sequence"
     
@@ -515,6 +577,7 @@ class Sequence(Regime):
 
     def _add_node_to_collection(self, node):
         self.nodes.append(node)
+    
 
         
 class Union(Regime):
@@ -722,7 +785,7 @@ class Component(object):
 
 
         # check that there is an island regime only if there is only 1 regime
-        island_regimes = set([r for r in self.regimes if not r.transitions])
+        island_regimes = set([r for r in self.regimes if not r.transitions and not self.get_regimes_to(r)])
         if island_regimes:
             assert len(self.regimes)==1, "User Error: Component contains island regimes and more than one regime."
 
@@ -737,6 +800,13 @@ class Component(object):
         self.ports = ports
         # we should check that parameters is correct
         # even better, we could auto-generate parameters
+
+    def get_regimes_to(self,regime):
+        """ Gets as a list all regimes that transition to regime"""
+        
+        return [t.from_ for t in self.transitions if t.to==regime]
+            
+
 
     def resolve_references(self):
         """ Uses self.regimes_map and self.transitions_map to resolve references in self.regimes and self.transitions"""
@@ -894,6 +964,63 @@ class Component(object):
         doc = E.nineml(self.to_xml(), xmlns=nineml_namespace)
         etree.ElementTree(doc).write(file, encoding="UTF-8",
                                      pretty_print=True, xml_declaration=True)
+
+    def to_dot(self,out, show_contents=True):
+        """ Write a DOT graph representation of component
+
+        http://en.wikipedia.org/wiki/DOT_language
+
+        Convert a dot file to an image using, i.e.:
+          dot -Tsvg spike_generator.dot -o spike_generator.svg
+          dot -Tpng spike_generator.png -o spike_generator.png
+
+        """
+
+        import cgi
+
+        # if out is a str, make a file
+        if isinstance(out,str):
+            out = file(out,'w')
+
+        out.write("""digraph "NineML Component '%s'" {\n""" % self.name)
+
+        out.write('\toverlap = "scale";\n')
+
+        regime_id = dict([(kv[0],i) for i,kv in enumerate(self.regime_map.iteritems())])
+
+
+        if show_contents:
+
+            out.write('\tgraph [fontsize=30 labelloc="t" label="" splines=true overlap=false rankdir = "LR"];\n\tratio = auto\n');
+            props = 'style = "filled, bold" penwidth = 1 fillcolor = "white" fontname = "Courier New" shape = "Mrecord" '
+            # regime template
+            t_regime = '\t"%(node)s" [ style = "filled, bold" penwidth = 1 fillcolor = "white" fontname = "Courier New" '+\
+                       'shape = "Mrecord" \\\n\t\tlabel =<<table border="0" cellborder="0" cellpadding="3" bgcolor="white">'+\
+                       '<tr><td bgcolor="black" \\\n\t\talign="center" colspan="2"><font color="white">'+\
+                       '%(regime_name)s</font></td></tr>\\\n\t\t%(contents)s</table>> ];\n ' 
+            # to fill: node, regime_name, contents
+            ns = {}
+
+            for r in self.regimes:
+                
+                ns['node'] = "regime_%d" % regime_id[r.name]
+                ns['regime_name'] = r.name
+                ns['contents'] = r.dot_content()
+                out.write(t_regime % ns)
+        
+        for t in self.transitions:
+            if show_contents:
+    
+                out.write('\tregime_%d -> regime_%d [label="%s @ %s"];\n' % (regime_id[t.from_.name], regime_id[t.to.name],
+                                                                   t.name.encode('utf-8'), t.condition.encode('utf-8')))
+            else:
+                out.write('\tregime_%d -> regime_%d [label="%s"];\n' % (regime_id[t.from_.name], regime_id[t.to.name],
+                                                                   t.name.encode('utf-8'), t.condition.encode('utf-8')))
+
+        out.write('}')
+
+
+        
         
         
 #def resolve_reference(ref, *where):

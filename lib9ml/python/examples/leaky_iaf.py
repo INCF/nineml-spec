@@ -1,6 +1,5 @@
 import nineml.abstraction_layer as nineml
 
-
 parameters = ["V", "t", "spike", "Isyn", "subthreshold", "refractory_end", "gL",
               "vL", "theta", "Vreset", "C", "trefractory", "tspike"]
 
@@ -34,6 +33,12 @@ try:
     # This case is used in the test suite for examples.
     c1.write(f)
 except NameError:
-    c1.write("leaky_iaf.xml")
-    c2 = parse("leaky_iaf.xml")
+    import os
+
+    base = "leaky_iaf"
+    c1.write(base+".xml")
+    c2 = nineml.parse(base+".xml")
     assert c1==c2
+
+    c1.to_dot(base+".dot", True)
+    os.system("dot -Tpng %s -o %s" % (base+".dot",base+".png"))

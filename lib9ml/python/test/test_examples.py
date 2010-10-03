@@ -13,7 +13,8 @@ class ExamplesTestCase(unittest.TestCase):
     def test_roundtrip_examples(self):
 
         examples = ['izhikevich2.py','izhikevich.py', 'nmda.py',
-                    'leaky_iaf2.py', 'leaky_iaf.py','hh2.py']
+                    'leaky_iaf2.py', 'leaky_iaf.py','hh2.py',
+                    'step_current.py','spike_generator.py']
                     #'hh.py']
 
         for e in examples:
