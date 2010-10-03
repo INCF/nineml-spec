@@ -34,8 +34,15 @@ return_transition = nineml.Transition(
                             name="return_transition"
                           )
 
-component = nineml.Component("Izhikevich", parameters,
-                             (spike_transition, return_transition))
+c1 = nineml.Component("Izhikevich", parameters,
+                             transitions=(spike_transition, return_transition))
 
 
-component.write("izhikevich.xml")
+# write to file object f if defined
+try:
+    # This case is used in the test suite for examples.
+    c1.write(f)
+except NameError:
+    c1.write("izhikevich.xml")
+    c2 = nineml.parse("izhikevich.xml")
+    assert c1==c2

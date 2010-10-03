@@ -4,24 +4,18 @@ import nineml.abstraction_layer as nineml
 parameters = ["V", "t", "spike", "Isyn", "subthreshold", "refractory_end", "gL",
               "vL", "theta", "Vreset", "C", "trefractory", "tspike"]
 
-subthreshold_equation = nineml.ODE("V", "t", "(-gL*(V-vL) + Isyn)/C")
-subthreshold_node = nineml.Reference(subthreshold_equation)
-
-threshold_detect = nineml.Assignment("spike", "V > theta")
-threshold_node = nineml.Reference(threshold_detect)
-
-subthreshold_regime = nineml.Sequence(subthreshold_node, threshold_node)
+subthreshold_regime = nineml.Sequence(
+    nineml.ODE("V", "t", "(-gL*(V-vL) + Isyn)/C"),
+    nineml.Assignment("spike", "V > theta")
+    )
 
 
-refractory_equation = nineml.Assignment("V", "Vreset")
-refractory_node = nineml.Reference(refractory_equation)
+refractory_regime = nineml.Union(
+    nineml.Assignment("V", "Vreset"),
+    nineml.Assignment("refractory_end", "t >= tspike + trefractory")
+    )
 
-check_refractory_time = nineml.Assignment("refractory_end", "t >= tspike + trefractory")
-check_refractory_node = nineml.Reference(check_refractory_time)
-
-refractory_regime = nineml.Union(refractory_node, check_refractory_node)
-
-tspike_assignment = nineml.Assign("tspike", "t")
+tspike_assignment = nineml.Assignment("tspike", "t")
 spike_transition = nineml.Transition(subthreshold_regime,
                                      refractory_regime,
                                      "spike",
@@ -31,5 +25,15 @@ subthreshold_transition = nineml.Transition(refractory_regime,
                                             subthreshold_regime,
                                             "refractory_end")
 
-component = nineml.Component("LeakyIAF", parameters,
-                             (spike_transition, subthreshold_transition))
+c1 = nineml.Component("LeakyIAF", parameters,
+                             transitions=(spike_transition, subthreshold_transition))
+
+
+# write to file object f if defined
+try:
+    # This case is used in the test suite for examples.
+    c1.write(f)
+except NameError:
+    c1.write("leaky_iaf.xml")
+    c2 = parse("leaky_iaf.xml")
+    assert c1==c2

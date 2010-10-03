@@ -89,8 +89,15 @@ assigned_variables = ["q10", "alpha_m", "beta_m", "alpha_h", "beta_h",
                       "alpha_n", "beta_n", "gna", "gk", "tspike"]
 parameters = input_variables + state_variables + fixed_parameters + assigned_variables
 
-component = Component("Hodgkin-Huxley", parameters,
-                      (spike_transition,),
+c1 = Component("Hodgkin-Huxley", parameters,
+                      transitions=(spike_transition,),
                       bindings=[q10_binding])
 
-component.write("hh.xml")
+# write to file object f if defined
+try:
+    # This case is used in the test suite for examples.
+    c1.write(f)
+except NameError:
+    c1.write("hh.xml")
+    c2 = parse("hh.xml")
+    assert c1==c2

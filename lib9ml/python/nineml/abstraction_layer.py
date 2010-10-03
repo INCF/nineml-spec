@@ -56,7 +56,12 @@ class Binding(RegimeElement):
     def __init__(self, name, value):
         self.name = name
         self.value = value
-    
+
+    def __eq__(self, other):
+        if not isinstance(other, self.__class__):
+            return False
+        return self.name == other.name and self.value == other.value
+
     def to_xml(self):
         return E(self.element_name,
                  E("math-inline", self.value),
@@ -76,7 +81,7 @@ class Equation(RegimeElement):
 class Port(object):
     pass
 
-class Event(RegimeElement,Port):
+class Event(Port):
     element_name = "event"
     
     def __init__(self,id):
@@ -351,7 +356,13 @@ class Regime(RegimeElement):
             self.name = "Regime%d" % Regime.n
         Regime.n += 1
 
-        self.condition = kwargs.get("condition")
+        # user can define transitions emanating from this
+        # regime
+        t = kwargs.get('transitions')
+        if t:
+            self.transitions=set(t)
+        else:
+            self.transitions=set()
 
         for node in nodes:
             assert isinstance(node, RegimeElement)
@@ -364,8 +375,9 @@ class Regime(RegimeElement):
             return False
         
         sort_key = lambda node: node.name
-        return reduce(and_, (self.name == other.name, self.condition == other.condition,
-                             sorted(self.nodes, key=sort_key) == sorted(other.nodes, key=sort_key)))
+        return reduce(and_, (self.name == other.name, 
+                             sorted(self.nodes, key=sort_key) == sorted(other.nodes, key=sort_key),
+                             sorted(self.transitions, key=sort_key) == sorted(other.transitions, key=sort_key)))
 
     def __repr__(self):
         return "%s(%s)" % (self.__class__.__name__, self.name)
@@ -378,37 +390,33 @@ class Regime(RegimeElement):
         return Reference(Regime, self.name)
 
     def add_node(self, node):
-        if isinstance(node, Transition):
-            if node.from_ is None:
-                node.from_=self
-            assert node.from_==self, "Regime contains a transition whose from_ is not referencing the Regime."
-            assert node.to!=self, "Regime contains a transition to itself!."
 
         self._add_node_to_collection(node)
 
 
-    def transitions(self):
-        """
-        Yields all the transitions contained within this Regime
-        """
-        for node in self.nodes:
-            if isinstance(node, Transition):
-                assert node.from_==self, "Regime contains Transition for which from_!=Regime"
-                yield node
-            #else:
-            #    for t in node.Transitions():
-            #        yield t
+    def add_transition(self, t):
+        """ Add a transition to the regime"""
+        if isinstance(t, Transition):
+            if t.from_ is None:
+                t.from_=self
+            if not t.from_==self:
+                print "WARNING: transition whose from_ was reassigned to the Regime."
+            assert t.to!=self, "transition '%s' assigns Regime '%s' to itself!." % (t.name, self.name)
+        else:
+            assert isinstance(t,Reference) and t.cls==Transition, "Regime.add_transition(t): t must be Transition or Reference(Transition, name)"
+        
+        self.transitions.add(t)
 
 
     def neighbors(self):
         """ Get all regimes we transition to """
-        for t in self.transitions():
+        for t in self.transitions:
             yield t.to
 
     def get_transition_to(self,to):
         """ Returns transition if Regime transitions to Regime 'to', otherwise None """
 
-        for t in self.transitions():
+        for t in self.transitions:
             if t.to == to:
                 return t
         else:
@@ -457,8 +465,7 @@ class Regime(RegimeElement):
         regimes_set.add(self)
 
         # Go through transitions of this regime
-        transitions = self.transitions()
-        for t in transitions:
+        for t in self.transitions:
             # if found a new regime, have it add itself and
             # all its new regimes recursively
                 
@@ -477,8 +484,6 @@ class Regime(RegimeElement):
 
     def to_xml(self):
         kwargs = {}
-        if self.condition:
-            kwargs['condition'] = self.condition
         return E(self.element_name,
                  name=self.name,
                  *[node.to_xml() for node in self.nodes], **kwargs)
@@ -489,22 +494,15 @@ class Regime(RegimeElement):
         nodes = []
         tag_class_map = {}
         name = element.get("name")
-        condition = element.get("condition")
-        for node_cls in (ODE, Assignment, Sequence, Union, Event, Transition, Inplace):
+        for node_cls in (ODE, Assignment, Sequence, Union, Inplace):
             tag_class_map[NINEML+node_cls.element_name] = node_cls
         for elem in element.iterchildren():
             node_cls = tag_class_map[elem.tag]
             tmp = node_cls.from_xml(elem)
-            if isinstance(tmp, Transition):
-                assert tmp.from_.name == name, "Regime contains a Transition node for which from_!=Regime."
-                tmp.from_ = None # resolved by Regime contructor to be Regime parent.
             nodes.append(tmp)
         if name is not None:
             kwargs = {"name": name}
-        if condition is not None:
-            kwargs["condition"] = condition
         return cls(*nodes, **kwargs)
-        
 
 class Sequence(Regime):
     element_name = "sequence"
@@ -531,55 +529,26 @@ class Union(Regime):
         self.nodes.add(node)
 
 
-def On(condition, do=None):
-    """ returns new RegimeElement which executes 'do' if condition is True
-
+def On(condition, to=None):
+    """ returns new Transition which goes to 'do' if condition is True.
+    
     do is a Regime, RegimeElement, iterable of expressions (mapped with expr_to_obj),
+    If it is an iterable
+
+    'On' is syntactic sugar for defining light regimes.
+
+    The resulting Transition has from_=None, so it must be added to a Regime
+    to be activated.
     
     """
 
-    if isinstance(do, (Regime, RegimeElement)):
-        # make interal deepcopy of do, so that user
-        # cannot modify it after we add it.
-        # such as i.e. add transitions
-
-        # TODO: test suite here to evaluate
-        # that user has lost all references to 'do' internals
-        
-        do = copy.deepcopy(do)
-
-        # If user keeps a reference to do and
-        # adds it elsewhere in the code, we have
-        # the chance to have two regimes with same name
-        # as our copy has the same name as original do.
-        #
-        # TODO: test suite should raise exception if
-        #  user tries to define two regimes with same name
-        
-
-        do = Sequence(do, condition=condition)
-
-    # Support do as an interable of expressions
-    elif hasattr(do,'__iter__'):
-        try:
-            do = map(expr_to_obj,do)
-        except ValueError:
-            raise ValueError, "if On 'do' kwargs is iterable, it must be map-able with expr_to_obj."
-
-        # make a sequence of it
-        # NB: user has no reference to this sequence
-        do = Sequence(*do, condition=condition)
-
-    else:
-        raise ValueError, "Invalid object for 'do' kwargs"
-
-    return do
+    return Transition(from_=None,to=Reference(Regime,to),condition=condition)
         
 
 
         
 
-class Transition(RegimeElement):
+class Transition(object):
     element_name = "transition"
     n = 0
     
@@ -663,48 +632,101 @@ class Transition(RegimeElement):
 class Component(object):
     element_name = "component"
     
-    def __init__(self, name, parameters, regimes = [], initial_regime = None, ports = [], bindings=[]):
-        """ Regime graph should not be edited after contructing a component"""
+    def __init__(self, name, parameters = [], regimes = [], transitions = [], ports = [], bindings=[]):
+        """
+        Regime graph should not be edited after contructing a component
+
+        *TODO*: if the user maintains a ref to a regime in regimes,
+        etc. they can violate this.  Code generators will need to
+        query regimes, transtions, so we can't privatize self
+        attributes {_regimes, _transitions, _regime_map,
+        _transition_map} by prefixing with "_".
+
+        We should do some privatizing for regimes, transitions, or do a deepcopy here.
+        We could make regimes and transitions tuples, and expose only read-only apis in Regime and Transition
+        class.  Then the _map could be made a sort of ImmutableDict.
+        *END TODO*
+
+
+        Specifying Regimes & Transitions
+        --------------------------------
+
+        The user passed 'regimes' and 'transitions' should contain true objects, i.e. they may not contain References. 
+        
+        Options to the user:
+        
+        1) provide both 'regimes' and 'transitions' (references will be resolved)
+        2) provide 'regimes' only (in which case there must be no unresolved references),
+        3) provide 'transitions' only (in which case there must be at least one transition in the model, and no unresolved references),
+
+
+        """
 
         self.name = name
         self.parameters = parameters
 
-        # if user only provides initial_regime, there must be no references in graph
-        # TODO: maybe make deepcopies of everything
-        # so the user can't edit the graph after Component construction
-        if regimes == []:
-            if initial_regime:
-                self.regimes = initial_regime.regimes_in_graph()
-                self.initial_regime = initial_regime 
-            else:
-                raise ValueError, "Need either regimes, or initial_regime without references in the graph."
+        # check for empty component, we do not support inplace building of a component.
+        if not regimes and not transitions:
+            raise ValueError, "Component constructor needs at least 'regimes' or 'transitions' to build component graph."
 
-        else:
-            if initial_regime:
-                self.initial_regime = initial_regime
-            else:
-                self.initial_regime = regimes[0]
 
-            self.regimes = set(regimes)
+        # add to transitions from regimes
+        # get only true transition objects (not references) from regimes
+        # these will be added to transition map in next step
+        trans_objects = [t for r in regimes for t in r.transitions if isinstance(t,Transition)]
+        # model with no transitions is indeed allowed.
 
+        trans_refs = [t for t in transitions if isinstance(t,Reference)]
+        assert not trans_refs, "Component constructor: kwarg 'transitions' may not contain references."
+        
+        transitions = set(transitions)
+        transitions.update(trans_objects)
+
+        # add to regimes from transitions
+        # get only true regime objects (not references) from transitions
+        # these will be added to regime map in next step
+        regime_objects = [r for t in transitions for r in (t.to,t.from_) if isinstance(r,Regime)]
+
+        if not regimes:
+            assert regime_objects, "Cannot build regime set: User supplied only Transitions to Component constructor,"+\
+                   "but all 'to','from_' attributes are references!"
+        regime_refs = [r for r in regimes if isinstance(r,Reference)]
+        assert not regime_refs, "Component constructor: kwarg 'regimes' may not contain references."
+
+        regimes = set(regimes)
+        regimes.update(regime_objects)
+
+
+
+        
         # build regime map
         self.regime_map = {}
-        for r in self.regimes:
+        for r in regimes:
             if self.regime_map.has_key(r.name):
-                raise ValueError, "Regime collection had Regimes with colliding names."
+                raise ValueError, "Regime collection has Regimes with colliding names."
             self.regime_map[r.name] = r
 
-        # check that user didn't define superfluous regimes
-        if self.initial_regime.regimes_in_graph() != self.regimes:
-            raise ValueError, "User defined island regimes."
+        # build transitions map
+        self.transition_map = {}
+        for t in transitions:
+            if self.transition_map.has_key(t.name):
+                raise ValueError, "Transition collection has Transitions with colliding names."
+            self.transition_map[t.name] = t
+               
+        # store final regime and transition sets for this component
+        self.regimes = set(regimes)
+        self.transitions = set(transitions)
 
-        # Resolve any remaining Regime references in transitions
+        # We have extracted all implicit knowledge of graph members, proceed to resolve references.
+        self.resolve_references()
 
-        for t in self.transitions:
-            if isinstance(t, Reference):
-                t.to = regime_map[t.to.name]
-                t.from_ = regime_map[t.from_.name]
-        
+
+        # check that there is an island regime only if there is only 1 regime
+        island_regimes = set([r for r in self.regimes if not r.transitions])
+        if island_regimes:
+            assert len(self.regimes)==1, "User Error: Component contains island regimes and more than one regime."
+
+      
         # Allow strings for bindings, map using expr_to_obj
         # Eliminate duplicates
         bindings = set(map(expr_to_obj,set(bindings)))
@@ -716,6 +738,38 @@ class Component(object):
         # we should check that parameters is correct
         # even better, we could auto-generate parameters
 
+    def resolve_references(self):
+        """ Uses self.regimes_map and self.transitions_map to resolve references in self.regimes and self.transitions"""
+
+        # resolve transition from_=None to parent regime
+        for r in self.regimes:
+            for t in r.transitions:
+                if t.from_==None:
+                    t.from_=r
+
+        # resolve regime references in transitions:
+        for t in self.transitions:
+            for attr in ('to','from_'):
+                r = t.__getattribute__(attr)
+                if not isinstance(r,Regime):
+                    assert isinstance(r,Reference) and r.cls==Regime, "Expected Regime reference or Regime"
+                    t.__setattr__(attr,self.regime_map[r.name])
+
+        # resolve transition references in regimes
+
+        for r in self.regimes:
+            for t in r.transitions:
+                if isinstance(t, Transition ): continue
+                assert isinstance(t,Reference) and r.cls==Transition, "Expected Transition reference or Transition" 
+                r.transitions.remove(t)
+                r.transitions.add(self.transition_map[t.name])
+
+        # add transitions to regimes:
+        for t in self.transitions:
+            t.from_.add_transition(t)
+            
+
+
     def __eq__(self, other):
         if not isinstance(other, self.__class__):
             return False
@@ -726,7 +780,7 @@ class Component(object):
                              self.parameters == other.parameters,
                              sorted(self.transitions, key=sort_key) == sorted(other.transitions, key=sort_key),
                              sorted(self.regimes, key=sort_key) == sorted(other.regimes, key=sort_key),
-                             self.bindings == other.bindings))
+                             sorted(self.bindings, key=sort_key) == sorted(other.bindings, key=sort_key)))
     
     @property
     def equations(self):
@@ -739,13 +793,7 @@ class Component(object):
             for equation in regime.equations():
                 yield equation
 
-    @property
-    def transitions(self):
-        trans_set = set()
-        for r in self.regimes:
-            trans_set.update(r.transitions())
-        return trans_set
-                        
+                       
     #@property
     #def regimes(self):
     #    regime_set = set([])
@@ -804,10 +852,9 @@ class Component(object):
     def to_xml(self):
         elements = [E.parameter(name=p) for p in self.parameters] + \
                    [r.to_xml() for r in self.regimes] + \
-                   [b.to_xml() for b in self.bindings] # +\
-                   # Transitions are now regime nodes
-                   #[t.to_xml() for t in self.transitions]
-        attrs = {"name": self.name, "initial_regime": self.initial_regime.name}
+                   [b.to_xml() for b in self.bindings] +\
+                   [t.to_xml() for t in self.transitions]
+        attrs = {"name": self.name}
         return E(self.element_name, *elements, **attrs)
        
     @classmethod
@@ -825,37 +872,15 @@ class Component(object):
         parameters = [p.get("name") for p in element.findall(NINEML+"parameter")]
         bindings = [Binding.from_xml(b) for b in element.findall(NINEML+Binding.element_name)] 
 
-        initial_regime_name = element.get("initial_regime")
-        if not initial_regime_name:
-            raise ValueError, "Component attribute 'initial_regime' not declared."
-
-        regime_map = {}
+        regimes = []
         for regime_cls in (Sequence, Union):
             for e in element.findall(NINEML+regime_cls.element_name):
-                r = regime_cls.from_xml(e)
-                if regime_map.has_key(r.name):
-                    raise ValueError, "Regime collection has Regimes with colliding names."
-                regime_map[r.name] = r
+                regimes.append(regime_cls.from_xml(e))
 
-        # Set initial regime
-        try:
-            initial_regime = regime_map[initial_regime_name]
-        except KeyError:
-            raise ValueError, "Declared initial regime '%s' not found in component element tree." % s
-        
-        # Transtions are part of regimes, as they cannot exist without a from_
-        #transitions = set([Transition.from_xml(t) for t in element.findall(NINEML+Transition.element_name)])
-        regimes = set(regime_map.values())
-
-        # resolve transition references
-        for r in regimes:
-            for t in r.transitions():
-                t.to = regime_map[t.to.name]
-                r = regime_map[t.from_.name]
-                t.from_ = r
+        transitions = [Transition.from_xml(t) for t in element.findall(NINEML+Transition.element_name)]
 
         # allocate new component
-        new_comp = cls(element.get("name"), parameters, regimes, initial_regime, bindings)
+        new_comp = cls(element.get("name"), parameters, regimes=regimes, transitions=transitions, bindings=bindings)
 
         return new_comp
 

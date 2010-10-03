@@ -32,8 +32,16 @@ subthreshold_transition = nineml.Transition(
                             name="subthreshold_transition"
                           )
 
-component = nineml.Component("LeakyIAF", parameters,
-                             (spike_transition, subthreshold_transition))
+c1 = nineml.Component("LeakyIAF", parameters,
+                             transitions=(spike_transition, subthreshold_transition))
 
 
-component.write("leaky_iaf2.xml")
+
+# write to file object f if defined
+try:
+    # This case is used in the test suite for examples.
+    c1.write(f)
+except NameError:
+    c1.write("leaky_iaf2.xml")
+    c2 = parse("leaky_iaf2.xml")
+    assert c1==c2
