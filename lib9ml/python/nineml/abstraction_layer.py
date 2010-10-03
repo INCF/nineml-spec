@@ -530,10 +530,10 @@ class Union(Regime):
 
 
 def On(condition, to=None):
-    """ returns new Transition which goes to 'do' if condition is True.
-    
-    do is a Regime, RegimeElement, iterable of expressions (mapped with expr_to_obj),
-    If it is an iterable
+    """ returns new Transition which goes to 'to' if condition is True.
+
+    Equivalent to :
+    Transition(from_=None,to=Reference(Regime,to),condition=condition)
 
     'On' is syntactic sugar for defining light regimes.
 
