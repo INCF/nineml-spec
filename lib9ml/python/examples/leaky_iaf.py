@@ -40,5 +40,5 @@ except NameError:
     c2 = nineml.parse(base+".xml")
     assert c1==c2
 
-    c1.to_dot(base+".dot", True)
+    c1.to_dot(base+".dot")
     os.system("dot -Tpng %s -o %s" % (base+".dot",base+".png"))
