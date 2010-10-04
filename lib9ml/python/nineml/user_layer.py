@@ -37,6 +37,7 @@ from operator import and_, or_
 
 nineml_namespace = 'http://nineml.org/9ML/0.1'
 NINEML = "{%s}" % nineml_namespace
+PARAMETER_NAME_AS_TAG_NAME = True
 
 def parse(url):
     """
@@ -411,6 +412,7 @@ class Parameter(object):
     Numerical values may either be numbers, or a component that generates
     numbers, e.g. a RandomDistribution instance.
     """
+    element_name = "value" # only used if PARAMETER_NAME_AS_TAG_NAME is False
     
     def __init__(self, name, value, unit=None):
         self.name = name
@@ -434,7 +436,7 @@ class Parameter(object):
     def is_random(self):
         return isinstance(self.value, RandomDistribution)
 
-    def to_xml(self):
+    def _to_xml_name_as_tag(self):
         if isinstance(self.value, RandomDistribution):
             value_element = E.reference(self.value.name)
         else:
@@ -446,9 +448,28 @@ class Parameter(object):
         else:
             return E(self.name,
                      E(Value.element_name, value_element))
+            
+    def _to_xml_generic_tag(self):
+        if isinstance(self.value, RandomDistribution):
+            value_element = E.reference(self.value.name)
+        else:
+            value_element = str(self.value)
+        attrs = {"parameter": self.name}
+        if self.unit:
+            attrs["unit"] = self.unit
+        return E(Parameter.element_name,
+                 value_element,
+                 **attrs)
+    
+    def to_xml(self):
+        if PARAMETER_NAME_AS_TAG_NAME:
+            return self._to_xml_name_as_tag()
+        else:
+            return self._to_xml_generic_tag()
+    
 
     @classmethod
-    def from_xml(cls, element, components):
+    def _from_xml_name_as_tag(cls, element, components):
         value = Value.from_xml(element.find(NINEML+Value.element_name), components)
         unit_element = element.find(NINEML+"unit")
         if unit_element is None:
@@ -458,6 +479,20 @@ class Parameter(object):
         return Parameter(name=element.tag.replace(NINEML,""),
                          value=value,
                          unit=unit)
+    
+    @classmethod
+    def _from_xml_generic_tag(cls, element, components):
+        assert element.tag == NINEML+cls.element_name, "Found <%s>, expected <%s>" % (element.tag, cls.element_name)
+        return Parameter(name=element.attrib["parameter"],
+                         value = Value.from_xml(element, components),
+                         unit = element.get("unit"))
+    
+    @classmethod
+    def from_xml(cls, element, components):
+        if PARAMETER_NAME_AS_TAG_NAME:
+            return cls._from_xml_name_as_tag(element, components)
+        else:
+            return cls._from_xml_generic_tag(element, components)
 
 
 class ParameterSet(dict):

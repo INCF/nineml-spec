@@ -89,7 +89,7 @@ def build_net_receive_block(transition_to_subthreshold, spike_transition):
                 watch_statements.append(stmt)
                 transition.to.flag = flag
             else:
-                raise Exception("Don't know what to do with this transition condition.")
+                raise Exception("Don't know what to do with this transition condition: %s" % condition)
         elif condition is True:
             pass
         else:

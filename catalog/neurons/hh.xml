@@ -1,0 +1,100 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<nineml xmlns="http://nineml.org/9ML/0.1">
+  <component name="Hodgkin-Huxley">
+    <sequence name="hh_regime">
+      <union name="current_calculation">
+        <sequence name="Regime10">
+          <union name="sodium_state_update">
+            <sequence name="sodium_activation_system">
+              <union name="Regime0">
+                <assignment to="alpha_m" name="Assignment0">
+                  <math-inline>-0.1*(v+40)/(exp(-(v+40)/10) - 1)</math-inline>
+                </assignment>
+                <assignment to="beta_m" name="Assignment1">
+                  <math-inline>4*exp(-(v+65)/18)</math-inline>
+                </assignment>
+              </union>
+              <union name="Regime1">
+                <assignment to="mtau" name="Assignment2">
+                  <math-inline>1/(q10*(alpha_m + beta_m))</math-inline>
+                </assignment>
+                <assignment to="minf" name="Assignment3">
+                  <math-inline>alpha_m/(alpha_m + beta_m)</math-inline>
+                </assignment>
+              </union>
+              <ode bound_variable="t" name="ODE0" dependent_variable="m">
+                <math-inline>(minf-m)/mtau</math-inline>
+              </ode>
+            </sequence>
+            <sequence name="sodium_inactivation_system">
+              <union name="Regime3">
+                <assignment to="alpha_h" name="Assignment4">
+                  <math-inline>0.07*exp(-(v+65)/20)</math-inline>
+                </assignment>
+                <assignment to="beta_h" name="Assignment5">
+                  <math-inline>1/(exp(-(v+35)/10) + 1)</math-inline>
+                </assignment>
+              </union>
+              <union name="Regime4">
+                <assignment to="htau" name="Assignment6">
+                  <math-inline>1/(q10*(alpha_h + beta_h))</math-inline>
+                </assignment>
+                <assignment to="hinf" name="Assignment7">
+                  <math-inline>alpha_h/(alpha_h + beta_h)</math-inline>
+                </assignment>
+              </union>
+              <ode bound_variable="t" name="ODE1" dependent_variable="h">
+                <math-inline>(hinf-h)/htau</math-inline>
+              </ode>
+            </sequence>
+          </union>
+          <assignment to="gna" name="Assignment12">
+            <math-inline>gnabar*m*m*m*h</math-inline>
+          </assignment>
+          <assignment to="ina" name="Assignment13">
+            <math-inline>gna*(v - ena)</math-inline>
+          </assignment>
+        </sequence>
+        <sequence name="Regime11">
+          <sequence name="potassium_state_update">
+            <union name="Regime7">
+              <assignment to="alpha_n" name="Assignment8">
+                <math-inline>-0.01*(v+55)/(exp(-(v+55)/y) - 1)</math-inline>
+              </assignment>
+              <assignment to="beta_n" name="Assignment9">
+                <math-inline>0.125*exp(-(v+65)/80)</math-inline>
+              </assignment>
+            </union>
+            <union name="Regime8">
+              <assignment to="ntau" name="Assignment10">
+                <math-inline>1/(q10*(alpha_n + beta_n))</math-inline>
+              </assignment>
+              <assignment to="ninf" name="Assignment11">
+                <math-inline>alpha_n/(alpha_n + beta_n)</math-inline>
+              </assignment>
+            </union>
+            <ode bound_variable="t" name="ODE2" dependent_variable="n">
+              <math-inline>(ninf-n)/ntau</math-inline>
+            </ode>
+          </sequence>
+          <assignment to="gk" name="Assignment14">
+            <math-inline>gkbar*n*n*n*n</math-inline>
+          </assignment>
+          <assignment to="ik" name="Assignment15">
+            <math-inline>gk*(v - ek)</math-inline>
+          </assignment>
+        </sequence>
+        <assignment to="il" name="Assignment16">
+          <math-inline>gl*(v - el)</math-inline>
+        </assignment>
+      </union>
+      <ode bound_variable="t" name="membrane_equation" dependent_variable="v">
+        <math-inline>(ina + ik + il + Isyn)/C</math-inline>
+      </ode>
+      <assignment to="spike" name="test_threshold_crossing">
+        <math-inline>V &gt; theta</math-inline>
+      </assignment>
+    </sequence>
+    <transition to="hh_regime" from="hh_regime" name="spike_emitted" condition="spike"/>
+  </component>
+</nineml>

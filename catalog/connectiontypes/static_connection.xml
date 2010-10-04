@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<nineml xmlns="http://nineml.org/9ML/0.1">
+  <component name="Synaptic connection with fixed weight">
+    <parameter name="weight"/>
+    <parameter name="delay"/>
+  </component>
+</nineml>
