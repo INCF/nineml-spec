@@ -71,11 +71,8 @@ hh_regime = Sequence( # or Union? do we solve for m,h,n first then V, or all tog
     state_updates,
     current_calculation,
     ODE("V", "t", "(ina + ik + il + Isyn)/C", name="membrane_equation"),
-    Assignment("spike", "V > theta", name="test_threshold_crossing"),
     name="hh_regime",
-    transitions=[On("spike",to="spike_regime")]
-
-    
+    transitions=[On("V > theta",to="spike_regime")]
 )
 
 spike_regime = Union(
@@ -87,12 +84,14 @@ spike_regime = Union(
 
 
 
-input_variables = ["Isyn", "t"]
-state_variables = ["m", "h", "n", "V"]
-fixed_parameters = ["C", "gnabar", "gkbar", "gl", "ena", "ek", "el", "celsius", "theta"]
-assigned_variables = ["q10", "alpha_m", "beta_m", "alpha_h", "beta_h",
-                      "alpha_n", "beta_n", "gna", "gk", "tspike"]
-parameters = input_variables + state_variables + fixed_parameters + assigned_variables
+#input_variables = ["Isyn", "t"]
+#state_variables = ["m", "h", "n", "V"]
+#fixed_parameters = ["C", "gnabar", "gkbar", "gl", "ena", "ek", "el", "celsius", "theta"]
+#assigned_variables = ["q10", "alpha_m", "beta_m", "alpha_h", "beta_h",
+#                      "alpha_n", "beta_n", "gna", "gk", "tspike"]
+#parameters = input_variables + state_variables + fixed_parameters + assigned_variables
+
+parameters = ['el', 'C', 'ek', 'ena', 'Isyn', 'gkbar', 'gnabar', 'theta', 'gl']
 
 c1 = Component("Hodgkin-Huxley", parameters,
                       regimes=(hh_regime,spike_regime),

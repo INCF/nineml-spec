@@ -12,14 +12,13 @@
 
 # EM: Added floats funcs, collect names and funcs instead of eval'ing.
 
+# This is a conditional parser
 
 
 import ply.lex as lex
 import ply.yacc as yacc
 import os
-
-class NineMLMathParseError(ValueError):
-    pass
+from nineml.expr_parse import NineMLMathParseError
 
 
 class Parser(object):
@@ -61,9 +60,9 @@ class Parser(object):
 class Calc(Parser):
 
     tokens = (
-        'NAME','NUMBER',
+        'NAME','NUMBER','CONDITIONAL','NOT','LOGICAL',
         'PLUS','MINUS','EXP', 'TIMES','DIVIDE',
-        'LPAREN','RPAREN','LFUNC', 'COMMA'
+        'LPAREN','RPAREN','LFUNC', 'COMMA', 'BOOL'
         )
 
     # Tokens
@@ -72,12 +71,23 @@ class Calc(Parser):
     t_MINUS   = r'-'
     t_EXP     = r'\*\*'
     t_TIMES   = r'\*'
+    t_CONDITIONAL   = r'(<=)|(>=)|(==)|(!=)|(>)|(<)'
+    t_LOGICAL = r'(&&)|(\|\|)'
+    t_NOT = r'\!'
     t_DIVIDE  = r'/'
     t_LPAREN  = r'\('
     t_RPAREN  = r'\)'
-    t_NAME    = r'[a-zA-Z_][a-zA-Z0-9_]*'
-    t_LFUNC    = r'[a-zA-Z_][a-zA-Z0-9_]*[ ]*\('
     t_COMMA   = r','
+
+    def t_LFUNC(self,t):
+        r'[a-zA-Z_][a-zA-Z0-9_]*[ ]*\('
+        return t
+        
+    def t_NAME(self,t):
+        r'[a-zA-Z_][a-zA-Z0-9_]*'
+        if t.value in ('True','true','False','false'):
+            t.type = 'BOOL'
+        return t
 
 
     def t_NUMBER(self, t):
@@ -95,15 +105,42 @@ class Calc(Parser):
         raise NineMLMathParseError, "Illegal character '%s' in '%s'" % (t.value[0],t)
 
     precedence = (
+        ('left','NAME'),
         ('left','PLUS','MINUS'),
         ('left','TIMES','DIVIDE'),
         ('left', 'EXP'),
         ('right','UMINUS'),
-        ('left','LFUNC'),
+        ('right','UNOT'),
+        ('left','NOT'),
+        ('left','LFUNC')
         )
 
-    def p_statement_expr(self, p):
-        'statement : expression'
+    start = 'conditional'
+
+    def p_conditional(self, p):
+        'conditional : boolean'
+        pass
+
+    def p_boolean_bool(self, p):
+        "boolean : BOOL"
+        pass
+
+
+    def p_boolean_not(self, p):
+        'boolean : NOT boolean %prec UNOT'
+        pass
+
+
+    def p_boolean_logical(self, p):
+        'boolean : boolean LOGICAL boolean'
+        pass
+
+    def p_boolean_group(self, p):
+        'boolean : LPAREN boolean RPAREN'
+        pass
+
+    def p_boolean_conditional(self, p):
+        'boolean : expression CONDITIONAL expression'
         pass
 
     def p_expression_binop(self, p):
@@ -120,15 +157,6 @@ class Calc(Parser):
         'expression : MINUS expression %prec UMINUS'
         pass
 
-    def p_func(self,p):
-        """expression : LFUNC expression RPAREN\n | LFUNC RPAREN
-                        | LFUNC expression COMMA expression RPAREN
-                        | LFUNC expression COMMA expression COMMA expression RPAREN
-        """
-        # EM: Supports up to 3 args.  Don't know how to support N.
-        
-        self.funcs.append(p[1][:-1].strip())
-
     def p_expression_group(self, p):
         'expression : LPAREN expression RPAREN'
         pass
@@ -141,6 +169,17 @@ class Calc(Parser):
         'expression : NAME'
         self.names.append(p[1])
 
+
+    def p_func(self,p):
+        """expression : LFUNC expression RPAREN\n | LFUNC RPAREN
+                        | LFUNC expression COMMA expression RPAREN
+                        | LFUNC expression COMMA expression COMMA expression RPAREN
+        """
+        # EM: Supports up to 3 args.  Don't know how to support N.
+        
+        self.funcs.append(p[1][:-1].strip())
+
+
     def p_error(self, p):
         if p:
             raise NineMLMathParseError, "Syntax error at '%s'" % p.value
@@ -148,14 +187,14 @@ class Calc(Parser):
             raise NineMLMathParseError, "Syntax error at EOF, probably unmatched parenthesis."
 
 
-def expr_parse(rhs):
-    """ Parses an expression rhs, i.e. no "=, +=, -=, etc." in the expr
+def cond_parse(conditional):
+    """ Parses a conditinal expression 
     and returns var names and func names as sets """
 
     calc = Calc()
-    return calc.parse(rhs)
+    return calc.parse(conditional)
     
 if __name__ == '__main__':
     calc = Calc()
-    p = calc.parse("1 / (( 1 + mg_conc * eta *  exp ( -1 * gamma*V))")
+    p = calc.parse("q > 1 / (( 1 + mg_conc * eta *  exp ( -1 * gamma*V))")
     print p

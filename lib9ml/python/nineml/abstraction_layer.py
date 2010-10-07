@@ -14,6 +14,9 @@ from nineml import __version__
 import re
 import copy
 
+from nineml.cache_decorator import cache_decorator as cache
+from nineml import math_namespace
+
 
 MATHML = "{http://www.w3.org/1998/Math/MathML}"
 nineml_namespace = 'http://nineml.org/9ML/0.1'
@@ -35,6 +38,8 @@ except ImportError:
             result = [x+[y] for x in result for y in pool]
         for prod in result:
             yield tuple(prod)
+
+
 
 
 def dot_escape(s):
@@ -74,6 +79,10 @@ class Binding(RegimeElement):
         self.name = name
         self.value = value
 
+    @property
+    def rhs(self):
+        return self.value
+
     def __eq__(self, other):
         if not isinstance(other, self.__class__):
             return False
@@ -83,6 +92,9 @@ class Binding(RegimeElement):
         return E(self.element_name,
                  E("math-inline", self.value),
                  name=self.name)
+
+    def as_expr(self):
+        return "%s := %s" % (self.name, self.value)
 
     @classmethod
     def from_xml(cls, element):
@@ -96,13 +108,16 @@ class Equation(RegimeElement):
     pass
 
 class Port(object):
-    pass
+    """ Base class for EventPort and AnalogPort, etc."""
+    def __init__(self,id, mode='r', ):
+        self.id = id
 
-class Event(Port):
+
+class EventPort(Port):
     element_name = "event"
     
-    def __init__(self,id):
-        self.id = id
+    def __init__(self,id, mode='r'):
+        Port.__init__(self, id, mode=mode)
 
 
     def __eq__(self, other):
@@ -128,14 +143,8 @@ class Event(Port):
         return cls(id)
         
 
-SpikeOutputEvent = Event('spike_output')
-SpikeInputEvent = Event('spike_input')
-ClockTic = Event('clock_tic')
-
-
-
-
-
+SpikeOutputEvent = EventPort('spike_output')
+SpikeInputEvent = EventPort('spike_input','w')
 
 
 class ODE(Equation):
@@ -145,16 +154,16 @@ class ODE(Equation):
     element_name = "ode"
     n = 0
     
-    def __init__(self, dependent_variable, bound_variable, rhs, name=None):
+    def __init__(self, dependent_variable, indep_variable, rhs, name=None):
         self.dependent_variable = dependent_variable
-        self.bound_variable = bound_variable
+        self.indep_variable = indep_variable
         self.rhs = rhs
         self.name = name or ("ODE%d" % ODE.n)
         ODE.n += 1
         
     def __repr__(self):
         return "ODE(d%s/d%s = %s)" % (self.dependent_variable,
-                                      self.bound_variable,
+                                      self.indep_variable,
                                       self.rhs)
 
     def __eq__(self, other):
@@ -163,12 +172,12 @@ class ODE(Equation):
 
         return reduce(and_, (self.name == other.name,
                              self.dependent_variable == other.dependent_variable,
-                             self.bound_variable == other.bound_variable,
+                             self.indep_variable == other.indep_variable,
                              self.rhs == other.rhs))
 
     def as_expr(self):
         return "d%s/d%s = %s" % (self.dependent_variable,
-                                 self.bound_variable,
+                                 self.indep_variable,
                                  self.rhs)
 
     def to_xml(self):
@@ -176,14 +185,14 @@ class ODE(Equation):
                  E("math-inline", self.rhs),
                  name=self.name,
                  dependent_variable=self.dependent_variable,
-                 bound_variable = self.bound_variable)
+                 independent_variable = self.indep_variable)
 
     @classmethod
     def from_xml(cls, element):
         assert element.tag == NINEML+cls.element_name
         rhs = element.find(NINEML+"math-inline").text
         return cls(element.get("dependent_variable"),
-                   element.get("bound_variable"),
+                   element.get("independent_variable"),
                    rhs,
                    name=element.get("name"))
     
@@ -192,6 +201,10 @@ class Assignment(Equation):
     element_name = "assignment"
     n = 0
     
+    @property
+    def rhs(self):
+        return self.expr
+
     def __init__(self, to, expr, name=None):
         self.to = to
         self.expr = expr
@@ -235,6 +248,10 @@ class Inplace(Equation):
 
     op = "+="
     
+    @property
+    def rhs(self):
+        return self.expr
+
     def __init__(self, to, op, expr, name=None):
         
         self.to = to
@@ -468,12 +485,31 @@ class Regime(RegimeElement):
         Yields all the equations contained within this Regime or any of its
         children.
         """
+        return self.nodes_filter(lambda x: isinstance(x,Equation))
+
+    def bindings(self):
+        """
+        Yields all the equations contained within this Regime or any of its
+        children.
+        """
+        return self.nodes_filter(lambda x: isinstance(x,Binding))
+
+
+    def nodes_filter(self, filter_func):
+        """
+        Yields all the nodes contained within this Regime or any of its
+        children for which filter_func yields true.
+
+        Example of valid filter_func:
+        filter_func = lambda x: isinstance(x, Equation)
+        
+        """
         for node in self.nodes:
-            if isinstance(node, Equation):
+            if filter_func(node):
                 yield node
             elif isinstance(node, Regime):
-                for eqn in node.equations():
-                    yield eqn
+                for cnode in node.nodes_filter(filter_func):
+                    yield cnode
             else:
                 pass
 
@@ -691,11 +727,11 @@ class Transition(object):
             assignment = None
         return cls(from_=from_, to=to, condition=condition, assignment=assignment, name=name)
 
-
 class Component(object):
     element_name = "component"
     
-    def __init__(self, name, parameters = [], regimes = [], transitions = [], ports = [], bindings=[]):
+    def __init__(self, name, parameters = [], regimes = [], transitions = [],
+                 ports = [], bindings = []):
         """
         Regime graph should not be edited after contructing a component
 
@@ -706,32 +742,33 @@ class Component(object):
         _transition_map} by prefixing with "_".
 
         We should do some privatizing for regimes, transitions, or do a deepcopy here.
-        We could make regimes and transitions tuples, and expose only read-only apis in Regime and Transition
-        class.  Then the _map could be made a sort of ImmutableDict.
+        We could make regimes and transitions tuples, and expose only read-only apis in
+        Regime and Transition class.  Then the _map could be made a sort of ImmutableDict.
         *END TODO*
 
 
         Specifying Regimes & Transitions
         --------------------------------
 
-        The user passed 'regimes' and 'transitions' should contain true objects, i.e. they may not contain References. 
+        The user passed 'regimes' and 'transitions' should contain true objects, i.e.
+        they may not contain References. 
         
         Options to the user:
         
         1) provide both 'regimes' and 'transitions' (references will be resolved)
         2) provide 'regimes' only (in which case there must be no unresolved references),
-        3) provide 'transitions' only (in which case there must be at least one transition in the model, and no unresolved references),
+        3) provide 'transitions' only (in which case there must be at least
+           one transition in the model, and no unresolved references),
 
 
         """
 
         self.name = name
-        self.parameters = parameters
 
         # check for empty component, we do not support inplace building of a component.
         if not regimes and not transitions:
-            raise ValueError, "Component constructor needs at least 'regimes' or 'transitions' to build component graph."
-
+            raise ValueError, "Component constructor needs at least 'regimes'"+\
+                  "or 'transitions' to build component graph."
 
         # add to transitions from regimes
         # get only true transition objects (not references) from regimes
@@ -740,8 +777,9 @@ class Component(object):
         # model with no transitions is indeed allowed.
 
         trans_refs = [t for t in transitions if isinstance(t,Reference)]
-        assert not trans_refs, "Component constructor: kwarg 'transitions' may not contain references."
-        
+        assert not trans_refs, "Component constructor: kwarg 'transitions' may not"+\
+               "contain references."
+
         transitions = set(transitions)
         transitions.update(trans_objects)
 
@@ -751,17 +789,14 @@ class Component(object):
         regime_objects = [r for t in transitions for r in (t.to,t.from_) if isinstance(r,Regime)]
 
         if not regimes:
-            assert regime_objects, "Cannot build regime set: User supplied only Transitions to Component constructor,"+\
-                   "but all 'to','from_' attributes are references!"
+            assert regime_objects, "Cannot build regime set: User supplied only Transitions "+\
+                   "to Component constructor, but all 'to','from_' attributes are references!"
         regime_refs = [r for r in regimes if isinstance(r,Reference)]
         assert not regime_refs, "Component constructor: kwarg 'regimes' may not contain references."
 
         regimes = set(regimes)
         regimes.update(regime_objects)
 
-
-
-        
         # build regime map
         self.regime_map = {}
         for r in regimes:
@@ -780,24 +815,53 @@ class Component(object):
         self.regimes = set(regimes)
         self.transitions = set(transitions)
 
-        # We have extracted all implicit knowledge of graph members, proceed to resolve references.
+        # We have extracted all implicit knowledge of graph members, proceed to
+        # resolve references.
         self.resolve_references()
 
 
         # check that there is an island regime only if there is only 1 regime
-        island_regimes = set([r for r in self.regimes if not r.transitions and not self.get_regimes_to(r)])
+        island_regimes = set([r for r in self.regimes if not r.transitions and \
+                              not self.get_regimes_to(r)])
         if island_regimes:
-            assert len(self.regimes)==1, "User Error: Component contains island regimes and more than one regime."
-
+            assert len(self.regimes)==1, "User Error: Component contains island regimes"+\
+                   "and more than one regime."
       
         # Allow strings for bindings, map using expr_to_obj
         # Eliminate duplicates
-        bindings = set(map(expr_to_obj,set(bindings)))
+
+        # This should not be a set, but a list!
+        # We resolve later colliding bindings
+        bindings = map(expr_to_obj,set(bindings))
+        for r in self.regimes:
+            bindings+=list(r.bindings())
+        #self.bindings = bindings
+
+        # build bindings map
+        bindings_map = {}
         for b in bindings:
             assert isinstance(b, Binding), "Received invalid binding."
-        self.bindings = bindings
-        
+            if b.name in bindings_map and b.as_expr()!=bindings_map[b.name].as_expr():
+                raise ValueError, "Multiple non-equal bindings on '%s' " % b.name
+            bindings_map[b.name] = b
+        self.bindings_map = bindings_map
+
+        # check bindings only have static parameters and functions on rhs
+        self.check_binding_expressions()
+
+        # check we aren't redefining math symbols (like e,pi)
+        self.check_non_parameter_symbols()
+
+        # Up till now, we've inferred parameters
+        # Now let's check what the user provided
+        # is consistant and finally set self.parameters
+        if parameters:
+            if self.user_parameters!=set(parameters):
+                raise ValueError, "Declared parameter list %s does not match inferred parameter list %s." % (str(self.parameters),str(self.user_parameters))
+
+        self.parameters = self.user_parameters
         self.ports = ports
+        
         # we should check that parameters is correct
         # even better, we could auto-generate parameters
 
@@ -806,8 +870,6 @@ class Component(object):
         
         return [t.from_ for t in self.transitions if t.to==regime]
             
-
-
     def resolve_references(self):
         """ Uses self.regimes_map and self.transitions_map to resolve references in self.regimes and self.transitions"""
 
@@ -857,62 +919,169 @@ class Component(object):
         #for transition in self.transitions:
         #    for regime in transition.from_, transition.to:
         for r in self.regimes:
-            for t in r.transitions():
+            for t in r.transitions:
                 if t.assignment:
-                    yield transition.assignment
-            for equation in regime.equations():
+                    yield t.assignment
+            for equation in r.equations():
                 yield equation
 
-                       
-    #@property
-    #def regimes(self):
-    #    regime_set = set([])
-    #    for transition in self.transitions:
-    #        regime_set.add(transition.from_)
-    #        regime_set.add(transition.to)
-    #    return regime_set
+    @property
+    def conditions(self):
+        """ Returns all conditions """
+        # TODO events
+        for t in self.transitions:
+            yield t.condition
 
     @property
-    def fixed_parameters(self):
-        # for now we trust the parameters list, but really we
-        # should parse the math blocks, and cross-check
-        return set(self.parameters).difference(self.dependent_variables).difference(self.independent_variables)
-       
+    def bindings(self):
+        return self.bindings_map.itervalues()
+
+
+    def check_binding_expressions(self):
+        """ Bound symbols (which are static when running the model)
+        can depend only on 'user parameters' (which are static when running the model)
+
+        This parses the binding rhs expressions to verify this is so.
+        """
+
+        from nineml.expr_parse import expr_parse
+
+        params = self.user_parameters
+        
+        for binding in self.bindings:
+            names, funcs = expr_parse(binding.rhs)
+            undef_funcs = funcs.difference(math_namespace.functions)
+            if undef_funcs:
+                funcs.difference(math_namespace.functions)
+                raise ValueError, "In binding '%s', undefined functions: %s" % \
+                      (binding.as_expr(),repr(list(undef_funcs)))
+
+
+            if binding.name in names:
+                raise ValueError, "Binding expression '%s': may not self reference." % binding.name
+            non_param_names = self.non_parameter_symbols.intersection(names)
+            # may reference other bindings
+            non_param_names = non_param_names.difference(self.bindings_map.iterkeys())
+            if non_param_names:
+                raise ValueError, "Binding symbols referencing variables is illegal: %s" % str(non_param_names)
+
+    def check_non_parameter_symbols(self):
+        """ Check that non-parameters symbols are not conflicting
+        with math_namespace symbols """
+        if self.non_parameter_symbols.intersection(math_namespace.symbols)!=set():
+            raise ValueError, "Non-parameters symbols (variables and bound symbols) may "+\
+                  "not redefine math symbols (such as 'e','pi')"
+            
+                
+
     @property
-    def independent_variables(self):
-        variables = set([])
-        #for equation in self.equations:
-        #    if isinstance(equation, ODE):
-        #        variables.add(equation.bound_variable)
-        for r in self.regimes:
-            for eq in r.odes():
-                variables.add(eq.bound_variable)
-        return variables
+    @cache
+    def user_parameters(self):
+        """ User parameters for the component. """
+        # TODO: cache once determined
+        # compare to the parameters lists declared by the user 
+
+        # parse the math blocks
+
+        from nineml.expr_parse import expr_parse
+        from nineml.cond_parse import cond_parse
+
+        symbols = set([])
+        for e in self.equations:
+            names, funcs = expr_parse(e.rhs)
+            undef_funcs = funcs.difference(math_namespace.functions)
+            if undef_funcs:
+                funcs.difference(math_namespace.functions)
+                raise ValueError, "In expression '%s', undefined functions: %s" % \
+                      (e.as_expr(),repr(list(undef_funcs)))
+            
+            symbols.update(names)
+
+        # now same for conditions
+        for c in self.conditions:
+            names, funcs = cond_parse(c)
+            undef_funcs = funcs.difference(math_namespace.functions)
+            if undef_funcs:
+                funcs.difference(math_namespace.functions)
+                raise ValueError, "In conditional '%s', undefined functions: %s" % \
+                      (c,repr(list(undef_funcs)))
+            
+            symbols.update(names)
+
+
+        symbols = symbols.difference(self.non_parameter_symbols)
+        symbols = symbols.difference(math_namespace.symbols)
+        return symbols.difference(math_namespace.reserved_symbols)
+
                  
     @property
-    def dependent_variables(self):
-        variables = set([])
-        for equation in self.equations:
-            if isinstance(equation, ODE):
-                variables.add(equation.dependent_variable)
-            elif isinstance(equation, Assignment):
-                variables.add(equation.to)
-        for binding in self.bindings:
-            variables.add(binding.name)
-        return variables
-        
+    @cache
+    def non_parameter_symbols(self):
+        """ All bindings, assignment and inplace left-hand-sides, plus X for ODE dX/dt = ... """ 
+        # TODO: cache once determined
+        symbols = set([])
+        symbols.update(self.variables)
+        symbols.update(self.bound_symbols)
+        return symbols
+
     @property
+    @cache
+    def variables(self):
+        symbols = set([])
+        symbols.update(self.integrated_variables)
+        symbols.update(self.assigned_variables)
+        symbols.update(self.independent_variables)
+        return symbols
+
+    @property
+    @cache
+    def bound_symbols(self):
+        # TODO: cache once determined
+        """ Return symbols which are subject to bindings (static assignments)"""
+        # construct set of keys (bound symbols)
+        statics = set(self.bindings_map)
+
+        # check user is not writing to bound variables
+        if statics.intersection(self.integrated_variables)!=set():
+            raise ValueError, "Error: user bound symbols which appear on lhs of ODEs"
+        if statics.intersection(self.assigned_variables)!=set():
+            raise ValueError, "Error: user bound symbols which appear on lhs of Assignments"+\
+                  "and Inplace OPs"
+        
+        return statics
+
+
+
+    @property
+    @cache
     def assigned_variables(self):
+        """ All assignment and inplace lhs' (which may also be ODE integrated variables),
+        but not bindings (which are not variables, but static) """
+
+        # TODO: cache once determined
         variables = set([])
         for equation in self.equations:
-            if isinstance(equation, Assignment):
+            if isinstance(equation, (Assignment,Inplace)):
                 variables.add(equation.to)
-        for binding in self.bindings:
-            variables.add(binding.name)
-        return variables.difference(self.integrated_variables)
+        return variables
+
+    @property
+    @cache
+    def independent_variables(self):
+        """ All X for ODE dY/dX """
+        # TODO: cache once determined
+        variables = set([])
+        for r in self.regimes:
+            for eq in r.odes():
+                variables.add(eq.indep_variable)
+        return variables
+
     
     @property
-    def integrated_variables(self): # "state" variables?
+    @cache
+    def integrated_variables(self):
+        """ All X for ODE dX/dt """
+        # TODO: cache once determined
         variables = set([])
         for equation in self.equations:
             if isinstance(equation, ODE):
@@ -975,8 +1144,6 @@ class Component(object):
           dot -Tpng spike_generator.png -o spike_generator.png
 
         """
-
-        import cgi
 
         # if out is a str, make a file
         if isinstance(out,str):

@@ -27,7 +27,7 @@ on_event_regime = Union(a_update, b_update, name="on_event_regime")
 
 # transitions
 
-transition1 = Transition(inter_event_regime, on_event_regime, condition="SpikeInEvent")
+transition1 = Transition(inter_event_regime, on_event_regime, condition="SpikeInputEvent == 1.0")
 
 transition2 = Transition(on_event_regime, inter_event_regime, condition=None)
 
@@ -35,11 +35,11 @@ transition2 = Transition(on_event_regime, inter_event_regime, condition=None)
 # Parameters
 
 external_parameters =  ["tau_r", "tau_d", "mg_conc", "eta", "gamma", "gmax"]
-variables_from_elsewhere = ["V", "weight", "inputEvent"]
+variables_from_elsewhere = ["V", "weight", "SpikeInputEvent"]
 state_variables = ["g", "A", "B"]
-internal_variables = ["tau_peak", "factor", "gB"]
+bindings = ["tau_peak", "factor"]
 
-parameters = external_parameters + variables_from_elsewhere + state_variables + internal_variables
+parameters = external_parameters + variables_from_elsewhere
 
 
 c1 = Component("NMDA_PSR", parameters, transitions=(transition1, transition2), bindings = (tau_peak, factor))

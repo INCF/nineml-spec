@@ -1,8 +1,7 @@
 import nineml.abstraction_layer as nineml
 
 
-parameters = ["V", "U", "t", "spike", "Isyn",
-              "a", "b", "c", "d", "theta"]
+parameters = ["Isyn","a", "b", "c", "d", "theta"]
 
 
 regimes = [

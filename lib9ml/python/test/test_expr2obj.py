@@ -60,7 +60,7 @@ class E2OTestCase(unittest.TestCase):
 
             assert o.rhs == rhs
             assert o.dependent_variable == dep_var
-            assert o.bound_variable == indep_var
+            assert o.indep_variable == indep_var
 
 
     def test_bad(self):
