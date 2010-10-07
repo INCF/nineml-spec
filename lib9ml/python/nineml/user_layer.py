@@ -702,6 +702,9 @@ class Population(object):
     def __ne__(self, other):
         return not self == other
     
+    def __str__(self):
+        return 'Population "%s": %dx"%s" %s' % (self.name, self.number, self.prototype.name, self.positions)
+    
     def get_components(self):
         components = []
         if self.prototype:
@@ -767,6 +770,12 @@ class PositionList(object):
     def __ne__(self, other):
         return not self == other
     
+    def __str__(self):
+        if self.structure:
+            return "positioned according to '%s'" % self.structure.name
+        else:
+            return "with explicit position list"
+    
     def get_positions(self, population):
         """
         Return a list or 1D numpy array of (x,y,z) positions.
@@ -804,7 +813,7 @@ class PositionList(object):
         if structure_element is not None:
             return cls(structure=get_or_create_component(structure_element.text, Structure, components))
         else:
-            positions = [(p.attrib['x'], p.attrib['y'], p.attrib['z'])
+            positions = [(float(p.attrib['x']), float(p.attrib['y']), float(p.attrib['z']))
                          for p in element.findall(NINEML+'position')]
             return cls(positions=positions)
 

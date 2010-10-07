@@ -65,15 +65,15 @@ Now we can export the component as XML (normally to a file, but here we print
 it to the screen)::
 
     >>> import sys
-    >>> c.write(sys.stdout)
+    >>> c.write(sys.stdout)                                                     #doctest: +REPORT_UDIFF
     <?xml version='1.0' encoding='UTF-8'?>
     <nineml xmlns="http://nineml.org/9ML/0.1">
       <component name="Izhikevich">
-        <parameter name="Isyn"/>
         <parameter name="a"/>
-        <parameter name="b"/>
         <parameter name="c"/>
+        <parameter name="b"/>
         <parameter name="d"/>
+        <parameter name="Isyn"/>
         <parameter name="theta"/>
         <union name="post_spike_regime">
           <assignment to="V" name="Assignment0">
@@ -91,11 +91,7 @@ it to the screen)::
             <math-inline>a*(b*V - U)</math-inline>
           </ode>
         </union>
-        <transition to="post_spike_regime" from="subthreshold_regime" name="spike_transition" condition="V &gt; theta">
-          <assignment to="tspike" name="Assignment1">
-            <math-inline>t</math-inline>
-          </assignment>
-        </transition>
+        <transition to="post_spike_regime" from="subthreshold_regime" name="spike_transition" condition="V &gt; theta"/>
         <transition to="subthreshold_regime" from="post_spike_regime" name="return_transition" condition="true"/>
       </component>
     </nineml>
@@ -128,24 +124,21 @@ Once you have a NineML ``Component`` object, it can be introspected in various
 ways. To get a list of the various methods and attributes of the component
 object, use the Python ``help()`` function::
 
-    >>> help(c)
+    >>> help(c)                                                                 #doctest: +ELLIPSIS
     Help on Component in module nineml.abstraction_layer object:
-    .
-    .
-    .
-    
+    ...
+
 We can also inspect the ``Component`` at various levels of detail::
 
     >>> c.regimes
     set([Union(post_spike_regime), Union(subthreshold_regime)])
     
-    >>> c.transitions
+    >>> c.transitions                                                           #doctest: +NORMALIZE_WHITESPACE
     set([Transition(from Union(subthreshold_regime) to Union(post_spike_regime) if V > theta),
          Transition(from Union(post_spike_regime) to Union(subthreshold_regime) if true)])
-    >>> list(c.equations)
+    >>> list(c.equations)                                                       #doctest: +NORMALIZE_WHITESPACE
     [Assignment('V', 'c'),
      Inplace('U', '+=', 'd'),
-     Assignment('tspike', 't'),
      ODE(dV/dt = 0.04*V*V + 5*V + 140.0 - U + Isyn),
      ODE(dU/dt = a*(b*V - U))]
     >>> c.variables
@@ -155,7 +148,7 @@ We can also inspect the ``Component`` at various levels of detail::
     >>> c.integrated_variables
     set(['U', 'V'])
     >>> c.parameters
-    ['Isyn', 'a', 'b', 'c', 'd', 'theta']
+    set(['a', 'c', 'b', 'd', 'Isyn', 'theta'])
     
 To visualize the component, we can export it in dot format (http://en.wikipedia.org/wiki/DOT_language)::
 
@@ -172,14 +165,12 @@ files into various image formats, e.g.::
 Regimes also have various useful methods and attributes, e.g.::
 
     >>> subthresh = c.regime_map['subthreshold_regime']
-    >>> help(subthresh)
+    >>> help(subthresh)                                                         #doctest: +ELLIPSIS
     Help on Union in module nineml.abstraction_layer object:
-    .
-    .
-    .
+    ...
     >>> list(subthresh.equations)
     [ODE(dV/dt = 0.04*V*V + 5*V + 140.0 - U + Isyn), ODE(dU/dt = a*(b*V - U))]
-    >>> list(subthresh.odes())
+    >>> list(subthresh.odes)
     [ODE(dV/dt = 0.04*V*V + 5*V + 140.0 - U + Isyn), ODE(dU/dt = a*(b*V - U))]
     >>> 
     >>> list(subthresh.neighbors)
@@ -201,7 +192,7 @@ as do equations::
     >>> dv.as_expr()
     'dV/dt = 0.04*V*V + 5*V + 140.0 - U + Isyn'
     >>> from lxml.etree import tostring
-    >>> print tostring(dv.to_xml(), pretty_print=True)
+    >>> print tostring(dv.to_xml(), pretty_print=True)                          #doctest: +NORMALIZE_WHITESPACE
     <ode independent_variable="t" name="ODE0" dependent_variable="V">
       <math-inline>0.04*V*V + 5*V + 140.0 - U + Isyn</math-inline>
     </ode>
