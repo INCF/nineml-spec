@@ -706,23 +706,11 @@ class Transition(object):
 ##                 assert isinstance(resolved_obj, ref.cls)
 ##                 setattr(self, attr_name, resolved_obj)
 
-##     def resolve_condition(self):
-##         """
-##         condition is a boolean variable, whose value must be defined in the
-##         "from" regime. This method returns the assignment that sets the value of
-##         condition.
-##         """
-##         if self.condition in ('true', 'false'):
-##             return eval(self.condition.title())
-##         condition_equation = None
-##         for eqn in self.from_.equations():
-##             if isinstance(eqn, Assignment) and eqn.to == self.condition:
-##                  condition_equation = eqn
-##                  break
-##         if condition_equation:
-##             return condition_equation
-##         else:
-##             raise Exception("Could not resolve transition condition '%s'" % self.condition)
+    def resolve_condition(self):
+        if self.condition in ('true', 'false'):
+            return eval(self.condition.title())
+        else:
+            return self.condition
 
     @classmethod
     def from_xml(cls, element):
@@ -1060,8 +1048,6 @@ class Component(object):
                   "and Inplace OPs"
         
         return statics
-
-
 
     @property
     @cache

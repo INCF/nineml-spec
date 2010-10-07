@@ -21,20 +21,21 @@ with open(template_file) as f:
 INIT_FLAG = 1
 
 def check_component(component):
-    nt = len(component.transitions)
+    transitions = list(component.transitions)
+    nt = len(transitions)
     if nt == 1:
-        assert component.transitions[0].from_ is component.transitions[0].to
-        transition_to_subthreshold = spike_transition = component.transitions[0]
+        assert transitions[0].from_ is transitions[0].to
+        transition_to_subthreshold = spike_transition = transitions[0]
     elif nt == 2:
         for i in range(1):
-            assert component.transitions[i%2].from_ is component.transitions[(i+1)%2].to
-        if len(component.transitions[0].from_.odes()) > 0:
-            spike_transition = component.transitions[0]
-            transition_to_subthreshold = component.transitions[1]
+            assert transitions[i%2].from_ is transitions[(i+1)%2].to
+        if len(list(transitions[0].from_.odes)) > 0:
+            spike_transition = transitions[0]
+            transition_to_subthreshold = transitions[1]
         else:
-            spike_transition = component.transitions[1]
-            transition_to_subthreshold = component.transitions[0]
-        assert len(spike_transition.to.odes()) == 0
+            spike_transition = transitions[1]
+            transition_to_subthreshold = transitions[0]
+        assert len(list(spike_transition.to.odes)) == 0
     else:
         raise Exception("Must have either one or two transitions.")
     return transition_to_subthreshold, spike_transition
@@ -43,11 +44,11 @@ def build_derivative_block(transition_to_subthreshold, spike_transition):
     functions = []
     derivative_block = []
     subthreshold_regime = transition_to_subthreshold.to
-    for eqn in subthreshold_regime.equations():
+    for eqn in subthreshold_regime.equations:
         if isinstance(eqn, nineml.ODE):
             dv = eqn.dependent_variable
             condition = transition_to_subthreshold.resolve_condition()
-            if isinstance(condition, nineml.Assignment):
+            if isinstance(condition, basestring):
                 if transition_to_subthreshold is spike_transition: # only a single regime
                     derivative_block.append("%s' = %s" %(dv, eqn.rhs))
                 else:
@@ -63,11 +64,11 @@ def build_derivative_block(transition_to_subthreshold, spike_transition):
                           } else {
                             deriv_%s = 0.0
                           }
-                        }""" % (dv, dv, condition.expr, dv, eqn.rhs, dv)))
+                        }""" % (dv, dv, condition, dv, eqn.rhs, dv)))
             elif condition is True: # automatic transition
                 derivative_block.append("%s' = %s" %(dv, eqn.rhs))
             else:
-                raise Exception("Don't know what to do with this transition condition.")
+                raise Exception("Don't know what to do with this transition condition: %s" % condition)
         else:
             assert isinstance(eqn, nineml.Assignment)
             derivative_block.append("%s = %s" % (eqn.to, eqn.expr))
@@ -81,10 +82,10 @@ def build_net_receive_block(transition_to_subthreshold, spike_transition):
     transitions = set((transition_to_subthreshold, spike_transition))
     for transition in transitions:
         condition = transition.resolve_condition()
-        if isinstance(condition, nineml.Assignment):
-            if ">" in condition.expr or "<" in condition.expr:
+        if isinstance(condition, basestring):
+            if ">" in condition or "<" in condition:
                 flag += 1
-                stmt = "  WATCH (%s) %d" % (condition.expr, flag)
+                stmt = "  WATCH (%s) %d" % (condition, flag)
                 stmt = stmt.replace("=", "") # WATCH does not like >=
                 watch_statements.append(stmt)
                 transition.to.flag = flag
@@ -93,7 +94,7 @@ def build_net_receive_block(transition_to_subthreshold, spike_transition):
         elif condition is True:
             pass
         else:
-            raise Exception("Don't know what to do with this transition condition.")
+            raise Exception("Don't know what to do with this transition condition: %s" % condition)
     net_receive_block = ["if (flag == %d) {" % INIT_FLAG] + watch_statements
     for transition in transitions:
         if hasattr(transition.to, "flag"):
@@ -107,7 +108,7 @@ def build_net_receive_block(transition_to_subthreshold, spike_transition):
             # not take sequences into account. Need to find an example with a
             # sequence that breaks this.
             if transition.from_ is not transition.to:
-                for equation in transition.to.equations():
+                for equation in transition.to.equations:
                   if isinstance(equation, nineml.Assignment):
                       net_receive_block.append("  %s = %s" % (equation.to, equation.expr))
     net_receive_block.append("}")
@@ -123,13 +124,13 @@ def build_context(component):
     context = {
         "title": "Spiking node generated from the 9ML file %s using 9ml2nmodl.py version %s" % (nineml_file, nineml.__version__),
         "model_name": component.name.replace("-", "_"),
-        "range_variables": ", ".join(component.fixed_parameters),
-        "initial_values": "\n  ".join("%s = 0" % p for p in component.dependent_variables) + "\n  " + \
+        "range_variables": ", ".join(component.parameters),
+        "initial_values": "\n  ".join("%s = 0" % p for p in component.assigned_variables) + "\n  " + \
                           "\n  ".join("%s = %s" % (b.name, b.value) for b in component.bindings),
         "init_flag": INIT_FLAG,
-        "parameter_values": "\n  ".join("%s = 1" % p for p in component.fixed_parameters),
+        "parameter_values": "\n  ".join("%s = 1" % p for p in component.parameters),
         "state_variables": " ".join(component.integrated_variables),
-        "assigned_variables": "\n  ".join(component.assigned_variables),
+        "assigned_variables": "\n  ".join(component.assigned_variables.difference(component.integrated_variables)),
         "function_blocks": "\n\n".join(functions),
         "derivative_block": "\n  ".join(derivative_block),
         "net_receive_block": "\n  ".join(net_receive_block),
