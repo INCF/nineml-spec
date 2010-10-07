@@ -454,7 +454,7 @@ class Regime(RegimeElement):
         
         self.transitions.add(t)
 
-
+    @property
     def neighbors(self):
         """ Get all regimes we transition to """
         for t in self.transitions:
@@ -480,19 +480,34 @@ class Regime(RegimeElement):
 
         return d
 
+    @property
     def equations(self):
         """
         Yields all the equations contained within this Regime or any of its
         children.
+
+        As nodes_filter is a generator, so too is this function.
         """
         return self.nodes_filter(lambda x: isinstance(x,Equation))
 
+    @property
     def bindings(self):
         """
-        Yields all the equations contained within this Regime or any of its
+        Yields all the bindings contained within this Regime or any of its
         children.
+
+        As nodes_filter is a generator, so too is this function.
         """
         return self.nodes_filter(lambda x: isinstance(x,Binding))
+
+    @property
+    def odes(self):
+        """
+        Yields all odes in the regime or any of its children.
+        
+        As nodes_filter is a generator, so too is this function.
+        """
+        return self.nodes_filter(lambda x: isinstance(x,ODE))
 
 
     def nodes_filter(self, filter_func):
@@ -543,10 +558,6 @@ class Regime(RegimeElement):
                 t.to.regimes_in_graph(regimes_set)
                 
         return regimes_set
-
-                    
-    def odes(self):
-        return [eqn for eqn in self.equations() if isinstance(eqn, ODE)]
 
     def to_xml(self):
         kwargs = {}
@@ -834,7 +845,7 @@ class Component(object):
         # We resolve later colliding bindings
         bindings = map(expr_to_obj,set(bindings))
         for r in self.regimes:
-            bindings+=list(r.bindings())
+            bindings+=list(r.bindings)
         #self.bindings = bindings
 
         # build bindings map
@@ -922,7 +933,7 @@ class Component(object):
             for t in r.transitions:
                 if t.assignment:
                     yield t.assignment
-            for equation in r.equations():
+            for equation in r.equations:
                 yield equation
 
     @property
@@ -1072,7 +1083,7 @@ class Component(object):
         # TODO: cache once determined
         variables = set([])
         for r in self.regimes:
-            for eq in r.odes():
+            for eq in r.odes:
                 variables.add(eq.indep_variable)
         return variables
 
