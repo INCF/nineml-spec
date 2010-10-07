@@ -2,7 +2,7 @@
 import nineml.user_layer as nineml
 from copy import deepcopy
 
-catalog = "http://svn.incf.org/svn/nineml/catalog/"
+catalog = "http://svn.incf.org/svn/nineml/trunk/catalog/"
 
 tau_distr = nineml.RandomDistribution(
                         "normal(20.0,3.0)",
@@ -89,6 +89,6 @@ model = nineml.Model("Simple 9ML example model")
 model.add_group(network)
 
 
-if "__name__"=="__main__":
+if __name__ == "__main__":
 
     model.write("simple_example.xml")

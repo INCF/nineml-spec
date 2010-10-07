@@ -1,7 +1,7 @@
 #encoding: utf-8
 import nineml.user_layer as nineml
 
-catalog = "http://svn.incf.org/svn/nineml/catalog/"
+catalog = "http://svn.incf.org/svn/nineml/trunk/catalog/"
 
 cell_parameters = {
     "membraneCapacitance": (1.0, "nF"),

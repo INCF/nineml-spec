@@ -308,8 +308,7 @@ class BaseComponent(object):
     
     def get_definition(self):
         import nineml.abstraction_layer
-        xmldoc = self.definition.retrieve()
-        return nineml.abstraction_layer.parse(xmldoc)
+        return nineml.abstraction_layer.parse(self.definition.url)
     
     def to_xml(self):
         element = E(self.element_name,

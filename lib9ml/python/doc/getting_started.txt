@@ -8,7 +8,7 @@ The easiest way to get started is probably to look at the examples
 (in the lib9ml/python/examples subdirectory). Running the examples
 will produce an XML file, e.g.::
 
-    $ python simple_example.py
+    $ python UL_simple_example.py
     
 will create "simple_example.xml" in the same directory.
 

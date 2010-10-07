@@ -1,0 +1,209 @@
+==========================
+Abstraction layer tutorial
+==========================
+
+Note that at present the Python API for the abstraction layer only supports
+neuron and synapse models.
+
+Here we will use the Izhikevich neuron model as an example.
+
+Start by importing the abstraction layer module::
+    
+    >>> import nineml.abstraction_layer as nineml
+
+A neuron model in NineML consists of a number of "regimes" (which may be
+nested) connected by "transitions". Regimes may contain equations and other
+regimes, and may be of two sorts, "unions", whose elements may be evaluated in
+parallel (if in series, the order of evaluation does not matter), and "sequences",
+where the elements must be evaluated in order (generally because the outputs of
+one element feed into the inputs of the next).
+
+For the Izhikevich model, we need to define two regimes: subthreshold and post-spike::
+
+    >>> subthreshold_regime = nineml.Union(
+    ...                         "dV/dt = 0.04*V*V + 5*V + 140.0 - U + Isyn",
+    ...                         "dU/dt = a*(b*V - U)",
+    ...                         name="subthreshold_regime")
+
+    >>> post_spike_regime = nineml.Union(
+    ...                         "V = c",
+    ...                         "U += d",
+    ...                         name="post_spike_regime")
+
+The syntax for writing equations (which may be either ordinary differential
+equations or assignments) is basically the same as Python's expression syntax
+(and very similar to that of C, etc.), except for the ``dV/dt`` part.
+
+When the membrane potential passes a threshold, the neuron transitions from the
+sub-threshold regime to the post-spike regime::
+    
+    >>> spike_transition = nineml.Transition(
+    ...                         from_=subthreshold_regime,
+    ...                         to=post_spike_regime,
+    ...                         condition="V > theta",
+    ...                         name="spike_transition")
+
+and then it automatically transitions back (``condition=None``)::
+
+    >>> return_transition = nineml.Transition(
+    ...                         from_=post_spike_regime,
+    ...                         to=subthreshold_regime,
+    ...                         condition=None,
+    ...                         name="return_transition")
+
+To create the neuron component, we need to specify a name, the parameters, and
+a list of transitions::
+    
+    >>> parameters = ["Isyn", "a", "b", "c", "d", "theta"]
+    >>> c = nineml.Component("Izhikevich", parameters,
+    ...                      transitions=(spike_transition, return_transition))
+    
+The parameters are not strictly necessary, as they can be inferred, but serve
+for cross-checking that the model reflects the modeller's intent.
+
+Now we can export the component as XML (normally to a file, but here we print
+it to the screen)::
+
+    >>> import sys
+    >>> c.write(sys.stdout)
+    <?xml version='1.0' encoding='UTF-8'?>
+    <nineml xmlns="http://nineml.org/9ML/0.1">
+      <component name="Izhikevich">
+        <parameter name="Isyn"/>
+        <parameter name="a"/>
+        <parameter name="b"/>
+        <parameter name="c"/>
+        <parameter name="d"/>
+        <parameter name="theta"/>
+        <union name="post_spike_regime">
+          <assignment to="V" name="Assignment0">
+            <math-inline>c</math-inline>
+          </assignment>
+          <inplace to="U" name="InplaceAdd0" op="+=">
+            <math-inline>d</math-inline>
+          </inplace>
+        </union>
+        <union name="subthreshold_regime">
+          <ode independent_variable="t" name="ODE0" dependent_variable="V">
+            <math-inline>0.04*V*V + 5*V + 140.0 - U + Isyn</math-inline>
+          </ode>
+          <ode independent_variable="t" name="ODE1" dependent_variable="U">
+            <math-inline>a*(b*V - U)</math-inline>
+          </ode>
+        </union>
+        <transition to="post_spike_regime" from="subthreshold_regime" name="spike_transition" condition="V &gt; theta">
+          <assignment to="tspike" name="Assignment1">
+            <math-inline>t</math-inline>
+          </assignment>
+        </transition>
+        <transition to="subthreshold_regime" from="post_spike_regime" name="return_transition" condition="true"/>
+      </component>
+    </nineml>
+    
+Note that there is no specification yet for an XML representation of the
+abstraction layer, so the syntax above will almost certainly change in future.
+If the model is expressed in Python, however, it will be easy to export new XML
+files every time the syntax changes. Also note that for now we are using a
+simple "inline" maths syntax, but (optional?) use of MathML is planned.
+
+
+Reading abstraction layer Components from file
+----------------------------------------------
+
+Now let's write our Izhikevich component to a file::
+
+    >>> c.write("test.xml")
+
+and then read it back in and check it is indeed the same component::
+
+    >>> c1 = nineml.parse("test.xml")
+    >>> c == c1
+    True
+    
+
+Exploring an abstraction layer Component
+----------------------------------------
+
+Once you have a NineML ``Component`` object, it can be introspected in various
+ways. To get a list of the various methods and attributes of the component
+object, use the Python ``help()`` function::
+
+    >>> help(c)
+    Help on Component in module nineml.abstraction_layer object:
+    .
+    .
+    .
+    
+We can also inspect the ``Component`` at various levels of detail::
+
+    >>> c.regimes
+    set([Union(post_spike_regime), Union(subthreshold_regime)])
+    
+    >>> c.transitions
+    set([Transition(from Union(subthreshold_regime) to Union(post_spike_regime) if V > theta),
+         Transition(from Union(post_spike_regime) to Union(subthreshold_regime) if true)])
+    >>> list(c.equations)
+    [Assignment('V', 'c'),
+     Inplace('U', '+=', 'd'),
+     Assignment('tspike', 't'),
+     ODE(dV/dt = 0.04*V*V + 5*V + 140.0 - U + Isyn),
+     ODE(dU/dt = a*(b*V - U))]
+    >>> c.variables
+    set(['U', 't', 'V'])
+    >>> c.independent_variables
+    set(['t'])
+    >>> c.integrated_variables
+    set(['U', 'V'])
+    >>> c.parameters
+    ['Isyn', 'a', 'b', 'c', 'd', 'theta']
+    
+To visualize the component, we can export it in dot format (http://en.wikipedia.org/wiki/DOT_language)::
+
+    >>> c.to_dot("test.dot")
+    
+Various tools can convert a dot file to an image, for example GraphViz (http://graphviz.org/).
+If you have GraphViz installed, then on the command-line you can convert the dot
+files into various image formats, e.g.::
+
+    $ dot -Tsvg test.dot -o test.svg
+    $ dot -Tpng test.dot -o test.png
+
+
+Regimes also have various useful methods and attributes, e.g.::
+
+    >>> subthresh = c.regime_map['subthreshold_regime']
+    >>> help(subthresh)
+    Help on Union in module nineml.abstraction_layer object:
+    .
+    .
+    .
+    >>> list(subthresh.equations)
+    [ODE(dV/dt = 0.04*V*V + 5*V + 140.0 - U + Isyn), ODE(dU/dt = a*(b*V - U))]
+    >>> list(subthresh.odes())
+    [ODE(dV/dt = 0.04*V*V + 5*V + 140.0 - U + Isyn), ODE(dU/dt = a*(b*V - U))]
+    >>> 
+    >>> list(subthresh.neighbors)
+    [Union(post_spike_regime)]
+    >>> subthresh.transitions
+    set([Transition(from Union(subthreshold_regime) to Union(post_spike_regime) if V > theta)])
+    
+as do equations::
+
+    >>> dv, du = subthresh.equations
+    >>> print dv
+    ODE(dV/dt = 0.04*V*V + 5*V + 140.0 - U + Isyn)
+    >>> dv.indep_variable
+    't'
+    >>> dv.dependent_variable
+    'V'
+    >>> dv.rhs
+    '0.04*V*V + 5*V + 140.0 - U + Isyn'
+    >>> dv.as_expr()
+    'dV/dt = 0.04*V*V + 5*V + 140.0 - U + Isyn'
+    >>> from lxml.etree import tostring
+    >>> print tostring(dv.to_xml(), pretty_print=True)
+    <ode independent_variable="t" name="ODE0" dependent_variable="V">
+      <math-inline>0.04*V*V + 5*V + 140.0 - U + Isyn</math-inline>
+    </ode>
+
+For further examples, see `lib9ml/python/examples/`. 
