@@ -39,20 +39,21 @@ nineml_namespace = 'http://nineml.org/9ML/0.1'
 NINEML = "{%s}" % nineml_namespace
 PARAMETER_NAME_AS_TAG_NAME = True
 
+
 def parse(url):
     """
     Read a NineML user-layer file and return a Model object.
-    
+
     If the URL does not have a scheme identifier, it is taken to refer to a
     local file.
     """
-    if not isinstance(url,file):
+    if not isinstance(url, file):
         f = urllib.urlopen(url)
         doc = etree.parse(f)
         f.close()
     else:
         doc = etree.parse(url)
-        
+
     root = doc.getroot()
     for import_element in root.findall(NINEML+"import"):
         url = import_element.find(NINEML+"url").text
@@ -74,22 +75,22 @@ class Model(object):
         self.components = {}
         self.groups = {}
         self._unresolved = {}
-    
+
     def __eq__(self, other):
         return reduce(and_, (self.name == other.name,
                              self.components == other.components,
                              self.groups == other.groups))
-        
+
     def __ne__(self, other):
         return not self == other
-    
+
     def add_component(self, component):
         """
         Add a component, defined in a 9ML abstraction layer file, to the model.
-        
+
         Components include spiking nodes, synapse models, random number
         distributions, network structure representations, connection methods.
-        
+
         `component` - should be a sub-class of BaseComponent.
         """
         assert isinstance(component, BaseComponent), type(component)
@@ -108,7 +109,7 @@ class Model(object):
         if component.name in self.components and self.components[component.name] != component:
             raise Exception("A different component with the name '%s' already exists" % component.name)
         self.components[component.name] = component
-    
+
     def _resolve_components(self):
         for component in self.components.values():
             if component.unresolved:
@@ -118,7 +119,7 @@ class Model(object):
         """
         Add a group to the model. Groups contain populations of nodes, where
         the nodes may be either individual neurons or other groups.
-        
+
         `group` - should be a Group instance.
         """
         assert isinstance(group, Group)
@@ -127,14 +128,14 @@ class Model(object):
         for subgroup in group.get_subgroups():
             self.add_group(subgroup)
         self.groups[group.name] = group   
-    
+
     @classmethod
     def from_xml(cls, element):
         """
         Parse an XML ElementTree structure and return a Model instance.
         
         `element` - should be an ElementTree Element instance.
-        
+
         See:
             http://docs.python.org/library/xml.etree.elementtree.html
             http://codespeak.net/lxml/
@@ -230,7 +231,7 @@ class Definition(object):
 class BaseComponent(object):
     """
     Base class for model components that are defined in the abstraction layer.
-    
+
     This is called a node in Anatoli's document AG-YLF-20091218.01, but I don't
     think "node" is a good name as it is easily confused with "node in a
     neuronal network" (something that emits spikes).

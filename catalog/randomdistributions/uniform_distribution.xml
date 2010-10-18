@@ -1,7 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<nineml xmlns="http://nineml.org/9ML/0.1">
-  <component name="Uniform distribution">
-    <parameter name="lowerBound"/>
-    <parameter name="upperBound"/>
-  </component>
-</nineml>

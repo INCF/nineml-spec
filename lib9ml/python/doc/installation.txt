@@ -30,4 +30,15 @@ Now run the tests::
     $ cd test
     $ python tester.py all
 
+Updating the nineml package
+===========================
+
+To update your  ``nineml`` installation to the latest version::
+
+    $ cd /path/to/nineml_trunk
+    $ svn update
+    $ cd lib9ml/python
+    $ python setup.py install
+
+    
 
