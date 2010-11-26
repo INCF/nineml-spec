@@ -1,7 +1,7 @@
 """ This module defines the namespace of functions and symbols available to 9ml expressions"""
 
 
-import math
+import math, numpy
 
 
 symbols = set(['pi','e'])
@@ -12,3 +12,14 @@ functions = set(['exp','sin','cos','log','log10','pow','sinh','cosh','tanh','sqr
              'atan','asin','acos','asinh','acosh','atanh','atan2'])
 
 
+namespace = {
+    "exp":numpy.exp,
+    "sqrt":numpy.sqrt,
+    "sin":numpy.sin,
+    "cos":numpy.cos,
+    "atan2":numpy.arctan2,
+    "log":numpy.log,
+    "pi":numpy.pi,
+    "e":numpy.e
+    }
+# TODO complete this list

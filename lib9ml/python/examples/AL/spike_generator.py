@@ -12,22 +12,14 @@ isi = numpy.random.exponential(1.0/rate,size=(rate*length*2,))
 t = numpy.add.accumulate(isi)
 spike_times = t[t<length]
 
-# 
-
 regimes = []
+events = []
 for i,t_spike in enumerate(spike_times):
+        events+=[nineml.On("t>%f" % t_spike,do=nineml.SpikeOutputEvent)]
 
-    if (i+1)<len(spike_times):
-        trans = [nineml.On("t>%f" % spike_times[i+1],to="spike_%d" % (i+1))]
-    else:
-        trans = []
-            
-    regimes.append(nineml.Union("t_spike = %f" % t_spike,
-                               transitions=trans,name="spike_%d" % i))
+spiker = nineml.Regime(transitions=events)
 
-
-c1 = nineml.Component("Spike Generator", [],
-                      regimes=regimes)
+c1 = nineml.Component("Spike Generator", regimes=[spiker])
 
 # write to file object f if defined
 try:

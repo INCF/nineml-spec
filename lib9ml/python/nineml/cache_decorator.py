@@ -3,29 +3,6 @@
 _cache = {}
 
 
-def im_cache_decorator(f):
-    """ Instance Method caching decorator """
-
-    import types
-    assert type(f)==types.MethodType, "Must decorate an instance method."
-
-    # TODO, this is not quite right because 
-    def new_f(*args,**kwargs):
-        cache_key = ('.'.join([f.__module__,f.im_self]),f.__name__,args,tuple(kwargs.iteritems()))
-        try:
-            val = _cache[cache_key]
-        except KeyError:
-            # no cached value found
-            # call the func
-            val = f(*args,**kwargs)
-            _cache[cache_key] = val
-
-        # return cached or new value
-        return val
-
-    # return function wrapped with cache
-    return new_f
-
 
 def dict_to_tuple_recursive(di):
     """ Turns dicts to tuples recursivly (if dicts inside dict)"""
@@ -87,3 +64,70 @@ def cache_decorator(f):
 
     # return function wrapped with cache
     return new_f
+
+
+
+
+
+def im_cache_decorator(f):
+    """ Instance Method caching decorator
+
+    This is better than cache_decorator for instance methods:
+    - the __cache__ per instance is freed when the instance is freed
+    - it is easier to invalidate the cache on a per function basis.
+
+    This caches in the instance in a instance attribute
+
+    __cache__
+
+    assigning instance.__cache__={}
+
+    will reset the cache
+
+    assigning instance.__cache__['f'] = {}
+    will reset the cache for instance.f
+
+    """
+
+    import types
+
+    def new_f(self, *args,**kwargs):
+
+        # create a cache in the class for this function
+        # if it does not already exist
+
+        if hasattr(self,'__cache__'):
+            cache = self.__cache__.get(f.func_name)
+        else:
+            self.__cache__ = {}
+            cache = None
+
+        cache_key = (args,freeze(kwargs))
+
+        # if no cache yet for the func
+        # proceed to evaluate and return
+        if not cache:
+            val = f(self, *args,**kwargs)
+            cache = {cache_key:val}
+            self.__cache__[f.func_name] = cache
+            return val
+
+        # there is a cache, but for these args,kwargs?
+        try:
+            val = cache[cache_key]
+        except KeyError:
+            # no cached value found
+            # call the func
+            val = f(self, *args,**kwargs)
+            cache[cache_key] = val
+
+        # return cached or new value
+        return val
+    new_f.__name__ = '__cached__'+f.__name__
+
+    # return function wrapped with cache
+    return new_f
+
+
+
+

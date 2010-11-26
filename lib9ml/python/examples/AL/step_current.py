@@ -2,15 +2,12 @@ import nineml.abstraction_layer as nineml
 
 # define a step current
 
-parameters = ["t_step","I0","Delta_I"]
+#parameters = ["t_step", "dI"]
 
-down_regime = nineml.Union("I = I0", transitions=[nineml.On("t>t_step",to="up_regime")])
+step = nineml.Regime(transitions=nineml.On("t>t_step",do=["I+=dI"]))
+ports = [nineml.SendPort("I")]
 
-up_regime = nineml.Union("I = I0 + Delta_I", name = "up_regime")
-
-
-c1 = nineml.Component("Step Current", parameters,
-                      regimes=(down_regime, up_regime))
+c1 = nineml.Component("Step Current", regimes=(step,))
 
 # write to file object f if defined
 try:

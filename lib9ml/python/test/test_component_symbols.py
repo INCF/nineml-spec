@@ -1,12 +1,7 @@
 
 import unittest
 import nineml.abstraction_layer as nineml
-
 import os, tempfile
-
-
-
-
 
 
 class ComponentSymbolsTestCase(unittest.TestCase):
@@ -14,32 +9,29 @@ class ComponentSymbolsTestCase(unittest.TestCase):
     def test_basic(self):
 
         bound = ['q']
-        parameters = ['a','b','c','d','theta']
+        parameters = ['a','b','c','d','theta','w']
         in_ports = ['Isyn']
         #out_ports = ['spike']
         state_vars = ["V","U"]
         indep_vars = ["t"]
 
         regimes = [
-            nineml.Union(
-                "q := 20.0 + a*b",
+            nineml.Regime(
+                "q := 20.0 + a*b + w",
                 "dV/dt = 0.04*V*V + 5*V + 140.0 - U + Isyn",
                 "dU/dt = a*(b*V - U)",
-                transitions = [nineml.On("V > theta",to="suprathreshold_regime")],
+                transitions = [nineml.On("V > theta",do=["V = c","U += d"])],
                 name="subthreshold_regime"
             ),
-            nineml.Union(
-                "V = c",
-                "U += d",
-                transitions = [nineml.On("true",to="subthreshold_regime")],
-                name="suprathreshold_regime"
-            )]
+            ]
 
+        ports = [nineml.ReducePort("Isyn",op="+")]
 
         c1 = nineml.Component("Izhikevich",
-                                     regimes = regimes )
+                                     regimes = regimes, ports=ports )
 
-        assert c1.parameters == set(parameters+in_ports)
+        #print parameters, c1.user_parameters
+        assert c1.user_parameters == set(parameters)
             
         assert c1.bound_symbols == set(bound)
         assert c1.independent_variables == set(indep_vars)

@@ -1,7 +1,7 @@
 
 import unittest
 import nineml.abstraction_layer as nineml
-from nineml.cache_decorator import cache_decorator, _cache, freeze, clear_cache
+from nineml.cache_decorator import cache_decorator, im_cache_decorator, _cache, freeze, clear_cache
 
 
 import os, tempfile
@@ -12,10 +12,82 @@ import os, tempfile
     
 
 
-
-
-
 class CacheDecorTestCase(unittest.TestCase):
+
+    def test_im_cache_decorator(self):
+
+        class X(object):
+
+            n = 0
+            m = 0
+
+            @property
+            @im_cache_decorator
+            def r(self, *args):
+                self.n+=1
+                return self.n
+
+            @im_cache_decorator
+            def wr(self, *args):
+                import numpy
+                self.m+=1
+                return self.m + numpy.sum(args)
+
+            @im_cache_decorator
+            def wwr(self, *args, **kwargs):
+                import numpy
+                self.m+=1
+                return self.m + numpy.sum(args) + numpy.sum(list(kwargs.itervalues()))
+            
+        x = X()
+        y = X()
+
+        # should be called
+        assert x.r==1
+        # should be cached
+        assert x.r==1
+
+        y.n=2
+        # should be called
+        assert y.r==3
+        # should be cached
+        assert y.r==3
+
+        x.__cache__['r']={}
+        # should be called
+        assert x.r==2
+        # should be cached
+        assert x.r==2
+
+        assert x.wr(1,2,3)==7
+        assert x.wr(1,2,3)==7
+        #print x.__cache__
+        assert x.__cache__['wr'][((1,2,3),())]==7
+
+        #m=1
+        
+        assert x.wwr(1,2,3,ww=2)==10
+        assert x.wwr(1,2,3,ww=2)==10
+
+        #m=2
+
+        assert x.wwr(1,2,3,ww=3)==12
+        assert x.wwr(1,2,3,ww=2)==10
+        assert x.wwr(1,2,3,ww=3)==12
+
+        #print x.__cache__
+        assert x.__cache__['wwr'][((1,2,3),(('ww',2),))]==10
+        assert x.__cache__['wwr'][((1,2,3),(('ww',3),))]==12
+
+        # reset cache for wwr
+        x.__cache__['wwr']={}
+
+        # now m=3
+        
+        assert x.wwr(1,2,3,ww=2)==12
+        #m=4
+        assert x.wwr(1,2,3,ww=3)==14
+
 
     def test_method_basic_args(self):
 

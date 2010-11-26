@@ -18,7 +18,11 @@
 import ply.lex as lex
 import ply.yacc as yacc
 import os
-from nineml.expr_parse import NineMLMathParseError
+from nineml.abstraction_layer.expr_parse import NineMLMathParseError, call_expr_func
+from nineml.abstraction_layer import math_namespace
+
+# for now avoid duplication, but maintain distinctness
+call_cond_func = call_expr_func
 
 
 class Parser(object):
@@ -52,9 +56,15 @@ class Parser(object):
         self.funcs = []
         try:
             yacc.parse(expr)
-        except NineMLMathParseError as e:
+        except NineMLMathParseError, e:
             raise NineMLMathParseError, str(e)+" Expression was: '%s'" % expr
-        return set(self.names), set(self.funcs)
+        #return set(self.names), set(self.funcs)
+
+        self.names = set(self.names)
+        self.names.difference_update(math_namespace.namespace)
+
+        return self.names, set(self.funcs)
+
 
     
 class Calc(Parser):
@@ -72,7 +82,7 @@ class Calc(Parser):
     t_EXP     = r'\*\*'
     t_TIMES   = r'\*'
     t_CONDITIONAL   = r'(<=)|(>=)|(==)|(!=)|(>)|(<)'
-    t_LOGICAL = r'(&&)|(\|\|)'
+    t_LOGICAL = r'(&)|(\|)'
     t_NOT = r'\!'
     t_DIVIDE  = r'/'
     t_LPAREN  = r'\('
@@ -176,8 +186,11 @@ class Calc(Parser):
                         | LFUNC expression COMMA expression COMMA expression RPAREN
         """
         # EM: Supports up to 3 args.  Don't know how to support N.
-        
-        self.funcs.append(p[1][:-1].strip())
+
+        func_name = p[1][:-1].strip()
+        if func_name not in math_namespace.namespace:
+            raise NineMLMathParseError, "Undefined function '%s'" % func_name
+        self.funcs.append(func_name)
 
 
     def p_error(self, p):
