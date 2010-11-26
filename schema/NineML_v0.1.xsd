@@ -28,14 +28,19 @@
 
     </xs:complexType>
 
+    <xs:group name="seqUnionTrans">
+        <xs:sequence>
+            <xs:element name="sequence" type="Sequence" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="union" type="Union" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="transition" type="Transition" minOccurs="1" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:group>
 
     <xs:complexType name="Component">
     
         <xs:sequence>
             <xs:element name="parameter" type="Parameter" minOccurs="1" maxOccurs="unbounded"/>
-            <xs:element name="sequence" type="Sequence" minOccurs="0" maxOccurs="unbounded"/>
-            <xs:element name="union" type="Union" minOccurs="0" maxOccurs="unbounded"/>
-            <xs:element name="transition" type="Transition" minOccurs="1" maxOccurs="unbounded"/>
+            <xs:group ref="seqUnionTrans" maxOccurs="unbounded"/>
         </xs:sequence>
 
         <xs:attribute name="name" type="xs:string" use="required"/>
