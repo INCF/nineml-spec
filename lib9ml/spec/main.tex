@@ -1,0 +1,243 @@
+\documentclass[a4paper]{article}
+
+\usepackage{fancyheadings}
+\usepackage[left=1.375in,right=1.375in]{geometry}
+\usepackage[dvips]{graphicx}
+\usepackage{color}
+\usepackage{url}
+\usepackage{natbib}
+
+\definecolor{INCFBlue}{rgb}{0.0,0.59,1.0}
+
+\begin{document}
+
+\pagestyle{empty}
+
+
+\begin{center}
+\includegraphics[width=0.7\columnwidth]{images/incf.eps}
+\end{center}
+
+\vspace*{1cm}
+
+\noindent\rule{\columnwidth}{1pt}
+\noindent\rule{\columnwidth}{2pt}
+
+\vspace*{1cm}
+
+\begin{center}
+
+\noindent{\Huge \bf Specification Document:}\\
+
+\vspace{0.5cm}
+\noindent{\Large \bf Network Interchange format for NEuroscience (NineML): \\ Abstraction Layer}\\
+\vspace{0.5cm}
+\noindent{\large INCF Task Force on Multi-Scale Modeling}\\
+\vspace{0.5cm}
+
+\noindent{\large Version: 0.1}\\
+
+\end{center}
+
+\vspace*{0.75cm}
+
+\noindent\rule{\columnwidth}{2pt}
+\noindent\rule{\columnwidth}{1pt}
+
+\vspace*{3cm}
+\noindent{\Large
+
+\begin{center}
+{\bf Authors (in alphabetical order): }
+\end{center}
+
+\noindent Hugo Cornelis, Andrew Davison, Mikael Djurfeldt, Sean Hill, Eilif Muller, Ivan Raikov \\
+
+%\vspace*{0.5cm}
+
+\noindent {\bf Date:} \today
+
+}
+
+
+\title{NineML Specification Document}
+
+\newpage
+\pagestyle{plain}
+
+\tableofcontents
+
+\section{Introduction}
+
+ With an increasing number of studies related to large-scale neuronal
+ network modeling, the International Neuroinformatics Coordinating
+ Facility (INCF) has identified a need for standards and guidelines to
+ ease model sharing and facilitate the replication of results across
+ different simulators. To create such standards, the INCF has formed a
+ program on Multiscale Modeling to develop a common standardized
+ description language for neuronal network models.  
+
+An oversight committee has been setup to guide the direction and
+objectives of the initiative with membership as follows:
+
+\begin{itemize}
+
+    \item Chair: Erik De Schutter, Okinawa Institute of Science and Technology, Japan
+    \item Ad Aertsen, Bernstein Center, Freiburg, Germany
+    \item Upinder Bhalla, National Center for Biological Sciences, Bangalore, India
+    \item Nicolas Brunel, CNRS-Université René Descartes, Paris, France
+    \item Sharon Crook, Arizona State University, Tempe, USA
+    \item Gustavo Deco, Universitat Pompeu Fabra, Barcelona, Spain
+    \item Markus Diesmann, RIKEN, Wako, Japan
+    \item Tomoki Fukai, RIKEN, Wako, Japan
+    \item Wulfram Gerstner, LCN, EPFL, Lausanne, Switzerland
+    \item Stephen Grossberg, Boston University, MA, USA
+    \item Rolf Kötter, Radboud University, Nijmegen, The Netherlands
+    \item Anders Lansner, Royal Institute of Technology (KTH), Stockholm, Sweden
+    \item Peter Latham, Gatsby Computational Neuroscience Unit, London, UK
+    \item Christiane Linster, Cornell University, Ithaca, NY, USA
+    \item Wolfgang Maass, Technische Universität Graz, Austria
+    \item Ernst Niebur, Johns Hopkins University, Baltimore, MD, USA
+    \item Felix Schürmann, EPFL, Lausanne, Switzerland
+    \item Simon Thorpe, Faculté de Médecine de Rangueil, Toulouse, France
+    \item Alessandro Treves, International School for Advanced Studies (SISSA), Trieste, Italy
+    \item Shiro Usui, RIKEN, Wako, Japan
+    \item Mark van Rossum, University of Edinburgh, UK
+    \item Xiao-Jing Wang, Yale University, New Haven, CT, USA
+
+\end{itemize}
+
+
+A task force has been assembled to evaluate and implement the recommendations of the oversight committee with membership as follows:
+
+\begin{itemize}
+
+    \item Lead: Sean Hill, BMI, EPFL, Lausanne, Switzerland 
+    \item Lead: Anatoli Gorchetchnikov, Boston University, USA
+    \item Lead: Ivan Raikov, Okinawa Institute of Science and Technology, Japan
+    \item Board Secretary: Yann Le Franc, University of Antwerp, Belgium
+    \item Robert Cannon, Textensor Limited, Edinburgh, UK
+    \item Robert Clewley, Georgia State University, Atlanta, USA
+    \item Hugo Cornelis, University of Texas Health Science Center, San Antonio, USA
+    \item Andrew Davison, CNRS, Gif-sur-Yvette, France
+    \item Erik De Schutter, Okinawa Institute of Science and Technology, Okinawa, Japan
+    \item Mikael Djurfeldt, INCF Secretariat and PDC, Royal Institute of Technology, Stockholm, Sweden
+    \item Padraig Gleeson, University College London, UK
+    \item Michael Hines, Yale University, New Haven, CT, USA
+    \item Birgit Kriener, Max Planck Institute for Dynamics and Self-Organization, Göttingen, Germany
+
+    \item Chung-Chuan Lo, National Tsing Hua University, Hsinchu, Taiwan
+    \item Abigail Morrison, Bernstein Center Freiburg, Germany
+    \item Eilif Muller, LCN, EPFL, Lausanne, Switzerland
+    \item Hans Ekkehard Plesser, Norwegian University of Life Sciences, Aas, Norway
+    \item Subhasis Ray, National Center for Biological Sciences, Bangalore, India
+    \item Lars Schwabe, University of Rostock, Germany
+    \item Botond Szatmary, Neurosciences Institute, San Diego, CA, USA
+
+\end{itemize}
+
+and thus includes the authors or primary contributors to a wide
+variety of computational neuroscience efforts including the Blue Brain
+Project, GENESIS-3, KInNeSS, MOOSE, NEURON, NEST, PyNN and NeuroML.
+
+\subsection{Design considerations}
+
+This document presents the current draft of a proposed standard
+language that achieves the goals set by the Multiscale Modeling
+oversight committee. The name of the proposed standard is Network
+Interchange for Neuroscience Modeling Language (NineML) and its first
+version is aimed at descriptions of large networks of spiking neurons.
+
+The key concepts of spiking neuron network modeling are 
+
+\begin{enumerate}
+\item spiking neurons
+\item synapses 
+\item populations of neurons 
+\item connectivity patterns across populations of neurons. 
+\end{enumerate}
+
+Accordingly, the INCF Task Force on Multiscale Modeling has identified
+a set of mathematical abstractions that are capable of representing
+these concepts in a computer language.  User layer and abstraction
+layer
+
+The design of NineML is divided in two semantic layers: an abstraction
+layer (the subject of the present document) that provides the core
+concepts, mathematics and syntax with which model variables and state
+update rules are explicitly described and a user layer that provides a
+syntax to specify the instantiation and parameterization of a network
+model in biological terms.
+
+As the User Layer provides the mechanism for instantiating and
+parameterization of the model elements that have been defined in the
+Abstraction Layer, it is clearly essential that these two layers share
+a complementary and compatible design philosophy. There must be a
+clear definition of which aspects of a model are defined in the User
+Layer and which are defined in the Abstraction Layer. In addition, the
+mechanisms for naming and addressing Abstraction Layer definitions
+from the User Layer must be compatible between layers.
+
+
+\subsection{Event handling and spikes}
+
+To handle events and spiking dynamics, we propose a flexible block diagram notation. The notation represents continuous and discrete variables, their evolution according to a set of rules such as a system of ordinary differential equations, and the conditions that induce a regime change, such as the transition from subthreshold mode to spiking and refractory modes. The notation we have developed is an explicit formalization of event handling and is an important step in ensuring model simulation consistency.
+
+ 
+\subsection{Implementation assumptions}
+
+One of the goals identified by task force members, was to maintain a
+clear distinction between the role of NineML and a simulator. NineML
+should provide only the information necessary for a simulator to
+instantiate the network models. In addition, for implementation and
+performance reasons, it is important to keep the language layer
+“close” to the simulator – such that the language layer is not
+responsible for maintaining separate representations of the
+instantiated network.  Language syntax
+
+While for the reference definition of the language a syntax is
+described, it is envisioned that the language should not require a
+specific syntax. Rather it is anticipated that the language can be
+employed by defining the model elements in a variety of different
+syntaxes including native, Python or Java (for example), and this
+layer will generate the declarative XML representation.
+
+\section{Glossary} 
+
+\section{The NineML Abstraction Layer Architecture}
+
+\subsection{Object Model}
+
+\subsection{
+
+
+
+\newpage
+
+
+\appendix
+
+
+\part*{Appendix}
+\addcontentsline{toc}{part}{Appendix}
+
+\section{\label{ap_examples}NineML Abstraction Layer Examples}
+
+\subsection{XML}
+
+Here are some examples of XML serialization
+
+
+\subsection{Python}
+
+Here are some examples of Python lib9ml syntax
+
+
+\subsection{Chicken Scheme}
+
+Here are some examples of Chicken Scheme lib9ml syntax
+
+
+\bibliography{refs}
+
+\end{document}
