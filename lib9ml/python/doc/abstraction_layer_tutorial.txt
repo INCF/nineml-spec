@@ -52,7 +52,8 @@ created at the same time as creating the Regime, by using the ``On`` function::
     ...                           "dV/dt = 0.04*V*V + 5*V + 140.0 - U + Isyn",
     ...                           "dU/dt = a*(b*V - U)",
     ...                           transitions=On("V > theta",
-    ...                                          do=["V = c", "U += d", SpikeOutputEvent]),
+    ...                                          do=["V = c", "U += d", SpikeOutputEvent],
+    ...                                          name="spike_transition"),
     ...                           name="subthreshold_regime")
 
 If the "to" regime is not specified in ``On``, it is taken to be the same as
@@ -70,15 +71,11 @@ and that the value of ``Isyn`` will be obtained by summing the currents made
 available by other components.
 
 To create the neuron component, we need to specify either a list of regimes
-or a list of transitions, or both, together with the list of ports,
+or a list of transitions, together with the list of ports,
 i.e. the following are equivalent::
     
     >>> c = Component("Izhikevich", transitions=[spike_transition], ports=ports)
     >>> c = Component("Izhikevich", regimes=[subthreshold_regime], ports=ports)
-    >>> c = Component("Izhikevich",
-    ...               regimes=[subthreshold_regime],
-    ...               transitions=[spike_transition],
-    ...               ports=ports)
 
 Now we can export the component as XML (normally to a file, but here we print
 it to the screen)::
@@ -105,7 +102,7 @@ it to the screen)::
             <math-inline>a*(b*V - U)</math-inline>
           </ode>
         </regime>
-        <transition from="subthreshold_regime" name="Transition1" condition="V &gt; theta">
+        <transition to="subthreshold_regime" from="subthreshold_regime" name="spike_transition" condition="V &gt; theta">
           <assignment to="V" name="Assignment1">
             <math-inline>c</math-inline>
           </assignment>
@@ -158,7 +155,7 @@ We can also inspect the ``Component`` at various levels of detail::
     >>> c.regimes
     set([Regime(subthreshold_regime)])
     >>> c.transitions                                                           #doctest: +NORMALIZE_WHITESPACE
-    set([Transition(from Regime(subthreshold_regime) to None if Condition('V > theta'))])
+    set([Transition(from Regime(subthreshold_regime) to Regime(subthreshold_regime) if Condition('V > theta'))])
     >>> list(c.equations)                                                       #doctest: +NORMALIZE_WHITESPACE
     [Assignment('V', 'c'),
      Inplace('U', '+=', 'd'),
@@ -202,9 +199,9 @@ Regimes also have various useful methods and attributes, e.g.::
     >>> list(subthresh.odes)
     [ODE(dV/dt = 0.04*V*V + 5*V + 140.0 - U + Isyn), ODE(dU/dt = a*(b*V - U))]
     >>> subthresh.neighbors
-    []
+    [Regime(subthreshold_regime)]
     >>> list(subthresh.transitions)
-    [Transition(from Regime(subthreshold_regime) to None if Condition('V > theta'))]
+    [Transition(from Regime(subthreshold_regime) to Regime(subthreshold_regime) if Condition('V > theta'))]
     
 as do equations::
 

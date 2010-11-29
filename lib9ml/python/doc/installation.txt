@@ -2,7 +2,7 @@
 Installation
 ============
 
-Use of the Python 9ML API requires that you have Python (version 2.5, 2.6 or 2.7) and the `lxml` package installed.
+Use of the Python 9ML API requires that you have Python (version 2.5, 2.6 or 2.7) and the `lxml` package installed. The abstraction layer API also requires the `PLY` package.
 
 Installing Python
 =================
@@ -13,6 +13,13 @@ Installing lxml
 ===============
 
 See http://codespeak.net/lxml/installation.html
+
+Installing PLY
+==============
+
+$ easy_install ply
+
+or download from http://pypi.python.org/pypi/ply/ or install from your packaging system.
 
 Installing the nineml package
 =============================

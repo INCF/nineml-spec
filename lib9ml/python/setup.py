@@ -6,7 +6,7 @@ from nineml.__init__ import __version__
 setup(
     name = "9ML",
     version = __version__,
-    packages = ['nineml',],
+    packages = ['nineml', 'nineml.abstraction_layer'],
     author = "Andrew P. Davison", # add your name here if you contribute to the code
     author_email = "andrewpdavison@gmail.com",
     description = "A tool reading, writing and generally working with 9ML files.",

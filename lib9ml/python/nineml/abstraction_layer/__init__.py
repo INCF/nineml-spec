@@ -446,7 +446,7 @@ class Transition(object):
         if not isinstance(other, self.__class__):
             return False
 
-        # to prevent infinite loop, one should olny check if
+        # to prevent infinite loop, one should only check if
         # the references from_,to are equal, not the objects
 
         try:
@@ -653,7 +653,7 @@ class Component(object):
         # build transition map
         self.transition_map = {}
         for t in transitions:
-            if self.transition_map.has_key(t.name):
+            if self.transition_map.has_key(t.name) and self.transition_map[t.name] != t:
                 raise ValueError, "Transition collection has Transitions with colliding names."
             self.transition_map[t.name] = t
                
