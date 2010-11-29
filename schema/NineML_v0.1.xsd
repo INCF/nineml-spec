@@ -40,7 +40,7 @@
     
         <xs:sequence>
             <xs:element name="parameter" type="Parameter" minOccurs="1" maxOccurs="unbounded"/>
-            <xs:element name="analog-port" type="Port" minOccurs="1" maxOccurs="unbounded"/>
+            <xs:element name="analog-port" type="Port" minOccurs="0" maxOccurs="unbounded"/>
             <xs:group ref="regimeBindingTrans" maxOccurs="unbounded"/>
         </xs:sequence>
 
