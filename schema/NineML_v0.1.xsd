@@ -28,10 +28,10 @@
 
     </xs:complexType>
 
-    <xs:group name="seqUnionTrans">
+    <xs:group name="regimeBindingTrans">
         <xs:sequence>
-            <xs:element name="sequence" type="Sequence" minOccurs="0" maxOccurs="unbounded"/>
-            <xs:element name="union" type="Union" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="regime" type="Regime" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="binding" type="Binding" minOccurs="0" maxOccurs="unbounded"/>
             <xs:element name="transition" type="Transition" minOccurs="1" maxOccurs="unbounded"/>
         </xs:sequence>
     </xs:group>
@@ -40,7 +40,8 @@
     
         <xs:sequence>
             <xs:element name="parameter" type="Parameter" minOccurs="1" maxOccurs="unbounded"/>
-            <xs:group ref="seqUnionTrans" maxOccurs="unbounded"/>
+            <xs:element name="analog-port" type="Port" minOccurs="1" maxOccurs="unbounded"/>
+            <xs:group ref="regimeBindingTrans" maxOccurs="unbounded"/>
         </xs:sequence>
 
         <xs:attribute name="name" type="xs:string" use="required"/>
@@ -51,29 +52,74 @@
         <xs:attribute name="name" type="xs:string" use="required"/>
     </xs:complexType>
 
+    <xs:complexType name="Math">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
 
-    <xs:complexType name="Sequence">
+    <xs:complexType name="Port">
+        <xs:attribute name="symbol" type="xs:string" use="required"/>
+        <xs:attribute name="mode" type="xs:string" use="required"/>   <!-- Prob should be restriction to enum -->
+        <xs:attribute name="op" type="xs:string" use="optional"/>   <!-- Prob should be restriction to enum -->
+    </xs:complexType>
+
+
+
+    <xs:complexType name="Regime">
         <xs:sequence>
-            <xs:any processContents="skip" minOccurs="0" maxOccurs="unbounded"/> <!-- Further elements will be specified!! -->
+            <xs:element name="ode" type="Ode" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
         <xs:attribute name="name" type="xs:string" use="required"/>
     </xs:complexType>
 
-    <xs:complexType name="Union">
+
+    <xs:complexType name="Ode">
         <xs:sequence>
-            <xs:any processContents="skip" minOccurs="0" maxOccurs="unbounded"/> <!-- Further elements will be specified!! -->
+            <xs:element name="math-inline" type="Math" minOccurs="1" maxOccurs="1"/>
         </xs:sequence>
+
+        <xs:attribute name="independent_variable" type="xs:string" use="required"/>
+        <xs:attribute name="name" type="xs:string" use="required"/>
+        <xs:attribute name="dependent_variable" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="Binding">
+        <xs:sequence>
+            <xs:element name="math-inline" type="Math" minOccurs="1" maxOccurs="1"/>
+        </xs:sequence>
+
         <xs:attribute name="name" type="xs:string" use="required"/>
     </xs:complexType>
 
     <xs:complexType name="Transition">
         <xs:sequence>
-            <xs:any processContents="skip" minOccurs="0" maxOccurs="unbounded"/> <!-- Further elements will be specified!! -->
+            <xs:element name="assignment" type="Assignment" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="inplace" type="Inplace" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="event-port" type="Port" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
         <xs:attribute name="to" type="xs:string" use="required"/>
         <xs:attribute name="from" type="xs:string" use="required"/>
         <xs:attribute name="name" type="xs:string" use="required"/>
         <xs:attribute name="condition" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="Assignment">
+        <xs:sequence>
+            <xs:element name="math-inline" type="Math" minOccurs="1" maxOccurs="1"/>
+        </xs:sequence>
+        <xs:attribute name="to" type="xs:string" use="required"/>
+        <xs:attribute name="name" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="Inplace">
+        <xs:sequence>
+            <xs:element name="math-inline" type="Math" minOccurs="1" maxOccurs="1"/>
+        </xs:sequence>
+        <xs:attribute name="to" type="xs:string" use="required"/>
+        <xs:attribute name="name" type="xs:string" use="required"/>
+        <xs:attribute name="op" type="xs:string" use="required"/>
     </xs:complexType>
 
 

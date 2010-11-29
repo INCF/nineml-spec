@@ -1,0 +1,94 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<nineml xmlns="http://nineml.org/9ML/0.1"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://nineml.org/9ML/0.1 NineML_v0.1.xsd" >
+        
+  <component name="Hodgkin-Huxley">
+    <parameter name="ena"/>
+    <parameter name="C"/>
+    <parameter name="ek"/>
+    <parameter name="el"/>
+    <parameter name="gkbar"/>
+    <parameter name="gnabar"/>
+    <parameter name="celsius"/>
+    <parameter name="theta"/>
+    <parameter name="gl"/>
+    <analog-port symbol="Isyn" mode="reduce" op="+"/>
+    <analog-port symbol="h" mode="send"/>
+    <analog-port symbol="t" mode="send"/>
+    <analog-port symbol="V" mode="send"/>
+    <analog-port symbol="n" mode="send"/>
+    <analog-port symbol="m" mode="send"/>
+    <regime name="hh_regime">
+      <ode independent_variable="t" name="ODE0" dependent_variable="n">
+        <math-inline>(ninf(V)-n)/ntau(V)</math-inline>
+      </ode>
+      <ode independent_variable="t" name="ODE1" dependent_variable="m">
+        <math-inline>(minf(V)-m)/mtau(V)</math-inline>
+      </ode>
+      <ode independent_variable="t" name="ODE2" dependent_variable="h">
+        <math-inline>(hinf(V)-h)/htau(V)</math-inline>
+      </ode>
+      <ode independent_variable="t" name="ODE3" dependent_variable="V">
+        <math-inline>(ina(m,h,V) + ik(n,V) + il(V) + Isyn)/C</math-inline>
+      </ode>
+    </regime>
+    <binding name="ntau(V)">
+      <math-inline>1.0/(q10*(alpha_n(V) + beta_n(V)))</math-inline>
+    </binding>
+    <binding name="q10">
+      <math-inline>3.0**((celsius - 6.3)/10.0)</math-inline>
+    </binding>
+    <binding name="minf(V)">
+      <math-inline>alpha_m(V)/(alpha_m(V) + beta_m(V))</math-inline>
+    </binding>
+    <binding name="alpha_n(V)">
+      <math-inline>-0.01*(V+55.0)/(exp(-(V+55.0)/10.0) - 1.0)</math-inline>
+    </binding>
+    <binding name="beta_m(V)">
+      <math-inline>4.0*exp(-(V+65.0)/18.0)</math-inline>
+    </binding>
+    <binding name="beta_h(V)">
+      <math-inline>1.0/(exp(-(V+35)/10.0) + 1.0)</math-inline>
+    </binding>
+    <binding name="alpha_m(V)">
+      <math-inline>-0.1*(V+40.0)/(exp(-(V+40.0)/10.0) - 1.0)</math-inline>
+    </binding>
+    <binding name="hinf(V)">
+      <math-inline>alpha_h(V)/(alpha_h(V) + beta_h(V))</math-inline>
+    </binding>
+    <binding name="alpha_h(V)">
+      <math-inline>0.07*exp(-(V+65.0)/20.0)</math-inline>
+    </binding>
+    <binding name="ik(n, V)">
+      <math-inline>gk(n)*(ek - V)</math-inline>
+    </binding>
+    <binding name="gna(m, h)">
+      <math-inline>gnabar*m*m*m*h</math-inline>
+    </binding>
+    <binding name="il(V)">
+      <math-inline>gl*(el - V )</math-inline>
+    </binding>
+    <binding name="ninf(V)">
+      <math-inline>alpha_n(V)/(alpha_n(V) + beta_n(V))</math-inline>
+    </binding>
+    <binding name="mtau(V)">
+      <math-inline>1/(q10*(alpha_m(V) + beta_m(V)))</math-inline>
+    </binding>
+    <binding name="gk(n)">
+      <math-inline>gkbar*n*n*n*n</math-inline>
+    </binding>
+    <binding name="ina(m, h, V)">
+      <math-inline>gna(m,h)*(ena - V)</math-inline>
+    </binding>
+    <binding name="htau(V)">
+      <math-inline>1.0/(q10*(alpha_h(V) + beta_h(V)))</math-inline>
+    </binding>
+    <binding name="beta_n(V)">
+      <math-inline>0.125*exp(-(V+65.0)/80.0)</math-inline>
+    </binding>
+    <transition to="hh_regime" from="hh_regime" name="Transition0" condition="V &gt; theta">
+      <event-port symbol="spike_output" mode="send"/>
+    </transition>
+  </component>
+</nineml>

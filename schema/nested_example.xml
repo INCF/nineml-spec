@@ -2,10 +2,10 @@
 <nineml xmlns="http://nineml.org/9ML/0.1"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://nineml.org/9ML/0.1 NineML_v0.1.xsd" name="Nested 9ML example model">
-        
+
   <node name="Inhibitory post-synaptic response">
     <definition>
-      <url>http://svn.incf.org/svn/nineml/catalog/postsynapticresponses/exp_g.xml</url>
+      <url>http://svn.incf.org/svn/nineml/trunk/catalog/postsynapticresponses/exp_g.xml</url>
     </definition>
     <properties>
       <decayTimeConstant>
@@ -20,7 +20,7 @@
   </node>
   <node name="local random connections">
     <definition>
-      <url>http://svn.incf.org/svn/nineml/catalog/connectionrules/fixed_probability.xml</url>
+      <url>http://svn.incf.org/svn/nineml/trunk/catalog/connectionrules/fixed_probability.xml</url>
     </definition>
     <properties>
       <p_connect>
@@ -31,7 +31,7 @@
   </node>
   <node name="Inhibitory neuron type">
     <definition>
-      <url>http://svn.incf.org/svn/nineml/catalog/neurons/IaF_tau.xml</url>
+      <url>http://svn.incf.org/svn/nineml/trunk/catalog/neurons/IaF_tau.xml</url>
     </definition>
     <properties>
       <membraneCapacitance>
@@ -62,7 +62,7 @@
   </node>
   <node name="lateral random connections">
     <definition>
-      <url>http://svn.incf.org/svn/nineml/catalog/connectionrules/fixed_probability.xml</url>
+      <url>http://svn.incf.org/svn/nineml/trunk/catalog/connectionrules/fixed_probability.xml</url>
     </definition>
     <properties>
       <p_connect>
@@ -73,7 +73,7 @@
   </node>
   <node name="Static inhibitory connections">
     <definition>
-      <url>http://svn.incf.org/svn/nineml/catalog/connectiontypes/static_connection.xml</url>
+      <url>http://svn.incf.org/svn/nineml/trunk/catalog/connectiontypes/static_connection.xml</url>
     </definition>
     <properties>
       <delay>
@@ -88,7 +88,7 @@
   </node>
   <node name="Excitatory neuron type">
     <definition>
-      <url>http://svn.incf.org/svn/nineml/catalog/neurons/IaF_tau.xml</url>
+      <url>http://svn.incf.org/svn/nineml/trunk/catalog/neurons/IaF_tau.xml</url>
     </definition>
     <properties>
       <membraneCapacitance>
@@ -119,7 +119,7 @@
   </node>
   <node name="Excitatory post-synaptic response">
     <definition>
-      <url>http://svn.incf.org/svn/nineml/catalog/postsynapticresponses/exp_g.xml</url>
+      <url>http://svn.incf.org/svn/nineml/trunk/catalog/postsynapticresponses/exp_g.xml</url>
     </definition>
     <properties>
       <decayTimeConstant>
@@ -134,7 +134,7 @@
   </node>
   <node name="column grid with 100 micron spacing">
     <definition>
-      <url>http://svn.incf.org/svn/nineml/catalog/networkstructures/2Dgrid.xml</url>
+      <url>http://svn.incf.org/svn/nineml/trunk/catalog/networkstructures/2Dgrid.xml</url>
     </definition>
     <properties>
       <fillOrder>
@@ -164,7 +164,7 @@
   </node>
   <node name="Static excitatory connections">
     <definition>
-      <url>http://svn.incf.org/svn/nineml/catalog/connectiontypes/static_connection.xml</url>
+      <url>http://svn.incf.org/svn/nineml/trunk/catalog/connectiontypes/static_connection.xml</url>
     </definition>
     <properties>
       <delay>
@@ -179,7 +179,7 @@
   </node>
   <node name="neuronal grid with 1 micron spacing">
     <definition>
-      <url>http://svn.incf.org/svn/nineml/catalog/networkstructures/2Dgrid.xml</url>
+      <url>http://svn.incf.org/svn/nineml/trunk/catalog/networkstructures/2Dgrid.xml</url>
     </definition>
     <properties>
       <fillOrder>
