@@ -20,7 +20,7 @@ struct
 
     binding tspike_set        =  [ tspike = (if spike then t else tspike) ]
 
-    binding subthreshold_regime  = Diagram.SEQUENCE subthreshold_eq (Diagram.SEQUENCE threshold_detect tspike_set)
+    binding subthreshold_regime  = DiagramLib.SEQUENCE subthreshold_eq (DiagramLib.SEQUENCE threshold_detect tspike_set)
 		 
     binding refractory_eq        = [ 
                                      [ t      =  t ]
@@ -30,7 +30,7 @@ struct
 				     [ U      = (U + d) ] 
                                     ]
 
-    return   Diagram.TRANSIENT subthreshold_regime refractory_eq spike 
+    return   DiagramLib.TRANSIENT subthreshold_regime refractory_eq spike 
 
 end
 
