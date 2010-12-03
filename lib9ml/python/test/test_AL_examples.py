@@ -19,7 +19,7 @@ class ExamplesTestCase(unittest.TestCase):
                     'leaky_iaf_w_synapses.py','destexhe_ampa.py',
                     'hill_tononi_Ih.py','pfister_triplet_stdp.py',
                     'markram_synapse_dynamics.py',
-                    'logistic_map.py']
+                    'logistic_map.py','morris-lecar.py']
 
         print ""
                     
