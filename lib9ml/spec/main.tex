@@ -6,8 +6,34 @@
 \usepackage{color}
 \usepackage{url}
 \usepackage{natbib}
+\usepackage{listings}
+
+\definecolor{CodeBackground}{rgb}{0.9, 0.95, 0.95}
+\lstset{ %
+    %language=Python,
+    %alsolanguage=hoc,
+	backgroundcolor=\color{CodeBackground},
+	frame=single,  % the zero-width frame is to make
+	framerule=0pt, % the colour extend beyond the listing
+	basicstyle=\ttfamily,
+	%xleftmargin=2em, 
+	%xrightmargin=2em
+}
+\lstdefinestyle{display}{
+  basicstyle=\ttfamily\footnotesize,
+}
+
+\lstdefinestyle{numberlines}{
+  basicstyle=\ttfamily\footnotesize,
+  numbers=left,
+  stepnumber=1
+}
+
 
 \definecolor{INCFBlue}{rgb}{0.0,0.59,1.0}
+
+\newcommand\nmlClass[1]{{\tt #1}}
+
 
 \begin{document}
 
@@ -69,13 +95,13 @@
 
 \section{Introduction}
 
- With an increasing number of studies related to large-scale neuronal
- network modeling, the International Neuroinformatics Coordinating
- Facility (INCF) has identified a need for standards and guidelines to
- ease model sharing and facilitate the replication of results across
- different simulators. To create such standards, the INCF has formed a
- program on Multiscale Modeling to develop a common standardized
- description language for neuronal network models.  
+With an increasing number of studies related to large-scale neuronal
+network modeling, the International Neuroinformatics Coordinating
+Facility (INCF) has identified a need for standards and guidelines to
+ease model sharing and facilitate the replication of results across
+different simulators. To create such standards, the INCF has formed a
+program on Multiscale Modeling to develop a common standardized
+description language for neuronal network models.
 
 An oversight committee has been setup to guide the direction and
 objectives of the initiative with membership as follows:
@@ -108,7 +134,8 @@ objectives of the initiative with membership as follows:
 \end{itemize}
 
 
-A task force has been assembled to evaluate and implement the recommendations of the oversight committee with membership as follows:
+A task force has been assembled to evaluate and implement the
+recommendations of the oversight committee with membership as follows:
 
 \begin{itemize}
 
@@ -121,10 +148,12 @@ A task force has been assembled to evaluate and implement the recommendations of
     \item Hugo Cornelis, University of Texas Health Science Center, San Antonio, USA
     \item Andrew Davison, CNRS, Gif-sur-Yvette, France
     \item Erik De Schutter, Okinawa Institute of Science and Technology, Okinawa, Japan
-    \item Mikael Djurfeldt, INCF Secretariat and PDC, Royal Institute of Technology, Stockholm, Sweden
+    \item Mikael Djurfeldt, INCF Secretariat and PDC, 
+Royal Institute of Technology, Stockholm, Sweden
     \item Padraig Gleeson, University College London, UK
     \item Michael Hines, Yale University, New Haven, CT, USA
-    \item Birgit Kriener, Max Planck Institute for Dynamics and Self-Organization, Göttingen, Germany
+    \item Birgit Kriener, Max Planck Institute for Dynamics and Self-Organization, 
+Göttingen, Germany
 
     \item Chung-Chuan Lo, National Tsing Hua University, Hsinchu, Taiwan
     \item Abigail Morrison, Bernstein Center Freiburg, Germany
@@ -142,13 +171,11 @@ Project, GENESIS-3, KInNeSS, MOOSE, NEURON, NEST, PyNN and NeuroML.
 
 \subsection{Design considerations}
 
-This document presents the current draft of a proposed standard
-language that achieves the goals set by the Multiscale Modeling
-oversight committee. The name of the proposed standard is Network
+The name of the proposed standard is Network
 Interchange for Neuroscience Modeling Language (NineML) and its first
 version is aimed at descriptions of large networks of spiking neurons.
 
-The key concepts of spiking neuron network modeling are 
+Key concepts of spiking neuron network modeling are
 
 \begin{enumerate}
 \item spiking neurons
@@ -159,8 +186,9 @@ The key concepts of spiking neuron network modeling are
 
 Accordingly, the INCF Task Force on Multiscale Modeling has identified
 a set of mathematical abstractions that are capable of representing
-these concepts in a computer language.  User layer and abstraction
-layer
+these concepts in a computer language.  
+
+\subsection{User layer and Abstraction layer}
 
 The design of NineML is divided in two semantic layers: an abstraction
 layer (the subject of the present document) that provides the core
@@ -179,17 +207,6 @@ mechanisms for naming and addressing Abstraction Layer definitions
 from the User Layer must be compatible between layers.
 
 
-\subsection{Event handling and spikes}
-
-To handle events and spiking dynamics, we propose a flexible block
-diagram notation. The notation represents continuous and discrete
-variables, their evolution according to a set of rules such as a
-system of ordinary differential equations, and the conditions that
-induce a regime change, such as the transition from subthreshold mode
-to spiking and refractory modes. The notation we have developed is an
-explicit formalization of event handling and is an important step in
-ensuring model simulation consistency.
-
  
 \subsection{Implementation assumptions}
 
@@ -200,20 +217,475 @@ instantiate the network models. In addition, for implementation and
 performance reasons, it is important to keep the language layer
 “close” to the simulator – such that the language layer is not
 responsible for maintaining separate representations of the
-instantiated network.  Language syntax
+instantiated network.  
 
-While for the reference definition of the language a syntax is
-described, it is envisioned that the language should not require a
+\subsection{Language syntax}
+
+It is envisioned that the language should not require a
 specific syntax. Rather it is anticipated that the language can be
 employed by defining the model elements in a variety of different
 syntaxes including native, Python or Java (for example), and this
 layer will generate the declarative XML representation.
 
-\section{Glossary} 
-
 \section{The NineML Abstraction Layer Architecture}
 
+The NineML Abstraction Layer architecture is composed of an Object
+Model, an intepreted language, and an XML serialization schema.
+
+The NineML Object Model is the set of fundamental building blocks of
+the NineML model architecture.  It defines the core concepts of NineML
+and encapsulates them into objects as per the Object Oriented
+Programming Paradigm.  
+
+The NineML interpreted language is a native, compact and complete
+domain specific interpreted language which specifies a minimal grammar for
+populating the NineML object model.  
+
+The NineML XML schema specifies how a NineML compliant program is to
+parse and emit NineML in a XML structured document.  The XML schema
+directly mirrors the NineML object model.
+
+The NineML object model, interpreted language, and XML schema are
+discussed in turn in the following sections.
+
+\subsection{Reading this section}
+
+Some conventions which are followed: 
+
+\begin{itemize}
+\item \nmlClass{Regime} - Denotes a class in the NineML Object Model.
+ 
+\end{itemize}
+
 \subsection{Object Model}
+
+The NineML Object Model is the set of fundamental building blocks of
+the NineML model architecture.  It defines the core concepts of NineML
+and encapsulates them into objects as per the Object Oriented
+Programming Paradigm.  For a given implementation, the objects may
+provide a wide range of programmatic methods for manipulating and
+constructing NineML objects.  However, the content and state of these
+objects and their interconnections is designed to be an effectively
+declarative data abstraction of the scientists modeling concepts.
+Following the discipline of mapping the Scientist's model to a
+representation in the NineML Object Model data abstraction is the
+first step to implementing a NineML compliant model description.
+
+Instantiating the NineML object model representation then can take
+multiple forms.  We can employ the object oriented programming
+features of most modern programming languages paired with a suitable
+NineML abstraction layer API to instantiate the objects, or we can
+write the model directly in the XML schema (as discussed below), or we
+can employ the custom NineML Interpreted Langauge as a compact
+representation and rely on its supported code generation and
+translation features to bring the model into a form that it can be
+supported in the user's desired simulation environment.
+
+\subsubsection{Regimes and Transitions}
+
+To handle events and spiking dynamics, but also domains of continuous
+dynamics, we propose a flexible block diagram notation.  The notation
+represents continuous and discrete variables, their evolution
+according to a set of rules such as a system of ordinary differential
+equations, a \nmlClass{Regime}, and the conditions that induce a change of
+Regime and/or discontinous changes in Regime state variables, a
+\nmlClass{Transition}, such as the transition from subthreshold to spiking
+and refractory modes.
+
+% Definition notation
+
+A \nmlClass{Regime} is defined in NineML as a system of ODEs in time on
+state variables.  As such, Regimes define how the state variables
+change (propagte in time) between subsequent \nmlClass{Transitions}.
+Regimes are defined to have non-vanishing temporal extent.  Once
+construction of the Regime is complete, it should have defined the
+following properties:
+\begin{itemize}
+\item An unordered collection of \nmlClass{StateVariable}s which are propagated when the \nmlClass{Regime} is active.
+\item A propagator for each state variable, $x_i$, presently in the
+  form of an \nmlClass{ODE} of the form $dx_i/dt = f(x_0, ..., x_i, t)$.
+%\item references to Transitions 
+\item user parameters for the \nmlClass{Regime}
+\item An unordered collection of \nmlClass{AnalogPort}s which publish state variables (type=send),
+  or consume state variables published from elsewhere (type=recv, or type=reduce).
+\end{itemize}
+
+A \nmlClass{Transition} is defined in NineML as having a source and target
+\nmlClass{Regime}, where the target \nmlClass{Regime} can be the same as the source, a
+\nmlClass{Condition} for triggering the \nmlClass{Transition}, and an ordered sequence of
+operations on \nmlClass{StateVariable}s which carried out on occurence of the
+\nmlClass{Transition}.  \nmlClass{Transition}s therefore are defined to have a vanishing
+temportal extent (i.e. they are event-like).  Once construction of a
+\nmlClass{Transition} is complete, it should have defined the following properties:
+\begin{itemize}
+\item The \nmlClass{Condition} or \nmlClass{EventPort(mode=recv)} which triggers the \nmlClass{Transition}
+\item An ordered sequence of \nmlClass{Assignment}s or
+  \nmlClass{Inplace} operations to state variables, or
+  \nmlClass{EventPort(mode=send)} objects (causing an event to be published, for example, a spike).
+\item A reference to the source \nmlClass{Regime}, and a reference to the target
+  \nmlClass{Regime}, which may be the same as the source \nmlClass{Regime}.
+\end{itemize}
+
+\subsubsection{Equations}
+
+NineML presently defines the following equation types: \nmlClass{ODE},
+\nmlClass{Assignment}, \nmlClass{Inplace}.  Each of these \nmlClass{Equation} sub-types must define its
+left-hand-side (lhs), and right-hand-side (rhs) of the equation, where
+it is the lhs which differs for each of the equation types above.
+
+For an \nmlClass{ODE}, after construction, it must define the following properties:
+\begin{itemize}
+\item the equation rhs (see below)
+\item the lhs consisting of the dependent variable, and the independent variable
+\end{itemize} 
+For example:
+\begin{lstlisting}[style=display]
+dx/dt = -x/tau
+\end{lstlisting}
+In this \nmlClass{ODE}, the dependent variable is \verb^x^, the independent
+variable is \verb^t^, and the rhs is \verb^-x/tau^.
+
+For an \nmlClass{Assignment}, after construction, it must define the following properties:
+\begin{itemize}
+\item the equation rhs (see below)
+\item the lhs consisting of the variable to which the rhs is assigned.
+\end{itemize}
+For example:
+\begin{lstlisting}[style=display]
+x = sin(t)+10
+\end{lstlisting}
+In this \nmlClass{Assignment}, the assigned variable is \verb^x^, and the rhs is \verb^sin(t)+10^.
+
+For an \nmlClass{Inplace} operation, after construction, it must define the following properties:
+\begin{itemize}
+\item the equation rhs (see below)
+\item the lhs
+\item the operation with which the rhs should be applied to the lhs
+\end{itemize}
+For example:
+\begin{lstlisting}[style=display]
+x -= x**2-y
+\end{lstlisting}
+In this \nmlClass{Inplace} operation, the operation is ``-'', the target operand
+is \verb^x^, and the rhs is \verb^x**2-y^.  In this case it is
+equivalent to the \nmlClass{Assignment}
+\begin{lstlisting}[style=display]
+x = x-x**2-y
+\end{lstlisting}
+but making the \nmlClass{Inplace} operation explicit allows for a more intuitive
+and compact representation of the operation, and allows to avoid a
+memory read of \verb^x^ in architectures that support inplace
+operations, such as GPUs, without symbolic manipulation of the rhs.
+
+In all cases, the rhs is a nested tree of functions, \nmlClass{Bindings}, and arguments,
+where the functions are drawn from the component library available to
+the model, as discussed in section \ref{nml_lib}, and arguments
+can be of type \nmlClass{Parameter} or \nmlClass{StateVariable}.  \nmlClass{Bindings} are discussed in the next section.
+
+\subsubsection{Bindings} 
+
+\nmlClass{Binding}s may be used for defining local parameters which are not exposed to the user, such as 
+\begin{lstlisting}[style=display]
+mypi := 3.14
+\end{lstlisting}
+or for defining function which are themselves a
+composition of the \nmlClass{Binding} \emph{arguments}, other functions and parameters (but not
+ \nmlClass{StateVariable}s).  For example,
+\begin{lstlisting}[style=display]
+F(X,Y) = sin(X**2+Y**2) + 10
+\end{lstlisting}
+When used in the rhs of \nmlClass{Equation}s, \nmlClass{Binding}s may be passed arguments which
+are any valid \nmlClass{Equation}, including \nmlClass{StateVariable}s.
+
+\subsubsection{Conditions}
+
+\nmlClass{Condition}s are the mathematical expressions which define
+when a \nmlClass{Transition} should be triggered.
+\nmlClass{Condition}s are any arbitrary combination of \emph{Logical
+  Operations} (see \ref{nml_lib}) (and/$\&$,or/$|$,noop,etc.) on the
+result of any arbitrary combination of \emph{Relational Operations}
+(see \ref{nml_lib}) ($>$,$<$,$==$,$<=$,$>=$, etc.) on \nmlClass{Equation}s.  At
+any given time in the \nmlClass{Regime}, the \nmlClass{Condition}
+expression then evaluates to True or False.  For example, the
+following are valid \nmlClass{Condition}s
+
+\begin{lstlisting}[style=display]
+x>10
+x>10 & y<20
+x>exp(-cos(y)) | y<sin(t)+5
+x==15
+\end{lstlisting}
+
+A \nmlClass{Condition} which persistantly evaluates to True
+violates the definition that \nmlClass{Tranisiton}s should have vanishing
+temporal extent, and there behaviour for this case is undefined, but
+it would be preferable for the implementation to produce an error
+message to the user.
+
+\subsubsection{Ports}
+
+There are two sub-classes of \nmlClass{Port} objects: \nmlClass{AnalogPort} and \nmlClass{EventPort}.
+% TODO
+Modes: reduce, send, recv.  
+Reduce operations: add, mul, etc.
+
+% TODO
+Connection rules for ports of different types.
+
+
+\subsubsection{Names}
+
+Objects of the following classes are bound to a name in a \nmlClass{Container}:
+\nmlClass{StateVariable}, \nmlClass{Parameter}, \nmlClass{Binding},
+\nmlClass{Port}, \nmlClass{Regime}, \nmlClass{Container}.
+
+\subsubsection{Components and Containers}
+
+Tying all these concepts together into the final resulting model is
+the purpose of the \nmlClass{Component}.  The \nmlClass{Component} then is the
+conglomerating object which is the subject of interaction with the
+\textbf{User Layer}.  To allow for modular composition of \nmlClass{Component}s
+from sub-\nmlClass{Component}s, and to avoid name collision with symbols and
+functions provided in standard libraries, a mechanism of namespace
+encapsulation is required, and implemented by the \nmlClass{Container} object.
+
+After construction, a \nmlClass{Component} must define the following properties:
+\begin{itemize}
+\item An unordered collection of \nmlClass{Transition}s which connect the \nmlClass{Regime}s
+  of the \nmlClass{Component} by assigning sources and targets from the named
+  collection of \nmlClass{Regime}s. 
+
+\item A \nmlClass{Container} object which contains an unordered named collection of 
+\begin{itemize}
+\item sub-\nmlClass{Container} objects (may be user defined, or imported from the NineML standard libraray (see Section \ref{nml_lib}).
+\item at least one \nmlClass{Regime} in the \nmlClass{Container} or its sub-\nmlClass{Container}s.
+\item \nmlClass{StateVariable}s.
+\item \nmlClass{Parameter}s.
+\item \nmlClass{EventPort}s.
+\item \nmlClass{AnalogPort}s.
+\item \nmlClass{Binding}s.
+\end{itemize}
+
+The following points are to be observed:
+\begin{itemize}
+\item All \nmlClass{StateVariable} symbols defined by the
+  \nmlClass{Regime}s in the \nmlClass{Component} should be by default
+  exposed in the collection of \nmlClass{AnalogPort} objects with
+  mode=send.
+\item All objects in a \nmlClass{Container}, such as
+  \nmlClass{Regime}s, \nmlClass{Equation}s, \nmlClass{Port}s, etc. do
+  name look-up in the \nmlClass{Component} \nmlClass{Container}
+  hierarchy using the \nmlClass{Container} they are contained in for
+  the root scope.
+\item \nmlClass{Condition}s, and source and target \nmlClass{Regime}
+  names in the \nmlClass{Component} \nmlClass{Transition}s do name
+  look up with scoping as if they are contained in the Component root
+  Container.
+\end{itemize}
+
+Implementations of the object model will likely want to provide
+query/filter methods for Containers, such that all names of a given
+type (e.g. \nmlClass{EventPort}) are returned.
+
+\end{itemize}
+
+
+\subsubsection{Access Paths for Nested Containers}
+
+Since \nmlClass{Container}s can be nested, names in
+sub-\nmlClass{Container}s of the current scope can be accessed via dot
+notation, e.g. \verb^M.x^ to refers to the member \verb^x^ of
+container \verb^M^.  To avoid ambiguity, we require that all members of
+a container (at the same nesting level) have distinct names. For
+example, a container \verb^C^ cannot have two members named \verb^m^, because we
+would not know which type \verb^C.m^ refers to.
+
+However, sub-containers can still define members with the same name as
+members from an enclosing container, since the path notation
+distinguishes them. For instance, \verb^C^ can have a member \verb^m^ and a
+sub-container \verb^D^ with another member \verb^m^.  The former member \verb^m^ is
+referred to as \verb^C.m^, and the latter as \verb^C.D.m^. 
+
+\subsubsection{Summary of Objects}
+
+% TODO (using LaTeX packages uml, or pst-uml ?) 
+A bunch of UML diagrams of all the objects, and how they hook up to each other.
+
+\subsubsection{\label{nml_lib}Libraries of Functions and Operations}
+
+% TODO
+RNGs, Special Functions, Logical Ops, Relational Ops, etc.
+% Probably we want to put the detailed reference in an Appendix.
+
+\subsubsection{Global Operations}
+
+Most implementations will want to introduce syntactic sugar for
+standard mathematical, logical, relational operations as well as
+exposing globally a subset of frequently occuring standard constants
+($e$, $pi$, etc.) and functions ($\sin(x)$, $\cos(x)$, $\exp(x)$,
+etc.).
+
+
+\subsection{The NineML Native Interpreted Language}
+
+The NineML native interpreted language is a compact and complete
+domain specific interpreted language which specifies an exact and
+minimal yet sufficient grammar for populating the NineML object model,
+and therefore serves as a reference implementation.  It is referred to
+as native in that, in contrast to other NineML implementations of
+the object model which are embedded in existing programming languages,
+the NineML native language implements its own language grammer, and
+thus avoids the common problem of embedded languages that the
+surrogate language can invade the embedded language.  Herein we
+describe the structure of this ``NineML native'' language.
+
+\subsubsection{Bindings}
+
+A fundamental aspect of a programming language is how it uses names to
+refer to computational objects.  We refer to NineML names as labels
+and to computational objects as values, and we say that labels
+identify values.
+
+In the NineML abstraction layer interpreter, we name values with the binding
+
+construct:
+\begin{lstlisting}[style=display]
+binding pi = 3.14159265
+\end{lstlisting}
+
+Once a label has been associated with a value, we can refer to the
+value by its label, thus implementing the basic property of name
+resolution in the NineML interpreter. A binding consists of a label
+and a value. Once a label is declared in a binding, its associated
+value can be reached by other bindings in the program, according to
+the scoping rules of the NineML interpreter, as described in the
+following sections.
+
+In general, values may have very complex structures, and it would be
+extremely inconvenient to have to remember and repeat their details
+each time we want to use them. Instead, we can use simple labels to
+refer to the results of compound operations, such as the circumference
+computed above. Complex values in NineML are constructed by building
+computational objects of increasing complexity as a sequence of
+bindings.
+
+ 
+\subsubsection{Expressions}
+
+The value of a binding can be given as a primitive expression, or as
+the result of a compound expression. One kind of primitive expression
+type is a number.
+
+Expressions representing numbers may be combined with an expression
+representing a primitive procedure (such as + or *) to form compound
+expressions. For example:
+
+\begin{lstlisting}[style=display]
+binding radius = 1
+binding area   = pi * radius * radius
+\end{lstlisting}
+
+The value of a compound expression is obtained by applying the
+operators specified to the arguments that are the values of the
+operands. In the example above, the value of the binding area is
+obtaining by applying the multiplication operator to the values of pi
+and radius.
+
+\subsubsection{Functions and Local Names}
+
+Function definitions in the NineML interpreter allow a compound operation to be given
+parameterized as a unit.
+
+For example, we can declare the following function for squaring
+numbers:
+
+\begin{lstlisting}[style=display]
+binding square = function (x)
+                 binding result = x * x
+                 return result
+\end{lstlisting}
+
+We have here a binding, which has been given the name square. The
+value of the binding is a function that represents the operation of
+multiplying something by itself. The thing to be multiplied is given a
+local name, x.
+
+The general form of a function definition is
+
+\begin{lstlisting}[style=display]
+function ( <formal parameters>) = <binding> ... <binding>  return <value>
+\end{lstlisting}
+ 
+The \verb^<formal parameters>^ are the names used within the body of the
+function to refer to the corresponding arguments of the function. The
+bindings inside the function contain expressions in which formal
+parameters are replaced by the actual arguments to which the procedure
+is applied. The return value of the function can refer to the values
+of the bindings defined in that function.
+
+Having defined square, we can now use it:
+
+\begin{lstlisting}[style=display]
+binding area = function (radius)
+               binding result = pi * square (radius)
+               return result
+\end{lstlisting}
+
+The meaning of the function is independent of the parameter names
+used by its author. The consequence is that the parameter names of a
+function are local to the body of the function.
+
+A formal parameter of a procedure has a special role in the
+procedure definition, in that it doesn't matter what label the formal
+parameter has. We say that the function definition binds its formal
+parameters. The meaning of a procedure definition is unchanged if a
+bound variable is consistently renamed throughout the definition.
+  
+\subsubsection{Block Structure and Scoping Rules}
+
+The possibility of associating values with labels and later
+retrieving them means that the NineML interpreter must maintain some
+sort of memory that keeps track of the label-value pairs. This memory
+is called the environment. A NineML program has a global environment
+associated with it, and every function has a local
+environment associated with it.
+
+The set of expressions for which a binding defines a label is called
+the scope of that label.  For example,
+
+\begin{lstlisting}[style=display]
+binding a = function (x) =
+
+            binding i = 1
+            binding j = 2
+
+            binding b = function (x)
+
+                // scope a+b
+
+                binding k = x+i
+
+                binding c = function (x)
+                    // scope a+b+c
+                    return x+j
+
+ 
+
+                return k + c(k)
+
+            // scope a
+            return i+b(j)
+
+\end{lstlisting}
+ 
+
+In a function definition, the labels declared as the bindings in that
+function have the body of the function as their scope.
+
+Such nesting of definitions is called lexical scoping: each use of a
+label in the NineML interpreter is resolved by looking up the label in
+the enclosing block definition, and if not found, in the outer blocks
+enclosing the current block.
 
 
 \section{XML Serialization Specification}
