@@ -31,4 +31,14 @@ How to build the pdf
 
 Use the Makefile provided as follows
 
-$ make
+$ make long
+
+The 'long' implies multi-pass, so it updates the internal references
+in the latex document.
+
+$ make clean 
+
+Will remove the pdf and all itermediate files, so that a
+subsequent call to make will re-build fresh.
+
+
