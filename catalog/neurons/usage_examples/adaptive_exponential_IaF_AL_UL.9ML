@@ -1,0 +1,379 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<!--
+NineML export from LEMS of model:
+
+Components
+    adExBurst2 (adExIaFCell)  C=2.81E-10 (SI capacitance) gL=3.0000000000000004E-8 (SI conductance) EL=-0.0706 (SI voltage) VT=-0.0504 (SI voltage) thresh=-0.0404 (SI voltage) reset=-0.0485 (SI voltage) delT=0.002 (SI voltage) tauw=0.04 (SI time) Iamp=8.000000000000001E-10 (SI current) Idel=0.0 (SI time) Idur=2.0 (SI time) a=4.0E-9 (SI conductance) b=8.000000000000001E-11 (SI current)
+    adExBurst4 (adExIaFCell)  C=2.81E-10 (SI capacitance) gL=3.0000000000000004E-8 (SI conductance) EL=-0.0706 (SI voltage) VT=-0.0504 (SI voltage) thresh=-0.0404 (SI voltage) reset=-0.047200000000000006 (SI voltage) delT=0.002 (SI voltage) tauw=0.04 (SI time) Iamp=8.000000000000001E-10 (SI current) Idel=0.0 (SI time) Idur=2.0 (SI time) a=4.0E-9 (SI conductance) b=8.000000000000001E-11 (SI current)
+    adExBurstChaos (adExIaFCell)  C=2.81E-10 (SI capacitance) gL=3.0000000000000004E-8 (SI conductance) EL=-0.0706 (SI voltage) VT=-0.0504 (SI voltage) thresh=-0.0404 (SI voltage) reset=-0.048 (SI voltage) delT=0.002 (SI voltage) tauw=0.04 (SI time) Iamp=8.000000000000001E-10 (SI current) Idel=0.0 (SI time) Idur=2.0 (SI time) a=4.0E-9 (SI conductance) b=8.000000000000001E-11 (SI current)
+    adExRebound (adExIaFCell)  C=2.81E-10 (SI capacitance) gL=3.0000000000000004E-8 (SI conductance) EL=-0.06 (SI voltage) VT=-0.054 (SI voltage) thresh=-0.03 (SI voltage) reset=-0.051000000000000004 (SI voltage) delT=0.002 (SI voltage) tauw=0.15 (SI time) Iamp=-5.0E-10 (SI current) Idel=0.15 (SI time) Idur=0.05 (SI time) a=2.0000000000000002E-7 (SI conductance) b=1.0000000000000002E-10 (SI current)
+    net1 (network) 
+    sim1 (Simulation)  length=0.3 (SI time) step=2.5E-5 (SI time)
+
+-->
+
+
+<!--Adding simulation Component(id=sim1 type=Simulation) of network: net1 (network) -->
+
+<nineml xmlns="http://nineml.org/9ML/0.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://nineml.org/9ML/0.1 http://neuroml.svn.sourceforge.net/viewvc/neuroml/DemoVer2.0/lems/Schemas/NineML/NineML_v0.1.xsd">
+
+    <!--Population adExPop1 contains components of: Component(id=adExBurst2 type=adExIaFCell)-->
+
+    <component name="adExIaFCell">
+        <parameter name="C"/>
+        <parameter name="gL"/>
+        <parameter name="EL"/>
+        <parameter name="VT"/>
+        <parameter name="thresh"/>
+        <parameter name="reset"/>
+        <parameter name="delT"/>
+        <parameter name="tauw"/>
+        <parameter name="Iamp"/>
+        <parameter name="Idel"/>
+        <parameter name="Idur"/>
+        <parameter name="a"/>
+        <parameter name="b"/>
+        <analog-port symbol="t" mode="send"/>
+        <analog-port symbol="v" mode="send"/>
+        <analog-port symbol="w" mode="send"/>
+        <analog-port symbol="I" mode="send"/>
+        <regime name="default_regime">
+            <ode independent_variable="t" name="v_equation" dependent_variable="v">
+                <math-inline>
+                        ((((0 - ((1 * gL) * (v - EL))) + (((gL * delT) * exp(((v - VT) / delT))) - w)) + I) / C)
+                </math-inline>
+            </ode>
+            <ode independent_variable="t" name="w_equation" dependent_variable="w">
+                <math-inline>
+                        (((a * (v - EL)) - w) / tauw)
+                </math-inline>
+            </ode>
+        </regime>
+        <!--Adding new regime for transe__v_gt_thresh-->
+        <transition name="transe__v_gt_thresh" from="default_regime" to="default_regime" condition="spike">
+            <assignment to="v" name="set_v">
+                <math-inline>
+                        reset
+                </math-inline>
+            </assignment>
+            <assignment to="w" name="set_w">
+                <math-inline>
+                        (w + b)
+                </math-inline>
+            </assignment>
+            <event-port symbol="spike_output" mode="send"/>
+        </transition>
+        <!--Adding new regime for transe__t_gt_Idel_and_t_lt_Idel+Idur-->
+        <transition name="transe__t_gt_Idel_and_t_lt_Idel+Idur" from="default_regime" to="default_regime" condition="true__t_gt_Idel_and_t_lt_Idel+Idur">
+            <assignment to="I" name="set_I">
+                <math-inline>
+                        Iamp
+                </math-inline>
+            </assignment>
+        </transition>
+        <!--Adding new regime for transe__t_gt_Idel+Idur-->
+        <transition name="transe__t_gt_Idel+Idur" from="default_regime" to="default_regime" condition="true__t_gt_Idel+Idur">
+            <assignment to="I" name="set_I">
+                <math-inline>
+                        0
+                </math-inline>
+            </assignment>
+        </transition>
+    </component>
+
+    <!--Population adExPop2 contains components of: Component(id=adExBurst4 type=adExIaFCell)-->
+
+
+    <!--Population adExPop3 contains components of: Component(id=adExBurstChaos type=adExIaFCell)-->
+
+
+    <!--Population adExPop4 contains components of: Component(id=adExRebound type=adExIaFCell)-->
+
+
+    <!--Node adExBurst2 is an instance of: adExIaFCell-->
+
+    <node name="adExBurst2">
+        <definition>
+            <url>.</url>
+            <!--Note: there needs to be some way to indentify the component (type) of this node...-->
+            <componentType>adExIaFCell</componentType>
+        </definition>
+        <properties>
+            <C>
+                <value>2.81E-10</value>
+                <unit>kg^-1 m^-2 s^4 A^2</unit>
+            </C>
+            <gL>
+                <value>3.0E-8</value>
+                <unit>kg^-1 m^-2 s^3 A^2</unit>
+            </gL>
+            <EL>
+                <value>-0.0706</value>
+                <unit>kg m^2 s^-3 A^-1</unit>
+            </EL>
+            <VT>
+                <value>-0.0504</value>
+                <unit>kg m^2 s^-3 A^-1</unit>
+            </VT>
+            <thresh>
+                <value>-0.0404</value>
+                <unit>kg m^2 s^-3 A^-1</unit>
+            </thresh>
+            <reset>
+                <value>-0.0485</value>
+                <unit>kg m^2 s^-3 A^-1</unit>
+            </reset>
+            <delT>
+                <value>0.002</value>
+                <unit>kg m^2 s^-3 A^-1</unit>
+            </delT>
+            <tauw>
+                <value>0.04</value>
+                <unit>s</unit>
+            </tauw>
+            <Iamp>
+                <value>8.0E-10</value>
+                <unit>A</unit>
+            </Iamp>
+            <Idel>
+                <value>0.0</value>
+                <unit>s</unit>
+            </Idel>
+            <Idur>
+                <value>2.0</value>
+                <unit>s</unit>
+            </Idur>
+            <a>
+                <value>4.0E-9</value>
+                <unit>kg^-1 m^-2 s^3 A^2</unit>
+            </a>
+            <b>
+                <value>8.0E-11</value>
+                <unit>A</unit>
+            </b>
+        </properties>
+    </node>
+
+    <!--Node adExBurst4 is an instance of: adExIaFCell-->
+
+    <node name="adExBurst4">
+        <definition>
+            <url>.</url>
+            <!--Note: there needs to be some way to indentify the component (type) of this node...-->
+            <componentType>adExIaFCell</componentType>
+        </definition>
+        <properties>
+            <C>
+                <value>2.81E-10</value>
+                <unit>kg^-1 m^-2 s^4 A^2</unit>
+            </C>
+            <gL>
+                <value>3.0E-8</value>
+                <unit>kg^-1 m^-2 s^3 A^2</unit>
+            </gL>
+            <EL>
+                <value>-0.0706</value>
+                <unit>kg m^2 s^-3 A^-1</unit>
+            </EL>
+            <VT>
+                <value>-0.0504</value>
+                <unit>kg m^2 s^-3 A^-1</unit>
+            </VT>
+            <thresh>
+                <value>-0.0404</value>
+                <unit>kg m^2 s^-3 A^-1</unit>
+            </thresh>
+            <reset>
+                <value>-0.0472</value>
+                <unit>kg m^2 s^-3 A^-1</unit>
+            </reset>
+            <delT>
+                <value>0.002</value>
+                <unit>kg m^2 s^-3 A^-1</unit>
+            </delT>
+            <tauw>
+                <value>0.04</value>
+                <unit>s</unit>
+            </tauw>
+            <Iamp>
+                <value>8.0E-10</value>
+                <unit>A</unit>
+            </Iamp>
+            <Idel>
+                <value>0.0</value>
+                <unit>s</unit>
+            </Idel>
+            <Idur>
+                <value>2.0</value>
+                <unit>s</unit>
+            </Idur>
+            <a>
+                <value>4.0E-9</value>
+                <unit>kg^-1 m^-2 s^3 A^2</unit>
+            </a>
+            <b>
+                <value>8.0E-11</value>
+                <unit>A</unit>
+            </b>
+        </properties>
+    </node>
+
+    <!--Node adExBurstChaos is an instance of: adExIaFCell-->
+
+    <node name="adExBurstChaos">
+        <definition>
+            <url>.</url>
+            <!--Note: there needs to be some way to indentify the component (type) of this node...-->
+            <componentType>adExIaFCell</componentType>
+        </definition>
+        <properties>
+            <C>
+                <value>2.81E-10</value>
+                <unit>kg^-1 m^-2 s^4 A^2</unit>
+            </C>
+            <gL>
+                <value>3.0E-8</value>
+                <unit>kg^-1 m^-2 s^3 A^2</unit>
+            </gL>
+            <EL>
+                <value>-0.0706</value>
+                <unit>kg m^2 s^-3 A^-1</unit>
+            </EL>
+            <VT>
+                <value>-0.0504</value>
+                <unit>kg m^2 s^-3 A^-1</unit>
+            </VT>
+            <thresh>
+                <value>-0.0404</value>
+                <unit>kg m^2 s^-3 A^-1</unit>
+            </thresh>
+            <reset>
+                <value>-0.048</value>
+                <unit>kg m^2 s^-3 A^-1</unit>
+            </reset>
+            <delT>
+                <value>0.002</value>
+                <unit>kg m^2 s^-3 A^-1</unit>
+            </delT>
+            <tauw>
+                <value>0.04</value>
+                <unit>s</unit>
+            </tauw>
+            <Iamp>
+                <value>8.0E-10</value>
+                <unit>A</unit>
+            </Iamp>
+            <Idel>
+                <value>0.0</value>
+                <unit>s</unit>
+            </Idel>
+            <Idur>
+                <value>2.0</value>
+                <unit>s</unit>
+            </Idur>
+            <a>
+                <value>4.0E-9</value>
+                <unit>kg^-1 m^-2 s^3 A^2</unit>
+            </a>
+            <b>
+                <value>8.0E-11</value>
+                <unit>A</unit>
+            </b>
+        </properties>
+    </node>
+
+    <!--Node adExRebound is an instance of: adExIaFCell-->
+
+    <node name="adExRebound">
+        <definition>
+            <url>.</url>
+            <!--Note: there needs to be some way to indentify the component (type) of this node...-->
+            <componentType>adExIaFCell</componentType>
+        </definition>
+        <properties>
+            <C>
+                <value>2.81E-10</value>
+                <unit>kg^-1 m^-2 s^4 A^2</unit>
+            </C>
+            <gL>
+                <value>3.0E-8</value>
+                <unit>kg^-1 m^-2 s^3 A^2</unit>
+            </gL>
+            <EL>
+                <value>-0.06</value>
+                <unit>kg m^2 s^-3 A^-1</unit>
+            </EL>
+            <VT>
+                <value>-0.054</value>
+                <unit>kg m^2 s^-3 A^-1</unit>
+            </VT>
+            <thresh>
+                <value>-0.03</value>
+                <unit>kg m^2 s^-3 A^-1</unit>
+            </thresh>
+            <reset>
+                <value>-0.051</value>
+                <unit>kg m^2 s^-3 A^-1</unit>
+            </reset>
+            <delT>
+                <value>0.002</value>
+                <unit>kg m^2 s^-3 A^-1</unit>
+            </delT>
+            <tauw>
+                <value>0.15</value>
+                <unit>s</unit>
+            </tauw>
+            <Iamp>
+                <value>-5.0E-10</value>
+                <unit>A</unit>
+            </Iamp>
+            <Idel>
+                <value>0.15</value>
+                <unit>s</unit>
+            </Idel>
+            <Idur>
+                <value>0.05</value>
+                <unit>s</unit>
+            </Idur>
+            <a>
+                <value>2.0E-7</value>
+                <unit>kg^-1 m^-2 s^3 A^2</unit>
+            </a>
+            <b>
+                <value>1.0E-10</value>
+                <unit>A</unit>
+            </b>
+        </properties>
+    </node>
+    <group name="sim1">
+
+        <!--Population adExPop1 contains components of: Component(id=adExBurst2 type=adExIaFCell)-->
+
+        <population name="adExPop1">
+            <number>1</number>
+            <prototype>adExBurst2</prototype>
+        </population>
+
+        <!--Population adExPop2 contains components of: Component(id=adExBurst4 type=adExIaFCell)-->
+
+        <population name="adExPop2">
+            <number>1</number>
+            <prototype>adExBurst4</prototype>
+        </population>
+
+        <!--Population adExPop3 contains components of: Component(id=adExBurstChaos type=adExIaFCell)-->
+
+        <population name="adExPop3">
+            <number>1</number>
+            <prototype>adExBurstChaos</prototype>
+        </population>
+
+        <!--Population adExPop4 contains components of: Component(id=adExRebound type=adExIaFCell)-->
+
+        <population name="adExPop4">
+            <number>1</number>
+            <prototype>adExRebound</prototype>
+        </population>
+    </group>
+</nineml>

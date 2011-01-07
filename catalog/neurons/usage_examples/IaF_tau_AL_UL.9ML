@@ -1,0 +1,81 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<!--
+NineML export from LEMS of model:
+
+Components
+    iaf (iafTauCell)  leakReversal=-0.05 (SI voltage) tau=0.03 (SI time) thresh=-0.055 (SI voltage) reset=-0.07 (SI voltage)
+    net1 (network) 
+    sim1 (Simulation)  length=0.3 (SI time) step=1.0E-5 (SI time)
+
+-->
+
+
+<!--Adding simulation Component(id=sim1 type=Simulation) of network: net1 (network) -->
+
+<nineml xmlns="http://nineml.org/9ML/0.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://nineml.org/9ML/0.1 http://neuroml.svn.sourceforge.net/viewvc/neuroml/DemoVer2.0/lems/Schemas/NineML/NineML_v0.1.xsd">
+
+    <!--Population iafPop contains components of: Component(id=iaf type=iafTauCell)-->
+
+    <component name="iafTauCell">
+        <parameter name="leakReversal"/>
+        <parameter name="tau"/>
+        <parameter name="thresh"/>
+        <parameter name="reset"/>
+        <analog-port symbol="t" mode="send"/>
+        <analog-port symbol="v" mode="send"/>
+        <regime name="default_regime">
+            <ode independent_variable="t" name="v_equation" dependent_variable="v">
+                <math-inline>
+                        ((leakReversal - v) / tau)
+                </math-inline>
+            </ode>
+        </regime>
+        <!--Adding new regime for transe__v_gt_thresh-->
+        <transition name="transe__v_gt_thresh" from="default_regime" to="default_regime" condition="spike">
+            <assignment to="v" name="set_v">
+                <math-inline>
+                        reset
+                </math-inline>
+            </assignment>
+            <event-port symbol="spike_output" mode="send"/>
+        </transition>
+    </component>
+
+    <!--Node iaf is an instance of: iafTauCell-->
+
+    <node name="iaf">
+        <definition>
+            <url>.</url>
+            <!--Note: there needs to be some way to indentify the component (type) of this node...-->
+            <componentType>iafTauCell</componentType>
+        </definition>
+        <properties>
+            <leakReversal>
+                <value>-0.05</value>
+                <unit>kg m^2 s^-3 A^-1</unit>
+            </leakReversal>
+            <tau>
+                <value>0.03</value>
+                <unit>s</unit>
+            </tau>
+            <thresh>
+                <value>-0.055</value>
+                <unit>kg m^2 s^-3 A^-1</unit>
+            </thresh>
+            <reset>
+                <value>-0.07</value>
+                <unit>kg m^2 s^-3 A^-1</unit>
+            </reset>
+        </properties>
+    </node>
+    <group name="sim1">
+
+        <!--Population iafPop contains components of: Component(id=iaf type=iafTauCell)-->
+
+        <population name="iafPop">
+            <number>1</number>
+            <prototype>iaf</prototype>
+        </population>
+    </group>
+</nineml>

@@ -1,0 +1,291 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<!--
+NineML export from LEMS of model:
+
+Components
+    izBurst (izhikevichCell)  v0=-0.07 (SI voltage) a=0.02 (none) b=0.2 (none) c=-50.0 (none) d=2.0 (none) thresh=0.03 (SI voltage) Iamp=15.0 (none) Idel=0.022 (SI time) Idur=2.0 (SI time) tscale=1000.0 (SI per_time) vscale=0.001 (SI voltage) pervscale=1000.0 (SI per_voltage)
+    izTonic (izhikevichCell)  v0=-0.07 (SI voltage) a=0.02 (none) b=0.2 (none) c=-65.0 (none) d=6.0 (none) thresh=0.03 (SI voltage) Iamp=14.0 (none) Idel=0.02 (SI time) Idur=2.0 (SI time) tscale=1000.0 (SI per_time) vscale=0.001 (SI voltage) pervscale=1000.0 (SI per_voltage)
+    izMixed (izhikevichCell)  v0=-0.07 (SI voltage) a=0.02 (none) b=0.2 (none) c=-55.0 (none) d=4.0 (none) thresh=0.03 (SI voltage) Iamp=10.0 (none) Idel=0.02 (SI time) Idur=2.0 (SI time) tscale=1000.0 (SI per_time) vscale=0.001 (SI voltage) pervscale=1000.0 (SI per_voltage)
+    net1 (network) 
+    sim1 (Simulation)  length=0.2 (SI time) step=5.0E-6 (SI time)
+
+-->
+
+
+<!--Adding simulation Component(id=sim1 type=Simulation) of network: net1 (network) -->
+
+<nineml xmlns="http://nineml.org/9ML/0.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://nineml.org/9ML/0.1 http://neuroml.svn.sourceforge.net/viewvc/neuroml/DemoVer2.0/lems/Schemas/NineML/NineML_v0.1.xsd">
+
+    <!--Population izpopBurst contains components of: Component(id=izBurst type=izhikevichCell)-->
+
+    <component name="izhikevichCell">
+        <parameter name="v0"/>
+        <parameter name="a"/>
+        <parameter name="b"/>
+        <parameter name="c"/>
+        <parameter name="d"/>
+        <parameter name="thresh"/>
+        <parameter name="Iamp"/>
+        <parameter name="Idel"/>
+        <parameter name="Idur"/>
+        <parameter name="tscale"/>
+        <parameter name="vscale"/>
+        <parameter name="pervscale"/>
+        <analog-port symbol="t" mode="send"/>
+        <analog-port symbol="v" mode="send"/>
+        <analog-port symbol="U" mode="send"/>
+        <analog-port symbol="I" mode="send"/>
+        <regime name="default_regime">
+            <ode independent_variable="t" name="v_equation" dependent_variable="v">
+                <math-inline>
+                        ((vscale * tscale) * (((((((0.04 * v) * v) * pervscale) * pervscale) + ((5 * v) * pervscale)) + (140.0 - U)) + I))
+                </math-inline>
+            </ode>
+            <ode independent_variable="t" name="U_equation" dependent_variable="U">
+                <math-inline>
+                        ((tscale * a) * (((b * v) * pervscale) - U))
+                </math-inline>
+            </ode>
+        </regime>
+        <!--Adding new regime for transe__v_gt_thresh-->
+        <transition name="transe__v_gt_thresh" from="default_regime" to="default_regime" condition="spike">
+            <assignment to="v" name="set_v">
+                <math-inline>
+                        (c * vscale)
+                </math-inline>
+            </assignment>
+            <assignment to="U" name="set_U">
+                <math-inline>
+                        (U + d)
+                </math-inline>
+            </assignment>
+            <event-port symbol="spike_output" mode="send"/>
+        </transition>
+        <!--Adding new regime for transe__t_gt_Idel_and_t_lt_Idel+Idur-->
+        <transition name="transe__t_gt_Idel_and_t_lt_Idel+Idur" from="default_regime" to="default_regime" condition="true__t_gt_Idel_and_t_lt_Idel+Idur">
+            <assignment to="I" name="set_I">
+                <math-inline>
+                        Iamp
+                </math-inline>
+            </assignment>
+        </transition>
+        <!--Adding new regime for transe__t_gt_Idel+Idur-->
+        <transition name="transe__t_gt_Idel+Idur" from="default_regime" to="default_regime" condition="true__t_gt_Idel+Idur">
+            <assignment to="I" name="set_I">
+                <math-inline>
+                        0
+                </math-inline>
+            </assignment>
+        </transition>
+    </component>
+
+    <!--Population izpopTonic contains components of: Component(id=izTonic type=izhikevichCell)-->
+
+
+    <!--Population izpopMixed contains components of: Component(id=izMixed type=izhikevichCell)-->
+
+
+    <!--Node izBurst is an instance of: izhikevichCell-->
+
+    <node name="izBurst">
+        <definition>
+            <url>.</url>
+            <!--Note: there needs to be some way to indentify the component (type) of this node...-->
+            <componentType>izhikevichCell</componentType>
+        </definition>
+        <properties>
+            <v0>
+                <value>-0.07</value>
+                <unit>kg m^2 s^-3 A^-1</unit>
+            </v0>
+            <a>
+                <value>0.02</value>
+                <unit>none</unit>
+            </a>
+            <b>
+                <value>0.2</value>
+                <unit>none</unit>
+            </b>
+            <c>
+                <value>-50.0</value>
+                <unit>none</unit>
+            </c>
+            <d>
+                <value>2.0</value>
+                <unit>none</unit>
+            </d>
+            <thresh>
+                <value>0.03</value>
+                <unit>kg m^2 s^-3 A^-1</unit>
+            </thresh>
+            <Iamp>
+                <value>15.0</value>
+                <unit>none</unit>
+            </Iamp>
+            <Idel>
+                <value>0.022</value>
+                <unit>s</unit>
+            </Idel>
+            <Idur>
+                <value>2.0</value>
+                <unit>s</unit>
+            </Idur>
+            <tscale>
+                <value>1000.0</value>
+                <unit>s^-1</unit>
+            </tscale>
+            <vscale>
+                <value>0.001</value>
+                <unit>kg m^2 s^-3 A^-1</unit>
+            </vscale>
+            <pervscale>
+                <value>1000.0</value>
+                <unit>kg^-1 m^-2 s^3 A</unit>
+            </pervscale>
+        </properties>
+    </node>
+
+    <!--Node izTonic is an instance of: izhikevichCell-->
+
+    <node name="izTonic">
+        <definition>
+            <url>.</url>
+            <!--Note: there needs to be some way to indentify the component (type) of this node...-->
+            <componentType>izhikevichCell</componentType>
+        </definition>
+        <properties>
+            <v0>
+                <value>-0.07</value>
+                <unit>kg m^2 s^-3 A^-1</unit>
+            </v0>
+            <a>
+                <value>0.02</value>
+                <unit>none</unit>
+            </a>
+            <b>
+                <value>0.2</value>
+                <unit>none</unit>
+            </b>
+            <c>
+                <value>-65.0</value>
+                <unit>none</unit>
+            </c>
+            <d>
+                <value>6.0</value>
+                <unit>none</unit>
+            </d>
+            <thresh>
+                <value>0.03</value>
+                <unit>kg m^2 s^-3 A^-1</unit>
+            </thresh>
+            <Iamp>
+                <value>14.0</value>
+                <unit>none</unit>
+            </Iamp>
+            <Idel>
+                <value>0.02</value>
+                <unit>s</unit>
+            </Idel>
+            <Idur>
+                <value>2.0</value>
+                <unit>s</unit>
+            </Idur>
+            <tscale>
+                <value>1000.0</value>
+                <unit>s^-1</unit>
+            </tscale>
+            <vscale>
+                <value>0.001</value>
+                <unit>kg m^2 s^-3 A^-1</unit>
+            </vscale>
+            <pervscale>
+                <value>1000.0</value>
+                <unit>kg^-1 m^-2 s^3 A</unit>
+            </pervscale>
+        </properties>
+    </node>
+
+    <!--Node izMixed is an instance of: izhikevichCell-->
+
+    <node name="izMixed">
+        <definition>
+            <url>.</url>
+            <!--Note: there needs to be some way to indentify the component (type) of this node...-->
+            <componentType>izhikevichCell</componentType>
+        </definition>
+        <properties>
+            <v0>
+                <value>-0.07</value>
+                <unit>kg m^2 s^-3 A^-1</unit>
+            </v0>
+            <a>
+                <value>0.02</value>
+                <unit>none</unit>
+            </a>
+            <b>
+                <value>0.2</value>
+                <unit>none</unit>
+            </b>
+            <c>
+                <value>-55.0</value>
+                <unit>none</unit>
+            </c>
+            <d>
+                <value>4.0</value>
+                <unit>none</unit>
+            </d>
+            <thresh>
+                <value>0.03</value>
+                <unit>kg m^2 s^-3 A^-1</unit>
+            </thresh>
+            <Iamp>
+                <value>10.0</value>
+                <unit>none</unit>
+            </Iamp>
+            <Idel>
+                <value>0.02</value>
+                <unit>s</unit>
+            </Idel>
+            <Idur>
+                <value>2.0</value>
+                <unit>s</unit>
+            </Idur>
+            <tscale>
+                <value>1000.0</value>
+                <unit>s^-1</unit>
+            </tscale>
+            <vscale>
+                <value>0.001</value>
+                <unit>kg m^2 s^-3 A^-1</unit>
+            </vscale>
+            <pervscale>
+                <value>1000.0</value>
+                <unit>kg^-1 m^-2 s^3 A</unit>
+            </pervscale>
+        </properties>
+    </node>
+    <group name="sim1">
+
+        <!--Population izpopBurst contains components of: Component(id=izBurst type=izhikevichCell)-->
+
+        <population name="izpopBurst">
+            <number>1</number>
+            <prototype>izBurst</prototype>
+        </population>
+
+        <!--Population izpopTonic contains components of: Component(id=izTonic type=izhikevichCell)-->
+
+        <population name="izpopTonic">
+            <number>1</number>
+            <prototype>izTonic</prototype>
+        </population>
+
+        <!--Population izpopMixed contains components of: Component(id=izMixed type=izhikevichCell)-->
+
+        <population name="izpopMixed">
+            <number>1</number>
+            <prototype>izMixed</prototype>
+        </population>
+    </group>
+</nineml>
