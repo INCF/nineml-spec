@@ -103,79 +103,27 @@ different simulators. To create such standards, the INCF has formed a
 program on Multiscale Modeling to develop a common standardized
 description language for neuronal network models.
 
-An oversight committee has been setup to guide the direction and
-objectives of the initiative with membership as follows:
+The name of the proposed standard is NineML (Network Interchange for
+Neuroscience Modeling Language) and its first version is aimed at
+descriptions of large networks of spiking neurons.
 
-\begin{itemize}
+\subsection{Scope}
 
-    \item Chair: Erik De Schutter, Okinawa Institute of Science and Technology, Japan
-    \item Ad Aertsen, Bernstein Center, Freiburg, Germany
-    \item Upinder Bhalla, National Center for Biological Sciences, Bangalore, India
-    \item Nicolas Brunel, CNRS-Université René Descartes, Paris, France
-    \item Sharon Crook, Arizona State University, Tempe, USA
-    \item Gustavo Deco, Universitat Pompeu Fabra, Barcelona, Spain
-    \item Markus Diesmann, RIKEN, Wako, Japan
-    \item Tomoki Fukai, RIKEN, Wako, Japan
-    \item Wulfram Gerstner, LCN, EPFL, Lausanne, Switzerland
-    \item Stephen Grossberg, Boston University, MA, USA
-    \item Rolf Kötter, Radboud University, Nijmegen, The Netherlands
-    \item Anders Lansner, Royal Institute of Technology (KTH), Stockholm, Sweden
-    \item Peter Latham, Gatsby Computational Neuroscience Unit, London, UK
-    \item Christiane Linster, Cornell University, Ithaca, NY, USA
-    \item Wolfgang Maass, Technische Universität Graz, Austria
-    \item Ernst Niebur, Johns Hopkins University, Baltimore, MD, USA
-    \item Felix Schürmann, EPFL, Lausanne, Switzerland
-    \item Simon Thorpe, Faculté de Médecine de Rangueil, Toulouse, France
-    \item Alessandro Treves, International School for Advanced Studies (SISSA), Trieste, Italy
-    \item Shiro Usui, RIKEN, Wako, Japan
-    \item Mark van Rossum, University of Edinburgh, UK
-    \item Xiao-Jing Wang, Yale University, New Haven, CT, USA
+The purpose of NineML is to provide a computer language for
+unambiguous description of computational neuroscience models of
+networks of spiking neurons.
 
-\end{itemize}
+Model description in NineML is intended to be formal in the sense that
+it is possible to interpret it unambiguously.  NineML is intended to
+describe the network architecture, parameters and equations that
+govern the dynamics of a network of spiking neurons. The behavioral
+aspects of such a system, such as input stimulus, and the numerical
+implementation details, such as integration method used, have to be
+described using different techniques.
 
+\subsection{Objective}
 
-A task force has been assembled to evaluate and implement the
-recommendations of the oversight committee with membership as follows:
-
-\begin{itemize}
-
-    \item Lead: Sean Hill, BMI, EPFL, Lausanne, Switzerland 
-    \item Lead: Anatoli Gorchetchnikov, Boston University, USA
-    \item Lead: Ivan Raikov, Okinawa Institute of Science and Technology, Japan
-    \item Board Secretary: Yann Le Franc, University of Antwerp, Belgium
-    \item Robert Cannon, Textensor Limited, Edinburgh, UK
-    \item Robert Clewley, Georgia State University, Atlanta, USA
-    \item Hugo Cornelis, University of Texas Health Science Center, San Antonio, USA
-    \item Andrew Davison, CNRS, Gif-sur-Yvette, France
-    \item Erik De Schutter, Okinawa Institute of Science and Technology, Okinawa, Japan
-    \item Mikael Djurfeldt, INCF Secretariat and PDC, 
-Royal Institute of Technology, Stockholm, Sweden
-    \item Padraig Gleeson, University College London, UK
-    \item Michael Hines, Yale University, New Haven, CT, USA
-    \item Birgit Kriener, Max Planck Institute for Dynamics and Self-Organization, 
-Göttingen, Germany
-
-    \item Chung-Chuan Lo, National Tsing Hua University, Hsinchu, Taiwan
-    \item Abigail Morrison, Bernstein Center Freiburg, Germany
-    \item Eilif Muller, LCN, EPFL, Lausanne, Switzerland
-    \item Hans Ekkehard Plesser, Norwegian University of Life Sciences, Aas, Norway
-    \item Subhasis Ray, National Center for Biological Sciences, Bangalore, India
-    \item Lars Schwabe, University of Rostock, Germany
-    \item Botond Szatmary, Neurosciences Institute, San Diego, CA, USA
-
-\end{itemize}
-
-and thus includes the authors or primary contributors to a wide
-variety of computational neuroscience efforts including the Blue Brain
-Project, GENESIS-3, KInNeSS, MOOSE, NEURON, NEST, PyNN and NeuroML.
-
-\subsection{Design considerations}
-
-The name of the proposed standard is Network
-Interchange for Neuroscience Modeling Language (NineML) and its first
-version is aimed at descriptions of large networks of spiking neurons.
-
-Key concepts of spiking neuron network modeling are
+The key concepts of spiking neuron network modeling are:
 
 \begin{enumerate}
 \item spiking neurons
@@ -184,11 +132,13 @@ Key concepts of spiking neuron network modeling are
 \item connectivity patterns across populations of neurons. 
 \end{enumerate}
 
-Accordingly, the INCF Task Force on Multiscale Modeling has identified
-a set of mathematical abstractions that are capable of representing
-these concepts in a computer language.  
+Accordingly, NineML defines a set of mathematical abstractions that
+are capable of representing these concepts.
 
-\subsection{User layer and Abstraction layer}
+\subsection{Design Considerations}
+
+
+\subsubsection{User layer and Abstraction layer}
 
 The design of NineML is divided in two semantic layers: an abstraction
 layer (the subject of the present document) that provides the core
@@ -205,10 +155,8 @@ clear definition of which aspects of a model are defined in the User
 Layer and which are defined in the Abstraction Layer. In addition, the
 mechanisms for naming and addressing Abstraction Layer definitions
 from the User Layer must be compatible between layers.
-
-
  
-\subsection{Implementation assumptions}
+\subsubsection{Implementation assumptions}
 
 One of the goals identified by task force members, was to maintain a
 clear distinction between the role of NineML and a simulator. NineML
@@ -219,7 +167,7 @@ performance reasons, it is important to keep the language layer
 responsible for maintaining separate representations of the
 instantiated network.  
 
-\subsection{Language syntax}
+\subsubsection{Language syntax}
 
 It is envisioned that the language should not require a
 specific syntax. Rather it is anticipated that the language can be
@@ -227,28 +175,7 @@ employed by defining the model elements in a variety of different
 syntaxes including native, Python or Java (for example), and this
 layer will generate the declarative XML representation.
 
-\section{The NineML Abstraction Layer Architecture}
-
-The NineML Abstraction Layer architecture is composed of an Object
-Model, an intepreted language, and an XML serialization schema.
-
-The NineML Object Model is the set of fundamental building blocks of
-the NineML model architecture.  It defines the core concepts of NineML
-and encapsulates them into objects as per the Object Oriented
-Programming Paradigm.  
-
-The NineML interpreted language is a native, compact and complete
-domain specific interpreted language which specifies a minimal grammar for
-populating the NineML object model.  
-
-The NineML XML schema specifies how a NineML compliant program is to
-parse and emit NineML in a XML structured document.  The XML schema
-directly mirrors the NineML object model.
-
-The NineML object model, interpreted language, and XML schema are
-discussed in turn in the following sections.
-
-\subsection{Reading this section}
+\subsection{Conventions}
 
 Some conventions which are followed: 
 
@@ -257,31 +184,118 @@ Some conventions which are followed:
  
 \end{itemize}
 
-\subsection{Object Model}
+\section{Abstraction Layer}
 
-The NineML Object Model is the set of fundamental building blocks of
-the NineML model architecture.  It defines the core concepts of NineML
-and encapsulates them into objects as per the Object Oriented
-Programming Paradigm.  For a given implementation, the objects may
-provide a wide range of programmatic methods for manipulating and
-constructing NineML objects.  However, the content and state of these
-objects and their interconnections is designed to be an effectively
-declarative data abstraction of the scientists modeling concepts.
-Following the discipline of mapping the Scientist's model to a
-representation in the NineML Object Model data abstraction is the
-first step to implementing a NineML compliant model description.
+The NineML Abstraction Layer specification consists of an Object
+Model, a native grammar and semantics, and an XML serialization
+format.
 
-Instantiating the NineML object model representation then can take
-multiple forms.  We can employ the object oriented programming
-features of most modern programming languages paired with a suitable
-NineML abstraction layer API to instantiate the objects, or we can
-write the model directly in the XML schema (as discussed below), or we
-can employ the custom NineML Interpreted Langauge as a compact
-representation and rely on its supported code generation and
-translation features to bring the model into a form that it can be
-supported in the user's desired simulation environment.
+The NineML Object Model specifies the core concepts of NineML and the
+object-oriented interface to them.
 
-\subsubsection{Regimes and Transitions}
+The NineML native grammar and semantics give a complete
+specification of a domain-specific language that reflects the NineML
+object model.
+
+The NineML XML format specifies how a NineML compliant program is to
+parse and emit NineML in a XML structured document.  The NineML XML
+schema reflects the NineML object model.
+
+The NineML object model, native language, and XML schema are discussed
+in turn in the following sections.
+
+A NineML object model representation then can take multiple forms.  A
+program can employ a concrete representation of the NineML objects in
+a specific programming language, or it can convert an internal model
+representation to and from the NineML XML schema, or it can take the
+form of an interpreter for the NineML native language as a compact
+representation and use code generation to produce a model
+representation for a target simulation environment.
+
+\subsection{Core Concepts}
+
+\subsubsection{Bindings}
+
+\nmlClass{Binding}s may be used for defining local parameters which are not exposed to the user, such as 
+\begin{lstlisting}[style=display]
+mypi := 3.14
+\end{lstlisting}
+or for defining function which are themselves a
+composition of the \nmlClass{Binding} \emph{arguments}, other functions and parameters (but not
+ \nmlClass{StateVariable}s).  For example,
+\begin{lstlisting}[style=display]
+F(X,Y) = sin(X**2+Y**2) + 10
+\end{lstlisting}
+When used in the rhs of \nmlClass{Equation}s, \nmlClass{Binding}s may be passed arguments which
+are any valid \nmlClass{Equation}, including \nmlClass{StateVariable}s.
+
+\subsubsection{Namespaces}
+
+Tying all these concepts together into the final resulting model is
+the purpose of the \nmlClass{Component}.  The \nmlClass{Component} then is the
+conglomerating object which is the subject of interaction with the
+\textbf{User Layer}.  To allow for modular composition of \nmlClass{Component}s
+from sub-\nmlClass{Component}s, and to avoid name collision with symbols and
+functions provided in standard libraries, a mechanism of namespace
+encapsulation is required, and implemented by the \nmlClass{Container} object.
+
+After construction, a \nmlClass{Component} must define the following properties:
+\begin{itemize}
+\item An unordered collection of \nmlClass{Transition}s which connect the \nmlClass{Regime}s
+  of the \nmlClass{Component} by assigning sources and targets from the named
+  collection of \nmlClass{Regime}s. 
+
+\item A \nmlClass{Container} object which contains an unordered named collection of 
+\begin{itemize}
+\item sub-\nmlClass{Container} objects (may be user defined, or imported from the NineML standard libraray (see Section \ref{nml_lib}).
+\item at least one \nmlClass{Regime} in the \nmlClass{Container} or its sub-\nmlClass{Container}s.
+\item \nmlClass{StateVariable}s.
+\item \nmlClass{Parameter}s.
+\item \nmlClass{EventPort}s.
+\item \nmlClass{AnalogPort}s.
+\item \nmlClass{Binding}s.
+\end{itemize}
+
+The following points are to be observed:
+\begin{itemize}
+\item All \nmlClass{StateVariable} symbols defined by the
+  \nmlClass{Regime}s in the \nmlClass{Component} should be by default
+  exposed in the collection of \nmlClass{AnalogPort} objects with
+  mode=send.
+\item All objects in a \nmlClass{Container}, such as
+  \nmlClass{Regime}s, \nmlClass{Equation}s, \nmlClass{Port}s, etc. do
+  name look-up in the \nmlClass{Component} \nmlClass{Container}
+  hierarchy using the \nmlClass{Container} they are contained in for
+  the root scope.
+\item \nmlClass{Condition}s, and source and target \nmlClass{Regime}
+  names in the \nmlClass{Component} \nmlClass{Transition}s do name
+  look up with scoping as if they are contained in the Component root
+  Container.
+\end{itemize}
+
+Implementations of the object model will likely want to provide
+query/filter methods for Containers, such that all names of a given
+type (e.g. \nmlClass{EventPort}) are returned.
+
+\end{itemize}
+
+\subsubsection{Access Paths for Nested Namespaces}
+
+Since \nmlClass{Container}s can be nested, names in
+sub-\nmlClass{Container}s of the current scope can be accessed via dot
+notation, e.g. \verb^M.x^ to refers to the member \verb^x^ of
+container \verb^M^.  To avoid ambiguity, we require that all members of
+a container (at the same nesting level) have distinct names. For
+example, a container \verb^C^ cannot have two members named \verb^m^, because we
+would not know which type \verb^C.m^ refers to.
+
+However, sub-containers can still define members with the same name as
+members from an enclosing container, since the path notation
+distinguishes them. For instance, \verb^C^ can have a member \verb^m^ and a
+sub-container \verb^D^ with another member \verb^m^.  The former member \verb^m^ is
+referred to as \verb^C.m^, and the latter as \verb^C.D.m^. 
+
+\subsection{Diagrams}
 
 To handle events and spiking dynamics, but also domains of continuous
 dynamics, we propose a flexible block diagram notation.  The notation
@@ -289,8 +303,8 @@ represents continuous and discrete variables, their evolution
 according to a set of rules such as a system of ordinary differential
 equations, a \nmlClass{Regime}, and the conditions that induce a change of
 Regime and/or discontinous changes in Regime state variables, a
-\nmlClass{Transition}, such as the transition from subthreshold to spiking
-and refractory modes.
+\nmlClass{Transition}, such as the transition from subthreshold to
+spiking and refractory modes.
 
 % Definition notation
 
@@ -382,21 +396,6 @@ where the functions are drawn from the component library available to
 the model, as discussed in section \ref{nml_lib}, and arguments
 can be of type \nmlClass{Parameter} or \nmlClass{StateVariable}.  \nmlClass{Bindings} are discussed in the next section.
 
-\subsubsection{Bindings} 
-
-\nmlClass{Binding}s may be used for defining local parameters which are not exposed to the user, such as 
-\begin{lstlisting}[style=display]
-mypi := 3.14
-\end{lstlisting}
-or for defining function which are themselves a
-composition of the \nmlClass{Binding} \emph{arguments}, other functions and parameters (but not
- \nmlClass{StateVariable}s).  For example,
-\begin{lstlisting}[style=display]
-F(X,Y) = sin(X**2+Y**2) + 10
-\end{lstlisting}
-When used in the rhs of \nmlClass{Equation}s, \nmlClass{Binding}s may be passed arguments which
-are any valid \nmlClass{Equation}, including \nmlClass{StateVariable}s.
-
 \subsubsection{Conditions}
 
 \nmlClass{Condition}s are the mathematical expressions which define
@@ -438,73 +437,6 @@ Connection rules for ports of different types.
 Objects of the following classes are bound to a name in a \nmlClass{Container}:
 \nmlClass{StateVariable}, \nmlClass{Parameter}, \nmlClass{Binding},
 \nmlClass{Port}, \nmlClass{Regime}, \nmlClass{Container}.
-
-\subsubsection{Components and Containers}
-
-Tying all these concepts together into the final resulting model is
-the purpose of the \nmlClass{Component}.  The \nmlClass{Component} then is the
-conglomerating object which is the subject of interaction with the
-\textbf{User Layer}.  To allow for modular composition of \nmlClass{Component}s
-from sub-\nmlClass{Component}s, and to avoid name collision with symbols and
-functions provided in standard libraries, a mechanism of namespace
-encapsulation is required, and implemented by the \nmlClass{Container} object.
-
-After construction, a \nmlClass{Component} must define the following properties:
-\begin{itemize}
-\item An unordered collection of \nmlClass{Transition}s which connect the \nmlClass{Regime}s
-  of the \nmlClass{Component} by assigning sources and targets from the named
-  collection of \nmlClass{Regime}s. 
-
-\item A \nmlClass{Container} object which contains an unordered named collection of 
-\begin{itemize}
-\item sub-\nmlClass{Container} objects (may be user defined, or imported from the NineML standard libraray (see Section \ref{nml_lib}).
-\item at least one \nmlClass{Regime} in the \nmlClass{Container} or its sub-\nmlClass{Container}s.
-\item \nmlClass{StateVariable}s.
-\item \nmlClass{Parameter}s.
-\item \nmlClass{EventPort}s.
-\item \nmlClass{AnalogPort}s.
-\item \nmlClass{Binding}s.
-\end{itemize}
-
-The following points are to be observed:
-\begin{itemize}
-\item All \nmlClass{StateVariable} symbols defined by the
-  \nmlClass{Regime}s in the \nmlClass{Component} should be by default
-  exposed in the collection of \nmlClass{AnalogPort} objects with
-  mode=send.
-\item All objects in a \nmlClass{Container}, such as
-  \nmlClass{Regime}s, \nmlClass{Equation}s, \nmlClass{Port}s, etc. do
-  name look-up in the \nmlClass{Component} \nmlClass{Container}
-  hierarchy using the \nmlClass{Container} they are contained in for
-  the root scope.
-\item \nmlClass{Condition}s, and source and target \nmlClass{Regime}
-  names in the \nmlClass{Component} \nmlClass{Transition}s do name
-  look up with scoping as if they are contained in the Component root
-  Container.
-\end{itemize}
-
-Implementations of the object model will likely want to provide
-query/filter methods for Containers, such that all names of a given
-type (e.g. \nmlClass{EventPort}) are returned.
-
-\end{itemize}
-
-
-\subsubsection{Access Paths for Nested Containers}
-
-Since \nmlClass{Container}s can be nested, names in
-sub-\nmlClass{Container}s of the current scope can be accessed via dot
-notation, e.g. \verb^M.x^ to refers to the member \verb^x^ of
-container \verb^M^.  To avoid ambiguity, we require that all members of
-a container (at the same nesting level) have distinct names. For
-example, a container \verb^C^ cannot have two members named \verb^m^, because we
-would not know which type \verb^C.m^ refers to.
-
-However, sub-containers can still define members with the same name as
-members from an enclosing container, since the path notation
-distinguishes them. For instance, \verb^C^ can have a member \verb^m^ and a
-sub-container \verb^D^ with another member \verb^m^.  The former member \verb^m^ is
-referred to as \verb^C.m^, and the latter as \verb^C.D.m^. 
 
 \subsubsection{Summary of Objects}
 
@@ -705,6 +637,74 @@ conformance testing in the NineML conformance testing suite.
 
 \part*{Appendix}
 \addcontentsline{toc}{part}{Appendix}
+
+\section{INCF Task Force}
+
+An oversight committee has been setup to guide the direction and
+objectives of the initiative with membership as follows:
+
+\begin{itemize}
+
+    \item Chair: Erik De Schutter, Okinawa Institute of Science and Technology, Japan
+    \item Ad Aertsen, Bernstein Center, Freiburg, Germany
+    \item Upinder Bhalla, National Center for Biological Sciences, Bangalore, India
+    \item Nicolas Brunel, CNRS-Université René Descartes, Paris, France
+    \item Sharon Crook, Arizona State University, Tempe, USA
+    \item Gustavo Deco, Universitat Pompeu Fabra, Barcelona, Spain
+    \item Markus Diesmann, RIKEN, Wako, Japan
+    \item Tomoki Fukai, RIKEN, Wako, Japan
+    \item Wulfram Gerstner, LCN, EPFL, Lausanne, Switzerland
+    \item Stephen Grossberg, Boston University, MA, USA
+    \item Rolf Kötter, Radboud University, Nijmegen, The Netherlands
+    \item Anders Lansner, Royal Institute of Technology (KTH), Stockholm, Sweden
+    \item Peter Latham, Gatsby Computational Neuroscience Unit, London, UK
+    \item Christiane Linster, Cornell University, Ithaca, NY, USA
+    \item Wolfgang Maass, Technische Universität Graz, Austria
+    \item Ernst Niebur, Johns Hopkins University, Baltimore, MD, USA
+    \item Felix Schürmann, EPFL, Lausanne, Switzerland
+    \item Simon Thorpe, Faculté de Médecine de Rangueil, Toulouse, France
+    \item Alessandro Treves, International School for Advanced Studies (SISSA), Trieste, Italy
+    \item Shiro Usui, RIKEN, Wako, Japan
+    \item Mark van Rossum, University of Edinburgh, UK
+    \item Xiao-Jing Wang, Yale University, New Haven, CT, USA
+
+\end{itemize}
+
+
+A task force has been assembled to evaluate and implement the
+recommendations of the oversight committee with membership as follows:
+
+\begin{itemize}
+
+    \item Lead: Sean Hill, BMI, EPFL, Lausanne, Switzerland 
+    \item Lead: Anatoli Gorchetchnikov, Boston University, USA
+    \item Lead: Ivan Raikov, Okinawa Institute of Science and Technology, Japan
+    \item Board Secretary: Yann Le Franc, University of Antwerp, Belgium
+    \item Robert Cannon, Textensor Limited, Edinburgh, UK
+    \item Robert Clewley, Georgia State University, Atlanta, USA
+    \item Hugo Cornelis, University of Texas Health Science Center, San Antonio, USA
+    \item Andrew Davison, CNRS, Gif-sur-Yvette, France
+    \item Erik De Schutter, Okinawa Institute of Science and Technology, Okinawa, Japan
+    \item Mikael Djurfeldt, INCF Secretariat and PDC, 
+Royal Institute of Technology, Stockholm, Sweden
+    \item Padraig Gleeson, University College London, UK
+    \item Michael Hines, Yale University, New Haven, CT, USA
+    \item Birgit Kriener, Max Planck Institute for Dynamics and Self-Organization, 
+Göttingen, Germany
+
+    \item Chung-Chuan Lo, National Tsing Hua University, Hsinchu, Taiwan
+    \item Abigail Morrison, Bernstein Center Freiburg, Germany
+    \item Eilif Muller, LCN, EPFL, Lausanne, Switzerland
+    \item Hans Ekkehard Plesser, Norwegian University of Life Sciences, Aas, Norway
+    \item Subhasis Ray, National Center for Biological Sciences, Bangalore, India
+    \item Lars Schwabe, University of Rostock, Germany
+    \item Botond Szatmary, Neurosciences Institute, San Diego, CA, USA
+
+\end{itemize}
+
+and thus includes the authors or primary contributors to a wide
+variety of computational neuroscience efforts including the Blue Brain
+Project, GENESIS-3, KInNeSS, MOOSE, NEURON, NEST, PyNN and NeuroML.
 
 \section{\label{ap_examples}NineML Abstraction Layer Examples}
 
