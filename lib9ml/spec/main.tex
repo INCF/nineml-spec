@@ -1,12 +1,14 @@
 \documentclass[a4paper]{article}
 
-\usepackage{fancyheadings}
+\usepackage{fancyhdr}
 \usepackage[left=1.375in,right=1.375in]{geometry}
 \usepackage[dvips]{graphicx}
 \usepackage{color}
 \usepackage{url}
 \usepackage{natbib}
 \usepackage{listings}
+\usepackage{amssymb}
+\usepackage{amsmath}
 
 \definecolor{CodeBackground}{rgb}{0.9, 0.95, 0.95}
 \lstset{ %
@@ -175,14 +177,6 @@ employed by defining the model elements in a variety of different
 syntaxes including native, Python or Java (for example), and this
 layer will generate the declarative XML representation.
 
-\subsection{Conventions}
-
-Some conventions which are followed: 
-
-\begin{itemize}
-\item \nmlClass{Regime} - Denotes a class in the NineML Object Model.
- 
-\end{itemize}
 
 \section{Abstraction Layer}
 
@@ -193,13 +187,13 @@ format.
 The NineML Object Model specifies the core concepts of NineML and the
 object-oriented interface to them.
 
-The NineML native grammar and semantics give a complete
-specification of a domain-specific language that reflects the NineML
-object model.
+The NineML native grammar and semantics give a complete specification
+of a domain-specific language that is isomorphic the NineML object
+model.
 
 The NineML XML format specifies how a NineML compliant program is to
 parse and emit NineML in a XML structured document.  The NineML XML
-schema reflects the NineML object model.
+schema is isomorphic to the NineML object model.
 
 The NineML object model, native language, and XML schema are discussed
 in turn in the following sections.
@@ -212,24 +206,108 @@ form of an interpreter for the NineML native language as a compact
 representation and use code generation to produce a model
 representation for a target simulation environment.
 
+
+\subsection{Conventions}
+
+Some conventions which are followed: 
+
+\begin{itemize}
+\item \nmlClass{Regime} - Denotes a class in the NineML Object Model.
+ 
+\end{itemize}
+
+[FIXME: define a convention for interfaces in the object model description]
+
 \subsection{Core Concepts}
 
 \subsubsection{Bindings}
 
-\nmlClass{Binding}s may be used for defining local parameters which are not exposed to the user, such as 
-\begin{lstlisting}[style=display]
-mypi := 3.14
-\end{lstlisting}
-or for defining function which are themselves a
-composition of the \nmlClass{Binding} \emph{arguments}, other functions and parameters (but not
- \nmlClass{StateVariable}s).  For example,
-\begin{lstlisting}[style=display]
-F(X,Y) = sin(X**2+Y**2) + 10
-\end{lstlisting}
-When used in the rhs of \nmlClass{Equation}s, \nmlClass{Binding}s may be passed arguments which
-are any valid \nmlClass{Equation}, including \nmlClass{StateVariable}s.
+A fundamental aspect of a programming language is how it uses names to
+refer to computational objects.  We refer to NineML names as labels
+and to computational objects as values, and we say that labels
+identify values.
+
+In the NineML abstraction layer, the naming of values is represented
+with the \nmlClass{Binding} object:
+
+\begin{equation*}
+\begin{array}{ll}
+   Binding & ::= Label \times Value \\
+\end{array}
+\end{equation*}
+
+Once a label is declared in a binding, its associated value can be
+reached by other bindings in the program, according to the scoping
+rules of the NineML nmlClass{Namespace} object, as described in the
+following section.
+
+The interface to a binding object must provide the following methods:
+\begin{equation*}
+\begin{array}{ll}
+   \mathbf{label} & :: Binding \rightarrow Label \\ & \textrm{[Returns the label of a binding]} \\
+   \mathbf{value} & :: Binding \rightarrow Value \\ & \textrm{[Returns the value of a binding]} \\
+\end{array}
+\end{equation*}
+
+\subsubsection{Values}
+
+
 
 \subsubsection{Namespaces}
+
+A NineML Abstraction Layer namespace is an ordered collection of
+bindings and sub-namespaces. 
+
+\begin{equation*}
+\begin{array}{ll}
+   Namespace & ::= NameEntry \quad collection \\
+   NameEntry & ::= Binding \quad  \lvert \quad Label \times Namespace \\
+\end{array}
+\end{equation*}
+
+\begin{itemize}
+\item A value in a binding must not refer to a name that is not in the
+  current namespace scope.
+\item A value in a binding can refer to a binding preceding the current binding in the
+  current namespace scope.
+\item All entries in a namespace (at the same scope) have distinct
+  names. For example, a namespace \verb^C^ cannot have two members
+  named \verb^m^, because we would not know which type \verb^C.m^
+  refers to.
+\item Sub-namespaces can still have entries with the same name as
+  entries from an outer enclosing namespace. For instance, \verb^C^
+  can have an entry \verb^m^ and a sub-namespace \verb^D^ with another
+  entry \verb^m^.  The former entry \verb^m^ is referred to as
+  \verb^C.m^, and the latter as \verb^C.D.m^.
+\end{itemize}
+
+The interface to a binding object must provide the following methods:
+\begin{equation*}
+\begin{array}{ll}
+   \mathbf{find}  & :: Namespace \times AccessPath \rightarrow
+   NameEntry \cup \emptyset \\
+   & \textrm{[Returns an entry with the given access path from a namespace]} \\
+   \mathbf{signature}  & :: Namespace \rightarrow (Label \times Type) \quad collection \\
+   & \textrm{[Returns the types of all entries in the namespace]} \\
+\end{array}
+\end{equation*}
+
+\subsubsection{Access Paths for Nested Namespaces}
+
+\begin{equation*}
+\begin{array}{ll}
+   AccessPath & ::= Label  \quad \lvert \quad AccessPath \times Label \\
+\end{array}
+\end{equation*}
+
+Since \nmlClass{Namespace}s can be nested, names in
+sub-\nmlClass{Namespace}s of the current scope can be accessed via dot
+notation, e.g. \verb^M.x^ to refer to the member \verb^x^ of container
+\verb^M^.
+
+
+
+\subsubsection{Specalized Namespaces}
 
 Tying all these concepts together into the final resulting model is
 the purpose of the \nmlClass{Component}.  The \nmlClass{Component} then is the
@@ -279,21 +357,6 @@ type (e.g. \nmlClass{EventPort}) are returned.
 
 \end{itemize}
 
-\subsubsection{Access Paths for Nested Namespaces}
-
-Since \nmlClass{Container}s can be nested, names in
-sub-\nmlClass{Container}s of the current scope can be accessed via dot
-notation, e.g. \verb^M.x^ to refers to the member \verb^x^ of
-container \verb^M^.  To avoid ambiguity, we require that all members of
-a container (at the same nesting level) have distinct names. For
-example, a container \verb^C^ cannot have two members named \verb^m^, because we
-would not know which type \verb^C.m^ refers to.
-
-However, sub-containers can still define members with the same name as
-members from an enclosing container, since the path notation
-distinguishes them. For instance, \verb^C^ can have a member \verb^m^ and a
-sub-container \verb^D^ with another member \verb^m^.  The former member \verb^m^ is
-referred to as \verb^C.m^, and the latter as \verb^C.D.m^. 
 
 \subsection{Diagrams}
 
@@ -493,13 +556,12 @@ value can be reached by other bindings in the program, according to
 the scoping rules of the NineML interpreter, as described in the
 following sections.
 
-In general, values may have very complex structures, and it would be
-extremely inconvenient to have to remember and repeat their details
-each time we want to use them. Instead, we can use simple labels to
-refer to the results of compound operations, such as the circumference
-computed above. Complex values in NineML are constructed by building
-computational objects of increasing complexity as a sequence of
-bindings.
+In general, values may have very complex structures, and it would not
+be practical to have to remember and repeat their details each time we
+want to use them. Instead, we can use simple labels to refer to the
+results of compound operations. Complex values in NineML are
+constructed by building computational objects of increasing complexity
+as a sequence of bindings.
 
  
 \subsubsection{Expressions}
