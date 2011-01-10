@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<nineml xmlns="http://nineml.org/9ML/0.1">
+  <component name="GuetigSTDP">
+    <parameter name="mu"/>
+    <parameter name="alpha"/>
+    <parameter name="tau_minus"/>
+    <parameter name="learning_rate"/>
+    <parameter name="tau_plus"/>
+    <analog-port symbol="W" mode="send"/>
+    <analog-port symbol="r" mode="send"/>
+    <analog-port symbol="o" mode="send"/>
+    <analog-port symbol="t" mode="send"/>
+    <regime name="Regime0">
+      <ode independent_variable="t" name="ODE0" dependent_variable="r">
+        <math-inline>-r/tau_plus</math-inline>
+      </ode>
+      <ode independent_variable="t" name="ODE1" dependent_variable="o">
+        <math-inline>-o/tau_minus</math-inline>
+      </ode>
+    </regime>
+    <transition to="Regime0" from="Regime0" name="Transition0">
+      <condition-on-event-port>
+        <event-port symbol="spike_pre" mode="recv"/>
+      </condition-on-event-port>
+      <inplace to="W" name="InplaceSub0" op="-=">
+        <math-inline>o*learning_rate*alpha*W**mu</math-inline>
+      </inplace>
+      <assignment to="W" name="Assignment0">
+        <math-inline>max(W,0.0)</math-inline>
+      </assignment>
+      <inplace to="r" name="InplaceAdd1" op="+=">
+        <math-inline>1.0</math-inline>
+      </inplace>
+    </transition>
+    <transition to="Regime0" from="Regime0" name="Transition1">
+      <condition-on-event-port>
+        <event-port symbol="spike_post" mode="recv"/>
+      </condition-on-event-port>
+      <inplace to="W" name="InplaceAdd2" op="+=">
+        <math-inline>r*learning_rate*(1-W)**mu</math-inline>
+      </inplace>
+      <assignment to="W" name="Assignment1">
+        <math-inline>min(W,1.0)</math-inline>
+      </assignment>
+      <inplace to="o" name="InplaceAdd3" op="+=">
+        <math-inline>1.0</math-inline>
+      </inplace>
+    </transition>
+  </component>
+</nineml>
