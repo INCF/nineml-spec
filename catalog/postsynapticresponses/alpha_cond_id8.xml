@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<nineml xmlns="http://nineml.org/9ML/0.1">
+  <component name="alpha_cond_id8">
+    <parameter name="E"/>
+    <parameter name="tau_a"/>
+    <analog-port symbol="W" mode="recv"/>
+    <analog-port symbol="g" mode="send"/>
+    <analog-port symbol="g_a" mode="send"/>
+    <analog-port symbol="V" mode="recv"/>
+    <analog-port symbol="t" mode="send"/>
+    <analog-port symbol="Isyn" expression="g(E-V)" mode="send"/>
+    <regime name="Regime1">
+      <ode independent_variable="t" name="ODE1" dependent_variable="g_a">
+        <math-inline>-g_a/tau_a</math-inline>
+      </ode>
+      <ode independent_variable="t" name="ODE2" dependent_variable="g">
+        <math-inline>g_a - g/tau_a</math-inline>
+      </ode>
+    </regime>
+    <transition to="Regime1" from="Regime1" name="Transition1">
+      <condition-on-event-port>
+        <event-port symbol="spike_input" mode="recv"/>
+      </condition-on-event-port>
+      <inplace to="g" name="InplaceAdd0" op="+=">
+        <math-inline>W</math-inline>
+      </inplace>
+    </transition>
+  </component>
+</nineml>

@@ -30,19 +30,18 @@ leaky_iaf = nineml.Component("gLIFid8", regimes = regimes, ports = ports)
 
 regimes = [
     nineml.Regime(
-        "dge_a/dt = -ge_a/tau_a",
-        "dge/dt = ge_a - ge/tau_a",
-        "dgi_a/dt = -gi_a/tau_a",
-        "dgi/dt = gi_a - gi/tau_a",
-        transitions = nineml.On(nineml.SpikeInputEvent,do="ge+=q"),
+        "dg_a/dt = -g_a/tau_a",
+        "dg/dt = g_a - g/tau_a",
+        transitions = nineml.On(nineml.SpikeInputEvent,do="g+=W"),
         )]
         
 ports = [nineml.RecvPort("V"),
-         nineml.SendPort("Isyn = ge(Ee-V) + gi(Ei-V)")]
-#transitions are wrong - need to access the W being output by the plastic synapse
-#as q is not known a priori
+         nineml.RecvPort("W"),
+         nineml.SendPort("Isyn = g(E-V)")]
+#how to access the W being output by a synapse?
 
-coba_syn = nineml.Component("gLIFid8_cond", regimes = regimes, ports = ports)
+
+coba_syn = nineml.Component("alpha_cond_id8", regimes = regimes, ports = ports)
 
 # User layer connects
 # leaky_iaf.ports['V'] -> coba_syn.ports['V']
@@ -76,7 +75,7 @@ try:
 except NameError:
     import os
 
-    base = "gLIFcond_id8"
+    base = "alpha_cond_id8"
     c1.write(base+".xml")
     c2 = nineml.parse(base+".xml")
     assert c1==c2

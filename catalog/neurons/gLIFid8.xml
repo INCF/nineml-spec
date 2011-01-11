@@ -7,8 +7,8 @@
     <parameter name="Rm"/>
     <analog-port symbol="V" mode="send"/>
     <analog-port symbol="Isyn" mode="reduce" op="+"/>
-    <analog-port symbol="t" mode="send"/>
     <analog-port symbol="tspike" mode="send"/>
+    <analog-port symbol="t" mode="send"/>
     <regime name="sub-threshold-regime">
       <ode independent_variable="t" name="ODE0" dependent_variable="V">
         <math-inline>(Vrest - V)/(Rm*Cm) + Isyn/Cm</math-inline>
