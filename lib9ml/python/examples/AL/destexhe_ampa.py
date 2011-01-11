@@ -180,7 +180,8 @@ on_regime = Regime(
             ]
     )
 
-ports = [RecvPort("V"),
+ports = [RecvPort("weight"),
+         RecvPort("V"),
          SendPort("Isyn = g(Ron,Roff)*(E-V)"), # this notation takes the assignment of Isyn out of the Regime
          SendPort("gsyn = g(Ron,Roff)")]
 

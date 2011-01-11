@@ -35,12 +35,14 @@ regimes = [
         "dR/dt = (1-R)/tau_r",  # tau_r is the recovery time constant for depression
         "du/dt = -(u-U)/tau_f", # tau_f is the time constant of facilitation
         transitions = nineml.On(nineml.SpikeInputEvent,
-                           do=["W = u*R",
+                           do=["Wout = u*R*Win",
                                "R -= u*R",
-                               "u += U*(1-u)"])  # Should I put a SpikeOutputEvent here?
+                               "u += U*(1-u)",
+                               nineml.SpikeInputEventRelay])  # Should I put a SpikeOutputEvent here?
     )]
 
-ports = [nineml.SendPort("W")]
+ports = [nineml.RecvPort("Win")
+         nineml.SendPort("Wout")]
 
 c1 = nineml.Component("MarkramSynapseDynamics", regimes=regimes, ports = ports)
 
