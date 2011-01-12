@@ -6,9 +6,9 @@
 # Maintainer: 
 # Created: Wed Jan  5 12:23:02 2011 (+0530)
 # Version: 
-# Last-Updated: Tue Jan 11 17:56:24 2011 (+0530)
+# Last-Updated: Wed Jan 12 10:33:52 2011 (+0530)
 #           By: Subhasis Ray
-#     Update #: 139
+#     Update #: 145
 # URL: 
 # Keywords: 
 # Compatibility: 
@@ -17,7 +17,7 @@
 
 # Commentary: 
 # 
-# Generate prototype for the model used in Tiesing et al 2004.
+# Generate prototype for the model used in Tiesinga et al 2004.
 # This is mostly based on hh.py by Andrew Davison.
 # 
 
@@ -33,7 +33,7 @@ import nineml.abstraction_layer as al
 
 
 bindings = [
-    "q10 := 3.0**((celsius - 6.3)/10.0)", # Taking from hh.py - no formula, but constant value 5 (which can be achieved with celsius = 20.95)
+    "q10 := 3.0**((celsius - 6.3)/10.0)", # Taking from hh.py - no formula in paper, but constant value 5 (which can be achieved with celsius = 20.95)
     "alpha_m(V) := -0.1*(V+35.0)/(exp(-(V+35.0)/10.0) - 1.0)",  # m - just a change of constant from hh.py
     "beta_m(V) := 4.0 * exp(-(V+60.0)/18.0)",
     "mtau(V) := 1/(q10*(alpha_m(V) + beta_m(V)))",
@@ -88,6 +88,16 @@ equations = [
 #    to t+dt is STP * dt.
 #  
 # 4. The synaptic conductance is exponentially decaying and can be easily implemented.
+#
+# 5. Causal vs non-causal Gaussian filter : My impression is that in
+#    general a state machine cannot implement an noncausal Gaussian
+#    filter. Although the current paper used a 40 ms window for the
+#    Gaussian filter, this kind of a-priori spike generation will be
+#    impossible to address with a state machine design as an
+#    online-thing (because future can affect the past). We need to
+#    separate the cases where all spikes/inputs are to be generated
+#    beforehand and processed during simulation and where teh
+#    spikes/inputs can be generated on-line during simulation.
 
 hh_regime = al.Regime(
     "dn/dt = (ninf(V)-n)/ntau(V)",
