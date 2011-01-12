@@ -1,11 +1,11 @@
 """
 
 Implements conductance based leaky integrate-and-fire neuron model
-as decribed on p 3699 of:
+as decribed on p 521 of:
 
-R. Guetig, R. Aharonov, S. Rotter, and Haim Sompolinsky (2003), 
-Learning Input Correlations through Nonlinear Temporally Asymmetric 
-Hebbian Plasticity, J. Neuroscience, 23(9) 3697--3714
+S. Bamford, A. Murray & D. Willshaw (2010), 
+Synaptic rewiring for topographic mapping and receptive field 
+development. Neural Network, 23 517-527
 
 
 Author: Abigail Morrison, 1/2011.
@@ -15,7 +15,7 @@ import nineml.abstraction_layer as nineml
 
 regimes = [
     nineml.Regime(
-	"dV/dt = (Vrest - V)/(Rm*Cm) + Isyn/Cm",
+	"dV/dt = (Vrest - V)/tau_m + Isyn/tau_m",
         transitions = nineml.On("V>Vth",do=["tspike = t","V = Vrest", nineml.SpikeOutputEvent]),
         name = "sub-threshold-regime"
     )]
@@ -24,14 +24,13 @@ regimes = [
 ports = [nineml.SendPort("V"),
          nineml.ReducePort("Isyn",op="+")]
 
-leaky_iaf = nineml.Component("gLIFid8", regimes = regimes, ports = ports)
+leaky_iaf = nineml.Component("gLIFid1", regimes = regimes, ports = ports)
 
-#alpha conductances
+#exponential conductances
 
 regimes = [
     nineml.Regime(
-        "dg_a/dt = -g_a/tau_a",
-        "dg/dt = g_a - g/tau_a",
+        "dg/dt = -g/tau",
         transitions = nineml.On(nineml.SpikeInputEvent,do="g+=W"),
         )]
         
@@ -40,7 +39,7 @@ ports = [nineml.RecvPort("V"),
          nineml.SendPort("Isyn = g(E-V)")]
 
 
-coba_syn = nineml.Component("alpha_cond_id8", regimes = regimes, ports = ports)
+coba_syn = nineml.Component("exp_cond_id1", regimes = regimes, ports = ports)
 
 # User layer connects
 # leaky_iaf.ports['V'] -> coba_syn.ports['V']
@@ -57,7 +56,7 @@ try:
 except NameError:
     import os
 
-    base = "gLIFid8"
+    base = "gLIFid1"
     c1.write(base+".xml")
     c2 = nineml.parse(base+".xml")
     assert c1==c2
@@ -74,7 +73,7 @@ try:
 except NameError:
     import os
 
-    base = "alpha_cond_id8"
+    base = "exp_cond_id1"
     c1.write(base+".xml")
     c2 = nineml.parse(base+".xml")
     assert c1==c2

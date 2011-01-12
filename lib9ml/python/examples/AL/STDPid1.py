@@ -1,12 +1,11 @@
 
 """
 
-Implements STDP with variable weight dependence as decribed in 
-eqns (1) and (2) of:
+Implements additive STDP as decribed on page 521 of:
 
-R. Guetig, R. Aharonov, S. Rotter, and Haim Sompolinsky (2003), 
-Learning Input Correlations through Nonlinear Temporally Asymmetric 
-Hebbian Plasticity, J. Neuroscience, 23(9) 3697--3714
+S. Bamford, A. Murray & D. Willshaw (2010), 
+Synaptic rewiring for topographic mapping and receptive field 
+development. Neural Network, 23 517-527
 
 
 Author: Abigail Morrison, 1/2011.
@@ -22,19 +21,18 @@ regimes = [
         "dr/dt = -r/tau_plus",
         "do/dt = -o/tau_minus",
         transitions = [nineml.On(nineml.PreEvent,
-                            do=["W  -= o*learning_rate*alpha*W**mu",
+                            do=["W  -= W_max*A_minus*o,
 				"W = max(W,0.0)",
                                 "r += 1.0",
 				nineml.PreEventRelay]),
                   nineml.On(nineml.PostEvent,
-                            do=["W  += r*learning_rate*(1-W)**mu",
-				"W = min(W,1.0)",
+                            do=["W  += W_max*A_plus",
+				"W = min(W,W_max)",
                                 "o += 1.0"])]
     )]
-# should there be an additional parameter to scale the weight?
 ports = [nineml.SendPort("W")]
 
-c1 = nineml.Component("STDP_id8", regimes=regimes, ports = ports)
+c1 = nineml.Component("STDPid1", regimes=regimes, ports = ports)
 
 # write to file object f if defined
 try:
@@ -43,7 +41,7 @@ try:
 except NameError:
     import os
 
-    base = "STDPid8"
+    base = "STDPid1"
     c1.write(base+".xml")
     c2 = nineml.parse(base+".xml")
     assert c1==c2
