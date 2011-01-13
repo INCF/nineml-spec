@@ -1,7 +1,7 @@
 """
 
 Implements leaky integrate-and-fire neuron model with delta jump
-synapses as decribed eqns 1 and 3 of:
+synapses as described eqns 1 and 3 of:
 
 F. Baroni & P. Varona (2010), 
 Spike timing-dependent plasticity is affected by the interplay of 

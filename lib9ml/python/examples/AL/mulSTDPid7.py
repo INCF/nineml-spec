@@ -1,11 +1,11 @@
 
 """
 
-Implements additive STDP as described on page 521 of:
+Implements multiplicative STDP with efficacies as decribed on page 3650 of:
 
-S. Bamford, A. Murray & D. Willshaw (2010), 
-Synaptic rewiring for topographic mapping and receptive field 
-development. Neural Network, 23 517-527
+M. Farries and A. Fairhall (2007), 
+Reinforcement Learning With Modulated Spike Timing–Dependent
+Synaptic Plasticity. J. Neurophysiol. 98 3648--3665
 
 
 Author: Abigail Morrison, 1/2011.
@@ -20,19 +20,23 @@ regimes = [
     nineml.Regime(
         "dr/dt = -r/tau_plus",
         "do/dt = -o/tau_minus",
+        "deps_r/dt = (1-eps_r)/tau_er",
+        "deps_o/dt = (1-eps_o)/tau_eo",
         transitions = [nineml.On(nineml.PreEvent,
-                            do=["W  -= W_max*A_minus*o,
-				"W = max(W,0.0)",
-                                "r += 1.0",
+                            do=["W  -= A_minus*eps_r*o*(W-Wmin)/(Wmax-Wmin),
+				"W = max(W,W_min)",
+                                "r += eps_r",
+                                "eps_r = 0.0",
 				nineml.PreEventRelay]),
                   nineml.On(nineml.PostEvent,
-                            do=["W  += W_max*A_plus*r",
-				"W = min(W,W_max)",
-                                "o += 1.0"])]
+                            do=["W  += A_plus*eps_o*r*(Wmax-W)/(Wmax-Wmin)",
+				"W = max(W,W_max)",
+                                "o += eps_o",
+                                "eps_o = 0.0"])]
     )]
 ports = [nineml.SendPort("W")]
 
-c1 = nineml.Component("STDPid1", regimes=regimes, ports = ports)
+c1 = nineml.Component("mulSTDPid7", regimes=regimes, ports = ports)
 
 # write to file object f if defined
 try:
@@ -41,7 +45,7 @@ try:
 except NameError:
     import os
 
-    base = "STDPid1"
+    base = "mulSTDPid7"
     c1.write(base+".xml")
     c2 = nineml.parse(base+".xml")
     assert c1==c2
