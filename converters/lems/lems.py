@@ -169,8 +169,13 @@ class ComponentType(BaseLEMS):
             print "Adding param: "+param9
             param = Parameter(param9)
             self.parameters.append(param)
+        for sv9 in component9.state_variables:
+            self.behavior.state_variables.append(StateVariable(sv9))
 
-        self.behavior.state_variables.append(StateVariable("ff"))
+        for regime9 in component9.regimes:
+            print "  Adding info on regime "+regime9.name
+            for ode9 in regime9.odes:
+                self.behavior.time_derivatives.append(TimeDerivative(ode9.dependent_variable, ode9.rhs))
 
 class Parameter(BaseLEMS):
     type = "Parameter"
@@ -186,11 +191,14 @@ class Parameter(BaseLEMS):
 class Behavior(BaseLEMS):
     type = "Behavior"
     state_variables = []
+    time_derivatives = []
 
     def to_xml(self):
         element = E(self.type)
         for sv in self.state_variables:
             element.append(sv.to_xml())
+        for td in self.time_derivatives:
+            element.append(td.to_xml())
         return element
     
 
@@ -200,10 +208,26 @@ class StateVariable(BaseLEMS):
 
     def __init__(self, name):
         self.name = name
-        
+
     def to_xml(self):
         element = E(self.type,name=self.name, dimension="none", exposure=self.name)
         return element
+
+    
+
+class TimeDerivative(BaseLEMS):
+    type = "TimeDerivative"
+
+    def __init__(self, variable, value):
+        self.variable = variable
+        self.value = value
+
+    def to_xml(self):
+        element = E(self.type,variable=self.variable, value=self.value)
+        return element
+
+
+
 
 if __name__ == "__main__":
 
