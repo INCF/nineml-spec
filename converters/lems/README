@@ -1,0 +1,4 @@
+This is an initial attempt to create a LEMS mapping from the 9ML Python object model, which will allow 9ml 
+abstraction layer elements to be run in the LEMS interpreter
+
+Padraig Gleeson Jan 20111
