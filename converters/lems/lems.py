@@ -94,6 +94,11 @@ class LEMS():
           print "  Adding component_name9 %s in the LEMS object model"%component_name9
           component9 = model.components[component_name9]
           comp = Component(component9.definition.url, component9.name)
+
+          for param_name9 in component9.parameters.keys():
+              param9 = component9.parameters[param_name9]
+              comp.parameter_values[param9.name] = str(param9.value)
+
           self.components[comp.id] = comp
 
       for group9 in model.groups.keys():
@@ -181,14 +186,20 @@ class Population(BaseNeuroML2):
 
 class Component(BaseNeuroML2):
 
-    parameters = []
+    parameter_values = {}
 
     def __init__(self, type, id):
         self.type = type
         self.id = id
 
     def to_xml(self):
-        element = E("Component",id=self.id, type=str(self.type))
+        attrs = {"id":self.id, "type":str(self.type)}
+
+        for param_name in self.parameter_values:
+            attrs[param_name] = self.parameter_values[param_name]+""
+
+        sub_els = {}
+        element = E("Component",*sub_els, **attrs)
                     
         return element
 
@@ -268,6 +279,8 @@ class Parameter(BaseLEMS):
     def to_xml(self):
         element = E(self.type,name=self.name, dimension="none")
         return element
+
+    
 class Parameter(BaseLEMS):
     type = "Parameter"
 
@@ -396,7 +409,9 @@ if __name__ == "__main__":
     al_definition_name = izhikevich.c1.name
     instance_name = "BurstingIzh"
 
-    izh_burst_cell = UL.SpikingNodeType(instance_name, al_definition_name, UL.ParameterSet())
+    paramsBurst = UL.ParameterSet(a =(0.02, ""), b=(0.2, ""), c=(-50, ""), d=(2, ""), theta=(30, ""), Isyn=(15, ""))
+
+    izh_burst_cell = UL.SpikingNodeType(instance_name, al_definition_name, paramsBurst)
 
     model.add_component(izh_burst_cell)
 
@@ -408,25 +423,22 @@ if __name__ == "__main__":
 
     model.write(file_ul_9ml)
 
-
-    
-
-
-
-
-
     lems_file = open(file_name, 'w')
     
-    lems = LEMS("TestSim", 100, 0.01)
+    lems = LEMS("TestSim", 200, 0.01)
 
     lems.read_9ml(components_9ml, model)
     
     lems.write(lems_file)
     
-    
     lems_file.close()
     
     print "Saved file to %s"%file_name
+
+    run_in_lems = True
+
+    if run_in_lems:
+       os.system("java -jar lems-0.6.1.jar "+file_name)
     
     
     
