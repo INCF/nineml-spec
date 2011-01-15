@@ -1,0 +1,109 @@
+<Lems xmlns="http://www.neuroml.org/lems/0.1"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.neuroml.org/lems/0.1 ../Schemas/LEMS/LEMS_v0.1.xsd">
+
+    <!-- A number of network elements for use in NeuroML 2 documents  -->
+    
+
+<Include file="NeuroMLCoreDimensions.xml"/>
+<Include file="Synapses.xml"/>
+
+<ComponentType name="network">
+    <Children name="populations" type="population"/>
+    <Children name="populations" type="population"/>
+
+
+    <Children name="explicitConnections" type="explicitConnection"/>
+    
+    <!--
+    <Children name="connectivities" type="EventConnectivity"/>-->
+
+    <Children name="explicitInputs" type="explicitInput"/>
+
+</ComponentType>
+
+
+<ComponentType name="population">
+    <Parameter name="size" dimension="none"/>
+    <ComponentRef name="component" type="Component"/>
+    <Behavior>
+        <Build>
+            <MultiInstantiate number="size" component="component"/>
+        </Build>
+    </Behavior>
+</ComponentType>
+
+
+
+
+<ComponentType name="explicitConnection">
+
+    <ComponentRef name="synapse" type="Synapse"/>
+    
+    <Path name="from"/>
+    <Path name="to"/>
+
+    <Text name="destination"/>
+    <Text name="sourcePort"/>
+    <Text name="targetPort"/>
+    
+    <Behavior>
+        <Build>
+          <With instance="from" as="a"/>
+          <With instance="to" as="b"/>
+         <EventConnection from="a" to="b" receiver="synapse" receiverContainer="destination"
+                sourcePort="sourcePort" targetPort="targetPort"/>
+        </Build>
+    </Behavior>
+</ComponentType>
+
+
+<!--   Not yet stable...
+
+<ComponentType name="EventConnectivity">
+    <Child name="Connections" type="ConnectionPattern"/>
+    <Link name="source" type="population"/>
+    <Link name="target" type="population"/>
+</ComponentType>
+
+<ComponentType name="ConnectionPattern">
+</ComponentType>
+
+
+<ComponentType name="AllAll" extends="ConnectionPattern">
+    <Behavior>
+        <Build>
+            <ForEach instances="../source" as="a">
+                 <ForEach instances="../target" as="b">
+                      <EventConnection from="a" to="b"/>
+                 </ForEach>
+            </ForEach>
+        </Build>
+    </Behavior>
+</ComponentType>-->
+
+
+
+
+<ComponentType name="explicitInput">
+
+    <ComponentRef name="input" type="PointCurrent"/>
+
+    <Path name="target"/>
+
+    <Text name="destination"/>
+    <Text name="sourcePort"/>
+    <Text name="targetPort"/>
+
+    <Behavior>
+        <Build>
+          <With instance="target" as="a"/>
+          <With instance="target" as="b"/>
+          
+         <EventConnection from="a" to="b" receiver="input" receiverContainer="destination"
+                sourcePort="sourcePort" targetPort="targetPort"/>
+        </Build>
+    </Behavior>
+</ComponentType>
+
+</Lems>

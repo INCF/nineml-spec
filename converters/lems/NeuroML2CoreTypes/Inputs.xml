@@ -1,0 +1,63 @@
+<Lems xmlns="http://www.neuroml.org/lems/0.1"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.neuroml.org/lems/0.1 ../Schemas/LEMS/LEMS_v0.1.xsd">
+
+    <!-- A number of input types for use in NeuroML 2 documents  -->
+
+
+<Include file="NeuroMLCoreDimensions.xml"/>
+
+<Include file="Synapses.xml"/>
+
+<ComponentType name="spikeGenerator">
+    <Parameter name="period" dimension="time"/>
+    <EventPort name="a" direction="out"/>
+
+    <Exposure name="tsince" dimension="time"/>
+
+    <Behavior>
+        <StateVariable name="tsince" dimension="time" exposure="tsince"/>
+        <TimeDerivative variable="tsince" value="1"/>
+        <OnCondition test="tsince .gt. period">
+            <StateAssignment variable="tsince" value="0"/>
+            <EventOut port="a"/>
+        </OnCondition>
+    </Behavior>
+</ComponentType>
+
+
+
+<ComponentType name="pulseGenerator" extends="PointCurrent"> <!-- Note: a synpase also extends PointCurrent -->
+        
+    <Parameter name="delay" dimension="time"/>
+    <Parameter name="duration" dimension="time"/>
+    <Parameter name="amplitude" dimension="current"/>
+
+    <!--TODO: remove! Only required as EventConnection is used in explicitInput to
+    connect inputs to cells. Events aren't passed! ... -->
+    <EventPort name="in" direction="in"/>  
+
+    <Behavior>
+        
+        <StateVariable name="i" exposure="i" dimension="current"/>
+
+        <OnCondition test="t .lt. delay">
+            <StateAssignment variable="i" value="0"/>
+        </OnCondition>
+
+        <OnCondition test="t .geq. delay">
+            <StateAssignment variable="i" value="amplitude"/>
+        </OnCondition>
+
+        <OnCondition test="t .gt. duration+delay">
+            <StateAssignment variable="i" value="0"/>
+        </OnCondition>
+
+         <OnEvent port="in"><!--TODO: remove, see above... 
+            <StateAssignment variable="i" value="0"/>-->
+         </OnEvent>
+
+    </Behavior>
+</ComponentType>
+
+</Lems>

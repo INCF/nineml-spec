@@ -1,0 +1,256 @@
+<Lems xmlns="http://www.neuroml.org/lems/0.1"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.neuroml.org/lems/0.1 ../Schemas/LEMS/LEMS_v0.1.xsd">
+
+    <!-- A number of synapse types for use in NeuroML 2 documents  -->
+
+   
+<!-- Including standard unit definitions for NeuroML v2.0 -->
+<Include file="NeuroMLCoreDimensions.xml"/>
+
+
+<ComponentType name="PointCurrent">
+
+    <Exposure name="i" dimension="current"/>
+
+    <Requirement name="v" dimension="voltage"/>
+
+    <Behavior>
+        <DerivedVariable name="i" exposure="i" dimension="current" value="0" />
+    </Behavior>
+
+</ComponentType>
+
+
+<ComponentType name="Synapse" extends="PointCurrent">
+
+    <EventPort name="in" direction="in"/>
+
+    <Behavior>
+        <DerivedVariable name="i" exposure="i" dimension="current" value="0" />
+    </Behavior>
+
+</ComponentType>
+
+
+    <ComponentType name="ConductanceBasedSynapse" extends="Synapse">
+
+        <Parameter name="gbase" dimension="conductance" />
+        <Parameter name="erev" dimension="voltage" />
+
+        <Exposure name="g" dimension="conductance"/>
+
+        <Behavior>
+                <DerivedVariable name="i" exposure="i" dimension="current" value="0" />
+                <DerivedVariable name="g" exposure="g" dimension="conductance" value="0" />
+        </Behavior>
+
+    </ComponentType>
+
+
+   <ComponentType name="expOneSynapse" extends="ConductanceBasedSynapse">
+
+      <Parameter name="tauDecay" dimension="time" />
+      <Child name="notes" type="notes"/>
+
+      <Behavior>
+
+         <StateVariable name="g" dimension="conductance" exposure="g"/>
+
+         <TimeDerivative variable="g" value="-g / tauDecay" />
+
+         <OnStart>
+            <StateAssignment variable="g" value="0" />
+         </OnStart>
+
+         <OnEvent port="in">
+            <StateAssignment variable="g" value="g + gbase" />
+         </OnEvent>
+
+         <DerivedVariable name="i" exposure="i" dimension="current" value="g * (erev - v)" />
+      </Behavior>
+   </ComponentType>
+
+
+   <ComponentType name="expTwoSynapse" extends="ConductanceBasedSynapse">
+      
+      <Parameter name="tauRise" dimension="time" />
+      <Parameter name="tauDecay" dimension="time" />
+      <Child name="notes" type="notes"/>
+
+      <Behavior>
+
+         <StateVariable name="A" dimension="none"/>
+         <StateVariable name="B" dimension="none"/>
+
+         <!-- TODO: evaluate only once!! -->
+         <DerivedVariable name="peakTime" dimension="time" value="(tauRise*tauDecay)/(tauDecay - tauRise) * ln(tauDecay/tauRise)" />
+         <DerivedVariable name="factor" dimension="none" value="1 / (-exp(-peakTime/tauRise) + exp(-peakTime/tauDecay))" />
+
+
+         <TimeDerivative variable="A" value="-A / tauRise" />
+         <TimeDerivative variable="B" value="-B / tauDecay" />
+
+         <OnStart>
+            <StateAssignment variable="A" value="0" />
+            <StateAssignment variable="B" value="0" />
+         </OnStart>
+
+         <OnEvent port="in">
+            <StateAssignment variable="A" value="A + factor" />
+            <StateAssignment variable="B" value="B + factor" />
+         </OnEvent>
+
+         <DerivedVariable name="g" dimension="conductance" exposure="g" value="gbase * (B - A)" />
+         <DerivedVariable name="i" exposure="i" dimension="current" value="g * (erev - v)" />
+
+      </Behavior>
+   </ComponentType>
+
+   <ComponentType name="VoltageConcDepBlock">
+           
+      <Parameter name="blockConcentration" dimension="concentration" />
+      <Parameter name="scalingConc" dimension="concentration" />
+      <Parameter name="scalingVolt" dimension="voltage" />
+
+      <Exposure name="scaling" dimension="none"/>
+      <Requirement name="v" dimension="voltage"/>
+      <Text name="species"/>
+      
+
+      <Behavior>
+         <DerivedVariable name="scaling" dimension="none" exposure="scaling" value="1/(1 + (blockConcentration/scalingConc)* exp(-1*(v/scalingVolt)))" />
+
+      </Behavior>
+
+   </ComponentType>
+
+
+
+
+   <ComponentType name="nmdaSynapse" extends="expTwoSynapse">
+
+      <Child name="block" type="VoltageConcDepBlock"/>
+
+      <Behavior>
+         <StateVariable name="A" dimension="none"/>
+         <StateVariable name="B" dimension="none"/>
+
+         <!-- TODO: evaluate only once!! -->
+         <DerivedVariable name="peakTime" dimension="time" value="(tauRise*tauDecay)/(tauDecay - tauRise) * ln(tauDecay/tauRise)" />
+         <DerivedVariable name="factor" dimension="none" value="1 / (-exp(-peakTime/tauRise) + exp(-peakTime/tauDecay))" />
+
+
+         <TimeDerivative variable="A" value="-A / tauRise" />
+         <TimeDerivative variable="B" value="-B / tauDecay" />
+
+         <OnStart>
+            <StateAssignment variable="A" value="0" />
+            <StateAssignment variable="B" value="0" />
+         </OnStart>
+
+         <OnEvent port="in">
+            <StateAssignment variable="A" value="A + factor" />
+            <StateAssignment variable="B" value="B + factor" />
+         </OnEvent>
+
+         <DerivedVariable name="block" dimension="none" select="block/scaling" />
+         <DerivedVariable name="g" dimension="conductance" exposure="g" value="gbase * block * (B - A)" />
+         <DerivedVariable name="i" exposure="i" dimension="current" value="g * (erev - v)" />
+         
+      </Behavior>
+   </ComponentType>
+
+
+               <!-- <plasticity initReleaseProb = "0.5" tauFac = "0" tauRec = "120"/>-->
+
+   <ComponentType name="plasticity">
+
+      <Parameter name="initReleaseProb" dimension="none" />
+      <Parameter name="tauFac" dimension="time" />
+      <Parameter name="tauRec" dimension="time" />
+
+      <Exposure name="initReleaseProb" dimension="none"/>
+      <Exposure name="tauFac" dimension="time"/>
+      <Exposure name="tauRec" dimension="time"/>
+
+      <Behavior>
+         <DerivedVariable name="initReleaseProb" dimension="none"  exposure="initReleaseProb" value="initReleaseProb" />
+         <DerivedVariable name="tauFac" dimension="time" exposure="tauFac" value="tauFac" />
+         <DerivedVariable name="tauRec" dimension="time" exposure="tauRec" value="tauRec" />
+      </Behavior>
+      <!--TODO: enable passibe of spike events to child elements so that plasticity can have state vars R, U, etc. and
+      update them appropriately -->
+
+   </ComponentType>
+
+
+   <ComponentType name="stpSynapse" extends="expTwoSynapse">
+
+      <Constant name="tsinceRate" dimension="none" value="1"/>
+      <Constant name="longTime" dimension="time" value="1000s"/>
+
+      <Child name="plasticity" type="plasticity"/>
+
+      <Exposure name="tsince" dimension="time"/>
+      <Exposure name="R" dimension="none"/>
+      <Exposure name="U" dimension="none"/>
+      
+      <Behavior>
+         <StateVariable name="A" dimension="none"/>
+         <StateVariable name="B" dimension="none"/>
+         
+         <StateVariable name="R" dimension="none" exposure="R"/>
+         <StateVariable name="U" dimension="none" exposure="U"/>
+
+         <StateVariable name="tsince" dimension="time" exposure="tsince"/>
+
+         <!-- TODO: evaluate only once!! -->
+         <DerivedVariable name="peakTime" dimension="time" value="(tauRise*tauDecay)/(tauDecay - tauRise) * ln(tauDecay/tauRise)" />
+         <DerivedVariable name="factor" dimension="none" value="1 / (-exp(-peakTime/tauRise) + exp(-peakTime/tauDecay))" />
+
+
+         <TimeDerivative variable="A" value="-A / tauRise" />
+         <TimeDerivative variable="B" value="-B / tauDecay" />
+         
+         <TimeDerivative variable="tsince" value="tsinceRate" />
+
+         <OnStart>
+            <StateAssignment variable="A" value="0" />
+            <StateAssignment variable="B" value="0" />
+            
+            <StateAssignment variable="R" value="1" />
+            <StateAssignment variable="tsince" value="longTime" />
+         </OnStart>
+
+        <OnCondition test="t .eq. 0">
+            <StateAssignment variable="U" value="initReleaseProb" />
+        </OnCondition>
+
+         <DerivedVariable name="initReleaseProb" dimension="none" select="plasticity/initReleaseProb" />
+         <DerivedVariable name="tauRec" dimension="time" select="plasticity/tauRec" />
+         <DerivedVariable name="tauFac" dimension="time" select="plasticity/tauFac" />
+
+         <OnEvent port="in">
+            <StateAssignment variable="A" value="A + factor" />
+            <StateAssignment variable="B" value="B + factor" />
+
+            <StateAssignment variable="R" value="R * (1-U) * exp(-1 * (tsince/tauRec)) + 1 - exp(-1 * (tsince/tauRec)) " />
+
+            <StateAssignment variable="U" value="U * exp(-(tsince)/tauFac) + initReleaseProb * (1 - (U * exp(-(tsince)/tauFac)))" />
+
+            <StateAssignment variable="tsince" value="0" />
+         </OnEvent>
+
+         <DerivedVariable name="plasticityFactor" dimension="none" value="R * U" />
+
+         <DerivedVariable name="g" dimension="conductance" exposure="g" value="gbase * plasticityFactor * (B - A)" />
+
+         <DerivedVariable name="i" exposure="i" dimension="current" value="g * (erev - v)" />
+
+      </Behavior>
+
+   </ComponentType>
+
+</Lems>
+

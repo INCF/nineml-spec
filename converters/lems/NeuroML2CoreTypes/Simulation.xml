@@ -1,0 +1,124 @@
+<Lems xmlns="http://www.neuroml.org/lems/0.1"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.neuroml.org/lems/0.1 ../Schemas/LEMS/LEMS_v0.1.xsd">
+
+
+    <!-- A number of Simulation types for use in NeuroML 2 documents  -->
+
+
+    <ComponentType name="Display">
+        <Parameter name="timeScale" dimension="time"/>
+        <Children name="lines" type="Line"/>
+
+        <Text name="title"/>  <!-- attribute to hold title of window -->
+
+        <Behavior>
+             <Show src="lines" scale="timeScale"/>
+        </Behavior>
+    </ComponentType>
+
+    <ComponentType name="Line">
+        <Parameter name="scale" dimension="*"/>
+        <Path name="quantity"/>
+        <Text name="color"/>
+        <Text name="unit"/>
+        <Text name="scale"/>
+        <Text name="save"/>
+        <Behavior>
+            <Record quantity="quantity" scale="scale" color="color"/>
+        </Behavior>
+    </ComponentType>
+
+
+
+    <ComponentType name="Simulation">
+        <Parameter name="length" dimension="time"/>
+        <Parameter name="step" dimension="time"/>
+        <Children name="displays" type="Display"/>
+        <ComponentRef name="target" type="network"/>
+
+        <Behavior>
+            <StateVariable name="t" dimension="time"/>
+            <Run component="target" variable="t" increment="step" total="length"/>
+            <Show src="displays"/>
+        </Behavior>
+    </ComponentType>
+
+    <ComponentType name="listOfSimulations">
+        <Children name="uniformTimeCourse" type="uniformTimeCourse"/>
+    </ComponentType>
+
+    <ComponentType name="uniformTimeCourse">
+        <Parameter name="initialTime" dimension="time"/>
+        <Parameter name="outputStartTime" dimension="time"/>
+        <Parameter name="outputEndTime" dimension="time"/>
+        <Parameter name="numberOfPoints" dimension="none"/>
+
+        <Behavior>
+             <DerivedVariable name="length" dimension="time" value="outputEndTime - initialTime"/>
+             <DerivedVariable name="step" dimension="time" value="length/numberOfPoints"/>
+        </Behavior>
+
+
+    </ComponentType>
+
+<!-- In development...
+    <ComponentType name="Simulation2">
+
+        <Parameter name="length" dimension="time"/>
+        <Parameter name="step" dimension="time"/>
+
+        <Constant name="l2" dimension="time" value="400ms"/>
+        
+        <ComponentRef name="target" type="network"/>
+        <Children name="displays" type="Display"/>
+
+
+        <Child name="uniformTimeCourse" type="uniformTimeCourse"/>
+
+        <Behavior>
+            <StateVariable name="t" dimension="time"/>
+
+            <DerivedVariable name="length2" dimension="time" select="uniformTimeCourse/outputEndTime"/>
+
+
+
+       <Run component="target" variable="t" increment="step" total="length"/>
+            <Show src="displays"/>
+        </Behavior>
+    </ComponentType>-->
+
+
+
+
+
+    <ComponentType name="sedML">
+
+        <!--<Child name="listOfSimulations" type="listOfSimulations"/>-->
+        <Children name="uniformTimeCourse" type="uniformTimeCourse"/>
+        <Children name="displays" type="Display"/>
+
+        <ComponentRef name="target" type="network"/>
+        
+        <Text name="version"/>
+        <Text name="level"/>
+
+        <!--
+        <Parameter name="length" dimension="time"/>
+        <Parameter name="step" dimension="time"/>-->
+        
+        
+        <Behavior>
+            <StateVariable name="t" dimension="time"/>
+
+            <!--<ExternalVariable name="length" dimension="time" select="uniformTimeCourse/outputEndTime"/>-->
+            <!--<ExternalVariable name="length" dimension="time" select="listOfSimulations/uniformTimeCourse/outputEndTime"/>-->
+            <!--<DerivedVariable name="length" value="listOfSimulations/uniformTimeCourse/outputEndTime"/>-->
+
+            <!--<Run component="target" variable="t" increment="step" total="length"/>-->
+            <Run component="target" variable="t" increment="0.01" total="300"/>
+            <Show src="displays"/>
+        </Behavior>
+    </ComponentType>
+
+</Lems>
