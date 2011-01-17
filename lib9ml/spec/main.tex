@@ -115,16 +115,16 @@ descriptions of large networks of spiking neurons.
 \subsection{Scope}
 
 The purpose of NineML is to provide a computer language for
-unambiguous description of computational neuroscience models of
+succinct and unambiguous description of computational neuroscience models of
 networks of spiking neurons.
 
-Model description in NineML is intended to be formal in the sense that
-it is possible to interpret it unambiguously.  NineML is intended to
-describe the network architecture, parameters and equations that
-govern the dynamics of a network of spiking neurons. The behavioral
-aspects of such a system, such as input stimulus, and the numerical
-implementation details, such as integration method used, have to be
-described using different techniques.
+NineML is intended to describe the network architecture, parameters
+and equations that govern the dynamics of a network of spiking
+neurons. The behavioral aspects of such a system, such as input
+stimulus, and the numerical implementation details, such as
+integration method used, have to be described using different
+techniques.  Model description in NineML is intended to be formal in
+the sense that it is possible to interpret it unambiguously.
 
 \subsection{Objective}
 
@@ -133,6 +133,11 @@ The key concepts of spiking neuron network modeling are:
 \begin{enumerate}
 \item spiking neurons
 \item synapses 
+\begin{enumerate}
+\item Post-synaptic membrane current mechanisms
+\item Short-term synaptic dynamics (a la Markram et. al. 1998)
+\item Long-term synaptic modifications (STDP, learning, etc.)
+\end{enumerate}
 \item populations of neurons 
 \item connectivity patterns across populations of neurons. 
 \end{enumerate}
@@ -145,10 +150,10 @@ are capable of representing these concepts.
 
 \subsubsection{User layer and Abstraction layer}
 
-The design of NineML is divided in two semantic layers: an abstraction
+The design of NineML is divided into two semantic layers: an abstraction
 layer (the subject of the present document) that provides the core
 concepts, mathematics and syntax with which model variables and state
-update rules are explicitly described and a user layer that provides a
+update rules are explicitly described, and a user layer that provides a
 syntax to specify the instantiation and parameterization of a network
 model in biological terms.
 
@@ -158,27 +163,30 @@ Abstraction Layer, it is clearly essential that these two layers share
 a complementary and compatible design philosophy. There must be a
 clear definition of which aspects of a model are defined in the User
 Layer and which are defined in the Abstraction Layer. In addition, the
-mechanisms for naming and addressing Abstraction Layer definitions
-from the User Layer must be compatible between layers.
+mechanisms and syntax for naming and addressing Abstraction Layer definitions
+is ideally re-used in the User Layer to keep things simple for the user.
  
 \subsubsection{Implementation assumptions}
 
 One of the goals identified by task force members, was to maintain a
 clear distinction between the role of NineML and a simulator. NineML
-should provide only the information necessary for a simulator to
-instantiate the network models. In addition, for implementation and
+should provide only the information necessary for any given simulator
+to instantiate the network models in a simulator agnostic way.  For
+example, NineML should specify the neuron membrane equation to solve,
+but not how to solve it.  In addition, for implementation and
 performance reasons, it is important to keep the language layer
 “close” to the simulator – such that the language layer is not
 responsible for maintaining separate representations of the
-instantiated network.  
+instantiated network.
 
 \subsubsection{Language syntax}
 
 It is envisioned that the language should not require a
-specific syntax. Rather it is anticipated that the language can be
+specific syntax or rely on any given technology or platform. 
+Rather it is anticipated that the language can be
 employed by defining the model elements in a variety of different
-syntaxes including native, Python or Java (for example), and this
-layer will generate the declarative XML representation.
+syntaxes including a native (domain specific) language, Python, Java, 
+and XML (for example).
 
 
 \section{Abstraction Layer}
@@ -190,8 +198,8 @@ format.
 The NineML Object Model specifies the core concepts of NineML and the
 object-oriented interface to them.
 
-The NineML native grammar and semantics give a complete specification
-of a domain-specific language that is isomorphic the NineML object
+The NineML native domain-specific language give a complete specification
+of a grammar and semantics that is isomorphic to the NineML object
 model.
 
 The NineML XML format specifies how a NineML compliant program is to
@@ -209,7 +217,6 @@ form of an interpreter for the NineML native language as a compact
 representation and use code generation to produce a model
 representation for a target simulation environment.
 
-
 \subsection{Conventions}
 
 Some conventions which are followed: 
@@ -223,14 +230,19 @@ Some conventions which are followed:
 
 \subsection{Core Concepts}
 
+In this section, we start by laying the foundation of the NineML
+heirarchical Namespace scheme used to unambigiously address elements
+of a given NineML Abstraction Layer model.  We then proceed to define the elements 
+which populate Namespaces to make up an Apbraction Layer model. 
+
 \subsubsection{Bindings}
 
 A fundamental aspect of a programming language is how it uses names to
 refer to computational objects.  We refer to NineML names as labels
-and to computational objects as values, and we say that labels
+and to computational objects (NineML elements) as values, and we say that labels
 identify values.
 
-In the NineML abstraction layer, the naming of values is represented
+In the NineML abstraction layer, the act of assigning a label to a value is achieved
 with the \nmlClass{Binding} object:
 
 \begin{equation*}
@@ -257,9 +269,38 @@ The interface to a binding object must provide the following methods:
 
 \subsubsection{Values}
 
+[TODO: A value has a type, what are those types ... see Gif 
+
+Constant/Primitives
+Compound Types:
+- Diagrams
+- Relation (Local functions for ``:='' in python)
+- Graphs
+- CSA
+
+- Closure/Python: ''Component Factory'' (mention here, refer to following section)
+  an intermediate value to represent Compound types with 
+  unspecified internal values.
+
+
+
+
+[Sub-TODO: ComponentType/ComponentInterface ... probably not a
+value, but rather a ``meta value'' ... where to talk about it ...]
+
+
+Sub-typing system
+
+See gif day2 minutes ... and write this section.
+Who gives it a go: Ivan
+]
 
 
 \subsubsection{Namespaces}
+
+[TODO: Relax that Namespace need be ordered.  Sure, while in ``native'' populating 
+the namespace will occur in an ordered fashion, the the final namespace
+needn't preserve the order of it's population. ] 
 
 A NineML Abstraction Layer namespace is an ordered collection of
 bindings and sub-namespaces. 
@@ -311,7 +352,7 @@ sub-\nmlClass{Namespace}s of the current scope can be accessed via dot
 notation, e.g. \verb^M.x^ to refer to the member \verb^x^ of container
 \verb^M^.
 
-\subsubsection{Specalized Namespaces}
+\subsubsection{Specalized Namespaces and Interfaces}
 
 Tying all these concepts together into the final resulting model is
 the purpose of the \nmlClass{Component}.  The \nmlClass{Component} then is the
@@ -319,9 +360,17 @@ conglomerating object which is the subject of interaction with the
 \textbf{User Layer}.  To allow for modular composition of \nmlClass{Component}s
 from sub-\nmlClass{Component}s, and to avoid name collision with symbols and
 functions provided in standard libraries, a mechanism of namespace
-encapsulation is required, and implemented by the \nmlClass{Container} object.
+encapsulation is required, and implemented by the \nmlClass{Namespace} object discussed previously.
 
-After construction, a \nmlClass{Component} must define the following properties:
+[TODO: Specialized Interfaces for NetworkElementModel, ConnectivityModel, etc., or even more specific SynapseModel, STDPModel, etc.]
+
+% For now, no nested interfaces, but indeed nested namespaces.
+
+%After construction, a \nmlClass{Component} must define the following properties:
+
+\subsubsection{NetworkElementModel Interface}
+A \nmlClass{Component} which exposes the NetworkElementModel
+\nmlClass{Interface} must contain the following:
 \begin{itemize}
 \item An unordered collection of \nmlClass{Transition}s which connect the \nmlClass{Regime}s
   of the \nmlClass{Component} by assigning sources and targets from the named
@@ -361,8 +410,25 @@ type (e.g. \nmlClass{EventPort}) are returned.
 
 \end{itemize}
 
+\subsubsection{Name Resolution}
 
-\subsection{Diagrams}
+Elements of Regimes and Transitions (ODEs, Assignments) resolve state
+variables, parameters, etc. relative to their containing
+Component/Namespace first, then the system Namespace.
+
+The system Namespace is immutable, and contains:
+- SignalLib/MathLib (pi,e, sin, cos)
+- RandomLib
+- DiagramLib (Regime, Transition, ODE, Assignment)
+
+- IntervalLib
+- etc.
+
+% Python-level
+%``import StochasticDiagram'' -> from StochasticDiagram import *
+
+
+\subsection{Diagram}
 
 Our assumption for the model simulation environment is that it
 consists of discrete and continuous subsystems. The continuous
