@@ -241,6 +241,15 @@ class ComponentType(BaseLEMS):
             param = Parameter(param9)
             self.parameters.append(param)
 
+        for analog_port9 in component9.analog_ports:
+            print "Looking at analog_port: "+analog_port9.symbol
+            if analog_port9.mode=="reduce":
+                print "Adding reducable analog_port %s as a param"%analog_port9.symbol
+                param = Parameter(analog_port9.symbol)
+                self.parameters.append(param)
+
+
+
         timeScale = Constant(timeScaleConst, "per_time", "1per_ms")
         self.constants.append(timeScale)
             
@@ -336,8 +345,10 @@ class OnCondition(BaseLEMS):
     state_assignments = []
 
     def __init__(self, test):
-
-        self.test = test.cond.replace(">", ".gt.").replace("<", ".lt.")
+        try:
+            self.test = test.cond.replace(">", ".gt.").replace("<", ".lt.")
+        except AttributeError:
+            self.test = "SPIKE IN: not yet implemented!"
 
     def to_xml(self):
         element = E(self.type,test=self.test)
@@ -386,7 +397,7 @@ class TimeDerivative(BaseLEMS):
 
 
 
-def test_9ml_al(test_ref, AL_file_ref, instance_name, params):
+def test_9ml_al(test_ref, AL_file_ref, instance_name, params, dur, dt):
 
     file_name = test_ref+".xml"
     '''file_al_9ml = test_ref+"_AL.9ml"'''
@@ -394,21 +405,27 @@ def test_9ml_al(test_ref, AL_file_ref, instance_name, params):
     
     print "Testing LEMS export..."
 
-
-    sys.path.append("../../lib9ml/python/examples/AL")
+    al_def_dir = "../../lib9ml/python/examples/AL"
+    sys.path.append(al_def_dir)
     exec("from %s import *" % AL_file_ref)
 
-    print "Loaded abstraction layer definition: %s" % c1.name
+    my_cell_comp = c1
+    ''' To handle Abigail's models...'''
+    if my_cell_comp.name.lower() != AL_file_ref.lower():
+        print my_cell_comp.name +" is not "+AL_file_ref+"..."
+        my_cell_comp = leaky_iaf 
+
+    print "Loaded abstraction layer definition: %s from file %s/%s.py" % (my_cell_comp.name, al_def_dir, AL_file_ref)
 
     components_9ml = []
-    components_9ml.append(c1)
+    components_9ml.append(my_cell_comp)
 
     catalog = "../../catalog/"
     network = UL.Group("Network1")
     model = UL.Model("Simple 9ML example model (based on %s AL definition) to run on LEMS"%AL_file_ref)
     model.add_group(network)
 
-    al_definition_name = c1.name
+    al_definition_name = my_cell_comp.name
 
     comp_instance = UL.SpikingNodeType(instance_name, al_definition_name, params)
 
@@ -424,7 +441,7 @@ def test_9ml_al(test_ref, AL_file_ref, instance_name, params):
 
     lems_file = open(file_name, 'w')
     
-    lems = LEMS(test_ref, 200, 0.01)
+    lems = LEMS(test_ref, dur, dt)
 
     lems.read_9ml(components_9ml, model)
     
@@ -449,4 +466,4 @@ if __name__ == "__main__":
 
     instance_name = "BurstingIzh"
 
-    test_9ml_al("TestLEMS", "izhikevich", instance_name, params)
+    test_9ml_al("TestLEMS", "izhikevich", instance_name, params, 200, 0.01)

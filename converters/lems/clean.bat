@@ -1,1 +1,1 @@
-del *.9ml *.pyc *.dll *.c *.dot *.mod
+del *.9ml *.pyc *.dll *.c *.dot *.mod *.sbml *.png *.xml *_nrn.py *.o

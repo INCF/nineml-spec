@@ -16,16 +16,14 @@ from lems import *
 import nineml.user_layer as UL
 
 
-
-
 if __name__ == "__main__":
 
     al_ref = "gLIFid1"
 
     print "Running test on lems.py with AL created with %s.py"%al_ref
 
-    params = UL.ParameterSet(Isyn=(15, ""))
+    params = UL.ParameterSet(Vrest = (-70,""), tau_m=(30,""), Vth=(-50,""), Isyn=(25, ""))
 
     instance_name = "IaF1"
 
-    test_9ml_al("TestIaF", al_ref, instance_name, params)
+    test_9ml_al("TestIaF", al_ref, instance_name, params, 1000, 0.01)
