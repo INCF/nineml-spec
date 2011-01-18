@@ -1,0 +1,96 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<nineml xmlns="http://nineml.org/9ML/0.1">
+  <component name="HHid19">
+    <parameter name="theta"/>
+    <analog-port symbol="n_kn" mode="send"/>
+    <analog-port symbol="t" mode="send"/>
+    <analog-port symbol="n_kd" mode="send"/>
+    <analog-port symbol="Isyn" mode="reduce" op="+"/>
+    <analog-port symbol="m" mode="send"/>
+    <analog-port symbol="h" mode="send"/>
+    <analog-port symbol="V" mode="send"/>
+    <regime name="hhid19_regime">
+      <ode independent_variable="t" name="ODE1" dependent_variable="h">
+        <math-inline>alpha_h_na(V)*(1-h)-beta_m_na(V)*h</math-inline>
+      </ode>
+      <ode independent_variable="t" name="ODE2" dependent_variable="n_kd">
+        <math-inline>alpha_n_kd(V)*(1-n_kd)-beta_n_kd(V)*n_kd</math-inline>
+      </ode>
+      <ode independent_variable="t" name="ODE0" dependent_variable="m">
+        <math-inline>alpha_m_na(V)*(1-m)-beta_m_na(V)*m</math-inline>
+      </ode>
+      <ode independent_variable="t" name="ODE4" dependent_variable="V">
+        <math-inline>(-g_L*(V-E_L)-I_Na(V,m,h)-I_kd(V,n_kd)-I_M(V,n_kn)-Isyn)/C_m</math-inline>
+      </ode>
+      <ode independent_variable="t" name="ODE3" dependent_variable="n_kn">
+        <math-inline>akpha_n_kn(V)*(1-n_kn)-beta_n_kn(V)*n_kn</math-inline>
+      </ode>
+    </regime>
+    <binding name="beta_n_kn(V)">
+      <math-inline>-0.0001*(V+30)/(1-exp())</math-inline>
+    </binding>
+    <binding name="beta_m_na(V)">
+      <math-inline>0.28*(V-VT-40)/(exp((V-VT-40)/5)-1)</math-inline>
+    </binding>
+    <binding name="I_Na(V, m, h)">
+      <math-inline>g_Na_bar*m*m*m*h*(V-E_Na)</math-inline>
+    </binding>
+    <binding name="g_m_bar">
+      <math-inline>0.28</math-inline>
+    </binding>
+    <binding name="g_L">
+      <math-inline>15.7</math-inline>
+    </binding>
+    <binding name="beta_n_kd(V)">
+      <math-inline>0.5*exp(-(V-VT-10)/40)</math-inline>
+    </binding>
+    <binding name="C_m">
+      <math-inline>0.35</math-inline>
+    </binding>
+    <binding name="alpha_h_na(V)">
+      <math-inline>0.128*exp(-(V-VT-VS-17)/18)</math-inline>
+    </binding>
+    <binding name="VS">
+      <math-inline>-10</math-inline>
+    </binding>
+    <binding name="beta_h_na(V)">
+      <math-inline>4/(1+exp(-(V-VT-VS-40)/5))</math-inline>
+    </binding>
+    <binding name="g_kd_bar">
+      <math-inline>3.46</math-inline>
+    </binding>
+    <binding name="I_M(V, n_kn)">
+      <math-inline>g_m_bar*n_kn*(V-E_k)</math-inline>
+    </binding>
+    <binding name="alpha_n_kn(V)">
+      <math-inline>0.0001*(V+30)/(1-exp(-(V+30)/9))</math-inline>
+    </binding>
+    <binding name="VT">
+      <math-inline>-58</math-inline>
+    </binding>
+    <binding name="I_kd(V, n_kd)">
+      <math-inline>g_kd_bar*n_kd*n_kd*n_kd*n_kd*(V-E_k)</math-inline>
+    </binding>
+    <binding name="alpha_m_na(V)">
+      <math-inline>-0.32*(V-VT-13)/(exp(-(V-VT-13)/4)-1)</math-inline>
+    </binding>
+    <binding name="g_Na_bar">
+      <math-inline>17.87</math-inline>
+    </binding>
+    <binding name="E_k">
+      <math-inline>-90</math-inline>
+    </binding>
+    <binding name="alpha_n_kd(V)">
+      <math-inline>-0.032*(V-VT-15)/(exp(-(V-VT-15)/5)-1)</math-inline>
+    </binding>
+    <binding name="E_Na">
+      <math-inline>50</math-inline>
+    </binding>
+    <binding name="E_L">
+      <math-inline>-80</math-inline>
+    </binding>
+    <transition to="hhid19_regime" from="hhid19_regime" name="Transition0" condition="V &gt; theta">
+      <event-port symbol="spike_output" mode="send"/>
+    </transition>
+  </component>
+</nineml>
