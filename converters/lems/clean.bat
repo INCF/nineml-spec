@@ -1,0 +1,1 @@
+del *.9ml *.pyc *.dll *.c *.dot *.mod

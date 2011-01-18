@@ -384,40 +384,39 @@ class TimeDerivative(BaseLEMS):
 
 
 
-if __name__ == "__main__":
 
-    file_name = "TestLEMS.xml"
-    file_al_9ml = "TestLEMS_AL.9ml"
-    file_ul_9ml = "TestLEMS_UL.9ml"
+
+def test_9ml_al(test_ref, AL_file_ref, instance_name, params):
+
+    file_name = test_ref+".xml"
+    '''file_al_9ml = test_ref+"_AL.9ml"'''
+    file_ul_9ml = test_ref+"_UL.9ml"
     
     print "Testing LEMS export..."
 
 
     sys.path.append("../../lib9ml/python/examples/AL")
-    import izhikevich
+    exec("from %s import *" % AL_file_ref)
 
-    print "Loaded abstraction layer definition: %s" % izhikevich.c1.name
+    print "Loaded abstraction layer definition: %s" % c1.name
 
     components_9ml = []
-    components_9ml.append(izhikevich.c1)
+    components_9ml.append(c1)
 
     catalog = "../../catalog/"
     network = UL.Group("Network1")
-    model = UL.Model("Simple 9ML example model (based on Izhikevich cell AL definition) to run on LEMS")
+    model = UL.Model("Simple 9ML example model (based on %s AL definition) to run on LEMS"%AL_file_ref)
     model.add_group(network)
 
-    al_definition_name = izhikevich.c1.name
-    instance_name = "BurstingIzh"
+    al_definition_name = c1.name
 
-    paramsBurst = UL.ParameterSet(a =(0.02, ""), b=(0.2, ""), c=(-50, ""), d=(2, ""), theta=(30, ""), Isyn=(15, ""))
+    comp_instance = UL.SpikingNodeType(instance_name, al_definition_name, params)
 
-    izh_burst_cell = UL.SpikingNodeType(instance_name, al_definition_name, paramsBurst)
-
-    model.add_component(izh_burst_cell)
+    model.add_component(comp_instance)
 
     unstructured = UL.Structure("Unstructured", catalog + "networkstructures/Unstructured.xml")
 
-    cellPop = UL.Population("CellsA", 2, izh_burst_cell, UL.PositionList(structure=unstructured))
+    cellPop = UL.Population("CellsA", 1, comp_instance, UL.PositionList(structure=unstructured))
 
     network.add(cellPop)
 
@@ -425,7 +424,7 @@ if __name__ == "__main__":
 
     lems_file = open(file_name, 'w')
     
-    lems = LEMS("TestSim", 200, 0.01)
+    lems = LEMS(test_ref, 200, 0.01)
 
     lems.read_9ml(components_9ml, model)
     
@@ -441,4 +440,13 @@ if __name__ == "__main__":
        os.system("java -jar lems-0.6.1.jar "+file_name)
     
     
-    
+
+if __name__ == "__main__":
+
+    print "Running main test on lems.py"
+
+    params = UL.ParameterSet(a =(0.02, ""), b=(0.2, ""), c=(-50, ""), d=(2, ""), theta=(30, ""), Isyn=(15, ""))
+
+    instance_name = "BurstingIzh"
+
+    test_9ml_al("TestLEMS", "izhikevich", instance_name, params)
