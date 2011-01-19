@@ -1,0 +1,34 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<nineml xmlns="http://nineml.org/9ML/0.1">
+  <component name="CondDoubleExpSynapse">
+    <parameter name="tau2"/>
+    <parameter name="g_bar"/>
+    <parameter name="tau1"/>
+    <parameter name="E"/>
+    <parameter name="W"/>
+    <analog-port symbol="Isyn" expression="g_bar*(g1-g2)/(tau1-tau2)*(V-E)" mode="send"/>
+    <analog-port symbol="g2" mode="send"/>
+    <analog-port symbol="t" mode="send"/>
+    <analog-port symbol="V" mode="recv"/>
+    <analog-port symbol="g1" mode="send"/>
+    <regime name="Regime0">
+      <ode independent_variable="t" name="ODE1" dependent_variable="g2">
+        <math-inline>-g2/tau2</math-inline>
+      </ode>
+      <ode independent_variable="t" name="ODE0" dependent_variable="g1">
+        <math-inline>-g1/tau1</math-inline>
+      </ode>
+    </regime>
+    <transition to="Regime0" from="Regime0" name="Transition0">
+      <condition-on-event-port>
+        <event-port symbol="spike_input" mode="recv"/>
+      </condition-on-event-port>
+      <inplace to="g1" name="InplaceAdd0" op="+=">
+        <math-inline>W</math-inline>
+      </inplace>
+      <inplace to="g2" name="InplaceAdd1" op="+=">
+        <math-inline>W</math-inline>
+      </inplace>
+    </transition>
+  </component>
+</nineml>
