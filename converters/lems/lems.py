@@ -12,11 +12,9 @@ Author: Padraig Gleeson
 
 from lxml import etree
 from lxml.builder import E
-import os, sys
+import os
+import sys
 
-
-import nineml.user_layer as UL
-import nineml.abstraction_layer as AL
 
 LEMS_EL = "Lems"
 DEFAULT_RUN="DefaultRun"
@@ -25,28 +23,34 @@ DISPLAY="Display"
 LINE="Line"
 
 
-class LEMS():
+class LEMS(): 
 
   includes = []
   components = {}
   componentTypes = {}
   networks = {}
+  simulations = []
+  
   description = "LEMS created with Python interface"
   
-  def __init__(self, sim_name, dur, dt):
-    self.sim_name = sim_name
-    self.dur = float(dur)
-    self.dt = float(dt)
+  def __init__(self):
+
     self.includes.append(Include("NeuroML2CoreTypes/Cells.xml"))
     self.includes.append(Include("NeuroML2CoreTypes/Networks.xml"))
     self.includes.append(Include("NeuroML2CoreTypes/Simulation.xml"))
 
+  def add_component(self, component):
+    self.components[component.id] = component
+
+
   def add_network(self, network):
     self.networks[network.id] = network
 
+
   
   def to_xml(self):
-    def_run = E(DEFAULT_RUN, component=self.sim_name)
+
+    def_run = E(DEFAULT_RUN, component=self.simulations[0].id)
     lems_xml = E(LEMS_EL, def_run)
 
     for include in self.includes:
@@ -62,7 +66,10 @@ class LEMS():
     for net in self.networks.keys():
         lems_xml.append(self.networks[net].to_xml())
 
-    net_to_sim = self.networks[self.networks.keys()[0]]
+    for sim in self.simulations:
+        lems_xml.append(sim.to_xml())
+
+    '''net_to_sim = self.networks[self.networks.keys()[0]]
 
     simulation = E(SIMULATION, id=self.sim_name, length="%fms"%self.dur, step="%fms"%self.dt, target=net_to_sim.id)
     
@@ -74,15 +81,37 @@ class LEMS():
         line = E(LINE, id="l1", quantity=pop.id+"[0]/V", color="#0040FF", scale="1")
         display.append(line)
 
-
-    lems_xml.append(simulation)
+    lems_xml.append(simulation)'''
 
     return lems_xml
+
+  def gen_sim_with_def_plots(self, network_id, dur, dt):
+
+    simulation = Simulation("Sim_"+network_id, "%fms"%dur, "%fms"%dt, network_id)
+
+    for pop_name in self.networks[network_id].populations.keys():
+        pop = self.networks[network_id].populations[pop_name]
+        display = Display("disp_"+pop.id, self.description+": "+pop.id)
+        comp = self.components[pop.component]
+        compType = self.componentTypes[comp.type]
+        state_vars = compType.behavior.state_variables
+        for i in range(pop.size):
+            for sv in state_vars:
+                line = Line("line_"+pop.id, "%s[%i]/%s"%(pop.id, i, sv.name), "#0040FF")
+                display.lines.append(line)
+                
+        simulation.displays.append(display)
+
+            
+    self.simulations.append(simulation)
+
 
   def read_9ml(self, components_9ml, model):
       print "Reading elements from 9ML: "+model.name
 
       self.description = model.name
+
+      '''simulation = Simulation(id=self.sim_name, length="%fms"%self.dur, step="%fms"%self.dt, target=net_to_sim.id)'''
 
       for comp9 in components_9ml:
           print "  Adding component of type: %s"%comp9.name
@@ -188,9 +217,11 @@ class Component(BaseNeuroML2):
 
     parameter_values = {}
 
-    def __init__(self, type, id):
+    def __init__(self, type, id, **kwargs):
         self.type = type
         self.id = id
+        for key in kwargs:
+            self.parameter_values[key] = kwargs[key]
 
     def to_xml(self):
         attrs = {"id":self.id, "type":str(self.type)}
@@ -203,6 +234,62 @@ class Component(BaseNeuroML2):
                     
         return element
 
+
+class Simulation(BaseLEMS):
+
+    type = "Simulation"
+    displays = []
+
+    def __init__(self, id, length, step, target):
+        self.id = id
+        self.length = length
+        self.step = step
+        self.target = target
+
+
+    def to_xml(self):
+        element = E(self.type, id=self.id, length=self.length, step=self.step, target=self.target)
+        for d in self.displays:
+            element.append(d.to_xml())
+        return element
+
+
+class Display(BaseLEMS):
+
+    type = "Display"
+    lines = []
+
+    '''display = E(DISPLAY, id="d1", title=self.description, timeScale="1s")'''
+    def __init__(self, id, title, timeScale="1s"):
+        self.id = id
+        self.title = title
+        self.timeScale = timeScale
+
+    def to_xml(self):
+        element = E(self.type, id=self.id, title=self.title, timeScale=self.timeScale)
+        for l in self.lines:
+            element.append(l.to_xml())
+        return element
+
+
+
+
+
+class Line(BaseLEMS):
+
+    type = "Line"
+
+    '''line = E(LINE, id="l1", quantity=pop.id+"[0]/V", color="#0040FF", scale="1")'''
+    def __init__(self, id, quantity, color, scale="1"):
+        self.id = id
+        self.quantity = quantity
+        self.color = color
+        self.scale = scale
+
+    def to_xml(self):
+        element = E(self.type, id=self.id, quantity=self.quantity, color=self.color, scale = self.scale)
+        return element
+    
 
 class ComponentType(BaseLEMS):
 
@@ -233,6 +320,8 @@ class ComponentType(BaseLEMS):
         return element
     
     def read_9ml(self, component9):
+
+        import nineml.abstraction_layer as AL
 
         timeScaleConst = "tscale"
         for param9 in component9.parameters:
@@ -399,6 +488,9 @@ class TimeDerivative(BaseLEMS):
 
 def test_9ml_al(test_ref, AL_file_ref, instance_name, params, dur, dt):
 
+
+    import nineml.user_layer as UL
+
     file_name = test_ref+".xml"
     '''file_al_9ml = test_ref+"_AL.9ml"'''
     file_ul_9ml = test_ref+"_UL.9ml"
@@ -413,7 +505,10 @@ def test_9ml_al(test_ref, AL_file_ref, instance_name, params, dur, dt):
     ''' To handle Abigail's models...'''
     if my_cell_comp.name.lower() != AL_file_ref.lower():
         print my_cell_comp.name +" is not "+AL_file_ref+"..."
-        my_cell_comp = leaky_iaf 
+        try:
+            my_cell_comp = leaky_iaf
+        except NameError:
+            print "Going with the flow..."
 
     print "Loaded abstraction layer definition: %s from file %s/%s.py" % (my_cell_comp.name, al_def_dir, AL_file_ref)
 
@@ -441,10 +536,14 @@ def test_9ml_al(test_ref, AL_file_ref, instance_name, params, dur, dt):
 
     lems_file = open(file_name, 'w')
     
-    lems = LEMS(test_ref, dur, dt)
+    lems = LEMS()
 
     lems.read_9ml(components_9ml, model)
+
+    lems.gen_sim_with_def_plots(lems.networks.values()[0].id, 200, 0.01)
+
     
+
     lems.write(lems_file)
     
     lems_file.close()
@@ -460,6 +559,8 @@ def test_9ml_al(test_ref, AL_file_ref, instance_name, params, dur, dt):
 
 if __name__ == "__main__":
 
+    import nineml.user_layer as UL
+    
     print "Running main test on lems.py"
 
     params = UL.ParameterSet(a =(0.02, ""), b=(0.2, ""), c=(-50, ""), d=(2, ""), theta=(30, ""), Isyn=(15, ""))

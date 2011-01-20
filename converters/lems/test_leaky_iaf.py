@@ -11,7 +11,7 @@ Author: Padraig Gleeson
 """
 
 
-from lems import *
+import lems
 
 import nineml.user_layer as UL
 
@@ -26,4 +26,4 @@ if __name__ == "__main__":
 
     instance_name = "IaF1"
 
-    test_9ml_al("TestIaF", al_ref, instance_name, params, 1000, 0.01)
+    lems.test_9ml_al("TestIaF", al_ref, instance_name, params, 400, 0.01)
