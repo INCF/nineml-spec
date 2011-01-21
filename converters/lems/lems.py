@@ -93,12 +93,18 @@ class LEMS():
         pop = self.networks[network_id].populations[pop_name]
         display = Display("disp_"+pop.id, self.description+": "+pop.id)
         comp = self.components[pop.component]
-        compType = self.componentTypes[comp.type]
-        state_vars = compType.behavior.state_variables
         for i in range(pop.size):
-            for sv in state_vars:
-                line = Line("line_"+pop.id, "%s[%i]/%s"%(pop.id, i, sv.name), "#0040FF")
+            try:
+                compType = self.componentTypes[comp.type]
+                state_vars = compType.behavior.state_variables
+                for sv in state_vars:
+                    line = Line("line_"+pop.id, "%s[%i]/%s"%(pop.id, i, sv.name), "#0040FF")
+                    display.lines.append(line)
+            except KeyError:
+                ''' e.g. if using NeuroML 2 ComponentType... '''
+                line = Line("line_"+pop.id, "%s[%i]/%s"%(pop.id, i, "v"), "#0040FF")
                 display.lines.append(line)
+
                 
         simulation.displays.append(display)
 

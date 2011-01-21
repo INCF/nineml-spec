@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 
-Initial version of converter 9ML -> LEMS
-Can be used to convert AL models in 9ml to LEMS to be executed with the LEMS interpreter
+Initial version of converter LEMS/NeuroML 2 Python API
 
 Based on scripts from Andrew Davison & Eilif Muller's libnineml
 
@@ -41,4 +40,12 @@ if __name__ == "__main__":
 
     lems_file = ref+".xml"
     lems.write(lems_file)
+
+    print "Saved file to %s"%lems_file
+
+    run_in_lems = True
+
+    if run_in_lems:
+       os.system("java -jar lems-0.6.1.jar "+lems_file)
+
     
