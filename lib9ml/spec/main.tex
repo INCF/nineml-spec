@@ -9,9 +9,6 @@
 \usepackage{listings}
 \usepackage{amssymb}
 \usepackage{amsmath}
-\usepackage{tikz}
-\usetikzlibrary{topaths,positioning}
-\usepackage{signalflowdiagram}
 
 \definecolor{CodeBackground}{rgb}{0.9, 0.95, 0.95}
 \lstset{ %
@@ -435,21 +432,6 @@ Who: Ivan
 
 
 \subsection{Diagram}
-
-Our assumption for the model simulation environment is that it
-consists of discrete and continuous subsystems. The continuous
-subsystem consists of variables that evolve along continuous functions
-of time, while the discrete system is defined as a set of constructors
-for discrete structures that provide means to control the continuous
-subsystem. 
-
-We propose a block diagram language, based on ideas from
-Orlarey:02, an algebraic approach to block diagram
-construction. The idea is to use a small set of combination operations
-to describe how block diagrams are composed, rather than specifying
-the individual connections between blocks. In our case, we define the
-combination operations to reflect the relationships between continuous
-dynamics, events, and state transitions.
 
 
 To handle events and spiking dynamics, but also domains of continuous
@@ -1096,6 +1078,211 @@ and thus includes the authors or primary contributors to a wide
 variety of computational neuroscience efforts including the Blue Brain
 Project, GENESIS-3, KInNeSS, MOOSE, NEURON, NEST, PyNN and NeuroML.
 
+\section{Code Generation Pseudocode Notation}
+\label{sec:pseudocode}
+
+The present section provides definitions for a simple applicative
+language capable of expressing finite state machines. This language
+forms the basis for the notation used to define code generation
+semantics for the hybrid state machine operators in section
+\ref{sec:hsm}.
+
+
+\begin{figure}
+{\small{}\begin{tabular*}{5cm}{l@{\extracolsep{1cm}}l}
+$L\;\in{}\;Literal$~&~\\
+$I\;\in{}\;Identifier$~&~\\
+$O\;\in{}\;Primop\quad{}\textrm{(As determined by the runtime environment)}$~&~\\
+$V\;\in{}\;Value$~&~\\
+$E\;\in{}\;Expression$~&~\\
+\\ ~&~\\
+$V$$\:::=\:$$\;$$L$ &[Literal (symbolic or numeric constant)]\\ $\qquad\;\bigm\vert\;$$I$ &[Identifier]\\ $\qquad\;\bigm\vert\;$\textbf{(}\texttt{primop} $O_{proc}$$\;$[$V_{arg}$]$+$\textbf{)}
+ &[Primitive operator invocation]\\ $\qquad\;\bigm\vert\;$\textbf{(}\texttt{struct} [$I_{slot}$=$V_{slot}$]$+$\textbf{)}
+ &[Structure constructor]\\ $\qquad\;\bigm\vert\;$\textbf{(}\texttt{sel} $I_{sel}$$\;$$V_{struct}$\textbf{)}
+ &[Structure selector]\\ $\qquad\;\bigm\vert\;$\textbf{(}\texttt{vector} [$V_{slot}$]$+$\textbf{)}
+ &[Vector constructor]\\ $\qquad\;\bigm\vert\;$\textbf{(}\texttt{vsub} $N_{index}$$\;$$V_{vector}$\textbf{)}
+ &[Vector index]\\ $\qquad\;\bigm\vert\;$\textbf{(}\texttt{ldv} $V_{pointer}$\textbf{)}
+ &[Pointer value access]\\ $\qquad\;\bigm\vert\;$\textbf{(}\texttt{stv} $V_{content}$\textbf{)}
+ &[Pointer value constructor]\\ $\qquad\;\bigm\vert\;$\textbf{(}\texttt{fn} [$I_{parameter}$]$+$$\;$$E_{body}$\textbf{)}
+ &[Parametric expression]\\ $\qquad\;\bigm\vert\;$\textbf{(}\texttt{ifv} $V_{condition}$$\;$$V_{true}$$\;$$V_{false}$\textbf{)}
+ &[Conditional value]\\ ~&~\\
+$E$$\:::=\:$$\;$\textbf{(}\texttt{val} $I_{val}$$\;$$V_{val}$\textbf{)}
+ &[Creates a new binding in the host namespace]\\ $\qquad\;\bigm\vert\;$\textbf{(}\texttt{let} $I_{binding}$$V_{binding}$$\;$$E_{body}$\textbf{)}
+ &[Expression with local binding]\\ $\qquad\;\bigm\vert\;$\textbf{(}\texttt{cond} $V_{condition}$$\;$$E_{true}$$\;$$E_{false}$\textbf{)}
+ &[Conditional expression]\\ $\qquad\;\bigm\vert\;$\textbf{(}\texttt{set} $V_{location}$$\;$$V_{value}$\textbf{)}
+ &[Points the given pointer to the given value]\\ $\qquad\;\bigm\vert\;$\textbf{(}\texttt{ret} $V_{return}$\textbf{)}
+ &[Returns the given value]\\ $\qquad\;\bigm\vert\;$\textbf{(}\texttt{seq} [$E_{stmt}$]$+$\textbf{)}
+ &[A sequence of expressions]\\ $\qquad\;\bigm\vert\;$\textbf{(}\texttt{noop} \textbf{)}
+ &[No operation]\\ ~&~\\
+$L$$\:::=\:$$\;$$N$ &[Numeric Literal]\\ $\qquad\;\bigm\vert\;$\textbf{(}\texttt{symbol} $I_{symbol}$\textbf{)}
+ &[Symbolic Literal]\\ \end{tabular*}
+}
+\caption{\label{Fig:PseudocodeSyntax}Grammar of the code generation pseudocode}\end{figure}
+
+\section{Hybrid State Machine Operators}
+\label{sec:hsm}
+
+
+Our assumption for the model simulation environment is that it
+consists of discrete and continuous subsystems. The continuous
+subsystem consists of variables that evolve along continuous functions
+of time, while the discrete system is defined as a set of constructors
+for discrete structures that provide means to control the continuous
+subsystem. 
+
+We propose a block diagram language, based on ideas from
+Orlarey:02, an algebraic approach to block diagram
+construction. The idea is to use a small set of combination operations
+to describe how block diagrams are composed, rather than specifying
+the individual connections between blocks. In our case, we define the
+combination operations to reflect the relationships between continuous
+dynamics, events, and state transitions.
+
+\subsection{Continuous subsystem}
+
+The continuous subsystem contains variables that evolve
+continuously with time, according to a set of rules such as a system
+of ordinary differential equations. A change in the dynamics of a
+continuous variable can be due to a change in the continuous
+environment or due to an event originating in the discrete
+subsystem. 
+
+In the approach inspired by dataflow modeling, continuous dynamics
+can be represented as signal flow diagrams, which consist of signal
+blocks and arrows. A signal block is the representation of a
+continuous function that takes one or more signal values as
+input (specified by input arrows), and returns one or more signal
+values (specified by output arrows).
+Figure \ref{Fig:SignalBlock} shows the structure of a block
+constructed by the $\texttt{SF}$ operator, which will be discussed
+in detail later. 
+
+\begin{figure}
+\includegraphics{figures/BasicSignalBlock}
+\caption{\label{Fig:SignalBlock}Basic signal block}
+\end{figure}
+
+In the algebraic approach to constructing block diagrams, a set of
+special combination operators (or combinators) are used to construct
+complex signal blocks from primitive ones. We assume there is a set of
+primitive blocks defined elsewhere that corresponds to arithmetic
+operators and other essential functionality of the continuous
+subsystem. 
+
+A model description in our notation will consist of the
+combination of a number of signal blocks into a composite signal block
+that specifies mathematical rules to be computed within a simulation
+environment. 
+
+\subsubsection{Basic signal function combinators}
+\begin{enumerate}
+
+\item $\texttt{IDENTITY}$ represents the identity signal function; the
+  input value is passed unchanged to the output.
+
+\item $\texttt{SEQUENCE}$ is the combinator to sequentially compose
+  signal functions: \[\texttt{SEQUENCE}\quad{}f_{1}\quad{}f_{2}\]
+
+The sequential composition of $f_{1}$ and $f_{2}$ is obtained by
+connecting the outputs of $f_{1}$ to the inputs of $f_{2}$.
+
+\begin{figure}
+\includegraphics{figures/SequenceSignalBlock}
+\caption{\label{Fig:SequenceSignalBlock}Sequence signal block}
+\end{figure}
+
+\item $\texttt{UNION}$ is the combinator to compose
+  signal functions in parallel: \[\texttt{UNION}\quad{}f_{1}\quad{}f_{2}\]
+
+The parallel composition of $f_{1}$ and $f_{2}$ is obtained by
+obtaining the union of outputs of $f_{1}$ and $f_{2}$.
+
+\begin{figure}
+\includegraphics{figures/UnionSignalBlock}
+\caption{\label{Fig:UnionSignalBlock}Union signal block}
+\end{figure}
+
+\item $\texttt{SENSE}$ selects a signal from the environment of the
+  continuous subsystem and applies the given signal function to that
+  signal: 
+
+\[\texttt{SENSE}\quad{}signal\quad{}f\]
+
+\begin{figure}
+\includegraphics{figures/SenseSignalBlock}
+\caption{\label{Fig:SenseSignalBlock}Sense signal block}
+\end{figure}
+
+\item $\texttt{ACTUATE}$ creates a new signal in the environment from
+  the output of the given signal function:
+
+\[\texttt{ACTUATE}\quad{}signal\quad{}f\]
+
+\begin{figure}
+\includegraphics{figures/ActuateSignalBlock}
+\caption{\label{Fig:ActuateSignalBlock}Actuate signal block}
+\end{figure}
+
+\end{enumerate}
+
+\subsubsection{Discrete events}
+
+An event originating in the discrete subsystem occurs at a single
+point in time, and has no duration, e.g. a signal exceeding some
+threshold. Events are modeled in the continuous subsystem as signals
+that are only defined at the points in time when the events occur.
+
+An event can be turned into a continuous signal by the $\texttt{HOLD}$
+signal function combinator, which remembers the most recent value of
+an event:
+
+\[\texttt{HOLD}\quad{}S_{e}\quad{}::=\quad{}S_{e}(t_{i})\quad{}where \quad{}t_{i}\leqq{}t\quad{} and \quad{}\nexists{S_{e}(t_{j})}:\:t_{i}\leqq{}t_{j}\]
+
+A continuous signal can turned into an event by the $\texttt{EDGE}$
+signal function combinator, which receives a signal and generates an
+event when the signal changes.
+
+Simultaneously occurring events can be merged by the $\texttt{MERGE}$
+combinator, which combines events using functions defined in the
+discrete subsystem:
+
+\[\texttt{MERGE}\quad{}I_{proc}\quad{}::=\quad{}\texttt{sf}(I_{proc}(x\;,\:\;y))\quad{}where \quad{}\langle{}x\;,\;\;y\rangle{}\in{}S_{e}(t_{i})\]
+
+
+This combinator yields a merged event stream containing the events
+returned by the supplied function.
+
+\subsubsection{Transitions and Transients}
+
+The switching primitives of the language can be used when there is a
+succession of signal functions to switch into as a succession of
+particular events occurs, similar to state changes in a finite state
+automaton.
+
+Suppose that the system of equations that govern the continuous
+dynamics is given by a function
+
+$F\;{\mathrm\mathbf{}(}y\;,\;\;y^{(1)}\;,\;\;\ldots\;,\;\;y^{(n-1)}\;,\;\;t{\mathrm\mathbf{})}\quad{}=\quad{}y^{(n)}$. 
+
+To represent the changes in the continuous dynamics, we will introduce
+the function $G$ such
+that \[G\;{\mathrm\mathbf{}(}k{\mathrm\mathbf{})}\mapsto{}F_{k}{\mathrm\mathbf{}(}y\;,\;\;t{\mathrm\mathbf{})}\]
+where $k$ is a vector of boolean values that reflects the possible
+modes of the continuous system. The signal function primitives then
+allow the construction of all $F_{k}$. The $\texttt{TRANSITION}$ primitive
+specifies when switching from one $F_{k}$ to another occurs. The
+relation consisting of all $\texttt{TRANSITION}$ statements describes
+function $G$.
+
+\[\texttt{TRANSITION}\quad{}I_{event}\quad{}S_{f}\quad{}S_{fk}\]
+\\  
+
+behaves as follows: $S_{f}$ is applied to the input signal and the
+signal $I_{event}$ is obtained. The output signal is $S_{f}$ until an
+event occurs. In that case, the output signal becomes $S_{fk}$, which
+replaces $S_{f}$.
+
+
 \section{\label{ap_examples}NineML Abstraction Layer Examples}
 
 \subsection{XML}
@@ -1108,9 +1295,9 @@ Here are some examples of XML serialization
 Here are some examples of Python lib9ml syntax
 
 
-\subsection{Chicken Scheme}
+\subsection{Native Syntax}
 
-Here are some examples of Chicken Scheme lib9ml syntax
+Here are some examples of NineML native syntax (Chicken Scheme implementation)
 
 
 %\bibliography{refs}
