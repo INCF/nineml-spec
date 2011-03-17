@@ -93,8 +93,12 @@ def build_net_receive_block(transition_to_subthreshold, spike_transition):
             for node in transition.nodes:
                 if isinstance(node, nineml.EventPort) and node.name == 'spike_output':
                     net_receive_block.append("  net_event(t)")
+                elif isinstance(node, nineml.Assignment):
+                    net_receive_block.append("  %s" % node.as_expr())
+                elif isinstance(node, nineml.Inplace):
+                    net_receive_block.append("  %s" % node.as_assignment().as_expr())
                 else:
-                    net_receive_block.append("  %s = %s" % (node.to, node.expr))
+                    raise Exception("Don't know how to handle nodes of type %s" % type(node))
     net_receive_block.append("}")
     return net_receive_block
 

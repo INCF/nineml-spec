@@ -511,6 +511,10 @@ class Inplace(Equation):
     def as_expr(self):
         return "%s %s %s" % (self.to,self.op, self.expr)
 
+    def as_assignment(self):
+        expr = "%s %s %s" % (self.to, self.op[0], self.expr)
+        return Assignment(self.to, expr, self.name)
+
     def prefix(self,prefix=""):
         return ("%s %s " % (prefix+self.to,self.op)) + Expression.prefix(self,prefix)
 
