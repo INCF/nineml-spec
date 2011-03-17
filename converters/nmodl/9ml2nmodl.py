@@ -47,28 +47,23 @@ def build_derivative_block(transition_to_subthreshold, spike_transition):
     for eqn in subthreshold_regime.equations:
         if isinstance(eqn, nineml.ODE):
             dv = eqn.dependent_variable
-            condition = transition_to_subthreshold.resolve_condition()
-            if isinstance(condition, basestring):
-                if transition_to_subthreshold is spike_transition: # only a single regime
-                    derivative_block.append("%s' = %s" %(dv, eqn.rhs))
-                else:
-                    # ODEs are only evaluated when the system is within the regime
-                    # that defines them. Therefore we have to define a function
-                    # that sets the derivative to zero when outside the appropriate
-                    # regime.
-                    derivative_block.append("%s' = deriv_%s(%s)" % (dv, dv, dv))
-                    functions.append(dedent("""
-                        FUNCTION deriv_%s(%s) {
-                          if (%s) {
-                            deriv_%s = %s
-                          } else {
-                            deriv_%s = 0.0
-                          }
-                        }""" % (dv, dv, condition, dv, eqn.rhs, dv)))
-            elif condition is True: # automatic transition
+            if transition_to_subthreshold is spike_transition: # only a single regime
                 derivative_block.append("%s' = %s" %(dv, eqn.rhs))
             else:
-                raise Exception("Don't know what to do with this transition condition: %s" % condition)
+                # ODEs are only evaluated when the system is within the regime
+                # that defines them. Therefore we have to define a function
+                # that sets the derivative to zero when outside the appropriate
+                # regime.
+                derivative_block.append("%s' = deriv_%s(%s)" % (dv, dv, dv))
+                condition = transition_to_subthreshold.condition.as_expr()
+                functions.append(dedent("""
+                    FUNCTION deriv_%s(%s) {
+                      if (%s) {
+                        deriv_%s = %s
+                      } else {
+                        deriv_%s = 0.0
+                      }
+                    }""" % (dv, dv, condition, dv, eqn.rhs, dv)))
         else:
             assert isinstance(eqn, nineml.Assignment)
             derivative_block.append("%s = %s" % (eqn.to, eqn.expr))
@@ -81,18 +76,13 @@ def build_net_receive_block(transition_to_subthreshold, spike_transition):
     watch_statements = []
     transitions = set((transition_to_subthreshold, spike_transition))
     for transition in transitions:
-        condition = transition.resolve_condition()
-        if isinstance(condition, basestring):
-            if ">" in condition or "<" in condition:
-                flag += 1
-                stmt = "  WATCH (%s) %d" % (condition, flag)
-                stmt = stmt.replace("=", "") # WATCH does not like >=
-                watch_statements.append(stmt)
-                transition.to.flag = flag
-            else:
-                raise Exception("Don't know what to do with this transition condition: %s" % condition)
-        elif condition is True:
-            pass
+        condition = transition.condition.as_expr()
+        if ">" in condition or "<" in condition:
+            flag += 1
+            stmt = "  WATCH (%s) %d" % (condition, flag)
+            stmt = stmt.replace("=", "") # WATCH does not like >=
+            watch_statements.append(stmt)
+            transition.to.flag = flag
         else:
             raise Exception("Don't know what to do with this transition condition: %s" % condition)
     net_receive_block = ["if (flag == %d) {" % INIT_FLAG] + watch_statements
@@ -100,48 +90,49 @@ def build_net_receive_block(transition_to_subthreshold, spike_transition):
         if hasattr(transition.to, "flag"):
             net_receive_block.append("} else if (flag == %d) {" % transition.to.flag)
             # if there is an assignment to t within the transition, we emit an event.
-            if transition.assignment:
-                assert transition.assignment.expr == "t"
-                net_receive_block.append("  net_event(%s)" % transition.assignment.expr) # this is a bit dodgy. Should perhaps be just net_event(t)?
-                net_receive_block.append("  %s = %s" % (transition.assignment.to, transition.assignment.expr))
-            # assignments are executed at the start of the regime. This does
-            # not take sequences into account. Need to find an example with a
-            # sequence that breaks this.
-            if transition.from_ is not transition.to:
-                for equation in transition.to.equations:
-                  if isinstance(equation, nineml.Assignment):
-                      net_receive_block.append("  %s = %s" % (equation.to, equation.expr))
+            for node in transition.nodes:
+                if isinstance(node, nineml.EventPort) and node.name == 'spike_output':
+                    net_receive_block.append("  net_event(t)")
+                else:
+                    net_receive_block.append("  %s = %s" % (node.to, node.expr))
     net_receive_block.append("}")
     return net_receive_block
 
-def build_context(component):
+
+def build_context(component, input_filename):
     """
     Return a dictionary that will be used to render the NMODL template.
     """
     transition_to_subthreshold, spike_transition = check_component(component)
     derivative_block, functions = build_derivative_block(transition_to_subthreshold, spike_transition)
     net_receive_block = build_net_receive_block(transition_to_subthreshold, spike_transition)
+    assigned_variables = component.assigned_variables.difference(component.integrated_variables)
     context = {
-        "title": "Spiking node generated from the 9ML file %s using 9ml2nmodl.py version %s" % (nineml_file, nineml.__version__),
+        "title": "Spiking node generated from the 9ML file %s using 9ml2nmodl.py version %s" % (input_filename, nineml.__version__),
         "model_name": component.name.replace("-", "_"),
-        "range_variables": ", ".join(component.parameters),
+        "range_variables": ", ".join(component.user_parameters.union(assigned_variables)),
         "initial_values": "\n  ".join("%s = 0" % p for p in component.assigned_variables) + "\n  " + \
                           "\n  ".join("%s = %s" % (b.name, b.value) for b in component.bindings),
         "init_flag": INIT_FLAG,
-        "parameter_values": "\n  ".join("%s = 1" % p for p in component.parameters),
+        "parameter_values": "\n  ".join("%s = 1" % p for p in component.user_parameters),
         "state_variables": " ".join(component.integrated_variables),
-        "assigned_variables": "\n  ".join(component.assigned_variables.difference(component.integrated_variables)),
+        "assigned_variables": "\n  ".join(assigned_variables),
         "function_blocks": "\n\n".join(functions),
         "derivative_block": "\n  ".join(derivative_block),
         "net_receive_block": "\n  ".join(net_receive_block),
     }
     return context
 
-if __name__ == "__main__":
-    import sys
-    nineml_file = sys.argv[1]
+
+def write_nmodl(nineml_file):
     component = nineml.parse(nineml_file)
     output_filename = nineml_file.replace(".xml", ".mod")
     print "Converting %s to %s" % (nineml_file, output_filename)
     with open(output_filename, "w") as f:
-        f.write(nmodl_template % build_context(component))
+        f.write(nmodl_template % build_context(component, nineml_file))
+
+
+if __name__ == "__main__":
+    import sys
+    write_nmodl(sys.argv[1])
+    

@@ -378,6 +378,16 @@ class Structure(BaseComponent):
         """
         raise NotImplementedError
 
+    @property
+    def is_csa(self):
+        return self.get_definition().__module__ == 'csa.geometry' # probably need a better test
+
+    def to_csa(self):
+        if self.is_csa:
+            return self.get_definition() # e.g. lambda size: csa.random2d(size, *self.parameters)
+        else:
+            raise Exception("Structure cannot be transformed to CSA geometry function")
+            
 
 class ConnectionRule(BaseComponent):
     """
@@ -1037,3 +1047,13 @@ class Projection(object):
                    rule=get_or_create_component(element.find(NINEML+"rule").text, ConnectionRule, components),
                    synaptic_response=get_or_create_component(element.find(NINEML+"response").text, SynapseType, components),
                    connection_type=get_or_create_component(element.find(NINEML+"synapse").text, ConnectionType, components))
+
+    def to_csa(self):
+        if self.rule.is_csa:
+            distance_func = _csa.euclidMetric2d # should allow different distance functions, specified somewhere in the user layer
+            src_geometry = self.source.positions.structure.to_csa()(self.source.number)
+            tgt_geometry = self.target.positions.structure.to_csa()(self.target.number)
+            distance_metric = distance_func(src_geometry, tgt_geometry)
+            _csa.cset(self.rule.to_csa() * distance_metric) 
+        else:
+            raise Exception("Connection rule does not use Connection Set Algebra")
