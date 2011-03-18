@@ -20,6 +20,7 @@ with open(template_file) as f:
         
 INIT_FLAG = 1
 
+
 def check_component(component):
     transitions = list(component.transitions)
     nt = len(transitions)
@@ -39,6 +40,7 @@ def check_component(component):
     else:
         raise Exception("Must have either one or two transitions.")
     return transition_to_subthreshold, spike_transition
+
 
 def build_derivative_block(transition_to_subthreshold, spike_transition):
     functions = []
@@ -68,6 +70,7 @@ def build_derivative_block(transition_to_subthreshold, spike_transition):
             assert isinstance(eqn, nineml.Assignment)
             derivative_block.append("%s = %s" % (eqn.to, eqn.expr))
     return derivative_block, functions
+
 
 def build_net_receive_block(transition_to_subthreshold, spike_transition):
     # For each non-automatic transition, we create a WATCH statement, with an
@@ -103,25 +106,40 @@ def build_net_receive_block(transition_to_subthreshold, spike_transition):
     return net_receive_block
 
 
+def transform_bindings(bindings):
+    constants = []
+    functions = []
+    for binding in bindings:
+        if binding.args:
+            functions.append(dedent("""
+                FUNCTION %s {
+                    %s = %s
+                }""" % (binding.lhs, binding.name, binding.rhs)))
+        else:
+            constants.append("%s = %s" % (binding.lhs, binding.rhs))
+    return constants, functions
+
+
 def build_context(component, input_filename):
     """
     Return a dictionary that will be used to render the NMODL template.
     """
     transition_to_subthreshold, spike_transition = check_component(component)
-    derivative_block, functions = build_derivative_block(transition_to_subthreshold, spike_transition)
+    derivative_block, deriv_functions = build_derivative_block(transition_to_subthreshold, spike_transition)
     net_receive_block = build_net_receive_block(transition_to_subthreshold, spike_transition)
     assigned_variables = component.assigned_variables.difference(component.integrated_variables)
+    constants, binding_functions = transform_bindings(component.bindings)
     context = {
         "title": "Spiking node generated from the 9ML file %s using 9ml2nmodl.py version %s" % (input_filename, nineml.__version__),
         "model_name": component.name.replace("-", "_"),
         "range_variables": ", ".join(component.user_parameters.union(assigned_variables)),
-        "initial_values": "\n  ".join("%s = 0" % p for p in component.assigned_variables) + "\n  " + \
-                          "\n  ".join("%s = %s" % (b.name, b.value) for b in component.bindings),
+        "initial_values": "\n  ".join("%s = 0" % p for p in component.integrated_variables) + "\n  " + \
+                          "\n  ".join(constants),
         "init_flag": INIT_FLAG,
         "parameter_values": "\n  ".join("%s = 1" % p for p in component.user_parameters),
         "state_variables": " ".join(component.integrated_variables),
         "assigned_variables": "\n  ".join(assigned_variables),
-        "function_blocks": "\n\n".join(functions),
+        "function_blocks": "\n\n".join(deriv_functions + binding_functions),
         "derivative_block": "\n  ".join(derivative_block),
         "net_receive_block": "\n  ".join(net_receive_block),
     }
@@ -130,7 +148,7 @@ def build_context(component, input_filename):
 
 def write_nmodl(nineml_file):
     component = nineml.parse(nineml_file)
-    output_filename = nineml_file.replace(".xml", ".mod")
+    output_filename = nineml_file.replace(".xml", ".mod").replace("-", "_")
     print "Converting %s to %s" % (nineml_file, output_filename)
     with open(output_filename, "w") as f:
         f.write(nmodl_template % build_context(component, nineml_file))

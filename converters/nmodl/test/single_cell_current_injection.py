@@ -36,8 +36,12 @@ def run(duration):
         
 def calculate_errors(spike_times, expected_spike_times):
     spike_times = numpy.array(spike_times)
-    errors = (spike_times - expected_spike_times)/expected_spike_times
-    success = (errors < 0.001).all()
+    if spike_times.shape != expected_spike_times.shape:
+        success = False
+        errors = "Different spike counts: actual: %d, expected %d" % (spike_times.size, expected_spike_times.size)
+    else:
+        errors = (spike_times - expected_spike_times)/expected_spike_times
+        success = (errors < 0.001).all()
     return success, errors
 
 def plot(filename, trec, vrec):

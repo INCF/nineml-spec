@@ -20,7 +20,7 @@ def initialize():
     cell.U = 0.2*cell.V
 
 #fih, cvode = configure(cell, initialize)
-fih = h.FInitializeHandler(0, initialize)
+fih = h.FInitializeHandler(1, initialize)
 cvode = h.CVode()
 cvode.active(1)
 
@@ -30,11 +30,11 @@ run(100.0)
 import numpy
 
 expected_spike_times = numpy.array( # I have no idea if these values are correct
-    [  4.39370897e-07,   2.09438417e+00,   4.73028132e+00,
-       8.96999878e+00,   4.27825706e+01,   4.43832185e+01,
-       4.61947833e+01,   4.83444533e+01,   5.11014716e+01,
-       5.61429396e+01,   8.98450254e+01,   9.14458020e+01,
-       9.32575612e+01,   9.54075431e+01,   9.81652146e+01])
+  [  2.12834641,   3.17733172,   4.31376038,   5.52657414,
+     6.85904596,   8.33813478,   9.97419301,  11.85470981,
+    14.10067134,  17.04985314,  50.2182681 ,  51.81893091,
+    53.63051808,  55.78022398,  58.53731759,  63.57952919,
+    97.27780952,  98.87851621])
 
 success, errors = calculate_errors(spike_times, expected_spike_times)
 

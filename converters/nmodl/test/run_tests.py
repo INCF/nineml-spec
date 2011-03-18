@@ -11,8 +11,8 @@ sys.path.append('..')
 nineml2nmodl = __import__("9ml2nmodl")
 from subprocess import Popen, PIPE
 
-models = ["leaky_iaf", ]#"izhikevich"]
-models = ["izhikevich", "leaky_iaf",]
+models = ["izhikevich", "morris-lecar", "leaky_iaf", ]
+#models = ["morris-lecar"]
 
 output_dir = "test_files"
 if not os.path.exists(output_dir):
