@@ -34,15 +34,17 @@ result = p.wait()
 # run test scripts
 cwd = os.getcwd()
 os.chdir(output_dir)
-outcomes = {}
-data = {}
+from single_cell_current_injection import TestCase, configure, run
+configure()
+tests = {}
 for model in models:
-    execfile("../test_%s.py" % model)
-    outcomes[model] = success
-    data[model] = (trec, vrec, spike_times, expected_spike_times, errors)
-os.chdir(cwd)
+    test = __import__("test_%s" % model)
+    tests[model] = TestCase(test.mechanism, test.parameters, test.initial_values, test.expected_spike_times)
+run(100.0)
 
 print "\n" + "="*26
-for model, passed in outcomes.items():
-    print "%-20s %s" % (model, passed and " OK " or "FAIL")
-    
+for model, test in tests.items():
+    print "%-20s %s" % (model, test.success and " OK " or "FAIL")
+    test.plot("test_%s.png" % model)
+
+os.chdir(cwd)    

@@ -1,12 +1,10 @@
 # encoding: utf-8
 
-from single_cell_current_injection import create_cell, configure, setup_recording, run, calculate_errors, plot
-import neuron
-h = neuron.h
+from single_cell_current_injection import TestCase, configure, run
+import numpy
 
-dummy = h.Section()
-
-parameters = {
+mechanism = "LeakyIAF"
+parameters = p = {
     'C': 1,         # nF
     'vL': -65,      # mV
     'Isyn': 0.5,    # nA
@@ -15,25 +13,22 @@ parameters = {
     't_ref': 5,     # ms
     'gL': 0.01,     # µS
 }
-cell = create_cell("LeakyIAF", parameters, dummy)
+initial_values = {'V': -65, 't_spike': -1e9}
 
-v_init = -65
-def initialize():
-    cell.V = v_init
-    cell.t_spike = -1e9
-fih, cvode = configure(cell, initialize)
-vrec, trec, spike_times, rec = setup_recording(cell)
-run(100.0)
-
-import numpy
 def time_to_spike(v_start):
-    tau_m = cell.C/cell.gL
-    x = cell.vL + cell.Isyn/cell.gL
-    return tau_m*numpy.log((v_start - x)/(cell.theta - x))
-spike1 = time_to_spike(v_init)
-spike2 = spike1 + cell.t_ref + time_to_spike(cell.V_reset)
+    tau_m = p['C']/p['gL']
+    x = p['vL'] + p['Isyn']/p['gL']
+    return tau_m*numpy.log((v_start - x)/(p['theta'] - x))
+spike1 = time_to_spike(initial_values['V'])
+spike2 = spike1 + p['t_ref'] + time_to_spike(p['V_reset'])
 expected_spike_times = numpy.array([spike1, spike2])
 
-success, errors = calculate_errors(spike_times, expected_spike_times)
 
-plot("test_leaky_iaf.png", trec, vrec)
+if __name__ == "__main__":
+    configure()
+    test = TestCase(mechanism, parameters, initial_values, expected_spike_times)
+    run(100.0)
+    test.plot("test_leaky_iaf.png")
+    errors = test.calculate_errors()
+    print test.success and "OK" or "FAIL"
+

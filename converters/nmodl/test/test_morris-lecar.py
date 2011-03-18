@@ -1,10 +1,7 @@
+import numpy
+from single_cell_current_injection import TestCase, configure, run
 
-from single_cell_current_injection import create_cell, configure, setup_recording, run, calculate_errors, plot
-import neuron
-h = neuron.h
-
-dummy = h.Section()
-
+mechanism = "Morris_Lecar"
 parameters = {
     'C': 10,
     'V1': -1.2,
@@ -21,25 +18,17 @@ parameters = {
     'V_ca': 120,
     'V_k': -84,
 }
-cell = create_cell("Morris_Lecar", parameters, dummy)
+initial_values = {
+    'V': -65,
+    'W': 0
+}
+expected_spike_times = numpy.array([ 8.19,  77.90]) # no idea if these are the correct values
 
-def initialize():
-    cell.V = -65
-    cell.W = 0
 
-#fih, cvode = configure(cell, initialize)
-fih = h.FInitializeHandler(1, initialize)
-cvode = h.CVode()
-cvode.active(1)
-cvode.condition_order(2)
-
-vrec, trec, spike_times, rec = setup_recording(cell)
-run(100.0)
-
-import numpy
-
-expected_spike_times = numpy.array([ 8.19,  77.90])
-
-success, errors = calculate_errors(spike_times, expected_spike_times)
-
-plot("test_morris-lecar.png", trec, vrec)
+if __name__ == "__main__":
+    configure()
+    test = TestCase(mechanism, parameters, initial_values, expected_spike_times)
+    run(100.0)
+    test.plot("test_morris-lecar.png")
+    errors = test.calculate_errors()
+    print test.success and "OK" or "FAIL"
