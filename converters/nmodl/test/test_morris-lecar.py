@@ -22,12 +22,12 @@ initial_values = {
     'V': -65,
     'W': 0
 }
-expected_spike_times = numpy.array([ 8.19,  77.90]) # no idea if these are the correct values
+expected_output = numpy.array([ 8.19,  77.90]) # no idea if these are the correct values
 
 
 if __name__ == "__main__":
     configure()
-    test = TestCase(mechanism, parameters, initial_values, expected_spike_times)
+    test = TestCase(mechanism, parameters, initial_values, expected_output)
     run(100.0)
     test.plot("test_morris-lecar.png")
     errors = test.calculate_errors()

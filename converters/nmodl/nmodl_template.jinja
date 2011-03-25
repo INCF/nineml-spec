@@ -1,0 +1,104 @@
+TITLE Spiking node generated from the 9ML file {{input_filename}} using 9ml2nmodl.py version {{version}}
+
+{%- set assigned_variables = component.assigned_variables.difference(component.integrated_variables) %}
+{%- set range_variables = component.user_parameters.union(assigned_variables) %}
+
+NEURON {
+  POINT_PROCESS {{ component.name|replace('-', '_') }}
+  RANGE {{ range_variables|join(', ') }}
+}
+
+CONSTANT {
+  SPIKE = 0
+  INIT = 1
+  {%- for regime in component.regimes %}
+  {{ regime.label }} = {{ regime.flag }}
+  {%- endfor %}
+  {%- for channel in channels %}
+  {{ channel }} = {{ loop.index0 }}
+  {%- endfor %}
+}
+
+INITIAL {
+  {%- for var in component.state_variables %}
+  {{ var }} = 0
+  {%- endfor %}
+  {%- for binding in component.bindings if not binding.args  %}
+  {{ binding.lhs }} == {{ binding.rhs }}
+  {%- endfor %}
+  regime = {{ initial_regime }}
+  net_send(0, INIT)
+}
+
+PARAMETER {
+  {%- for p in component.user_parameters %}
+  {{ p }} = 1
+  {%- endfor %}
+}
+
+STATE { {{ component.integrated_variables|join(' ') }} }
+
+ASSIGNED {
+  regime
+  {{ assigned_variables|join('\n ') }}
+}
+
+BREAKPOINT {
+  SOLVE states METHOD derivimplicit
+}
+
+DERIVATIVE states {
+  {%- for var in component.integrated_variables %}
+    {{ var }}' = deriv_{{ var }}({{ deriv_func_args(component, var)|join(', ') }})
+  {%- endfor %}
+}
+
+{% for var in component.integrated_variables %}
+FUNCTION deriv_{{ var }}({{ deriv_func_args(component, var)|join(', ') }}) {
+  {%- for regime in component.regimes %}
+  if (regime=={{ regime.label }}) {
+    deriv_{{ var }} = {{ ode_for(regime, var).rhs }}
+  }
+  {%- endfor %}
+}
+{%- endfor %}
+{%- for binding in component.bindings if binding.args %}
+FUNCTION {{binding.lhs}} {
+  {{binding.name}} = {{binding.rhs}}
+}
+{%- endfor %}
+
+NET_RECEIVE({{ weight_var }}, channel) {
+  INITIAL {
+    : stop channel being set to 0 by default
+  }
+  if (flag == SPIKE) {
+    :printf("Received spike with weight %f on channel %f at %f\n", {{ weight_var }}, channel, t)
+    {%- for regime in component.regimes %}
+    if (regime == {{ regime.label }}) {
+      {%- for transition in regime.transitions if on_input_event(transition) %}
+      if (channel == {{ transition.condition.channel }}) {
+        {%- for node in transition.nodes %}
+        {{ as_expr(node) }}
+        {%- endfor %}
+      }
+      {%- endfor %}
+    }
+    {%- endfor %}
+  } else if (flag == INIT) {
+    {%- for transition in component.transitions if threshold_crossing(transition) %}
+    WATCH ({{transition.condition.as_expr()|replace('=','')}}) {{ transition.to.flag }}
+    {%- endfor %}
+  {%- for transition in component.transitions if not on_input_event(transition) %}
+  } else if (flag == {{ transition.to.label }}) {
+    regime = flag
+    {%- for node in transition.nodes %}
+    {%- if emit_spike(node) %}
+    net_event(t)
+    {%- else %}
+    {{ as_expr(node) }}
+    {%- endif %}
+    {%- endfor %}
+  {%- endfor %}
+  }
+}

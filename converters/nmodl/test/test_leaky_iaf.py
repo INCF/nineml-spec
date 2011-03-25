@@ -1,6 +1,7 @@
 # encoding: utf-8
 
-from single_cell_current_injection import TestCase, configure, run
+from single_cell_current_injection import TestCase
+from util import configure, run
 import numpy
 
 mechanism = "LeakyIAF"
@@ -21,12 +22,12 @@ def time_to_spike(v_start):
     return tau_m*numpy.log((v_start - x)/(p['theta'] - x))
 spike1 = time_to_spike(initial_values['V'])
 spike2 = spike1 + p['t_ref'] + time_to_spike(p['V_reset'])
-expected_spike_times = numpy.array([spike1, spike2])
+expected_output = numpy.array([spike1, spike2])
 
 
 if __name__ == "__main__":
     configure()
-    test = TestCase(mechanism, parameters, initial_values, expected_spike_times)
+    test = TestCase(mechanism, parameters, initial_values, expected_output)
     run(100.0)
     test.plot("test_leaky_iaf.png")
     errors = test.calculate_errors()

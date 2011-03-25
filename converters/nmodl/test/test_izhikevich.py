@@ -15,7 +15,7 @@ initial_values = {
     'V': -65,
     'U': 0.2 * -65 
 }
-expected_spike_times = [# I have no idea if these values are correct
+expected_output = [# I have no idea if these values are correct
      2.12834641,   3.17733172,   4.31376038,   5.52657414,
      6.85904596,   8.33813478,   9.97419301,  11.85470981,
     14.10067134,  17.04985314,  50.2182681 ,  51.81893091,
@@ -26,7 +26,7 @@ expected_spike_times = [# I have no idea if these values are correct
 
 if __name__ == "__main__":
     configure()
-    test = TestCase(mechanism, parameters, initial_values, expected_spike_times)
+    test = TestCase(mechanism, parameters, initial_values, expected_output)
     run(100.0)
     test.plot("test_izhikevich.png")
     errors = test.calculate_errors()

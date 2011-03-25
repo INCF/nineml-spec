@@ -11,8 +11,7 @@ sys.path.append('..')
 nineml2nmodl = __import__("9ml2nmodl")
 from subprocess import Popen, PIPE
 
-models = ["izhikevich", "morris-lecar", "leaky_iaf", ]
-#models = ["morris-lecar"]
+models = ["izhikevich", "morris-lecar", "leaky_iaf", "if_cond_exp"]
 
 output_dir = "test_files"
 if not os.path.exists(output_dir):
@@ -30,16 +29,18 @@ for model in models:
 # run nrnivmodl
 p = Popen("nrnivmodl", shell=True, stdout=None, stderr=None, cwd=output_dir)
 result = p.wait()
+assert result == 0, "nrnivmodl failed"
 
 # run test scripts
 cwd = os.getcwd()
 os.chdir(output_dir)
-from single_cell_current_injection import TestCase, configure, run
+#from single_cell_current_injection import TestCase, configure, run
+from util import configure, run
 configure()
 tests = {}
 for model in models:
     test = __import__("test_%s" % model)
-    tests[model] = TestCase(test.mechanism, test.parameters, test.initial_values, test.expected_spike_times)
+    tests[model] = test.TestCase(test.mechanism, test.parameters, test.initial_values, test.expected_output)
 run(100.0)
 
 print "\n" + "="*26
