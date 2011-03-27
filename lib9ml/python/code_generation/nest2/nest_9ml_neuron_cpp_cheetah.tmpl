@@ -1,0 +1,439 @@
+#*
+
+This is a Cheetah template (http://www.cheetahtemplate.org)
+
+python lib9ml fills this template to yield a NEST neuron model
+
+Author: Eilif Muller, 2011
+
+Copyright (C) 2011 Eilif Muller. All Rights Reserved.
+
+    Redistribution and use in source and binary forms, with or without
+    modification, are permitted provided that the following conditions
+    are met:
+
+    1. Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimer.
+
+    2. Redistributions in binary form must reproduce the above
+    copyright notice, this list of conditions and the following
+    disclaimer in the documentation and/or other materials provided
+    with the distribution.
+
+    3. The name of the authors or the INCF may not be used to endorse or promote
+    products derived from this software without specific prior written
+    permission.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+    CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+    INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+    MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+    DISCLAIMED. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT,
+    INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+    (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+    SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+    HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+    CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+    OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+    EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+
+*#
+
+
+/*
+ *  ${model.nest_classname}.cpp
+ *
+ *  This C++ code is automatically generated from nest_model_template.h
+ *  using python lib9ml (www.nineml.org) a NineML (www.nineml.org)
+ *  specification.
+ *
+ *  python lib9ml-based code generation for NEST2 was implemented by 
+ *  Eilif Muller with contributions from many others in the 
+ *  context of the INCF Task Force on Multi-scale Modelling.
+ *
+ */
+
+
+\#include "exceptions.h"
+\#include "$model.header_name"
+\#include "network.h"
+\#include "dict.h"
+\#include "integerdatum.h"
+\#include "doubledatum.h"
+\#include "dictutils.h"
+\#include "numerics.h"
+\#include "universal_data_logger_impl.h"
+\#include "lockptrdatum.h"
+
+\#include <limits>
+\#include <stdexcept>
+
+// User defined names from 9ml model definition  
+// have no mapping to NEST standard names, so define out own names.
+// in 
+
+namespace nest_nineml {
+  namespace ${model.nest_classname}_names {
+
+    const Name Regime9ML("Regime9ML");
+
+## parameters
+#for $p in $model.parameters
+    const Name ${p.symbol}("$p.symbol");
+#end for
+
+
+## state_vars
+#for $p in $model.state_vars
+    const Name ${p.symbol}("$p.symbol");
+#end for
+
+## bindings/variables
+#for $p in $model.binds
+    const Name ${p.symbol}("$p.symbol");
+#end for
+
+  }
+
+}
+
+namespace nest {
+template <>
+void RecordablesMap<nest_nineml::${model.nest_classname}>::create()
+{
+    using namespace nest_nineml;
+## state_vars
+#for $p in $model.state_vars
+    insert_(${model.nest_classname}_names::${p.symbol}, &${model.nest_classname}::get_StateVar_${p.symbol});
+#end for
+
+}
+}
+
+nest::RecordablesMap<nest_nineml::${model.nest_classname}> nest_nineml::${model.nest_classname}::recordablesMap_;
+
+
+
+## Shorter form of model names namespace
+#set $mynames="nest_nineml::%s_names" %($model.nest_classname,)
+/* ---------------------------------------------------------------- 
+ * Default constructors defining default parameters and state
+ * ---------------------------------------------------------------- */
+    
+nest_nineml::$model.nest_classname::Parameters_::Parameters_()
+  : \
+#set $com = ','
+#for $p in $model.parameters
+  #if $p==$model.parameters[-1]
+    #set $com = ''
+  #end if
+    ${p.symbol}(${p.default_value})$com // $p.unit
+#end for
+  {}
+
+nest_nineml::$model.nest_classname::State_::State_(const Parameters_& p)
+  : \
+#for $p in $model.state_vars
+    ${p.symbol}(${p.initial_value}), // $p.unit
+#end for
+    regime_(${model.initial_regime})
+  {}
+
+/* ---------------------------------------------------------------- 
+ * Parameter and state extractions and manipulation functions
+ * ---------------------------------------------------------------- */
+
+void nest_nineml::$model.nest_classname::Parameters_::get(DictionaryDatum &d) const
+{
+#for $p in $model.parameters
+  (*d)[$mynames::$p.symbol] = $p.symbol;
+#end for
+
+}
+
+void nest_nineml::$model.nest_classname::Parameters_::set(const DictionaryDatum& d)
+{
+#for $p in $model.parameters
+  updateValue<double>(d, $mynames::$p.symbol, $p.symbol);
+#end for
+
+  // TODO/FUTURE: handle 9ml parameter restrictions
+  /*
+  if ( C_m <= 0 )
+    throw nest::BadProperty("The membrane capacitance must be strictly positive.");
+
+  if ( V_reset >= V_th )
+    throw nest::BadProperty("The reset potential must be below threshold.");
+  
+  if ( t_ref < 0 )
+    throw nest::BadProperty("The refractory time must be at least one simulation step.");  
+
+  */
+
+
+
+}
+
+void nest_nineml::$model.nest_classname::State_::get(DictionaryDatum &d) const
+{
+#for $p in $model.state_vars
+  (*d)[$mynames::$p.symbol] = $p.symbol;
+#end for
+
+  // get regime
+  (*d)[$mynames::Regime9ML] = regime_;
+
+}
+
+void nest_nineml::$model.nest_classname::State_::set(const DictionaryDatum& d, const Parameters_& p)
+{
+
+#for $p in $model.state_vars
+  updateValue<double>(d, $mynames::$p.symbol, $p.symbol);
+#end for
+
+  // TODO/FUTURE: handle 9ml state_var restrictions
+
+  //TODO: set regime?
+
+}
+
+void nest_nineml::$model.nest_classname::Variables_::get(DictionaryDatum &d) const
+{
+#for $p in $model.binds
+  (*d)[$mynames::$p.symbol] = $p.symbol;
+#end for
+}
+
+
+nest_nineml::$model.nest_classname::Buffers_::Buffers_(nest_nineml::$model.nest_classname& n)
+  : logger_(n),
+    spike_inputs_(std::vector<nest::ListRingBuffer>(SUP_SPIKE_RECEPTOR-1))
+{
+// Initialization of the remaining members is deferred to
+// init_buffers_().
+}
+
+nest_nineml::$model.nest_classname::Buffers_::Buffers_(const Buffers_&, nest_nineml::$model.nest_classname& n)
+  : logger_(n),
+    spike_inputs_(std::vector<nest::ListRingBuffer>(SUP_SPIKE_RECEPTOR-1))
+{
+  // Initialization of the remaining members is deferred to
+  // init_buffers_().
+}
+
+
+
+/* ---------------------------------------------------------------- 
+ * Default and copy constructor for node
+ * ---------------------------------------------------------------- */
+
+nest_nineml::$model.nest_classname::${model.nest_classname}()
+  : Archiving_Node(), 
+    P_(), 
+    S_(P_),
+    B_(*this)
+{}
+
+nest_nineml::$model.nest_classname::${model.nest_classname}(const ${model.nest_classname}& n)
+  : Archiving_Node(n), 
+    P_(n.P_), 
+    S_(n.S_),
+    B_(n.B_,*this)
+{}
+
+/* ---------------------------------------------------------------- 
+ * Node initialization functions
+ * ---------------------------------------------------------------- */
+
+void nest_nineml::$model.nest_classname::init_node_(const Node& proto)
+{
+  const ${model.nest_classname}& pr = downcast<${model.nest_classname}>(proto);
+  P_ = pr.P_;
+  S_ = pr.S_;
+}
+
+void nest_nineml::$model.nest_classname::init_state_(const Node& proto)
+{
+  const ${model.nest_classname}& pr = downcast<${model.nest_classname}>(proto);
+  S_ = pr.S_;
+}
+
+void nest_nineml::$model.nest_classname::init_buffers_()
+{
+  // Reset spike buffers.
+  for(std::vector<nest::ListRingBuffer>::iterator it = B_.spike_inputs_.begin();
+      it != B_.spike_inputs_.end(); ++it) {
+
+    it->clear(); // include resize
+
+  }
+
+  //B_.currents_.clear();  // include resize
+  B_.logger_.reset();
+
+  Archiving_Node::clear_history();
+
+}
+
+void nest_nineml::$model.nest_classname::calibrate()
+{
+  const double h  = nest::Time::get_resolution().get_ms(); 
+  /*
+  const double eh = std::exp(-h/P_.tau_syn);
+  const double tc = P_.tau_syn / P_.C_m;
+
+  // compute matrix elements, all other elements 0
+  V_.P11 = eh;
+  V_.P22 = eh;
+  V_.P21 = h * eh;
+  V_.P30 = h / P_.C_m;
+  V_.P31 = tc * ( P_.tau_syn - (h+P_.tau_syn) * eh );
+  V_.P32 = tc * ( 1 - eh );
+  // P33_ is 1
+    
+  // initial value ensure normalization to max amplitude 1.0
+  V_.pscInitialValue = 1.0 * numerics::e / P_.tau_syn;
+
+  // refractory time in steps
+  V_.t_ref_steps = nest::Time(nest::Time::ms(P_.t_ref)).get_steps();
+  assert(V_.t_ref_steps >= 0);  // since t_ref_ >= 0, this can only fail in error
+  */
+
+
+## Evaluate bindings
+#for $b in $model.binds
+  V_.$b.symbol = $b.expression;
+#end for
+ 
+  //TODO
+
+}
+
+/* ---------------------------------------------------------------- 
+ * Update and spike handling functions
+ * ---------------------------------------------------------------- */
+
+void nest_nineml::$model.nest_classname::update(nest::Time const& origin, 
+                                   const nest::long_t from_step, 
+                                   const nest::long_t to_step)
+{
+
+  Regimes target_regime = S_.regime_;
+
+  const double h  = nest::Time::get_resolution().get_ms(); 
+  double t;
+
+  // A place to store result of transition condition evaluation
+  // NB: Python CG assumes this storage named thusly exists.
+  bool transPendingTmp[$len($model.transitions)];
+
+  for ( long lag = from_step ; lag < to_step ; ++lag )
+  {
+
+    // get the present time
+    t = nest::Time(nest::Time::step(origin.get_steps()+lag+1)).get_ms();
+
+    // order is important in this loop, since we have to use the old values
+    // (those upon entry to the loop) on right hand sides everywhere
+
+    // state update as per regime, then transitions
+    switch (S_.regime_) {
+
+    // TODO: synapses
+
+    #for $r in $model.regimes
+
+    case $r.symbol :
+      
+      // State update regime odes
+      #for $ode in $r.odes
+      $ode.CODE
+      #end for $ode
+     
+      // Transitions as per current regime
+      // Conditions must all be evaluated prior
+      // to taking a Condition, as per spec.
+      #for $t in $r.transitions
+      if (${t.condition.CODE}) {
+         ## does this transition trigger a regime change?
+	 #if $r.symbol != $t.to.symbol
+	    // check a regime change is not already queued
+            // by another transition
+            if (target_regime ==  S_.regime_)
+   	       // set target_regime 
+	       target_regime = ${t.to.symbol};
+	    else
+	       // transition plurality
+               throw std::runtime_error("${model.nest_classname}::update - encountered transition plurality");
+	 #end if
+      }
+      #end for $t
+
+      // *** EVAL ASSIGNMENTS ***
+      // Unique target regime is known
+      // Now evaluate assignments for each transition which occured
+      #for $t in $r.transitions
+      while (${t.condition.PENDING}) {
+        // evaluate assignments and output ports
+        #for $a in $t.nodes
+	  $a.CODE
+	#end for $a
+        ${t.condition.PENDING_FINALIZE}
+      }
+      #end for $t
+
+      // *** CHANGE REGIME ***
+      // now we can change regime
+      S_.regime_ = target_regime;
+
+      break; // case $r.symbol
+
+    #end for $r
+
+
+    } // switch (S_.regime_)
+
+
+    // TODO: which var is voltage?
+    //B_.potentials_.record_data(slice_origin.get_steps()+lag, S_.V_m);
+
+    // TODO: which var is spike var?
+
+    // TODO: how to map synapse ports to input events for the neurons?
+    B_.logger_.record_data(origin.get_steps()+lag);
+
+  }  
+}                           
+
+void nest_nineml::$model.nest_classname::handle(nest::SpikeEvent & e)
+{
+  assert(e.get_delay() > 0);
+  assert(e.get_rport() < static_cast<nest::int_t>(B_.spike_inputs_.size()));
+
+  for (int i=0;i<e.get_multiplicity();i++) {
+    B_.spike_inputs_[e.get_rport()].
+        append_value(e.get_rel_delivery_steps(network()->get_slice_origin()), e.get_weight());
+  }									      
+
+}
+
+void nest_nineml::$model.nest_classname::handle(nest::CurrentEvent& e)
+{
+  assert(e.get_delay() > 0);
+
+  // TODO
+  assert(false);
+  //B_.currents_.add_value(e.get_rel_delivery_steps(network()->get_slice_origin()), 
+//		                    e.get_weight() * e.get_current());
+}
+
+// Do not move this function as inline to h-file. It depends on 
+// analog_data_logger_impl.h being included here.
+void nest_nineml::$model.nest_classname::handle(nest::DataLoggingRequest& e)
+{
+  B_.logger_.handle(e);
+}
+
+

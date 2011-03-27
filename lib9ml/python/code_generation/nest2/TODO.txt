@@ -1,0 +1,82 @@
+Author: Eilif Muller
+
+As can be seen in concept1.py, code generation is possible already
+with python lib9ml, but it could use alot of polishing.  Here I
+collect many of the points I observed as I implemented concept1.py
+... there are also some inline comments in concept1.py
+
+
+- User layer: initial values, initial regime
+- units
+- support choice of integration methods (other than forward euler)
+- handle 9ml parameter restrictions
+
+- more advanced calibrate impl: support exact spike times, etc.
+
+- Current event
+  see ht_neuron.cpp::update
+  // set new input current
+  B_.I_stim_ = B_.currents_.get_value(lag);
+
+- EventPort and Conditions ... global interface declaration
+  -> 
+
+
+- FIX: SpikeEvent: weight and multiplicity are not accounted for.
+  -> Let's say we store the whole event objects in the spike_inputs_ buffer
+     then what do we do with multiple events per time step
+     in the general case? 
+     -> allow multiple transitions per time step under certain
+     conditions (no regime change) ...
+
+- Condition, ODE, Assignment expr replacement with S_. P_. etc.
+  EventPort expr replacement with something meaningful
+  -> all must define CODE attribute, which is substituted code
+
+SpikeOutputPort -> CODE = 
+	    set_spiketime(Time::step(slice_origin.get_steps()+lag+1));
+	    SpikeEvent se;
+	    network()->send(*this, se, lag);
+
+
+SpikeInputPort -> CODE =
+	       B_.spike_inputs_[${receptor}].get_value(lag);
+
+
+$trans.condition.CODE -> 1st loop through conditions, sets var referred to in PENDING
+		      
+$trans.condition.PENDING -> check if the condition is still true
+$trans.condition.FINALIZE_PENDING -> "break;" except for SpikeInputEvent triggered transitions 
+
+- In EVAL ASSIGNMENTS: the code is for special case of linear super
+imposable synapses -> When this is not the case (we need some
+(probably sympy) code to detect this), each weight must be stored
+seperately, requiring a new ring buffer object which can store a list
+of events per lag.  Maybe in this case, we should use a different
+template, to avoid making this one too complicated, or non-optimal.
+
+
+
+- Avoid need for scafolding object model, i.e. add mechanisms
+  in 9ML AL for mapping Component representations to user defined
+  derived object models. 
+  See concept1.py:
+  # This is a scafolding object model ... ontop of 9ML
+  # Once we have 9ML component namespaceing worked out
+  # we should devise a system so that we can inject
+  # Nest specific derived classes for each of the
+  # 9ML AL base classes which implement the necessary
+  # Nest specific attributes.
+
+
+
+- Connection weight: Presently no way to handle this in 9ML, so it is ignored.
+
+
+
+- Need for conformance checks for 9ML model type (neuron, synapse, etc)
+   i.e. in NestModel constructor
+
+        # TODO: we should find a 9ML standard way of checking
+        # the things a model should satisfy for it to be valid.
+        # i.e. A neuron model should satisfy a few things:

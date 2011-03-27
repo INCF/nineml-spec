@@ -1,0 +1,433 @@
+#*
+
+This is a Cheetah template (http://www.cheetahtemplate.org)
+
+python lib9ml fills this template to yield a NEST neuron model
+
+Author: Eilif Muller, 2011
+
+Copyright (C) 2011 Eilif Muller. All Rights Reserved.
+
+    Redistribution and use in source and binary forms, with or without
+    modification, are permitted provided that the following conditions
+    are met:
+
+    1. Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimer.
+
+    2. Redistributions in binary form must reproduce the above
+    copyright notice, this list of conditions and the following
+    disclaimer in the documentation and/or other materials provided
+    with the distribution.
+
+    3. The name of the authors or the INCF may not be used to endorse or promote
+    products derived from this software without specific prior written
+    permission.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+    CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+    INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+    MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+    DISCLAIMED. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT,
+    INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+    (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+    SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+    HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+    CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+    OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+    EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+
+*#
+
+
+#ifndef ${model.nest_classname.upper}_H
+#define ${model.nest_classname.upper}_H
+
+/*
+ *  ${model.nest_classname}.h 
+ *
+ *  This C++ code is automatically generated from nest_model_template.h
+ *  using python lib9ml (www.nineml.org) a NineML (www.nineml.org)
+ *  specification.
+ *
+ *  python lib9ml-based code generation for NEST2 was implemented by 
+ *  Eilif Muller with contributions from many others in the 
+ *  context of the INCF Task Force on Multi-scale Modelling.
+ *
+ */
+
+
+\#include "nest.h"
+\#include "event.h"
+\#include "archiving_node.h"
+\#include "ring_buffer.h"
+\#include "connection.h"
+\#include "universal_data_logger.h"
+\#include "recordables_map.h"
+\#include "dictdatum.h"
+
+namespace nest_nineml {
+
+  /* BeginDocumentation
+Name: $model.nest_classname - $model.short_description
+
+Parameters:
+
+  #for $p in $model.parameters
+  $p.symbol    unit=$p.unit, Ctype=$p.Ctype - $p.notes
+  #end for
+
+Description:
+
+  $model.long_description
+
+
+*/
+
+  /**
+   * Non-leaky integrate-and-fire neuron with alpha-shaped PSCs.
+   */
+
+  // TODO: change this to ArchivingNode in case of plasticity.  See ht_neuron for example.
+  class $model.nest_classname : public nest::Archiving_Node
+  {
+  public:        
+    
+    /**
+     * The constructor is only used to create the model prototype in the model manager.
+     */ 
+    ${model.nest_classname}();
+    
+    /**
+     * The copy constructor is used to create model copies and instances of the model.
+     * @node The copy constructor needs to initialize the parameters and the state.
+     *       Initialization of buffers and interal variables is deferred to 
+     *       @c init_buffers_() and @c calibrate().
+     */      
+    ${model.nest_classname}(const ${model.nest_classname}&);
+
+    /**
+     * Import sets of overloaded virtual functions.
+     * This is necessary to ensure proper overload and overriding resolution.
+     * @see http://www.gotw.ca/gotw/005.htm.
+     */
+    using nest::Node::connect_sender;
+    using nest::Node::handle;
+
+    /**
+     * Used to validate that we can send SpikeEvent to desired target:port.
+     */
+    nest::port check_connection(nest::Connection&, nest::port);
+    
+    /**
+     * @defgroup mynest_handle Functions handling incoming events.
+     * We tell nest that we can handle incoming events of various types by 
+     * defining @c handle() and @c connect_sender() for the given event.
+     * @{
+     */
+    void handle(nest::SpikeEvent &);        //! accept spikes
+    void handle(nest::CurrentEvent &);      //! accept input current
+    void handle(nest::DataLoggingRequest &);
+    // void handle(nest::PotentialRequest &);  //! allow membrane potential recording
+    
+    nest::port connect_sender(nest::SpikeEvent&, nest::port);
+    nest::port connect_sender(nest::CurrentEvent&, nest::port);
+    nest::port connect_sender(nest::DataLoggingRequest &, nest::port);
+
+    // nest::port connect_sender(nest::PotentialRequest&, nest::port);
+    /** @} */
+    
+    void get_status(DictionaryDatum &) const;
+    void set_status(const DictionaryDatum &);
+  
+  private:    
+
+    // These friend declarations must be precisely here.
+    friend class nest::RecordablesMap<${model.nest_classname}>;
+    friend class nest::UniversalDataLogger<${model.nest_classname}>;
+
+    /**     * Synapse types to connect to
+     * @note Excluded upper and lower bounds are defined as INF_, SUP_.
+     *       Excluding port 0 avoids accidental connections.
+     */
+    //			AMPA, NMDA, GABA_A, GABA_B, 
+    enum SynapseTypes { INF_SPIKE_RECEPTOR = 0,
+#echo                        '\t'+', '.join([x.symbol for x in $model.synapses])+',\n'
+			SUP_SPIKE_RECEPTOR };
+
+
+    /**
+     * Enumeration of all 9ml regimes
+     * @note Excluded upper and lower bounds are defined as INF_, SUP_.
+     *       Excluding port 0 avoids accidental connections.
+     */
+
+    enum Regimes { INF_REGIME = 0,
+#echo                        '\t'+', '.join([x.symbol for x in $model.regimes])+',\n'
+			SUP_REGIME};
+
+
+    //! Reset parameters and state of neuron.
+    void init_node_(const Node& proto);
+
+    //! Reset state of neuron.
+    void init_state_(const Node& proto);
+    
+    //! Reset internal buffers of neuron.
+    void init_buffers_();
+
+    //! Initialize auxiliary quantities, leave parameters and state untouched.
+    void calibrate();
+    
+    //! Take neuron through given time interval
+    void update(nest::Time const &, const nest::long_t, const nest::long_t);
+
+    /**
+     * Free parameters of the neuron.
+     *
+     * These are the parameters that can be set by the user through @c SetStatus.
+     * They are initialized from the model prototype when the node is created.
+     * Parameters do not change during calls to @c update() and are not reset by 
+     * @c ResetNetwork.
+     * 
+     * @note Parameters_ need neither copy constructor nor @c operator=(), since 
+     *       all its members are copied properly by the default copy constructor
+     *       and assignment operator. Important: 
+     *       - If Parameters_ contained @c Time members, you need to define the
+     *         assignment operator to recalibrate all members of type @c Time . You
+     *         may also want to define the assignment operator.
+     *       - If Parameters_ contained members that cannot copy themselves, such
+     *         as C-style arrays, you need to define the copy constructor and
+     *         assignment operator to copy those members.
+     */
+    struct Parameters_ {
+      #for $p in $model.parameters
+      $p.Ctype $p.symbol; //!< $p.notes
+      #end for
+
+      //! Initialize parameters to their default values.
+      Parameters_();
+      
+      //! Store parameter values in dictionary.
+      void get(DictionaryDatum&) const;
+
+      //! Set parameter values from dictionary.
+      void set(const DictionaryDatum&);
+    }; 
+  
+    /**
+     * Dynamic state of the neuron.
+     *
+     * These are the state variables that are advanced in time by calls to 
+     * @c update(). In many models, some or all of them can be set by the user 
+     * through @c SetStatus. The state variables are initialized from the model
+     * prototype when the node is created. State variables are reset by @c ResetNetwork.
+     * 
+     * @note State_ need neither copy constructor nor @c operator=(), since 
+     *       all its members are copied properly by the default copy constructor
+     *       and assignment operator. Important: 
+     *       - If State_ contained @c Time members, you need to define the
+     *         assignment operator to recalibrate all members of type @c Time . You
+     *         may also want to define the assignment operator.
+     *       - If State_ contained members that cannot copy themselves, such
+     *         as C-style arrays, you need to define the copy constructor and
+     *         assignment operator to copy those members.
+     */
+    struct State_ {
+      #for $sv in $model.state_vars
+      $sv.Ctype $sv.symbol; //!< $sv.notes
+      #end for
+
+      //! The present 9ml regime
+      Regimes regime_;
+
+      /** 
+       * Construct new default State_ instance based on values in Parameters_.
+       * This c'tor is called by the no-argument c'tor of the neuron model. It
+       * takes a reference to the parameters instance of the model, so that the
+       * state can be initialized in accordance with parameters, e.g., initializing
+       * the membrane potential with the resting potential.
+       */
+      State_(const Parameters_&);
+      
+      /** Store state values in dictionary. */
+      void get(DictionaryDatum&) const;
+      
+      /** 
+       * Set membrane potential from dictionary.
+       * @note Receives Parameters_ so it can test that the new membrane potential
+       *       is below threshold.
+       */
+      void set(const DictionaryDatum&, const Parameters_&);
+    };
+
+    /**
+     * Buffers of the neuron.
+     * Ususally buffers for incoming spikes and data logged for analog recorders.
+     * Buffers must be initialized by @c init_buffers_(), which is called before
+     * @c calibrate() on the first call to @c Simulate after the start of NEST,
+     * ResetKernel or ResetNetwork.
+     * @node Buffers_ needs neither constructor, copy constructor or assignment operator,
+     *       since it is initialized by @c init_nodes_(). If Buffers_ has members that
+     *       cannot destroy themselves, Buffers_ will need a destructor.
+     */
+    struct Buffers_ {
+      Buffers_(${model.nest_classname}&);
+      Buffers_(const Buffers_&, ${model.nest_classname}&);
+
+      nest::UniversalDataLogger<${model.nest_classname}> logger_;
+      std::vector<nest::ListRingBuffer> spike_inputs_;    //!< Buffer incoming spikes through delay, as sum
+    };
+    
+    /**
+     * Internal variables of the neuron.
+     * These variables must be initialized by @c calibrate, which is called before
+     * the first call to @c update() upon each call to @c Simulate.
+     * @node Variables_ needs neither constructor, copy constructor or assignment operator,
+     *       since it is initialized by @c calibrate(). If Variables_ has members that
+     *       cannot destroy themselves, Variables_ will need a destructor.
+     */
+    struct Variables_ {
+
+      #for $bind in $model.binds
+
+      ${bind.Ctype} $bind.symbol //!< $bind.notes
+
+      #end for
+
+      //! Get variable values from dictionary.
+      void get(DictionaryDatum&) const;
+
+
+    };
+    
+    /**
+     * @defgroup pif_members Member variables of neuron model.
+     * Each model neuron should have precisely the following four data members,
+     * which are one instance each of the parameters, state, buffers and variables
+     * structures. Experience indicates that the state and variables member should
+     * be next to each other to achieve good efficiency (caching).
+     * @note Devices require one additional data member, an instance of the @c Device
+     *       child class they belong to.
+     * @{
+     */
+    Parameters_ P_;  //!< Free parameters.
+    State_      S_;  //!< Dynamic state.
+    Variables_  V_;  //!< Internal Variables
+    Buffers_    B_;  //!< Buffers.
+    /** @} */
+
+    static nest::RecordablesMap<${model.nest_classname}> recordablesMap_;
+
+    /* Getters for state variables, used for recordables mape */
+
+## state_vars
+#for $p in $model.state_vars
+    $p.Ctype get_StateVar_${p.symbol}() const { return S_.${p.symbol}; }
+#end for
+
+
+  };
+
+inline
+nest::port $model.nest_classname::check_connection(nest::Connection& c, nest::port receptor_type)
+{
+  // You should usually not change the code in this function. 
+  // It confirms that the target of connection @c c accepts @c SpikeEvent on
+  // the given @c receptor_type.
+  nest::SpikeEvent e;
+  e.set_sender(*this);
+  c.check_event(e);
+  return c.get_target()->connect_sender(e, receptor_type);
+}
+  
+inline
+nest::port $model.nest_classname::connect_sender(nest::SpikeEvent&, nest::port receptor_type)
+{
+  // Confirm to the connection management system that we are able
+  // to handle @c SpikeEvent on port. 
+
+  assert(B_.spike_inputs_.size() == $len($model.synapses));
+      
+  if ( !( INF_SPIKE_RECEPTOR < receptor_type 
+	  && receptor_type < SUP_SPIKE_RECEPTOR ) )
+    {
+      throw nest::UnknownReceptorType(receptor_type, get_name());
+      return 0;
+    }
+  else
+    return receptor_type - 1;
+
+}
+ 
+inline
+nest::port $model.nest_classname::connect_sender(nest::CurrentEvent&, nest::port receptor_type)
+{
+  // You should usually not change the code in this function. 
+  // It confirms to the connection management system that we are able
+  // to handle @c CurrentEvent on port 0. You need to extend the function
+  // if you want to differentiate between input ports.
+  if (receptor_type != 0)
+    throw nest::UnknownReceptorType(receptor_type, get_name());
+  return 0;
+}
+ 
+inline
+nest::port $model.nest_classname::connect_sender(nest::DataLoggingRequest& dlr, 
+			  nest::port receptor_type)
+{
+  if (receptor_type != 0)
+     throw nest::UnknownReceptorType(receptor_type, get_name());
+  B_.logger_.connect_logging_device(dlr, recordablesMap_);
+  return 0;
+}
+
+
+inline
+void $model.nest_classname::get_status(DictionaryDatum &d) const
+{
+  int testing=0;
+  
+  P_.get(d);
+  S_.get(d);
+  
+  Archiving_Node::get_status(d);
+
+  #if $model.debug
+  // Getting of variables for testing only
+  V_.get(d);
+  #end if
+
+  // Get receptor type mappings
+  DictionaryDatum receptor_type = new Dictionary();
+
+  #for $s in $model.synapses
+  (*receptor_type)["$s.symbol"] = $s.symbol;
+  #end for
+
+  (*d)["receptor_types"] = receptor_type;
+
+}
+
+inline
+void $model.nest_classname::set_status(const DictionaryDatum &d)
+{
+  Parameters_ ptmp = P_;  // temporary copy in case of errors
+  ptmp.set(d);                       // throws if BadProperty
+  State_      stmp = S_;  // temporary copy in case of errors
+  stmp.set(d, ptmp);                 // throws if BadProperty
+
+  Archiving_Node::set_status(d);
+
+  // if we get here, temporaries contain consistent set of properties
+  P_ = ptmp;
+  S_ = stmp;
+
+  // In general, this needs to be called at least to update bindings.
+  calibrate();
+}
+
+} // namespace nest_nineml
+
+#endif /* #ifndef ${model.nest_classname.upper}_H */

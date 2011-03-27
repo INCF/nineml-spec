@@ -421,6 +421,12 @@ class Transition(object):
             yield p
 
     @property
+    def event_port_nodes(self):
+        """ Yields all EventPorts in the Transition nodes"""
+        for p in self.nodes_filter(lambda x: isinstance(x,EventPort)):
+            yield p
+
+    @property
     def equations(self):
         """ Yields all equations in the Transition"""
         return self.nodes_filter(lambda x: isinstance(x,Equation))

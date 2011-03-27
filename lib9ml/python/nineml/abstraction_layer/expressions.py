@@ -84,6 +84,27 @@ class Expression(object):
                 expr = Expression.name_replace(func,prefix+func,expr, func_ok=True)
 
         return expr
+
+    def rhs_name_transform(self, name_map):
+        """
+        Returns a string represenation of the rhs with
+        expr symbol names replaced as follows:
+
+        from_name->to_name
+
+        Where nam_map should be dictionary like of the form:
+        name_map[from]=to
+        
+        """
+
+        # names that are in math_symbol space do not show up in self.names
+        expr = self.rhs
+        for name in name_map:
+            expr = Expression.name_replace(name,name_map[name],expr)
+
+        return expr
+
+
         
 
     @classmethod
