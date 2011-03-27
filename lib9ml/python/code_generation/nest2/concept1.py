@@ -40,6 +40,7 @@ Copyright (C) 2011 Eilif Muller. All Rights Reserved.
 
 from iaf_cond_exp_9ML import iaf_cond_exp_9ML
 import nineml.abstraction_layer as nineml
+import os
 
 iaf_cond_exp_9ML.long_description = """
 Long description of the iaf_cond_exp ...
@@ -294,6 +295,10 @@ nineml_namespace = {
     'SpikeOutputEvent': nineml.SpikeOutputEvent,
     'EventPort': nineml.EventPort
     }
+
+# make the destination subdir
+if not os.path.exists("nest_model"):
+    os.mkdir("nest_model")
 
 f_h = file("nest_model/nest_9ml_neuron.h",'w')
 #t_h = Template(h_template, searchList=[{'model':nm}])
