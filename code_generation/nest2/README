@@ -1,0 +1,21 @@
+Generate and Build the 9ML iaf_cond_exp_9ml neuron model for NEST
+=================================================================
+
+python concept1.py
+
+cd nest_model
+./boostrap.sh
+mkdir build
+cd build
+../configure --with-nest=/opt/nest2/bin/nest-config
+make -j4
+make install
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/nest2/lib/nest
+cd ../..
+
+Test iaf_cond_exp_9ml
+=====================
+
+python test_iaf9ml.py
+
+
