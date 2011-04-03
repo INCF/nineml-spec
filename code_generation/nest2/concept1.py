@@ -53,29 +53,29 @@ iaf_cond_exp_9ML.short_description = "Standard integrate and fire with exponenti
 # Things we need to know which should come from the user layer
 synapse_ports = ['excitatory', 'inhibitory']
 AP_port = 'spike_output'
-V_port = 'V'
+V_port = 'V_m'
 initial_regime = "sub-threshold-regime"
 
 initial_values = {
-    'V': -70.0,
-    'g_e': 0.0,
-    'g_i': 0.0,
-    'tspike':0.0
+    'V_m': -70.0,
+    'g_ex': 0.0,
+    'g_in': 0.0,
+    't_spike':0.0
     }
 
 default_values = {
-    'tau_e': 1.5,
-    'tau_i': 10.0,
-    'E_e': 0.0,
-    'E_i': -80.0,
+    'tau_syn_ex': 1.5,
+    'tau_syn_in': 10.0,
+    'E_ex': 0.0,
+    'E_in': -80.0,
     'Isyn': 0.0,
-    'C': 1.0,
-    'gL': 10.0,
-    'q_e': 2.0,
-    'q_i': 2.0,
-    'trefractory': 5.0,
-    'Vth': -55.0,
-    'vL': -70.0,
+    'C_m': 1.0,
+    'g_L': 10.0,
+    'q_ex': 2.0,
+    'q_in': 2.0,
+    't_ref': 5.0,
+    'V_th': -55.0,
+    'E_L': -70.0,
     'V_reset': -70.0
     }
 
