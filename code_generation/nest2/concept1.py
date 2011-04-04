@@ -122,7 +122,7 @@ class NestODE(object):
         parent_component = parent_regime.parent_component
         name_map = parent_component.name_map
         self.dependent_variable = ode.dependent_variable
-        self.CODE = name_map[ode.dependent_variable] + " = (" + ode.rhs_name_transform(name_map) + ")*h;"
+        self.CODE = name_map[ode.dependent_variable] + " += (" + ode.rhs_name_transform(name_map) + ")*h;"
 
 class NestCondition(object):
 
@@ -148,13 +148,13 @@ class NestInputEventPort(object):
         # Code to check if a spike arrived at this port
         # should check if the list ring buffer at this lag
         # is empty or not
-        self.CODE = '!B_.spike_inputs_[%s].get_list(lag).empty()' % eventport.name
+        self.CODE = '!B_.spike_inputs_[%s-INF_SPIKE_RECEPTOR-1].get_list(lag).empty()' % eventport.name
         
         self.PENDING = self.CODE
         # TODO:
         # For now we are dropping the weight for this event until
         # we can fix 9ML so that we can do something sensible with it.
-        self.PENDING_FINALIZE = 'B_.spike_inputs_[%s].get_list(lag).pop_back();' % eventport.name
+        self.PENDING_FINALIZE = 'B_.spike_inputs_[%s-INF_SPIKE_RECEPTOR-1].get_list(lag).pop_back();' % eventport.name
 
 
 class NestOutputEventPort(object):

@@ -107,6 +107,7 @@ void RecordablesMap<nest_nineml::${model.nest_classname}>::create()
 #for $p in $model.state_vars
     insert_(${model.nest_classname}_names::${p.symbol}, &${model.nest_classname}::get_StateVar_${p.symbol});
 #end for
+    insert_(${model.nest_classname}_names::Regime9ML, &${model.nest_classname}::get_StateVar_regime);
 
 }
 }
@@ -130,7 +131,9 @@ nest_nineml::$model.nest_classname::Parameters_::Parameters_()
   #end if
     ${p.symbol}(${p.default_value})$com // $p.unit
 #end for
-  {}
+  {
+    recordablesMap_.create();
+  }
 
 nest_nineml::$model.nest_classname::State_::State_(const Parameters_& p)
   : \
@@ -234,7 +237,8 @@ nest_nineml::$model.nest_classname::${model.nest_classname}()
     P_(), 
     S_(P_),
     B_(*this)
-{}
+{
+}
 
 nest_nineml::$model.nest_classname::${model.nest_classname}(const ${model.nest_classname}& n)
   : Archiving_Node(n), 
@@ -308,6 +312,8 @@ void nest_nineml::$model.nest_classname::calibrate()
 #end for
  
   //TODO
+
+  B_.logger_.init();  // ensures initialization in case mm connected after Simulate
 
 }
 

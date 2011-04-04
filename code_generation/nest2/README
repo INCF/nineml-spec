@@ -9,8 +9,9 @@ mkdir build
 cd build
 ../configure --with-nest=/opt/nest2/bin/nest-config
 make -j4
-make install
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/nest2/lib/nest
+# No need for make install ... can use what resides in .libs
+##make install
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/src/nineml-svn-trunk/code_generation/nest2/nest_model/.libs
 cd ../..
 
 Test iaf_cond_exp_9ml

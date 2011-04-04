@@ -326,7 +326,7 @@ Description:
 #for $p in $model.state_vars
     $p.Ctype get_StateVar_${p.symbol}() const { return S_.${p.symbol}; }
 #end for
-
+     double_t get_StateVar_regime() const { return double_t(S_.regime_); }
 
   };
 
@@ -379,8 +379,7 @@ nest::port $model.nest_classname::connect_sender(nest::DataLoggingRequest& dlr,
 {
   if (receptor_type != 0)
      throw nest::UnknownReceptorType(receptor_type, get_name());
-  B_.logger_.connect_logging_device(dlr, recordablesMap_);
-  return 0;
+  return B_.logger_.connect_logging_device(dlr, recordablesMap_);
 }
 
 
@@ -408,6 +407,7 @@ void $model.nest_classname::get_status(DictionaryDatum &d) const
 
   (*d)["receptor_types"] = receptor_type;
 
+  (*d)[nest::names::recordables] = recordablesMap_.get_list();
 }
 
 inline

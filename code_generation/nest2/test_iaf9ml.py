@@ -25,7 +25,7 @@ import time
 nest.ResetKernel()
 
 dt = 0.1 # milliseconds
-tsim = 100 # seconds
+tsim = 2 # seconds
 bg_e = 6.0 # Hz
 bg_i = 10.2 # Hz
 
@@ -36,7 +36,7 @@ nest.SetStatus([0],{'resolution':dt})
 iaf = nest.Create('iaf_cond_exp',1)
 iaf9ml =  nest.Create('iaf_cond_exp_9ml',1)
 
-iafParams = {'V_th':-57.0, 'V_reset': -70.0, 't_ref': 0.5, 'g_L':28.95,
+iafParams = {'V_th':-57.0, 'V_reset': -70.0, 't_ref': 20.0, 'g_L':28.95,
 'C_m':289.5, 'E_L' : -70.0, 'E_ex': 0.0, 'E_in': -75.0, 'tau_syn_ex':1.5,
 'tau_syn_in': 10.0}
 
@@ -100,6 +100,22 @@ spike_detector = nest.Create('spike_detector',1)
 nest.Connect(iaf,spike_detector,model='static_synapse')
 nest.Connect(iaf9ml,spike_detector,model='static_synapse')
 
+
+m = nest.Create('multimeter',
+                params = {'withtime': True, 
+                          'interval': 0.1,
+                          'record_from': ['V_m', 'g_ex', 'g_in']})
+
+
+nest.Connect(m, iaf)
+
+m_9ml = nest.Create('multimeter',
+                params = {'withtime': True, 
+                          'interval': 0.1,
+                          'record_from': ['V_m', 'g_ex', 'g_in', 'Regime9ML']})
+
+nest.Connect(m_9ml, iaf9ml)
+
 # simulate
 
 t1 = time.time()
@@ -112,14 +128,32 @@ print "Elapsed: ", t2-t1, " seconds."
 spikes = nest.GetStatus(spike_detector,'events')[0]['times']
 espikes = spikes.astype(float)
 
-espikes = espikes.compress(espikes>500.0)
+data = nest.GetStatus(m)[0]['events']
+data_9ml = nest.GetStatus(m_9ml)[0]['events']
 
-erate = float(len(espikes))/(tsim-0.5)
+t = data["times"]
 
-print "IAF firing rate = ",erate, ' Hz.'
+g_in = data["g_in"]
+g_in_9ml = data_9ml["g_in"]
+
+v = data["V_m"]
+v_9ml = data_9ml["V_m"]
+
+regime = data_9ml["Regime9ML"]
 
 
 
+subplot(211)
+plot(t,regime,'r-')
+ylabel('regime')
+axis([0, 500,0.0,3.0])
 
+subplot(212)
+plot(t,v,'g-',lw=4, label='iaf_cond_exp')
+plot(t,v_9ml,'r-',lw=1.5,label='iaf_cond_exp_9ml')
+xlabel("time [ms]")
+ylabel("voltage [mV]")
+axis([0, 500,-72, -55])
+legend()
 
 
