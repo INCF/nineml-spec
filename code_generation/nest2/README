@@ -1,8 +1,22 @@
 Generate and Build the 9ML iaf_cond_exp_9ml neuron model for NEST
 =================================================================
 
+Dependencies:
+
+* NEST requires a "ListRingBuffer" patch, or a very latest 
+SVN revision (As of April 6th, 2011).  Contact Eilif Muller 
+for more details.
+
+* Cheetah python teplating system 
+  Ubuntu:
+  $ sudo apt-get install python-cheetah
+
+
+
+# Do NEST code generation for iaf_cond_exp_9ML.py in nest_model dir
 python concept1.py
 
+# Build mymodule for NEST
 cd nest_model
 ./boostrap.sh
 mkdir build
@@ -17,6 +31,7 @@ cd ../..
 Test iaf_cond_exp_9ml
 =====================
 
-python test_iaf9ml.py
+python comparison9ml_iaf_cond_exp.py
+
 
 
