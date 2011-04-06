@@ -47,6 +47,8 @@ q[3] = 3+ba
 class CheetahTestCase(unittest.TestCase):
 
     def test_preprocessor_directives(self):
+        """ check rendering of C preprocesser directives """
+
         # include needs escaping with \\
         t = Template('\\#include "$header"', {'header':'mymodule.h'})
         assert str(t) == '#include "mymodule.h"'
@@ -66,15 +68,22 @@ class CheetahTestCase(unittest.TestCase):
 
 
     def test_synapse_enum(self):
+        """ check rendering a collections of variables provided in a Python list """
         t = Template("""#echo ', '.join([x['symbol'] for x in $model.synapses])""",{'model':test_model})
         assert str(t) == "AMPA, GABA_A"
 
     def test_len(self):
+        """ check rendering len(list) """
         t = Template("""$len($model.synapses)""", {'model':test_model})
         assert str(t)==str(len(test_model.synapses))
 
-    def test_raise(self):
+    def test_len2(self):
+        """ another check of rendering len(list) """
+        t = Template("$len($x)", {'x':[1,2,3]})
+        assert str(t)=="3"
 
+    def test_raise(self):
+        """ check raising errors """
         t = Template("#raise TypeError, 'expected ODE or Assignment class'")
 
         try:
@@ -83,8 +92,7 @@ class CheetahTestCase(unittest.TestCase):
             assert e.args[0] == 'expected ODE or Assignment class'
 
     def test_loop(self):
-
-        
+        """ check rending using loops """
         print ""
         t = Template(loop_test_template, {'stuff':['aa','bb','ab','ba']})
         #print str(t)
@@ -92,16 +100,14 @@ class CheetahTestCase(unittest.TestCase):
         assert str(t) == loop_test_result
 
 
-    def test_len(self):
-        t = Template("$len($x)", {'x':[1,2,3]})
-        assert str(t)=="3"
-
-    def test_len_doublecolon(self):
+    def test_doublecolon(self):
+        """ check that double colon postfix doesn't mangle """
         t = Template("$x::", {'x':3})
         assert str(t)=="3::"
 
 
     def test_dynamic_contructs(self):
+        """check conditional rending with newline slurping"""
 
         # test if, with slurping
         s = """#if $switch
@@ -118,6 +124,7 @@ bar#slurp
 
 
     def test_forloop_whitespace(self):
+        """check loop rendering with control of intermediate newline or whitespace"""
 
         l = ['foo','bar','baz']
 
@@ -152,6 +159,7 @@ $x
 
 
     def test_class_attr_lookup(self):
+        """ check rendering of class attributes """
         class X:
             pass
 
@@ -167,6 +175,7 @@ $x
 
 
     def test_parameters_constructor(self):
+        """ check strategy for rendering NEST parameters constructor (need commas for each parameter, but not after last) """
 
         ref_s="""
 nest_nineml::test_model::Parameters_::Parameters_()
@@ -205,39 +214,13 @@ nest_nineml::$nest_classname::Parameters_::Parameters_()
         assert str(t) == ref_s
 
     def test_names_namespace(self):
+        """check configuration of Cheetah shorthand for a long C++ namespace"""
 
         s = "#set $mynames='nest_nineml::%s_names' % ($class,)\n$mynames::V_m"
         t = Template(s,{'class':'MyClass'})
         assert str(t)=="nest_nineml::MyClass_names::V_m"
 
-    def test_parameters_get(self):
-
-        ref_s = """
-void nest_nineml::$model.nest_classname::Parameters_::get(DictionaryDatum &d) const
-{
-  (*d)[names::C_m    ] = C_m;
-  (*d)[names::I_e    ] = I_e;
-  (*d)[names::tau_syn] = tau_syn;
-  (*d)[names::V_th   ] = V_th;
-  (*d)[names::V_reset] = V_reset;
-  (*d)[names::t_ref  ] = t_ref;
-}
-"""
-        s = """
-void nest_nineml::$model.nest_classname::Parameters_::get(DictionaryDatum &d) const
-{
-#for $p in $model.parameters
-  (*d)[names::C_m    ] = C_m;
-#end for
-  (*d)[names::I_e    ] = I_e;
-  (*d)[names::tau_syn] = tau_syn;
-  (*d)[names::V_th   ] = V_th;
-  (*d)[names::V_reset] = V_reset;
-  (*d)[names::t_ref  ] = t_ref;
-}
-"""
-
-    
+ 
 
 
 
