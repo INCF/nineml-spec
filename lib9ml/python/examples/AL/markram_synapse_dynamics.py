@@ -38,11 +38,10 @@ regimes = [
                            do=["Wout = u*R*Win",
                                "R -= u*R",
                                "u += U*(1-u)",
-                               nineml.SpikeInputEventRelay])  # Should I put a SpikeOutputEvent here?
+                               nineml.PreEventRelay])  # Should I put a SpikeOutputEvent here?
     )]
 
-ports = [nineml.RecvPort("Win")
-         nineml.SendPort("Wout")]
+ports = [nineml.SendPort("Wout")]
 
 c1 = nineml.Component("MarkramSynapseDynamics", regimes=regimes, ports = ports)
 

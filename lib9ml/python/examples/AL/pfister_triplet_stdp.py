@@ -27,7 +27,7 @@ regimes = [
                             do=["W  -= o1*(A2_minus + A3_minus*r2)",
                                 "r1 += 1.0",
                                 "r2 += 1.0",
-                                nineml.PreEventRelay]),
+                                nineml.EventPort("PreEventRelay",mode="send")]),
                   nineml.On(nineml.PostEvent,
                             do=["W  += r1*(A2_plus + A3_plus*o2)",
                                 "o1 += 1.0",

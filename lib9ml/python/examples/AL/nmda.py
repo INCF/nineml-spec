@@ -18,8 +18,7 @@ inter_event_regime = Regime(
                   "B = B + weight*factor"])
     )
 
-ports = [RecvPort("weight"),
-         RecvPort("V"),
+ports = [RecvPort("V"),
          SendPort("Isyn = g(V,A,B)*(E - V)"), # this notation takes the assignment of Isyn out of the Regime
          SendPort("gsyn = g(V,A,B)")]
 

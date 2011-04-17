@@ -124,6 +124,7 @@ SpikeOutputEvent = EventPort('spike_output')
 SpikeInputEvent = EventPort('spike_input', mode="recv")
 PreEvent = EventPort('spike_pre', mode="recv")
 PostEvent = EventPort('spike_post', mode="recv")
+PreEventRelay = EventPort('spike_pre_relay', mode="send")
 
 # Syntactic sugar
 ReducePort = curry(AnalogPort,mode="reduce")
