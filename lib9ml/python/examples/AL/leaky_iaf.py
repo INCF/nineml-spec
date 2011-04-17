@@ -20,7 +20,7 @@ refractory_regime = nineml.Regime(
 ports = [nineml.SendPort("V"),
          nineml.ReducePort("Isyn",op="+")]
 
-c1 = nineml.Component("LeakyIAF", regimes = [subthreshold_regime, refractory_regime])
+c1 = nineml.Component("LeakyIAF", regimes = [subthreshold_regime, refractory_regime], ports=ports)
 
 
 
