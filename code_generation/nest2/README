@@ -25,13 +25,16 @@ cd build
 make -j4
 # No need for make install ... can use what resides in .libs
 ##make install
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/src/nineml-svn-trunk/code_generation/nest2/nest_model/.libs
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/src/nineml-svn-trunk/code_generation/nest2/nest_model/build/.libs
 cd ../..
 
 Test iaf_cond_exp_9ml
 =====================
 
-python comparison9ml_iaf_cond_exp.py
+$ipython -pylab
+>>> execfile('comparison9ml_iaf_cond_exp.py')
+
+
 
 
 

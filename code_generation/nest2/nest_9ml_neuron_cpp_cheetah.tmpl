@@ -181,11 +181,11 @@ void nest_nineml::$model.nest_classname::Parameters_::set(const DictionaryDatum&
 void nest_nineml::$model.nest_classname::State_::get(DictionaryDatum &d) const
 {
 #for $p in $model.state_vars
-  (*d)[$mynames::$p.symbol] = $p.symbol;
+  def<nest::double_t>(d, $mynames::$p.symbol, $p.symbol); 
 #end for
 
   // get regime
-  (*d)[$mynames::Regime9ML] = regime_;
+  def<nest::double_t>(d, $mynames::Regime9ML, regime_); 
 
 }
 

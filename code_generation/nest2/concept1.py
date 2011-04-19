@@ -106,7 +106,7 @@ class NestParameter(object):
 class NestStateVar(object):
     
     # TODO: units
-    def __init__(self, symbol, initial_value, parent_component, Ctype = "double_t", unit="[unspecified unit]", notes = ""):
+    def __init__(self, symbol, initial_value, parent_component, Ctype = "nest::double_t", unit="[unspecified unit]", notes = ""):
         self.symbol = symbol
         self.Ctype = Ctype
         self.unit = unit

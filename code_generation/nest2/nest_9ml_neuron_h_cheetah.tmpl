@@ -326,7 +326,7 @@ Description:
 #for $p in $model.state_vars
     $p.Ctype get_StateVar_${p.symbol}() const { return S_.${p.symbol}; }
 #end for
-     double_t get_StateVar_regime() const { return double_t(S_.regime_); }
+     nest::double_t get_StateVar_regime() const { return nest::double_t(S_.regime_); }
 
   };
 
