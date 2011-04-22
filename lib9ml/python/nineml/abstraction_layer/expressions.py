@@ -72,7 +72,6 @@ class Expression(object):
         self.rhs is not modified.
         
         """
-
         # names that are in math_symbol space do not show up in self.names
         if expr==None:
             expr = self.rhs
@@ -82,7 +81,6 @@ class Expression(object):
         for func in self.funcs:
             if func not in math_namespace.namespace:
                 expr = Expression.name_replace(func,prefix+func,expr, func_ok=True)
-
         return expr
 
     def rhs_name_transform(self, name_map):
@@ -104,8 +102,6 @@ class Expression(object):
 
         return expr
 
-
-        
 
     @classmethod
     def name_replace(cls,frm,to,rhs, func_ok=False):
@@ -242,6 +238,10 @@ class Binding(Expression, RegimeElement):
 
         if self.name in self.args:
             raise ValueError, "Binding expression '%s': function binding has argument symbol = binding symbol." % self.name
+
+
+    def __repr__(self):
+        return "<Binding: %s>" % self.as_expr()
 
     def prefix(self,prefix=""):
         return prefix+Expression.prefix(self,prefix,exclude=self.args, expr=self.as_expr())
@@ -392,9 +392,11 @@ class ODE(Equation, RegimeElement):
     def lhs(self):
         return "d%s/d%s" % (self.dependent_variable, self.indep_variable)
 
-    @property
-    def to(self):
+    def _get_to(self):
         return self.dependent_variable
+    def _set_to(self, name):
+        self.dependent_variable = name
+    to = property(fget=_get_to, fset=_set_to)
     
     def as_expr(self):
         return "d%s/d%s = %s" % (self.dependent_variable,
@@ -441,10 +443,8 @@ class Assignment(Equation, RegimeElement):
 
     def get_rhs(self):
         return self.expr
-
     def set_rhs(self,v):
         self.expr = v
-
     rhs = property(get_rhs, set_rhs)
 
     @property
@@ -497,9 +497,11 @@ class Inplace(Equation):
 
     op = "+="
     
-    @property
-    def rhs(self):
+    def get_rhs(self):
         return self.expr
+    def set_rhs(self,v):
+        self.expr = v
+    rhs = property(get_rhs, set_rhs)
 
     @property
     def lhs(self):
