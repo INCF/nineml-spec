@@ -737,12 +737,11 @@ class Component(object):
         #self.backsub_equations()
 
 
-    def __getattribute__(self,name):
-        ga = object.__getattribute__
-        if name in ga(self,'ports_map'):
-            return ga(self,'ports_map')[name]
+    def __getattr__(self, name):
+        if name in self.__getattribute__('ports_map'):
+            return self.ports_map[name]
         else:
-            return ga(self, name)
+            return self.__getattribute__(name)
 
     def get_regimes_to(self,regime):
         """ Gets as a list all regimes that transition to regime"""
@@ -935,7 +934,7 @@ class Component(object):
             # There for the following check is removed:
             #for f in binding.missing_functions:
             #    raise ValueError, "Binding '%s' calls undefined function '%s' " % str(binding.as_expr(),f)
-
+            
             non_param_names = self.non_parameter_symbols.intersection(binding.names)
             # may reference other bindings
             non_param_names = non_param_names.difference(self.bindings_map.iterkeys())
@@ -1060,6 +1059,20 @@ class Component(object):
             if isinstance(equation, ODE):
                 variables.add(equation.dependent_variable)
         return variables
+
+    def add_prefix(self, prefix, exclude=[]):
+        """Add a prefix to all symbols except those explicitly excluded"""
+        #Temporary solution for namespacing, until we get namespaces figured out.
+        for eq in self.equations:
+            if eq.to not in exclude:
+                eq.to = prefix + eq.to
+            eq.rhs = eq.prefix(prefix, exclude=exclude)
+            eq.parse() # update names, funcs
+        for port in self.ports:
+            if port.symbol not in exclude and port.symbol != 't':
+                self.ports_map.pop(port.symbol)
+                port.symbol = prefix + port.symbol
+                self.ports_map[port.symbol] = port
     
     def to_xml(self):
         elements = [E.parameter(name=p) for p in self.parameters] + \
@@ -1069,7 +1082,7 @@ class Component(object):
                    [t.to_xml() for t in self.transitions]
         attrs = {"name": self.name}
         return E(self.element_name, *elements, **attrs)
-       
+  
     @classmethod
     def from_xml(cls, element):
         """
@@ -1271,9 +1284,9 @@ class Component(object):
                     e_name = "%s.%s" % (r1.name,e.name)
                     # to name does not change r2.regime
                     to_name = "%s*%s" % (e.to.name,r2.name)
-                    transitions += [Transition(e.nodes, to=to_name, name=e_name)]
+                    transitions += [Transition(*e.nodes, to=to_name, name=e_name, condition=e.condition)]
 
-                new_regimes += [Union(nodes, name=name,transitions=transitions)]
+                new_regimes += [Regime(nodes, name=name,transitions=transitions)]
 
         # ports
 

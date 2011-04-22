@@ -3,18 +3,20 @@ from nineml.abstraction_layer import *
 # Simple quantal-increase exponential-decay conductance-based synapse
 # This synapse model is linear.
 
-parameters = ['tau','E','q']
+parameters = ['tau','E', 'q']
 
 regimes = [
     Regime(
         "dg/dt = -g/tau",
-        transitions = On(SpikeInputEvent,do="g+=q")
+        transitions = On(SpikeInputEvent, do="g+=q"),
+        name="synaptic_decay"
         )]
 
 ports = [RecvPort("V"),
          SendPort("Isyn = g*(E-V)")]
 
-coba_syn = Component("CoBaSynapse", regimes = regimes, ports = ports, parameters = parameters)
+coba_syn = Component("CoBaSynapse", regimes=regimes, ports=ports,
+                     parameters=parameters)
 
 # User layer connects
 # leaky_iaf.ports['V'] -> coba_syn.ports['V']

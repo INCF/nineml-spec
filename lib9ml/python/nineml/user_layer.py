@@ -262,7 +262,7 @@ class BaseComponent(object):
             assert isinstance(reference, basestring), "reference should be the name of a component"
             self.definition = None
         else:
-            raise Exception()
+            raise TypeError("definition must be a Definition, a Component or a url")
         if isinstance(parameters, ParameterSet):
             self.parameters = parameters
         elif isinstance(parameters, dict):
@@ -1005,7 +1005,7 @@ class Projection(object):
                 setattr(self, name, None)
                 self.references[name] = attr
             else:
-                raise Exception()
+                raise TypeError("Invalid type for %s: %s" % (name, type(attr)))
 
     def __eq__(self, other):
         test_attributes = ["name", "source", "target", "rule", "synaptic_response", "connection_type"]
