@@ -1,6 +1,8 @@
 from neuron import h
 import numpy
-import pylab
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as pylab
 
 def configure():
     cvode = h.CVode()
