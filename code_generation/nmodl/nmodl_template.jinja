@@ -1,11 +1,11 @@
 TITLE Spiking node generated from the 9ML file {{input_filename}} using 9ml2nmodl.py version {{version}}
 
 {%- set assigned_variables = component.assigned_variables.difference(component.integrated_variables) %}
-{%- set range_variables = component.user_parameters.union(assigned_variables) %}
+{%- set range_variables = component.user_parameters.union(assigned_variables).union(unconnected_receive_ports) %}
 
 NEURON {
   POINT_PROCESS {{ component.name|replace('-', '_') }}
-  RANGE {{ range_variables|join(', ') }}
+  RANGE {{ range_variables|join(', ') }}, regime
 }
 
 CONSTANT {
@@ -24,7 +24,7 @@ INITIAL {
   {{ var }} = 0
   {%- endfor %}
   {%- for binding in component.bindings if not binding.args  %}
-  {{ binding.lhs }} == {{ binding.rhs }}
+  {{ binding.lhs }} = {{ binding.rhs }}
   {%- endfor %}
   regime = {{ initial_regime }}
   net_send(0, INIT)
@@ -33,6 +33,9 @@ INITIAL {
 PARAMETER {
   {%- for p in component.user_parameters %}
   {{ p }} = 1
+  {%- endfor %}
+  {%- for p in unconnected_receive_ports %}
+  {{ p }} = 0
   {%- endfor %}
 }
 
@@ -68,16 +71,19 @@ FUNCTION {{binding.lhs}} {
 }
 {%- endfor %}
 
-NET_RECEIVE({{ weight_var }}, channel) {
+NET_RECEIVE(w, channel) {
   INITIAL {
     : stop channel being set to 0 by default
   }
   if (flag == SPIKE) {
-    :printf("Received spike with weight %f on channel %f at %f\n", {{ weight_var }}, channel, t)
+    printf("Received spike with weight %f on channel %f at %f\n", w, channel, t)
     {%- for regime in component.regimes %}
     if (regime == {{ regime.label }}) {
       {%- for transition in regime.transitions if on_input_event(transition) %}
       if (channel == {{ transition.condition.channel }}) {
+        {% if weight_variables %}
+        {{ get_weight_variable(transition.condition.channel, weight_variables) }} = w
+        {% endif %}
         {%- for node in transition.nodes %}
         {{ as_expr(node) }}
         {%- endfor %}
