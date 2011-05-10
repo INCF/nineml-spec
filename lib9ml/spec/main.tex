@@ -776,6 +776,7 @@ binding a = function (x) =
             // scope a
             return i+b(j)
 
+
 \end{lstlisting}
  
 
@@ -905,7 +906,7 @@ $V\;\in{}\;Value$~&~\\
 $E\;\in{}\;Expression$~&~\\
 \\ ~&~\\
 $V$$\:::=\:$$\;$$L$ &[Literal (symbolic or numeric constant)]\\ $\qquad\;\bigm\vert\;$$I$ &[Identifier]\\ $\qquad\;\bigm\vert\;$\textbf{(}\texttt{primop} $O_{proc}$$\;$[$V_{arg}$]$+$\textbf{)}
- &[Primitive operator invocation]\\ $\qquad\;\bigm\vert\;$\textbf{(}\texttt{struct} [$I_{slot}$=$V_{slot}$]$+$\textbf{)}
+ &[Primitive operator invocation]\\ $\qquad\;\bigm\vert\;$\textbf{(}\texttt{prim} [$I_{slot}$=$V_{slot}$]$+$\textbf{)}
  &[Structure constructor]\\ $\qquad\;\bigm\vert\;$\textbf{(}\texttt{sel} $I_{sel}$$\;$$V_{struct}$\textbf{)}
  &[Structure selector]\\ $\qquad\;\bigm\vert\;$\textbf{(}\texttt{vector} [$V_{slot}$]$+$\textbf{)}
  &[Vector constructor]\\ $\qquad\;\bigm\vert\;$\textbf{(}\texttt{vsub} $N_{index}$$\;$$V_{vector}$\textbf{)}
@@ -994,6 +995,9 @@ environment.
 The sequential composition of $f_{1}$ and $f_{2}$ is obtained by
 connecting the outputs of $f_{1}$ to the inputs of $f_{2}$.
 
+
+
+
 \begin{figure}
 \includegraphics{figures/SequenceSignalBlock}
 \caption{\label{Fig:SequenceSignalBlock}Sequence signal block}
@@ -1004,6 +1008,8 @@ connecting the outputs of $f_{1}$ to the inputs of $f_{2}$.
 
 The parallel composition of $f_{1}$ and $f_{2}$ is obtained by
 obtaining the union of outputs of $f_{1}$ and $f_{2}$.
+
+
 
 \begin{figure}
 \includegraphics{figures/UnionSignalBlock}
