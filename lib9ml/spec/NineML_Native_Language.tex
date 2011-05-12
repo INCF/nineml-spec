@@ -209,7 +209,87 @@ in the enclosing block definition, and if not found, in the outer
 blocks enclosing the current block. 
 
 \subsection*{Module Language}
-TODO
+\subsubsection*{Identifiers and access paths}
+We refer to values and containers either by identifier (if we are in
+the scope of their binding) or via the dot notation, e.g. M.x to refer
+to the x member of container M. The following definition represents
+both kinds of references: \begin{center}
+{\small{}\begin{verbatim}
+Access paths:          p ::= X | p.X
+\end{verbatim}
+}\end{center}
+
+
+Since modules can be nested, paths may be arbitrarily long,
+e.g. \texttt{M.N.P.x}, which reads \texttt{((M.N).P).x}. To
+avoid ambiguity, we require that all member of a container (at the
+same nesting level) have distinct names. For example, a container \texttt{C} cannot have two members named \texttt{m}, because we would not know which type \texttt{C.m} refers to. 
+
+However, sub-containers can still define members with the same name
+as members from an enclosing container, since the path notation
+distinguishes them. For instance, C can have a m member and a D
+sub-container with another m type component; the former member m is
+referred to as C.m, and the latter as C.D.m. 
+
+\subsubsection*{Components and Containers}
+The main syntactic constructs of the NineML module system are
+components and containers. A container consists of bindings and
+containers (called sub-containers) packaged together into a logical
+unit. A component is an interface, usually thought of as a type for a
+container: it specifies the names of all the entities provided by the
+container, as well as signatures for sub-containers. 
+
+A container definition introduces a new container name, which can
+point to a previously existing container, or it can be a structure: \begin{center}
+{\small{}\begin{verbatim}
+Container definition:    container x = c
+Container expressions:   c ::= p | structure s end | ( c : M )
+\end{verbatim}
+}\end{center}
+
+
+A structure is an ordered collection of bindings and
+sub-containers. A binding consists of a name and value; the value can
+refer to a binding preceding the current binding in the current
+container scope: \begin{center}
+{\small{}\begin{verbatim}
+container J =
+structure
+  binding x = 5
+  binding y = x + 1
+end
+\end{verbatim}
+}\end{center}
+
+
+A binding value can also refer to a subcontainer in the current scope: \begin{center}
+{\small{}\begin{verbatim}
+container K =
+structure
+  container N =
+  structure
+    binding x = 5
+  end
+  binding y = N.x + 1
+end
+\end{verbatim}
+}\end{center}
+
+
+A component is an interface, usually thought of as a type for a
+container: it specifies the names of all the entities provided by the
+structure as well as the types of value components, and components for
+subcontainers. 
+
+Component definitions also consist of names and subcontainers, but
+instead of values, they specify the type of each member: \begin{center}
+{\small{}\begin{verbatim}
+Components:              M ::= () | C; S
+
+Component members:       C ::= binding i : type  | container X : M
+\end{verbatim}
+}\end{center}
+
 
 \section*{Semantic Definition}
 Every programming language presents its own conceptual view of
@@ -257,9 +337,8 @@ A semantic rule has the form \begin{equation*}
  where the antecedents and the consequent contain formulas with
 variables (described next). Informally, the rule asserts: ``If the
 transitions specified by the antecedents are valid, then the
-transition specified by the consequent is valid.''  
-
-TODO: Axioms
+transition specified by the consequent is valid.''  A rule that
+contains no antecedents is called an axiom. 
 
 Formulas are divided in two kinds: sequents and conditions.
 Conditions are restriction on the applicability of the rule: a
@@ -275,8 +354,8 @@ s_{1}\;\vdash{}\;E\;\Rightarrow{}\;s_{2}\end{equation*}
 \begin{tabular*}{5cm}{l@{\extracolsep{1cm}}l}
 $Expression$$\:::=\:$$L$ &[Literal (symbolic or numeric constant)]\\ $\qquad\;\bigm\vert\;$
 $I$ &[Identifier]\\ $\qquad\;\bigm\vert\;$
-$\langle{}E_{1}\;\texttt{,}\;E_{2}\rangle{}$ &[Tuple constructor]\\ $\qquad\;\bigm\vert\;$
-$\texttt{fn}\quad{}I_{parameter}\quad{}E_{body}$ &[Function constructor]\\ $\qquad\;\bigm\vert\;$
+$\langle{}E_{1},\;\texttt{,},\;E_{2}\rangle{}$ &[Tuple constructor]\\ $\qquad\;\bigm\vert\;$
+$\texttt{function}\quad{}I_{parameter}\quad{}E_{body}$ &[Function constructor]\\ $\qquad\;\bigm\vert\;$
 $\texttt{if}\quad{}E_{1}\quad{}E_{2}\quad{}E_{3}$ &[Conditional]\\ $\qquad\;\bigm\vert\;$
 $E_{proc}\quad{}E_{arg}$ &[Function application]\\ $\qquad\;\bigm\vert\;$
 $\texttt{let}\quad{}I_{lb}\texttt{=}E_{lb}\quad{}\texttt{in}\quad{}E_{body}$ &[Expression with local binding]\\ $\qquad\;\bigm\vert\;$
@@ -293,7 +372,7 @@ Values in the core language can be one of the following: \begin{enumerate}
 \item integers;
 \item IEEE 754 floating-point numbers;
 \item boolean values $true$ and $false$
-\item closures of the form $\langle{}\lambda{}P.E\rho{}\rangle{}$, where $E$ is an expression and $rho$ is an environment; in other words, a closure is a pair denoting a function and its execution environment; 
+\item closures of the form $\langle{}\lambda{}P.E,\;\rho{}\rangle{}$, where $E$ is an expression and $rho$ is an environment; in other words, a closure is a pair denoting a function and its execution environment; 
 \item predefined primitive functions;
 \item tuples of semantic values of the form $\langle{}alpha\;beta\rangle{}$, which may in turn be tuples, so that trees of semantic values can be constructed. 
 \end{enumerate}
@@ -338,7 +417,7 @@ Rule 9 is the introduction rule for tuples of values. Both components of the tup
 
 \begin{equation}
 \frac{{\mathrm\mathbf{}(}\rho{}\;\vdash{}\;E_{1}\;\Rightarrow{}\;\alpha{}{\mathrm\mathbf{})}\;{\mathrm\mathbf{}(}\rho{}\;\vdash{}\;E_{2}\;\Rightarrow{}\;\beta{}{\mathrm\mathbf{})}}%
-{\rho{}\;\vdash{}\;E_{1}\;\texttt{,}\;E_{2}\;\Rightarrow{}\;{\mathrm\mathbf{}(}\langle{}\alpha{}\;\beta{}\rangle{}{\mathrm\mathbf{})}}\end{equation}
+{\rho{}\;\vdash{}\;E_{1}\;\texttt{,}\;E_{2}\;\Rightarrow{}\;\langle{}\alpha{},\;\beta{}\rangle{}}\end{equation}
 The next rule deals with function application. Type-checking must
 ensure that the operator of an application can only evaluate to a
 functional value, i.e. a closure. This closure is taken apart. The
@@ -347,7 +426,7 @@ parameter association has been added. Since $E_{2}$ is
 evaluated, the Core Language uses call-by-value. 
 
 \begin{equation}
-\frac{{\mathrm\mathbf{}(}\rho{}\;\vdash{}\;E_{1}\;\Rightarrow{}\;\langle{}\lambda{}P.E\rho{}_{1}\rangle{}{\mathrm\mathbf{})}\;{\mathrm\mathbf{}(}\rho{}\;\vdash{}\;E_{2}\;\Rightarrow{}\;\alpha{}{\mathrm\mathbf{})}\;{\mathrm\mathbf{}(}\rho{}_{1}\cdot{}P\mapsto{}\alpha{}\;\vdash{}\;E\;\Rightarrow{}\;\beta{}{\mathrm\mathbf{})}}%
+\frac{{\mathrm\mathbf{}(}\rho{}\;\vdash{}\;E_{1}\;\Rightarrow{}\;\langle{}\lambda{}P.E,\;\rho{}_{1}\rangle{}{\mathrm\mathbf{})}\;{\mathrm\mathbf{}(}\rho{}\;\vdash{}\;E_{2}\;\Rightarrow{}\;\alpha{}{\mathrm\mathbf{})}\;{\mathrm\mathbf{}(}\rho{}_{1}\cdot{}P\mapsto{}\alpha{}\;\vdash{}\;E\;\Rightarrow{}\;\beta{}{\mathrm\mathbf{})}}%
 {\rho{}\;\vdash{}\;E_{1}\;E_{2}\;\Rightarrow{}\;\beta{}}\end{equation}
 Rule 11 deals with local bindings. 
 
