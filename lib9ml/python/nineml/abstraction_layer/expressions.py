@@ -403,8 +403,8 @@ class ODE(Equation, RegimeElement):
                                  self.indep_variable,
                                  self.rhs)
 
-    def prefix(self,prefix=""):
-        return ("d%s/d%s = " % (prefix+self.dependent_variable, self.indep_variable)) + Expression.prefix(self,prefix)
+    #def prefix(self,prefix=""):
+    #    return ("d%s/d%s = " % (prefix+self.dependent_variable, self.indep_variable)) + Expression.prefix(self,prefix)
 
 
     def to_xml(self):
@@ -462,8 +462,8 @@ class Assignment(Equation, RegimeElement):
         return "%s = %s" % (self.to,
                             self.expr)
 
-    def prefix(self,prefix=""):
-        return ("%s = " % (prefix+self.to,)) + Expression.prefix(self,prefix)
+    #def prefix(self,prefix=""):
+    #    return ("%s = " % (prefix+self.to,)) + Expression.prefix(self,prefix)
 
     def __eq__(self, other):
         from operator import and_
@@ -538,8 +538,8 @@ class Inplace(Equation):
         expr = "%s %s %s" % (self.to, self.op[0], self.expr)
         return Assignment(self.to, expr, self.name)
 
-    def prefix(self,prefix=""):
-        return ("%s %s " % (prefix+self.to,self.op)) + Expression.prefix(self,prefix)
+    #def prefix(self,prefix=""):
+    #    return ("%s %s " % (prefix+self.to,self.op)) + Expression.prefix(self,prefix)
 
     def __eq__(self, other):
         from operator import and_
