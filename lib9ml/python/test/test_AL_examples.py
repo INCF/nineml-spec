@@ -28,7 +28,7 @@ class ExamplesTestCase(unittest.TestCase):
             print e
             f = tempfile.TemporaryFile()
             d = dict(f=f)
-            execfile(os.path.join('../examples/AL',e),d)
+            execfile(os.path.join(os.path.dirname(__file__), '../examples/AL',e),d)
             # create component 'c1' and writes to f, if defined
 
             # re-read the xml output of the component
