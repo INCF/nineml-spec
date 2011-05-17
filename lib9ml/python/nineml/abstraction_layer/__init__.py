@@ -1073,6 +1073,15 @@ class Component(object):
                 self.ports_map.pop(port.symbol)
                 port.symbol = prefix + port.symbol
                 self.ports_map[port.symbol] = port
+
+        # invalidate the instance method cache, triggering all the @cache decorated methods to be re-calculated
+        self.__cache__={}
+
+        # TODO: still this is not working. See test_component_symbols.py -> test_add_prefix
+        # Presumably, for this to work inplace, we need to "re-run" certain parts of the
+        # constructor ... maybe this is improved with Namespaces ...
+
+        # See also: test_expressions.py -> test_prefixing
     
     def to_xml(self):
         elements = [E.parameter(name=p) for p in self.parameters] + \

@@ -33,6 +33,8 @@ class ExpressionsTestCase(unittest.TestCase):
         pfx_i = i.prefix("PRE_")
         assert pfx_i == "PRE_U += PRE_gk(PRE_n)*(PRE_V - PRE_ek)"
 
+        # TODO: ports, AnalogPorts with rhs/assignments
+
 
     def test_name_replace(self):
 
