@@ -352,14 +352,14 @@ s_{1}\;\vdash{}\;E\;\Rightarrow{}\;s_{2}\end{equation*}
 
 \subsection*{Syntax of the Core Language}
 \begin{tabular*}{5cm}{l@{\extracolsep{1cm}}l}
+$Declaration$$\:::=\:$$\texttt{binding}\quad{}I_{val}\quad{}\texttt{=}\quad{}E_{val}$ &[Creates a new binding in the host namespace]\\ ~&~\\
 $Expression$$\:::=\:$$L$ &[Literal (symbolic or numeric constant)]\\ $\qquad\;\bigm\vert\;$
 $I$ &[Identifier]\\ $\qquad\;\bigm\vert\;$
 $\langle{}E_{1},\;\texttt{,},\;E_{2}\rangle{}$ &[Tuple constructor]\\ $\qquad\;\bigm\vert\;$
 $\texttt{function}\quad{}I_{parameter}\quad{}E_{body}$ &[Function constructor]\\ $\qquad\;\bigm\vert\;$
 $\texttt{if}\quad{}E_{1}\quad{}E_{2}\quad{}E_{3}$ &[Conditional]\\ $\qquad\;\bigm\vert\;$
 $E_{proc}\quad{}E_{arg}$ &[Function application]\\ $\qquad\;\bigm\vert\;$
-$\texttt{let}\quad{}I_{lb}\texttt{=}E_{lb}\quad{}\texttt{in}\quad{}E_{body}$ &[Expression with local binding]\\ $\qquad\;\bigm\vert\;$
-$\texttt{binding}\quad{}I_{val}\quad{}\texttt{=}\quad{}E_{val}$ &[Creates a new binding in the host namespace]\\ ~&~\\
+$\texttt{let}\quad{}I_{lb}\texttt{=}E_{lb}\quad{}\texttt{in}\quad{}E_{body}$ &[Expression with local binding]\\ ~&~\\
 $Literal$$\:::=\:$$N$ &[Numeric Literal]\\ $\qquad\;\bigm\vert\;$
 $I_{symbol}$ &[Symbolic Literal]\\ \end{tabular*}
 \subsection*{Semantics for the Core Language}
@@ -393,13 +393,13 @@ Axioms 1 to 4 state that literals are in normal form, i.e. they immediately yiel
 \rho{}\;\vdash{}\;\texttt{true}\;\Rightarrow{}\;true\end{equation}
 \begin{equation}
 \rho{}\;\vdash{}\;\texttt{false}\;\Rightarrow{}\;false\end{equation}
-Axiom 5 asserts that an expression of the form $\lambda{}P.E$ is also in normal form. The
+Axiom 5 asserts that an expression of the form $\lambda{}I.E$ is also in normal form. The
 value obtained is a closure, pairing this expression with the
 environment. 
 
 \begin{equation}
-\rho{}\;\vdash{}\;\lambda{}P.E\;\Rightarrow{}\;\langle{}\lambda{}P.E\rho{}\rangle{}\end{equation}
-Axiom 6 states that the value associated to an identifier is to be looked up in the environment $\rho{}$. 
+\rho{}\;\vdash{}\;\lambda{}I.E\;\Rightarrow{}\;\langle{}\lambda{}I.E\rho{}\rangle{}\end{equation}
+Axiom 6 states that the value associated with an identifier is to be looked up in the environment $\rho{}$. 
 
 \begin{equation}
 \rho{}\;\vdash{}\;I\;\Rightarrow{}\;\texttt{ident-find}(I,\:\rho{})\end{equation}
@@ -426,14 +426,30 @@ parameter association has been added. Since $E_{2}$ is
 evaluated, the Core Language uses call-by-value. 
 
 \begin{equation}
-\frac{{\mathrm\mathbf{}(}\rho{}\;\vdash{}\;E_{1}\;\Rightarrow{}\;\langle{}\lambda{}P.E,\;\rho{}_{1}\rangle{}{\mathrm\mathbf{})}\;{\mathrm\mathbf{}(}\rho{}\;\vdash{}\;E_{2}\;\Rightarrow{}\;\alpha{}{\mathrm\mathbf{})}\;{\mathrm\mathbf{}(}\rho{}_{1}\cdot{}P\mapsto{}\alpha{}\;\vdash{}\;E\;\Rightarrow{}\;\beta{}{\mathrm\mathbf{})}}%
+\frac{{\mathrm\mathbf{}(}\rho{}\;\vdash{}\;E_{1}\;\Rightarrow{}\;\langle{}\lambda{}I.E,\;\rho{}_{1}\rangle{}{\mathrm\mathbf{})}\;{\mathrm\mathbf{}(}\rho{}\;\vdash{}\;E_{2}\;\Rightarrow{}\;\alpha{}{\mathrm\mathbf{})}\;{\mathrm\mathbf{}(}\rho{}_{1}\cdot{}I\mapsto{}\alpha{}\;\vdash{}\;E\;\Rightarrow{}\;\beta{}{\mathrm\mathbf{})}}%
 {\rho{}\;\vdash{}\;E_{1}\;E_{2}\;\Rightarrow{}\;\beta{}}\end{equation}
 Rule 11 deals with local bindings. 
 
 \begin{equation}
-\frac{{\mathrm\mathbf{}(}\rho{}\;\vdash{}\;E_{2}\;\Rightarrow{}\;\alpha{}{\mathrm\mathbf{})}\;{\mathrm\mathbf{}(}\rho{}\cdot{}P\mapsto{}\alpha{}\;\vdash{}\;E_{1}\;\Rightarrow{}\;\beta{}{\mathrm\mathbf{})}}%
-{\rho{}\;\vdash{}\;\texttt{let}\;P\;=\;E_{2}\;\texttt{in}\;E_{1}\;\Rightarrow{}\;\beta{}}\end{equation}
+\frac{{\mathrm\mathbf{}(}\rho{}\;\vdash{}\;E_{2}\;\Rightarrow{}\;\alpha{}{\mathrm\mathbf{})}\;{\mathrm\mathbf{}(}\rho{}\cdot{}I\mapsto{}\alpha{}\;\vdash{}\;E_{1}\;\Rightarrow{}\;\beta{}{\mathrm\mathbf{})}}%
+{\rho{}\;\vdash{}\;\texttt{let}\;I\;=\;E_{2}\;\texttt{in}\;E_{1}\;\Rightarrow{}\;\beta{}}\end{equation}
+\subsection*{Syntax of the Module Language}
+\begin{tabular*}{5cm}{l@{\extracolsep{1cm}}l}
+$ModExpr$$\:::=\:$$Path$ &[Reference to a module]\\ $\qquad\;\bigm\vert\;$
+$\texttt{structure}\quad{}MDecl_{1}\ldots{}MDecl_{n}\quad{}\texttt{end}$ &[Module structure]\\ ~&~\\
+$MDecl$$\:::=\:$$Declaration$ &[Core language declaration]\\ $\qquad\;\bigm\vert\;$
+$\texttt{module}\quad{}I\quad{}\texttt{=}\quad{}ModExpr$ &[Module declaration]\\ ~&~\\
+$Path$$\:::=\:$$I$ &[Identifier]\\ $\qquad\;\bigm\vert\;$
+$Path\;\cdot{}\;I$ &[Path to an identifier]\\ \end{tabular*}
 \subsection*{Semantics for the Module Language}
-TODO
+The next two axioms state that the module associated with a path is to be looked up in the environment $\rho{}_{module}$. 
 
+\begin{equation}
+\rho{}_{module}\;\vdash{}\;I\;\Rightarrow{}\;\texttt{ident-find}(I,\:\rho{}_{module})\end{equation}
+\begin{equation}
+\rho{}_{module}\;\vdash{}\;P.I\;\Rightarrow{}\;\texttt{ident-find}(I,\:{\mathrm\mathbf{}(}\rho{}_{module}\;\vdash{}\;P{\mathrm\mathbf{})})\end{equation}
+\begin{equation}
+\frac{\begin{array}{l}\rho{}_{module}\;\vdash{}\;MDecl_{1}\;\Rightarrow{}\;\rho{}_{module}\cdot{}I_{1}\mapsto{}\alpha{}\\
+\rho{}_{module}\cdot{}I_{1}\mapsto{}\alpha{}\;\vdash{}\;MDecl_{2}\;\Rightarrow{}\;\rho{}_{module}\cdot{}I_{1}\mapsto{}\alpha{}\cdot{}I_{2}\mapsto{}\beta{}\end{array}}%
+{\rho{}_{module}\;\vdash{}\;\texttt{structure}\;MDecl_{1}\;MDecl_{2}\;\texttt{end}\;\Rightarrow{}\;\texttt{\{}\;I_{1}\mapsto{}\alpha{}\;\texttt{ ; }\;I_{2}\mapsto{}\beta{}\;\texttt{\}}}\end{equation}
 \end{document}
