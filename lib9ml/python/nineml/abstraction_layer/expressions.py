@@ -72,6 +72,9 @@ class Expression(object):
         self.rhs is not modified.
         
         """
+
+
+
         # names that are in math_symbol space do not show up in self.names
         if expr==None:
             expr = self.rhs
@@ -351,12 +354,24 @@ class Equation(Expression):
         
 
 class ODE(Equation, RegimeElement):
-    """
+    """ 
     Represents a first-order, ordinary differential equation.
     """
     element_name = "ode"
     n = 0
     
+
+    def prefix(self, prefix="", exclude=[], expr=None):
+        dep = self.dependent_variable if self.dependent_variable in exclude else prefix + self.dependent_variable
+        indep = self.indep_variable if self.indep_variable in exclude else prefix + self.indep_variable
+        return ODE( 
+                    dependent_variable = dep,
+                    indep_variable =     indep,
+                    rhs = Expression.prefix(self,prefix=prefix,exclude=exclude,expr=self.rhs),
+                    )
+
+
+
     def __init__(self, dependent_variable, indep_variable, rhs, name=None):
         self.dependent_variable = dependent_variable
         self.indep_variable = indep_variable

@@ -9,6 +9,7 @@ from operator import and_
 from nineml import __version__
 import re
 import copy
+import itertools
 
 from nineml.cache_decorator import im_cache_decorator as cache
 from nineml.abstraction_layer import math_namespace
@@ -76,7 +77,9 @@ class Regime(object):
             self.name = "Regime%d" % Regime.n
         Regime.n += 1
       
+        #print "n1:", nodes
         nodes = map(expr_to_obj,nodes)
+        #print "n2", nodes
 
         # check user isn't using 'events' kwarg anymore
         events = kwargs.get("events")
@@ -660,7 +663,7 @@ class Component(object):
         self.transition_map = {}
         for t in transitions:
             if self.transition_map.has_key(t.name) and self.transition_map[t.name] != t:
-                raise ValueError, "Transition collection has Transitions with colliding names."
+                raise ValueError, "Transition collection has Transitions with colliding names."+ str(t.name)
             self.transition_map[t.name] = t
                
         # store final regime and transition sets for this component
@@ -1131,7 +1134,7 @@ class Component(object):
         etree.ElementTree(doc).write(file, encoding="UTF-8",
                                      pretty_print=True, xml_declaration=True)
 
-    def to_dot(self,out, show_contents=True):
+    def to_dot(self,out, show_contents=True, relabel_nodes=False):
         """ Write a DOT graph representation of component
 
         http://en.wikipedia.org/wiki/DOT_language
@@ -1152,6 +1155,14 @@ class Component(object):
 
         regime_id = dict([(kv[0],i) for i,kv in enumerate(self.regime_map.iteritems())])
 
+        #TransitionLabelDict:
+        node_labels = {}
+        for r in itertools.chain(self.regimes):
+            node_labels[r] = "Regime:%d"%len(node_labels)
+
+        for t in itertools.chain(self.transitions):
+            node_labels[t] = "Trans:%d"%len(node_labels)
+
 
         if show_contents:
 
@@ -1168,9 +1179,11 @@ class Component(object):
             for r in self.regimes:
                 
                 ns['node'] = "regime_%d" % regime_id[r.name]
-                ns['regime_name'] = r.name
+                ns['regime_name'] = r.name if not relabel_nodes else node_labels[r]
                 ns['contents'] = r.dot_content()
                 out.write(t_regime % ns)
+
+
 
         # transition template
         t_transition = '\t"%(from)s" -> "%(to)s" [ style = "filled, bold" penwidth = 1 fillcolor = "white" fontname = "Courier New" \\\n'+\
@@ -1194,7 +1207,7 @@ class Component(object):
 
                 ns['from'] = "regime_%d" % regime_id[t.from_.name]
                 ns['to'] = "regime_%d" % regime_id[t.to.name]
-                ns['trans_name'] = t.name
+                ns['trans_name'] = t.name if not relabel_nodes else node_labels[t]
                 ns['condition'] = dot_escape(t.condition.as_expr())
                 #ns['contents'] = t.dot_content()
                 ns['contents'] = t.dot_content()
@@ -1290,7 +1303,7 @@ class Component(object):
                 transitions = []
                 for e in r1.transitions:
                     # prevent name collision
-                    e_name = "%s.%s" % (r1.name,e.name)
+                    e_name = "%s.%s"  % (r1.name,e.name)
                     # to name does not change r2.regime
                     to_name = "%s*%s" % (e.to.name,r2.name)
                     transitions += [Transition(*e.nodes, to=to_name, name=e_name, condition=e.condition)]

@@ -11,8 +11,8 @@ class Port(object):
                      '+':'+', '-':'-', '*':'*', '/':'/'}
 
     def __init__(self, internal_symbol, mode='send', op=None):
-        """
-
+        """  
+        
         For AnalogPorts:
 
           if mode='send', internal_symbol may be an expression, e.g. "Isyn = g(E-V)"
