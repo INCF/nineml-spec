@@ -331,12 +331,12 @@ class ModelToSingleComponentReducer(object):
     ###############################
     def copy_and_prefix_odes_from_regime(self,component,regime):
         # TODO: Proper prefixing:
-        prefix = component.getTreePosition(jointoken="_")
+        prefix = component.getTreePosition(jointoken="_") + "_"
 
         for n in regime.nodes: assert isinstance(n,nineml.Equation)
         excludes = ['t']
-        prefix = prefix+"_"
-        return [ expr.prefix(prefix=prefix,exclude=excludes) for expr in regime.nodes ]
+        #return [ expr.prefix(prefix=prefix,exclude=excludes) for expr in regime.nodes ]
+        return [ expr.clone(prefix=prefix,prefix_excludes=excludes) for expr in regime.nodes ]
 
 
 
@@ -362,10 +362,8 @@ class ModelToSingleComponentReducer(object):
 
         # Functions to remap nodes:
         def remapNode_Assignment(n):
-            to = oldtransitionnamespace + n.to
-            expr = n.prefix(prefix=oldtransitionnamespace,exclude=['t'],expr=n.expr) 
-            name = None
-            return nineml.Assignment( to=to, expr=expr, name=name )
+            return n.clone( prefix = oldtransitionnamespace, prefix_excludes=['t'] )
+            
         def remapNode_EventPort(n):
             return nineml.EventPort( 
                     internal_symbol = oldtransitionnamespace + n.symbol,
@@ -385,7 +383,9 @@ class ModelToSingleComponentReducer(object):
         # Remap the condition:
 
         def remap_Condition_Condition(c):
-            return c.prefix(prefix = oldtransitionnamespace, exclude=['t'], expr=c.cond)
+            return c.clone( prefix=oldtransitionnamespace, prefix_excludes=['t'] )
+            #return c.prefix(prefix = oldtransitionnamespace, exclude=['t'], expr=c.cond)
+        
             #return newcondition
         def remap_Condition_EventPort(p):
             return nineml.EventPort( oldtransitionnamespace + p.name, mode=p.mode, op=p.reduce_op)

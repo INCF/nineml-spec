@@ -2,10 +2,20 @@ from nineml.abstraction_layer import expressions
 
 class Condition(expressions.Expression):
 
-    def __init__(self, cond):
-
+    def __init__(self, cond, name=None):
+        
         self.cond = cond
         self.parse()
+        self.name = name
+
+    def _clone(self, prefix, prefix_excludes, name ):
+    
+        return Condition( 
+                    cond = expressions.Expression.prefix(self,prefix=prefix,exclude=prefix_excludes,expr=self.cond),
+                    name=name
+                    )
+
+
 
     def parse(self):
         """ parses and checks validity of condtional """
@@ -67,6 +77,8 @@ class Condition(expressions.Expression):
             return False
 
         return self.cond == other.cond
+
+
 
 
 ##     def to_xml(self):

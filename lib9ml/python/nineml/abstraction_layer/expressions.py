@@ -46,6 +46,10 @@ class Expression(object):
         """ parses and checks validity of rhs """
         from nineml.abstraction_layer.expr_parse import expr_parse
 
+        print self.rhs, type(self.rhs)
+        print self
+        print 
+        
         self.names, self.funcs = expr_parse(self.rhs)
 
         # Parser now does this check
@@ -85,6 +89,11 @@ class Expression(object):
             if func not in math_namespace.namespace:
                 expr = Expression.name_replace(func,prefix+func,expr, func_ok=True)
         return expr
+
+
+
+    
+
 
     def rhs_name_transform(self, name_map):
         """
@@ -201,6 +210,28 @@ class Expression(object):
         return False
 
 
+
+    # Interface:
+    def clone(self, prefix="", prefix_excludes=None, clone_name=True, prefix_name=False):
+        prefix_excludes = [] if not prefix_excludes else prefix_excludes
+        
+        name = self.name if clone_name else None
+        if name and prefix_name: name = prefix + name
+        
+        return self._clone(prefix=prefix,prefix_excludes=prefix_excludes,name=name)
+        
+        
+    def _clone(self, prefix, prefix_excludes, name ):
+        raise NotImplementedError()
+        
+        
+        
+        
+        
+        
+    
+    
+    
 
 class Binding(Expression, RegimeElement):
     # EM: In the context of NEST and GPU code generation, bindings make sense:
@@ -353,6 +384,8 @@ class Equation(Expression):
     pass
         
 
+
+
 class ODE(Equation, RegimeElement):
     """ 
     Represents a first-order, ordinary differential equation.
@@ -361,15 +394,17 @@ class ODE(Equation, RegimeElement):
     n = 0
     
 
-    def prefix(self, prefix="", exclude=[], expr=None):
-        dep = self.dependent_variable if self.dependent_variable in exclude else prefix + self.dependent_variable
-        indep = self.indep_variable if self.indep_variable in exclude else prefix + self.indep_variable
+    def _clone(self, prefix, prefix_excludes, name ):
+    
+        dep = self.dependent_variable if self.dependent_variable in prefix_excludes else prefix + self.dependent_variable
+        indep = self.indep_variable if self.indep_variable in prefix_excludes else prefix + self.indep_variable
+         
         return ODE( 
                     dependent_variable = dep,
                     indep_variable =     indep,
-                    rhs = Expression.prefix(self,prefix=prefix,exclude=exclude,expr=self.rhs),
+                    rhs = Expression.prefix(self,prefix=prefix,exclude=prefix_excludes,expr=self.rhs),
+                    name = name
                     )
-
 
 
     def __init__(self, dependent_variable, indep_variable, rhs, name=None):
@@ -411,6 +446,7 @@ class ODE(Equation, RegimeElement):
         return self.dependent_variable
     def _set_to(self, name):
         self.dependent_variable = name
+        
     to = property(fget=_get_to, fset=_set_to)
     
     def as_expr(self):
@@ -439,10 +475,23 @@ class ODE(Equation, RegimeElement):
                    name=element.get("name"))
     
 
+
+
 class Assignment(Equation, RegimeElement):
     element_name = "assignment"
     n = 0
+        
+    # Interface:
+    def _clone(self, prefix, prefix_excludes, name ):
     
+        to = self.to if self.to in prefix_excludes else prefix + self.to
+        return Assignment( 
+                    to = to,
+                    expr = Expression.prefix(self,prefix=prefix,exclude=prefix_excludes,expr=self.rhs),
+                    name = name
+                    )
+    
+   
     def __init__(self, to, expr, name=None):
         self.to = to
         self.expr = expr
