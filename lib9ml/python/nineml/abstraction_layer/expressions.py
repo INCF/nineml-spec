@@ -46,10 +46,6 @@ class Expression(object):
         """ parses and checks validity of rhs """
         from nineml.abstraction_layer.expr_parse import expr_parse
 
-        print self.rhs, type(self.rhs)
-        print self
-        print 
-        
         self.names, self.funcs = expr_parse(self.rhs)
 
         # Parser now does this check
@@ -76,8 +72,6 @@ class Expression(object):
         self.rhs is not modified.
         
         """
-
-
 
         # names that are in math_symbol space do not show up in self.names
         if expr==None:
@@ -406,7 +400,7 @@ class ODE(Equation, RegimeElement):
                     name = name
                     )
 
-
+    
     def __init__(self, dependent_variable, indep_variable, rhs, name=None):
         self.dependent_variable = dependent_variable
         self.indep_variable = indep_variable
@@ -454,10 +448,7 @@ class ODE(Equation, RegimeElement):
                                  self.indep_variable,
                                  self.rhs)
 
-    #def prefix(self,prefix=""):
-    #    return ("d%s/d%s = " % (prefix+self.dependent_variable, self.indep_variable)) + Expression.prefix(self,prefix)
-
-
+    
     def to_xml(self):
         return E(self.element_name,
                  E("math-inline", self.rhs),

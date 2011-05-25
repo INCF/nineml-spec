@@ -77,9 +77,9 @@ class Regime(object):
             self.name = "Regime%d" % Regime.n
         Regime.n += 1
       
-        #print "n1:", nodes
+        
         nodes = map(expr_to_obj,nodes)
-        #print "n2", nodes
+        
 
         # check user isn't using 'events' kwarg anymore
         events = kwargs.get("events")

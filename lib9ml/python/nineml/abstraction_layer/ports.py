@@ -2,6 +2,7 @@
 from nineml.helpers import curry
 from nineml.abstraction_layer.xmlns import *
 from nineml.abstraction_layer.expressions import expr_to_obj, Assignment
+from reportlab.graphics.shapes import EVEN_ODD
 
 class Port(object):
     """ Base class for EventPort and AnalogPort, etc."""
@@ -52,6 +53,11 @@ class Port(object):
             raise ValueError, "Port of mode!=reduce may not specify 'op'."
             
         # TODO: EventPort can also be reduce?  Then no op needed.
+
+
+    
+        
+        
 
 
     def __eq__(self, other):
@@ -118,6 +124,15 @@ class EventPort(Port):
     def is_bool(self):
         """ To match the Condition interface.  Event needs to check. """
         return False
+    
+    # Added by MH to make hierachical resolving code cleaner:
+    def clone(self, prefix="", prefix_excludes=None):
+        prefix_excludes = prefix_excludes if prefix_excludes else []
+        assert not self.expr
+        
+        symbol = self.symbol if not self.symbol in prefix_excludes else prefix + self.symbol
+        return EventPort(internal_symbol=symbol, mode=self.mode, op=self.reduce_op )
+     
 
 
 SpikeOutputEvent = EventPort('spike_output')

@@ -12,6 +12,8 @@ import util
 
 
 
+def flattenFirstLevel( nestedList ):
+    return list( itertools.chain(*nestedList) )
 
 def safe_dictionary_merge( dictionaries ):
     newDict = {}
@@ -332,8 +334,6 @@ class ModelToSingleComponentReducer(object):
     def copy_and_prefix_odes_from_regime(self,component,regime):
         # TODO: Proper prefixing:
         prefix = component.getTreePosition(jointoken="_") + "_"
-
-        for n in regime.nodes: assert isinstance(n,nineml.Equation)
         excludes = ['t']
         #return [ expr.prefix(prefix=prefix,exclude=excludes) for expr in regime.nodes ]
         return [ expr.clone(prefix=prefix,prefix_excludes=excludes) for expr in regime.nodes ]
@@ -346,53 +346,33 @@ class ModelToSingleComponentReducer(object):
         # Make a name for the state:
         namebuilder = lambda (comp,regime) : "%s:%s" % (comp.getPathString(), regime.name) 
         regime_name = "State%d"%index + ",".join([ namebuilder(rc) for rc in component_regimes_zip]) 
+        regime_name = None
         
         # Copy accross all the nodes from each regime. We need to 
         # prefix all nodes with the names to prevent collision.
-        regime_equations = [ self.copy_and_prefix_odes_from_regime(*rc) for rc in component_regimes_zip ]
-        regime_equations = list( itertools.chain(*regime_equations ) ) 
-
+        regime_equations = flattenFirstLevel( [ self.copy_and_prefix_odes_from_regime(*rc) for rc in component_regimes_zip ] )
+        
         return nineml.Regime(*regime_equations, name = regime_name )
 
-    def create_transition(self,oldtransition, oldcomponent, fromRegime, toRegime):
+    def create_transition(self, oldtransition, oldcomponent, fromRegime, toRegime):
         transitionName = "%s#%s#%s"%( fromRegime.name, toRegime.name, oldtransition.name )    
         transitionName = None
         oldtransitionnamespace = oldcomponent.getTreePosition("_") + "_"
 
 
-        # Functions to remap nodes:
-        def remapNode_Assignment(n):
-            return n.clone( prefix = oldtransitionnamespace, prefix_excludes=['t'] )
-            
-        def remapNode_EventPort(n):
-            return nineml.EventPort( 
-                    internal_symbol = oldtransitionnamespace + n.symbol,
-                    mode=n.mode,
-                    op=n.reduce_op )
-
+        # Remap all the nodes:
         node_remapper = { 
-                     nineml.Assignment: remapNode_Assignment,
-                     nineml.EventPort: remapNode_EventPort,
+                     nineml.Assignment: lambda n: n.clone( prefix = oldtransitionnamespace, prefix_excludes=['t'] ),
+                     nineml.EventPort:  lambda e: e.clone( prefix = oldtransitionnamespace, prefix_excludes=['t'] ),
                     }
-
-        # Remap the nodes in the transition:
         mappednodes = [ node_remapper[ type(n) ] (n) for n in oldtransition.nodes ] 
         
 
 
         # Remap the condition:
-
-        def remap_Condition_Condition(c):
-            return c.clone( prefix=oldtransitionnamespace, prefix_excludes=['t'] )
-            #return c.prefix(prefix = oldtransitionnamespace, exclude=['t'], expr=c.cond)
-        
-            #return newcondition
-        def remap_Condition_EventPort(p):
-            return nineml.EventPort( oldtransitionnamespace + p.name, mode=p.mode, op=p.reduce_op)
-
         condition_remapper = { 
-                nineml.Condition: remap_Condition_Condition, 
-                nineml.EventPort : remap_Condition_EventPort 
+                nineml.Condition:  lambda c: c.clone( prefix=oldtransitionnamespace, prefix_excludes=['t'] ) , 
+                nineml.EventPort : lambda p: p.clone( prefix=oldtransitionnamespace, prefix_excludes=['t'] ) 
         }
         newcondition = condition_remapper[ type(oldtransition.condition) ](oldtransition.condition)
 
@@ -410,8 +390,9 @@ class ModelToSingleComponentReducer(object):
 
         # Create our new 'Regime-Space'. This is the cross product off all
         # the 'Regime-Spaces' from each component.
-        print "Building new Regime Space"
-        print "  Taking cross-product of existing regime-spaces"
+        
+        #print "Building new Regime Space"
+        #print "  Taking cross-product of existing regime-spaces"
         newRegimeLookupMap = {}
         regimes = [ comp.regimes for comp in self.modelcomponents]
         for i,regimetuple in enumerate( itertools.product(*regimes) ):
@@ -421,16 +402,13 @@ class ModelToSingleComponentReducer(object):
         
         # Now we are in a position to setup the transitions:
         # Lets reiterate over the regime-space:
-        print "  Setting up transition map"
-        for comp in self.modelcomponents:
-            print comp.getTreePosition()
-
+        
         for regimetuple,regimeNew in newRegimeLookupMap.iteritems():
             #For each regime in the regimetuple, lets see what we can reach from there:
-            print
-            print "RegimeTuple:",regimetuple
+            
+            #print "RegimeTuple:",regimetuple
             for regimeIndex, regime in enumerate( regimetuple ):
-                print 'RegimeIndex:',regimeIndex, "NTransitions:", len(regime.transitions)
+                #print 'RegimeIndex:',regimeIndex, "NTransitions:", len(regime.transitions)
                 for oldtransition in regime.transitions:
                     # We calculate the tuple of the Regime this transitions should jump to:
                     #print oldtransition
@@ -488,7 +466,7 @@ class ModelToSingleComponentReducer(object):
 
 
         # Resolve the internally connected ports:
-        print "  Resolving internal connections"
+        #print "  Resolving internal connections"
         
 
         def remapNameGlobally(originalname, targetname):
@@ -507,7 +485,7 @@ class ModelToSingleComponentReducer(object):
                         else:
                             assert False
 
-                    print "Condition type:", type(transition.condition)
+                    #print "Condition type:", type(transition.condition)
                     if isinstance(transition.condition, nineml.EventPort):
                         if transition.condition.symbol == originalname: 
                             transition.condition.symbol = targetname
@@ -522,7 +500,7 @@ class ModelToSingleComponentReducer(object):
 
         # Create a dictionary of all the remappings: send->recv:
         for src,dst in portconnections:
-            print "   * Resolving  Internal Port (Recv)"
+            #print "   * Resolving  Internal Port (Recv)"
             dstport = ports[dst]
             srcport = ports[src]
             assert dstport.mode in ['recv','reduce']
@@ -538,7 +516,7 @@ class ModelToSingleComponentReducer(object):
                 subExpr = srcport.expr if srcport.expr else srcport.symbol
                 dstName = "_".join(dst)
                 srcName = "_".join(src)
-                print 'Substituting:', srcName, ' => ', dstName
+                #print 'Substituting:', srcName, ' => ', dstName
                 remapNameGlobally( originalname = dstName, targetname=srcName)
 
                 # Finally remove the port:
@@ -558,14 +536,14 @@ class ModelToSingleComponentReducer(object):
                 else:
                     reduceConnections[dst].append(src)
 
-        print "Active Reduce Ports:"
+        #print "Active Reduce Ports:"
         for port,connections in reduceConnections.iteritems():
             reduce_op = ports[port].reduce_op
             reduce_port_name = '.'.join(port) 
             reduceexpr = reduce_op.join( [ "_".join(c) for c in connections ] )
             replacementexpr = "( ( %s ) "%(reduce_port_name) + reduce_op + " ( " + reduceexpr + " ) )"
-            print port, "->", connections
-            print replacementexpr
+            #print port, "->", connections
+            #print replacementexpr
             remapNameGlobally( originalname=reduce_port_name, targetname=replacementexpr)
 
 
@@ -594,7 +572,7 @@ class ModelToSingleComponentReducer(object):
         
 
 
-        print "Building constructing reduced component"
+        #print "Building constructing reduced component"
         #self.reducedcomponent = nineml.Component( "reduced", regimes = newRegimeLookupMap.values(), ports=[] )
         self.reducedcomponent = nineml.Component( "reduced", regimes = newRegimeLookupMap.values(), ports=newports )
 
