@@ -104,11 +104,11 @@ class Model(TreeNode):
 
 
 class Component(TreeNode):
-    def __init__(self, name, parameters = [], regimes = [], transitions=[], ports = [], bindings = [], model=None):
+    def __init__(self, name, parameters = [], regimes = [],  analog_ports = [], bindings = [], model=None):
         super(Component,self).__init__()
         self._regimes = regimes
-        self._transitions = transitions
-        self._ports = ports
+        #self._transitions = transitions
+        self._analog_ports = analog_ports
         self._bindings = bindings
 
         self.query = ComponentQueryer(self)
@@ -141,11 +141,19 @@ class Component(TreeNode):
 
     @property 
     def transitions(self):
-        return self._transitions
+        for r in self.regimes:
+            for t in r.transitions:
+                yield t
+        #return self._transitions
 
     @property
     def ports(self):
-        return self._ports
+        for p in self._analog_ports:
+            yield p
+        for t in self.transitions:
+            for e in t.event_ports:
+                yield e
+                 
 
    # @property
    # def subcomponents(self):
@@ -352,6 +360,7 @@ class ModelToSingleComponentReducer(object):
         # prefix all nodes with the names to prevent collision.
         regime_equations = flattenFirstLevel( [ self.copy_and_prefix_odes_from_regime(*rc) for rc in component_regimes_zip ] )
         
+        
         return nineml.Regime(*regime_equations, name = regime_name )
 
     def create_transition(self, oldtransition, oldcomponent, fromRegime, toRegime):
@@ -360,11 +369,13 @@ class ModelToSingleComponentReducer(object):
         oldtransitionnamespace = oldcomponent.getTreePosition("_") + "_"
 
 
+            
         # Remap all the nodes:
         node_remapper = { 
                      nineml.Assignment: lambda n: n.clone( prefix = oldtransitionnamespace, prefix_excludes=['t'] ),
                      nineml.EventPort:  lambda e: e.clone( prefix = oldtransitionnamespace, prefix_excludes=['t'] ),
                     }
+        
         mappednodes = [ node_remapper[ type(n) ] (n) for n in oldtransition.nodes ] 
         
 
@@ -461,8 +472,10 @@ class ModelToSingleComponentReducer(object):
         external_ports = []
 
         analogports = FilterType( ports.values(), nineml.AnalogPort )
-        eventports = FilterType( ports.values(), nineml.EventPort  )
-
+        eventports =  FilterType( ports.values(), nineml.EventPort  )
+        
+        for p in ports.values():
+            print "PORT:",p
 
 
         # Resolve the internally connected ports:
@@ -470,10 +483,36 @@ class ModelToSingleComponentReducer(object):
         
 
         def remapNameGlobally(originalname, targetname):
+            print 'Global-Remap [%s->%s]'%(originalname,targetname)
+            
+                        
+            for p in ports.values():
+                if not p.expr: continue
+                
+                print '  ', p, p.expr
+                p.expr.rhs = p.expr.rhs_name_transform( {originalname:targetname} )
+                p.expr.parse()
+                print '->', p, p.expr
+                
+            
+            
             for regime in newRegimeLookupMap.values():
                 for eqn in regime.equations:
+                    print '  ', eqn,
                     eqn.rhs = eqn.rhs_name_transform( {originalname:targetname} )
-
+                    eqn.parse()
+                    print '->', eqn
+                
+                
+                for av in regime.assignments:
+                    print '  ', av,
+                    av.rhs = av.rhs_name_transform( {originalname:targetname} )
+                    av.parse()
+                    print '->', av
+                
+                
+                    
+                
                 for transition in regime.transitions:
                     
                     # Transform Transition
@@ -481,7 +520,10 @@ class ModelToSingleComponentReducer(object):
                         if isinstance(node, nineml.EventPort):
                             if node.symbol == originalname: node.symbol = targetname
                         elif isinstance(node, nineml.Assignment):
+                            print '  ', node, 
                             node.rhs = node.rhs_name_transform( {originalname:targetname} )
+                            node.parse()
+                            print '->', node
                         else:
                             assert False
 
@@ -491,36 +533,13 @@ class ModelToSingleComponentReducer(object):
                             transition.condition.symbol = targetname
                     elif isinstance(transition.condition, nineml.Condition):
                             transition.condition.cond = transition.condition.rhs_name_transform( {originalname:targetname} )
+                            transition.condition.parse()
                     else: 
                         assert False
                         
 
 
 
-
-        # Create a dictionary of all the remappings: send->recv:
-        for src,dst in portconnections:
-            #print "   * Resolving  Internal Port (Recv)"
-            dstport = ports[dst]
-            srcport = ports[src]
-            assert dstport.mode in ['recv','reduce']
-            # Recieve Port:
-            if dstport.mode == 'recv':
-                # This is a recieve port. This means that we can hardwire the send-port data into it.
-                # To do this, we remap all expressions in the dst-component model that use this port.
-                
-                # We need to check whether the send port is a binding. If it is, then lets 
-                # substitute in the 'binding expression' if it isn't, then we can use the full name of the 
-                # port:
-
-                subExpr = srcport.expr if srcport.expr else srcport.symbol
-                dstName = "_".join(dst)
-                srcName = "_".join(src)
-                #print 'Substituting:', srcName, ' => ', dstName
-                remapNameGlobally( originalname = dstName, targetname=srcName)
-
-                # Finally remove the port:
-                analogports.remove(dstport)
 
 
 
@@ -539,12 +558,47 @@ class ModelToSingleComponentReducer(object):
         #print "Active Reduce Ports:"
         for port,connections in reduceConnections.iteritems():
             reduce_op = ports[port].reduce_op
-            reduce_port_name = '.'.join(port) 
-            reduceexpr = reduce_op.join( [ "_".join(c) for c in connections ] )
+            reduce_port_name = '_'.join(port) 
+            
+            
+            connection_substs = []
+            for c in connections:
+                fullyqualifiedname = "_".join(c)
+                fullyqualifiednamespace = "_".join(c[:-1]) + '_'
+                cp = ports[c]
+                if not cp.expr:
+                    connection_substs.append( fullyqualifiedname )
+                else:
+                    connection_substs.append( cp.expr.clone(prefix=fullyqualifiednamespace).rhs )
+                
+            connection_substs = [ "(%s)"%cs for cs in connection_substs]
+            reduceexpr = reduce_op.join( connection_substs )
             replacementexpr = "( ( %s ) "%(reduce_port_name) + reduce_op + " ( " + reduceexpr + " ) )"
-            #print port, "->", connections
-            #print replacementexpr
+            print 'Remapping', reduce_port_name, 'as', replacementexpr
             remapNameGlobally( originalname=reduce_port_name, targetname=replacementexpr)
+
+
+        # Create a dictionary of all the remappings: send->recv:
+        for src,dst in portconnections:
+            #print "   * Resolving  Internal Port (Recv)"
+            dstport = ports[dst]
+            srcport = ports[src]
+            assert dstport.mode in ['recv','reduce']
+            # Recieve Port:
+            if dstport.mode == 'recv':
+                # This is a recieve port. This means that we can hardwire the send-port data into it.
+                # To do this, we remap all expressions in the dst-component model that use this port.
+                
+                subExpr = srcport.expr if srcport.expr else "_".join(src[:-1]) + "_" +  srcport.symbol
+                dstName = "_".join(dst)
+                srcName = "_".join(src)
+                #print 'Substituting:', srcName, ' => ', dstName
+                
+                
+                print 'Remapping (Recv)', dstName, 'as', subExpr
+                remapNameGlobally( originalname = dstName, targetname=subExpr)
+                # Finally remove the port:
+                analogports.remove(dstport)
 
 
 
@@ -556,25 +610,27 @@ class ModelToSingleComponentReducer(object):
 
         # Resolve the externally connected ports:
         #TODO: CLEAN UP THIS CODE:
-        newports = []
+        new_analog_ports = []
         for p in analogports:
+            print "Adding Externally Connect AnalogPort"
             newportname = '_'.join( portLocations[p] )
-            if p.mode == 'send':
-                newports.append( nineml.AnalogPort( internal_symbol = newportname, mode = p.mode, op = p.reduce_op ) ) 
-            elif p.mode == 'recv':
-                newports.append( nineml.AnalogPort( internal_symbol = newportname, mode = p.mode, op = p.reduce_op ) ) 
-            elif p.mode == 'reduce':
-                newports.append( nineml.AnalogPort( internal_symbol = newportname, mode = p.mode, op = p.reduce_op ) ) 
-            else:
-                assert False
-
-
+            var_prefix = '_'.join( portLocations[p][:-1] ) + "_"
+            newport = p.clone(newname=newportname, expr_prefix= var_prefix)
+            new_analog_ports.append( newport )            
+            
         
-
-
-        #print "Building constructing reduced component"
-        #self.reducedcomponent = nineml.Component( "reduced", regimes = newRegimeLookupMap.values(), ports=[] )
-        self.reducedcomponent = nineml.Component( "reduced", regimes = newRegimeLookupMap.values(), ports=newports )
+#        new_event_ports = []
+#        for p in eventports:
+#            
+#            print "Adding Externally Connect EventPort"
+#            newportname = '_'.join( portLocations[p] )
+#            var_prefix = '_'.join( portLocations[p][:-1] ) + "_"
+#            newport = p.clone( prefix= var_prefix)
+                            
+            
+        
+        
+        self.reducedcomponent = nineml.Component( "iaf_2coba", regimes = newRegimeLookupMap.values(), ports=new_analog_ports )
 
 
 
@@ -589,7 +645,9 @@ class ModelToSingleComponentReducer(object):
 
 
 def reduce_to_single_component( model ):
-    return ModelToSingleComponentReducer(model).reducedcomponent
+    reducer = ModelToSingleComponentReducer(model)
+    #print reducer.portmappings
+    return reducer.reducedcomponent
 
 
 
@@ -616,6 +674,17 @@ def dump_reduced(component, filename):
 
     #for p in $component.analog_ports:
       AnalogPort: $p.name, $p.mode, $p.reduce_op
+    #end for
+    
+    #for p in $component.event_ports:
+      EventPort: $p.name, $p.mode, $p.reduce_op
+    #end for
+
+
+    PARAMETERS
+    ===============
+    #for up in $component.user_parameters:
+      Parameter: $up
     #end for
 
     REGIMES:

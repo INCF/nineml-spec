@@ -50,49 +50,6 @@ sim.setup(timestep=0.1, min_delay=0.1)
 
 
 
-SynapseDetails = namedtuple( 'SynapseDetails', ['label', 'conductance_connector', 'weight_connector', 'mode'] )
-
-
-
-
-celltype = create_celltypeclass_from_component(
-                                        name = "iaf_2coba",
-                                        nineml_component = testComponent,
-                                        
-                                        synapse_mode='conductance',
-                                        membrane_voltage = "iaf.V",
-                                        membrane_synaptic_conductance = 'iaf.gSynapticInput',
-                                        
-                                        synapses = [
-                                            SynapseDetails(  namespace='cobaExcit', conductance_connector='g', weight_connector='q', mode='conductance' ),
-                                            SynapseDetails(  namespace='cobaInhib', conductance_connector='g', weight_connector='q', mode='conductance' ),
-                                                   ]
-                                               
-                                        )
-
-
-
-parameters = {
-    'iaf.C': 1.0,
-    'iaf.gL': 50.0,
-    'iaf.t_ref': 5.0,
-    'iaf.theta': -50.0,
-    'iaf.vL': -65.0,
-    'iaf.V_reset': -65.0,
-    'cobaExcit.tau': 2.0,
-    'cobaInhib.tau': 5.0,
-    'cobaExcit.E': 0.0,
-    'cobaInhib.E': -70.0,
-
-}
-
-
-
-
-
-
-
-
 
 
 
@@ -151,8 +108,6 @@ def mh_nineml_cell_type(name, neuron_model, port_map={}, weight_variables={}, **
     
 celltype_cls = mh_nineml_cell_type("if_cond_exp",
                                 leaky_iaf.c1,
-                                excitatory=coba_synapse.c1,
-                                inhibitory=deepcopy(coba_synapse.c1),
                                 port_map={
                                     'excitatory': [('V', 'V'), ('Isyn', 'Isyn')],
                                     'inhibitory': [('V', 'V'), ('Isyn', 'Isyn')]
@@ -160,7 +115,10 @@ celltype_cls = mh_nineml_cell_type("if_cond_exp",
                                 weight_variables={
                                     'excitatory': 'q',
                                     'inhibitory': 'q'
-                                })
+                                },
+                                excitatory=coba_synapse.c1,
+                                inhibitory=deepcopy(coba_synapse.c1),
+                                   )
 
 parameters = {
     'C': 1.0,
@@ -176,8 +134,11 @@ parameters = {
 }
 
 
+#print "Class Type:", celltype_cls, type( celltype_cls )
+#import sys
+#sys.exit(0)
 
-
+#c = celltype_cls()
 
 
 cells = sim.Population(1, celltype_cls, parameters)
@@ -209,6 +170,7 @@ gInh = cells.recorders['inhibitory_g'].get()[:,2]
 gExc = cells.recorders['excitatory_g'].get()[:,2]
 
 import pylab
+pylab.suptitle("From Original Pathway")
 pylab.plot(t,v)
 pylab.show()
 

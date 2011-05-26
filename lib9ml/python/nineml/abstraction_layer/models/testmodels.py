@@ -68,20 +68,20 @@ def get_iaf_2coba():
     iaf = models.Component( "iaf",
             regimes = [
                 nineml.Regime(
-                    "dV/dt = ( (gl+gSynapticInput)*(v_rest - V) + i + i_offset)/(cm)",
-                    transitions = [nineml.On("V > v_thresh", do=["t_spike = t", "V = v_reset", nineml.SpikeOutputEvent], to="refractoryregime"), ],
+                    "dV/dt = ( gl*( vrest - V ) + ISyn)/(cm)",
+                    transitions = [nineml.On("V > vthresh", do=["tspike = t", "V = vreset", nineml.SpikeOutputEvent], to="refractoryregime"), ],
                     name = "subthresholdregime"
                     ),
     
                 nineml.Regime(
                     "dV/dt = 0",
-                    transitions = [ nineml.On("t >= t_spike + tau_refrac", to="subthresholdregime") ],
+                    transitions = [ nineml.On("t >= tspike + taurefrac", to="subthresholdregime") ],
                     name = "refractoryregime"
                     )
                     ],
-            ports = [   nineml.SendPort("V"), 
-                        nineml.ReducePort("gSynapticInput", op="+"), 
-                        nineml.RecvPort("q") ]
+            analog_ports = [   nineml.SendPort("V"), 
+                        nineml.ReducePort("ISyn", op="+"),
+                     ]
                 )
         
     
@@ -92,11 +92,13 @@ def get_iaf_2coba():
                     transitions = [
                            nineml.On(nineml.EventPort('spikeinput', mode="recv"), do="g=g+q"),
                            ],
-                    name = "default-regime"
+                    name = "defaultregime"
                     )
                     ],
     
-                ports = [ nineml.RecvPort("V"), nineml.SendPort("g"), nineml.RecvPort("q") ]
+                analog_ports = [ nineml.RecvPort("V"), 
+                          nineml.SendPort("I=g*(vrev-V)"), 
+                          nineml.RecvPort("q") ]
                 )
     
     
@@ -108,11 +110,31 @@ def get_iaf_2coba():
     # Connections have to be setup as strings, because we are deep-copying objects.
     iaf_2coba_model.connect_ports( "iaf.V", "cobaExcit.V" )
     iaf_2coba_model.connect_ports( "iaf.V", "cobaInhib.V" )
+    iaf_2coba_model.connect_ports( "cobaExcit.I", "iaf.ISyn" )
+    iaf_2coba_model.connect_ports( "cobaInhib.I", "iaf.ISyn" )
+    
+    
+    #print type(coba)
+    #print "PORTS:"
+    #for port in coba.ports:
+    #    print port
+    #print "----------\n\n"
+    
+    #for regime in coba.regimes:
+    #    print regime 
+    #    for transition in regime.transitions:
+    #        print "Trans:", transition
+    #        print "  ", list( transition.event_ports )
+            
+    #print "OK"
+    
+    #
+    #import sys
+    #sys.exit(0)
     
     return iaf_2coba_model
 
-    #reduced = models.reduce_to_single_component(iaf_2coba_model)    
-    #return reduced
+    
     
     
     
