@@ -45,12 +45,13 @@ def import_tests(path, names, prefix='test_',ext='.py'):
     import sys
 
     if names == 'all':
-
         wild = join(path,'%s*%s' % (prefix,ext))
         print "Finding all tests matching wildcard: %s" % wild
         files = glob.glob(wild)
     else:
         files = [join(path,'%s%s%s' % (prefix,name,ext)) for name in names]
+
+    print files
 
     # make sure path is in the sys.path
     if path not in sys.path:
@@ -60,11 +61,12 @@ def import_tests(path, names, prefix='test_',ext='.py'):
     modules = []
     for f in files:
         mod_name = split(splitext(f)[0])[1]
+        print mod_name ###
         if exists(f):
             modules.append(__import__(mod_name))
         else:
             print (bcolors.WARN + "Skipping %s:"+bcolors.ENDC+"\n\ttest module file %s not found.") % (mod_name,f)
-    
+    print "***", modules
     return modules
 
 def suite(modules):

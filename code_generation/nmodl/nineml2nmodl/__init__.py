@@ -14,6 +14,7 @@ template_file = os.path.join(os.path.dirname(__file__), "nmodl_template.jinja")
 with open(template_file) as f:
     nmodl_template = Template(f.read())
 
+__version__ = "0.1dev"
 FIRST_REGIME_FLAG = 1001
 
 
