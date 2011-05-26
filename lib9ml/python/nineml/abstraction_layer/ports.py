@@ -11,7 +11,7 @@ class Port(object):
     reduce_op_map = {'add':'+', 'sub':'-', 'mul':'*', 'div':'/',
                      '+':'+', '-':'-', '*':'*', '/':'/'}
 
-    def __init__(self, internal_symbol, mode='send', op=None):
+    def __init__(self, internal_symbol, mode='send', op=None, expr=None):
         """  
         
         For AnalogPorts:
@@ -22,6 +22,8 @@ class Port(object):
 
 
         """
+
+        
 
         self.expr = None
         self.symbol = internal_symbol
@@ -36,6 +38,13 @@ class Port(object):
             if not isinstance(self.expr, Assignment):
                 raise ValueError, "Port expression '%s' is not a valid assignment" % internal_symbol
             self.symbol = self.expr.lhs
+
+
+        # MH: Are we trying to express the expr twice?
+        assert not (self.expr and expr)
+        if expr:
+            self.expr = expr
+        
 
         self.mode = mode
         self.reduce_op = op
@@ -54,6 +63,8 @@ class Port(object):
             
         # TODO: EventPort can also be reduce?  Then no op needed.
 
+    
+    
 
     
         
@@ -67,11 +78,14 @@ class Port(object):
                and self.reduce_op == other.reduce_op and self.expr==other.expr
 
     def __repr__(self):
-        if self.reduce_op:
-            return "%s('%s', mode='%s', op='%s')" % \
-                   (self.__class__.__name__, self.symbol, self.mode, self.reduce_op)
-        else:
-            return "%s('%s', mode='%s')" % (self.__class__.__name__, self.symbol, self.mode)
+        
+        classstring = self.__class__.__name__ 
+        opstr = ', op=%s'%self.reduce_op if self.reduce_op else ''
+        exprstr = ', expr= %s'%self.expr if self.expr else ''
+        
+        return "%s('%s', mode='%s' %s%s)" % (classstring, self.symbol, self.mode, opstr, exprstr)
+                   
+                   
 
     def encode(self, encoding):
         return repr(self).encode(encoding)
@@ -115,7 +129,33 @@ class Port(object):
 class AnalogPort(Port):
     element_name = "analog-port"
     """ Port which may be in a Regime """
-    pass
+    
+    
+    def clone(self, prefix="", expr_prefix=None):
+        if expr_prefix is None:
+            expr_prefix = prefix
+        elif expr_prefix is False:
+            expr_prefix = ""
+        else:
+            pass
+
+        expr = self.expr.clone( prefix=expr_prefix ) if self.expr else None
+        return AnalogPort(internal_symbol = prefix + self.symbol,
+                          mode=self.mode, 
+                          op=self.reduce_op, 
+                          expr=expr
+                          )
+    def cloneOld(self, newname=None, expr_prefix=None):
+        expr = self.expr.clone( prefix=expr_prefix ) if self.expr else None
+        return AnalogPort(internal_symbol = self.symbol if not newname else newname,
+                          mode=self.mode, 
+                          op=self.reduce_op, 
+                          expr=expr
+                          )
+     
+
+
+
 
 class EventPort(Port):
     element_name = "event-port"
@@ -130,10 +170,10 @@ class EventPort(Port):
         prefix_excludes = prefix_excludes if prefix_excludes else []
         assert not self.expr
         
-        symbol = self.symbol if not self.symbol in prefix_excludes else prefix + self.symbol
+        symbol = self.symbol if self.symbol in prefix_excludes else prefix + self.symbol
         return EventPort(internal_symbol=symbol, mode=self.mode, op=self.reduce_op )
      
-
+    
 
 SpikeOutputEvent = EventPort('spike_output')
 SpikeInputEvent = EventPort('spike_input', mode="recv")

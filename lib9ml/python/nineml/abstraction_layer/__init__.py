@@ -195,6 +195,13 @@ class Regime(object):
         """
         return self.nodes_filter(lambda x: isinstance(x,Equation))
 
+
+    @property
+    def assignments(self):
+        """ Yields all equations in the Transition"""
+        return self.nodes_filter(lambda x: isinstance(x,Assignment))
+    
+
     @property
     def bindings(self):
         """
@@ -433,6 +440,13 @@ class Transition(object):
     def equations(self):
         """ Yields all equations in the Transition"""
         return self.nodes_filter(lambda x: isinstance(x,Equation))
+
+    @property
+    def assignments(self):
+        """ Yields all equations in the Transition"""
+        return self.nodes_filter(lambda x: isinstance(x,Assignment))
+
+
 
     def nodes_filter(self, filter_func):
         """
@@ -716,13 +730,22 @@ class Component(object):
             self.ports_map[p.symbol] = p
             
 
+
+        #print "user_parameters"
+        #print self.user_parameters
+        #print "--------"
+        
+        
         # Up till now, we've inferred parameters
         # Now let's check what the user provided
         # is consistant and finally set self.parameters
         if parameters:
-            if self.user_parameters!=set(parameters):
-                raise ValueError, "Declared parameter list %s does not match inferred parameter list %s." \
-                      % (str(sorted(parameters)),str(sorted(self.user_parameters)))
+            parameters_as_set = set(parameters)
+            if self.user_parameters!=parameters_as_set:
+                additional = parameters_as_set.difference(self.user_parameters)
+                missing = self.user_parameters.difference(parameters_as_set)
+                raise ValueError, "Declared parameter list %s does not match inferred parameter list %s.\nMissing: %s\nAdditional: %s" \
+                      % (str(sorted(parameters)),str(sorted(self.user_parameters)), str(sorted(missing)),str(sorted(additional)))
 
         self.parameters = self.user_parameters
 
@@ -752,10 +775,10 @@ class Component(object):
         return [t.from_ for t in self.transitions if t.to==regime]
 
     @property
-    def ports(self):
+    def ports(self):    
         """ yield all ports for component"""
         for p in self.analog_ports:
-            yield p
+            yield p 
         for p in self.event_ports:
             yield p
 
@@ -763,7 +786,9 @@ class Component(object):
     def event_ports(self):
         """ return all event ports in regime transitions"""
         for t in self.transitions:
-            for ep in t.event_ports:
+            #print 'event_ports:transition', t
+            for ep in set(t.event_ports):
+                    #print 'event_ports:eventport', ep
                     yield ep
 
     def check_ports(self):
@@ -960,13 +985,17 @@ class Component(object):
         # TODO: cache once determined
         # compare to the parameters lists declared by the user 
 
-        # parse the math blocks
-
 
         symbols = set([])
         for e in self.equations:
-            symbols.update(e.names)
-
+            symbols.update( e.names )
+            
+            
+            
+            
+        #print 'Eqns'
+        #print symbols
+        
         # now same for conditions
         for c in self.conditions:
             symbols.update(c.names)
@@ -1118,6 +1147,11 @@ class Component(object):
 
         transitions = [Transition.from_xml(t) for t in element.findall(NINEML+Transition.element_name)]
 
+
+        #print "Parameters from XML:"
+        #for p in parameters:
+        #    print p
+        #print "-----------------"
         # allocate new component
         new_comp = cls(element.get("name"), parameters, regimes=regimes, transitions=transitions, bindings=bindings, ports=analog_ports)
 

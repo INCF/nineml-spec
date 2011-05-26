@@ -33,6 +33,7 @@ class TreeNode(object):
     
 
     # Naming Functions:
+    # != TO GO -!
     def getContainedNamespaceName(self):
         if not self.getParentModel(): return ""
         return util.invertDictionary(self.getParentModel().subnodes)[self]
@@ -51,6 +52,19 @@ class TreeNode(object):
 
     def getPathString(self):
         return self.getTreePosition( jointoken="/" )
+    
+    # != TO GO TIL HERE -!
+
+
+    def get_node_addr(self):
+        if not self.getParentModel():
+            return NamespaceAddress.create_root()
+        else:
+            return self.getParentModel().get_node_addr().get_subns_addr( self.getContainedNamespaceName() ) 
+
+
+
+
 
     # Parenting:
     def setParentModel(self,parentmodel):
@@ -85,10 +99,17 @@ class Model(TreeNode):
 
     def connect_ports( self, src, sink ):
         #TODO: Check that the ports are connected to items in this model.
-       self.portconnections.append( (src,sink) ) 
+       self.portconnections.append( (NamespaceAddress(src),NamespaceAddress(sink) ) ) 
     
 
     def get_fully_qualified_port_connections(self):
+        self.namespace = self.get_node_addr()
+        def make_fqname(target):
+            return NamespaceAddress.concat( self.namespace, target)
+        conns = [ (make_fqname(src),make_fqname(sink)) for (src,sink) in self.portconnections ]
+        return conns
+        
+
         model_addr = self.getTreePosition()
         def make_fqname(target):
             return tuple ( model_addr + target.split(".") )
@@ -212,9 +233,20 @@ class ComponentQueryer(object):
 
 
     
+    def get_fully_addressed_analogports_new(self):
+        comp_addr = self.component.get_node_addr()
+        return dict( [ (comp_addr.get_subns_addr(port.name), port) for port in self.component.ports if isinstance(port, nineml.AnalogPort) ] )
+
+    # TO GO:
+    def get_fully_addressed_ports_new(self):
+        comp_addr = self.component.get_node_addr()
+        return dict( [ (comp_addr.get_subns_addr(port.name), port) for port in self.component.ports ] )
     def get_fully_addressed_ports(self):
         comp_addr = self.component.getTreePosition()
         return dict( [ (tuple(comp_addr + [port.name]),port) for port in self.component.ports ] )
+    ###########
+
+
 
 	#More advanced searches on just this node:
     @property
@@ -290,6 +322,19 @@ class ModelVisitorDF(object):
 
 
 # Base class for visitation:
+class ModelVisitorDF_NodeCollector(ModelVisitorDF):
+    def __init__(self, model=None):
+        self.nodes = []
+        if model: self.Visit(model)
+
+    def VisitComponentNode(self, node):
+        self.nodes.append(node)
+    def VisitModelNode(self, node):
+        self.nodes.append(node)
+
+    def __iter__(self):
+        return iter(self.nodes)
+
 class ModelVisitorDF_ComponentCollector(ModelVisitorDF):
     def __init__(self, model=None):
         self.components = []
@@ -321,18 +366,57 @@ class ModelVisitorDF_ModelCollector(ModelVisitorDF):
 import nineml.abstraction_layer as nineml
 
 
+class NamespaceAddress(object):
+    def __init__(self, loc):
+        if isinstance(loc, basestring):
+            self.loctuple = loc.split('.')
+        elif isinstance(loc, tuple):
+            self.loctuple = loc
+        else:
+            assert False
 
+    
+    def __hash__(self):
+        return hash(self.loctuple)
+
+    def __eq__(self,rhs):
+        if not isinstance(rhs, self.__class__): 
+            return False
+        return self.loctuple == rhs.loctuple
+
+
+    def get_subns_addr(self, component_name):
+        return NamespaceAddress( loc = tuple( list(self.loctuple) + [component_name] ) )
+    def get_parent_addr(self):
+        assert len(self.loctuple) > 0
+        return NamespaceAddress( loc = self.loctuple[:-1] )
+
+    def __repr__(self):
+        return "NSAddr: '" + "//" + "/".join( self.loctuple) + "/'"
+
+    @classmethod
+    def create_root(cls):
+        return NamespaceAddress( loc=() )
+
+    def get_str_prefix(self):
+        return "_".join( self.loctuple ) + "_"
+
+    @classmethod
+    def concat(cls,*args):
+        loctuple = tuple( flattenFirstLevel( [ list(a.loctuple) for a in args ] ) )
+        return NamespaceAddress(loc=loctuple)
 
 
 class ModelToSingleComponentReducer(object):
-    def __init__(self,model):
+    def __init__(self,model, componentname):
         self.model = model 
+        self.componentname=componentname
+
         self.modelcomponents = ModelVisitorDF_ComponentCollector(self.model).components
         self.modelsubmodels = ModelVisitorDF_ModelCollector(self.model, include_root=True).models
 
         self.build_new_regime_space()
-
-        #self.reducedcomponent = None
+        self.remap_ports()
 
 
 
@@ -343,7 +427,6 @@ class ModelToSingleComponentReducer(object):
         # TODO: Proper prefixing:
         prefix = component.getTreePosition(jointoken="_") + "_"
         excludes = ['t']
-        #return [ expr.prefix(prefix=prefix,exclude=excludes) for expr in regime.nodes ]
         return [ expr.clone(prefix=prefix,prefix_excludes=excludes) for expr in regime.nodes ]
 
 
@@ -436,201 +519,128 @@ class ModelToSingleComponentReducer(object):
                     oldcomponent = self.modelcomponents[regimeIndex]
                     t = self.create_transition(oldtransition=oldtransition,oldcomponent=oldcomponent, fromRegime=regimeNew, toRegime=newRegimeTo)
                     regimeNew.add_transition( t = t )
-                    
+        
+        self.newRegimeLookupMap = newRegimeLookupMap
 
     
 
-
-
-
-        # Remapping of ports:
-        #########################
-
-        # Build the reduced component.
-        # Each Component can have:
-        #    - Analogue SendPorts (To be Exposed)
-        #    - Analogue RecvPort  (To be exposed if not connected internally)
-        #    - Analogue ReducePorts (To be exposed)
-        #    - Input Event Ports
-        #    - Output Event Ports
+    # This is a mess, to be cleaned:
+    @classmethod
+    def global_remap_port_ext(cls, originalname, targetname, new_ports, newRegimeLookupMap):
+        print 'Global-Remap [%s- >%s]'%(originalname,targetname)
+                    
+        for p in new_ports.values():
+            if not p.expr: continue
+            print '  ', p, p.expr
+            p.expr.rhs = p.expr.rhs_name_transform( {originalname:targetname} )
+            p.expr.parse()
+            print '->', p, p.expr
         
+        for regime in newRegimeLookupMap.values():
+            for eqn in regime.equations:
+                print '  ', eqn, 
+                eqn.rhs = eqn.rhs_name_transform( {originalname:targetname} )
+                eqn.parse()
+                print '->', eqn
+            
+            
+            for av in regime.assignments:
+                print '  ', av,
+                av.rhs = av.rhs_name_transform( {originalname:targetname} )
+                av.parse()
+                print '->', av
+            
+            for transition in regime.transitions:
+                
+                # Transform Transition
+                for node in transition.nodes:
+                    if  isinstance(node, nineml.EventPort):
+                        if node.symbol == originalname: node.symbol = targetname
+                    elif isinstance(node, nineml.Assignment):
+                        print '  ', node, 
+                        node.rhs = node.rhs_name_transform( {originalname:targetname} )
+                        node.parse()
+                        print '->', node
+                    else:
+                        assert False
+
+                #print "Condition type:", type(transition.condition)
+                if isinstance(transition.condition, nineml.EventPort):
+                    if  transition.condition.symbol == originalname: 
+                        transition.condition.symbol = targetname
+                elif isinstance(transition.condition, nineml.Condition):
+                        transition.condition.cond = transition.condition.rhs_name_transform( {originalname:targetname} )
+                        transition.condition.parse()
+                else: 
+                    assert False
+
+
+
+    def remap_ports(self):
+        newRegimeLookupMap = self.newRegimeLookupMap
+
+        # Create a maps { Namespaces -> Ports}
+        old_port_dicts = [ comp.query.get_fully_addressed_analogports_new() for comp in self.modelcomponents ]
+        old_ports = safe_dictionary_merge( old_port_dicts )
+
+        # Create the new analog ports with prefixed names:
+        new_ports = {}
+        for ns,port in old_ports.iteritems():
+            new_ports[ns] = port.clone( prefix=ns.get_parent_addr().get_str_prefix() )
         
-        # Compile a large dictionary, that maps addresses in the tree to ports:
-        port_dicts = [ comp.query.get_fully_addressed_ports() for comp in self.modelcomponents ]
-        ports = safe_dictionary_merge( port_dicts )
-        portLocations = util.invertDictionary(ports)
-        # ports = { ('comp1','comp1'):AnalogPorts(), ('comp1','comp2'):AnalogPorts(), ('comp1','comp3'):AnalogPorts(),}
+
+        # [Forwarding function]
+        def globalRemapPort(originalname,targetname):
+            return ModelToSingleComponentReducer.global_remap_port_ext(originalname=originalname, targetname=targetname, new_ports=new_ports, newRegimeLookupMap=newRegimeLookupMap)
+        
+        def get_send_port_subsitution(srcPort):
+            if srcPort.expr:
+                return "(%s)"%srcPort.expr.rhs
+            return srcPort.name 
 
 
-        # Compile a large list of tuples (src,dst) containing all the fully qualified port mappings:
-        # portconnections = [ (('comp1','comp1'),('comp1','comp2')), (('comp1','comp1'),('comp1','comp3')), ]
+
+        # Handle port mappings:
+        # portconnections = [ (NS -> NS),(NS -> NS ), (NS -> NS) ]
         portconnections = [model.get_fully_qualified_port_connections() for model in self.modelsubmodels] 
         portconnections = list( itertools.chain(* portconnections ) )
 
-
-        internally_connectedports = []
-        external_ports = []
-
-        analogports = FilterType( ports.values(), nineml.AnalogPort )
-        eventports =  FilterType( ports.values(), nineml.EventPort  )
-        
-        for p in ports.values():
-            print "PORT:",p
-
-
-        # Resolve the internally connected ports:
-        #print "  Resolving internal connections"
-        
-
-        def remapNameGlobally(originalname, targetname):
-            print 'Global-Remap [%s->%s]'%(originalname,targetname)
-            
-                        
-            for p in ports.values():
-                if not p.expr: continue
-                
-                print '  ', p, p.expr
-                p.expr.rhs = p.expr.rhs_name_transform( {originalname:targetname} )
-                p.expr.parse()
-                print '->', p, p.expr
-                
-            
-            
-            for regime in newRegimeLookupMap.values():
-                for eqn in regime.equations:
-                    print '  ', eqn,
-                    eqn.rhs = eqn.rhs_name_transform( {originalname:targetname} )
-                    eqn.parse()
-                    print '->', eqn
-                
-                
-                for av in regime.assignments:
-                    print '  ', av,
-                    av.rhs = av.rhs_name_transform( {originalname:targetname} )
-                    av.parse()
-                    print '->', av
-                
-                
-                    
-                
-                for transition in regime.transitions:
-                    
-                    # Transform Transition
-                    for node in transition.nodes:
-                        if isinstance(node, nineml.EventPort):
-                            if node.symbol == originalname: node.symbol = targetname
-                        elif isinstance(node, nineml.Assignment):
-                            print '  ', node, 
-                            node.rhs = node.rhs_name_transform( {originalname:targetname} )
-                            node.parse()
-                            print '->', node
-                        else:
-                            assert False
-
-                    #print "Condition type:", type(transition.condition)
-                    if isinstance(transition.condition, nineml.EventPort):
-                        if transition.condition.symbol == originalname: 
-                            transition.condition.symbol = targetname
-                    elif isinstance(transition.condition, nineml.Condition):
-                            transition.condition.cond = transition.condition.rhs_name_transform( {originalname:targetname} )
-                            transition.condition.parse()
-                    else: 
-                        assert False
-                        
+        # A. Handle Recieve Ports:
+        for srcAddr,dstAddr in portconnections[:]:
+            srcPort = new_ports[srcAddr]
+            dstPort = new_ports[dstAddr]
+            if dstPort.mode == 'recv':
+                globalRemapPort( dstPort.name, get_send_port_subsitution(srcPort) )
+                del new_ports[ dstAddr ]
+                portconnections.remove( (srcAddr,dstAddr) )
 
 
-
-
-
-
-        # Resolve the Reduce ports that have an internal connection to a send port:
-        #1/ Create a dictionary to pull all the things connected to each reduce port:
-        reduceConnections = {}
+        # B. Handle Reduce Ports:
+        # 1/ Make a map { reduce_port -> [send_port1, send_port2, send_port3], ...}
+        from collections import defaultdict
+        reduce_connections = defaultdict( list )
         for src,dst in portconnections:
-            dstport = ports[dst]
-            srcport = ports[src]
+            dstport = new_ports[dst]
+            srcport = new_ports[src]
             if dstport.mode == 'reduce':
-                if not dst in reduceConnections:
-                    reduceConnections[dst] = [ src ]
-                else:
-                    reduceConnections[dst].append(src)
+                reduce_connections[dstport].append(srcport)
 
-        #print "Active Reduce Ports:"
-        for port,connections in reduceConnections.iteritems():
-            reduce_op = ports[port].reduce_op
-            reduce_port_name = '_'.join(port) 
-            
-            
-            connection_substs = []
-            for c in connections:
-                fullyqualifiedname = "_".join(c)
-                fullyqualifiednamespace = "_".join(c[:-1]) + '_'
-                cp = ports[c]
-                if not cp.expr:
-                    connection_substs.append( fullyqualifiedname )
-                else:
-                    connection_substs.append( cp.expr.clone(prefix=fullyqualifiednamespace).rhs )
-                
-            connection_substs = [ "(%s)"%cs for cs in connection_substs]
-            reduceexpr = reduce_op.join( connection_substs )
-            replacementexpr = "( ( %s ) "%(reduce_port_name) + reduce_op + " ( " + reduceexpr + " ) )"
-            print 'Remapping', reduce_port_name, 'as', replacementexpr
-            remapNameGlobally( originalname=reduce_port_name, targetname=replacementexpr)
+        # 2/ Subsitute each reduce port in turn:
+        for dstport, srcportList in reduce_connections.iteritems():
+            src_subs = [ get_send_port_subsitution(s) for s in srcportList ]
+            terms = [dstport.name] + src_subs
+            reduce_expr= dstport.reduce_op.join(terms) 
+            globalRemapPort( dstport.name, reduce_expr )
 
-
-        # Create a dictionary of all the remappings: send->recv:
-        for src,dst in portconnections:
-            #print "   * Resolving  Internal Port (Recv)"
-            dstport = ports[dst]
-            srcport = ports[src]
-            assert dstport.mode in ['recv','reduce']
-            # Recieve Port:
-            if dstport.mode == 'recv':
-                # This is a recieve port. This means that we can hardwire the send-port data into it.
-                # To do this, we remap all expressions in the dst-component model that use this port.
-                
-                subExpr = srcport.expr if srcport.expr else "_".join(src[:-1]) + "_" +  srcport.symbol
-                dstName = "_".join(dst)
-                srcName = "_".join(src)
-                #print 'Substituting:', srcName, ' => ', dstName
-                
-                
-                print 'Remapping (Recv)', dstName, 'as', subExpr
-                remapNameGlobally( originalname = dstName, targetname=subExpr)
-                # Finally remove the port:
-                analogports.remove(dstport)
-
-
-
-
-        
-
-        # Find all  of the dstport-name:
-
-
-        # Resolve the externally connected ports:
-        #TODO: CLEAN UP THIS CODE:
-        new_analog_ports = []
-        for p in analogports:
-            print "Adding Externally Connect AnalogPort"
-            newportname = '_'.join( portLocations[p] )
-            var_prefix = '_'.join( portLocations[p][:-1] ) + "_"
-            newport = p.clone(newname=newportname, expr_prefix= var_prefix)
-            new_analog_ports.append( newport )            
-            
-        
-#        new_event_ports = []
-#        for p in eventports:
-#            
-#            print "Adding Externally Connect EventPort"
-#            newportname = '_'.join( portLocations[p] )
-#            var_prefix = '_'.join( portLocations[p][:-1] ) + "_"
-#            newport = p.clone( prefix= var_prefix)
-                            
-            
+        self.reducedcomponent = nineml.Component( self.componentname, regimes = newRegimeLookupMap.values(), ports=new_ports.values() )
         
         
-        self.reducedcomponent = nineml.Component( "iaf_2coba", regimes = newRegimeLookupMap.values(), ports=new_analog_ports )
+
+
+
+
+
+
 
 
 
@@ -644,8 +654,8 @@ class ModelToSingleComponentReducer(object):
 
 
 
-def reduce_to_single_component( model ):
-    reducer = ModelToSingleComponentReducer(model)
+def reduce_to_single_component( model, componentname ):
+    reducer = ModelToSingleComponentReducer(model,componentname)
     #print reducer.portmappings
     return reducer.reducedcomponent
 

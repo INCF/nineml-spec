@@ -96,7 +96,7 @@ class _mh_build_nineml_celltype(type):
 
         # Reduce the model:                    
         from nineml.abstraction_layer import models               
-        reduction_process = models.ModelToSingleComponentReducer(nineml_model)
+        reduction_process = models.ModelToSingleComponentReducer(nineml_model, componentname="iaf_2coba")
         reduced_component = reduction_process.reducedcomponent
         
         #reduced_component.regimes
