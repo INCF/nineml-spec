@@ -1,3 +1,4 @@
+#! /usr/bin/python
 """
 Converts 9ML abstraction layer neuron files to NMODL.
   
@@ -9,6 +10,8 @@ import os.path
 from textwrap import dedent
 from jinja2 import Template 
 import nineml.abstraction_layer as nineml
+
+import itertools
 
 template_file = os.path.join(os.path.dirname(__file__), "nmodl_template.jinja")
 with open(template_file) as f:
@@ -22,6 +25,8 @@ def as_expr(node):
         return node.as_expr()
     elif isinstance(node, nineml.Inplace):
         return node.as_assignment().as_expr()
+    elif isinstance(node, nineml.EventPort):
+        return ""
     else:
         raise Exception("Don't know how to handle nodes of type %s" % type(node))
 
@@ -56,7 +61,22 @@ def build_channels(component):
             channel = transition.condition.name.upper()
             if channel not in channels:
                 channels.add(channel)
-            transition.condition.channel = channel
+            transition.condition.channel_ = channel
+    
+    
+    if True:
+        chls = list(channels)
+        chls.sort(reverse=False)
+        #chls.sort(reverse=True)
+        return chls
+
+
+    
+    # MH: Construct a dictionary mapping channels to 0,1,2,....        
+    #d =  dict( zip( channels, itertools.count() ) )
+    #return d 
+    
+    
     return channels
 
 def guess_weight_variable(component):
@@ -68,11 +88,13 @@ def guess_weight_variable(component):
     elif len(weight_variables) == 1:
         return list(weight_variables)[0]
     else:
-        raise Exception("Can't yet handle multiple weight variables")
+        
+        raise Exception("Can't yet handle multiple weight variables \n(%s)"%weight_variables)
 
 def get_weight_variable(channel, weight_variables):
     # ugly hack
     #import pdb; pdb.set_trace()
+   
     for k in weight_variables.keys():
         if k.upper() in channel:
             return weight_variables[k]
@@ -92,7 +114,7 @@ def unconnected_analog_receive_ports(component, weight_variables):
     return receive_ports
     
 
-def build_context(component, weight_variables, input_filename):
+def build_context(component, weight_variables, input_filename="[Unknown-Filename]", hierarchical_mode=False):
     """
     Return a dictionary that will be used to render the NMODL template.
     """
@@ -101,6 +123,17 @@ def build_context(component, weight_variables, input_filename):
         regime.label = regime.name.replace(' ', '').replace('-', '_').upper()
     if not weight_variables:
         weight_variables = {'': guess_weight_variable(component)}
+        
+        
+    
+    reduce_port_terminations = []
+    weights_as_states = False
+    if hierarchical_mode:
+        reduce_port_terminations = ['%s = 0'%p.name for p in component.analog_ports if p.mode=='reduce']
+        weights_as_states = True
+    
+        
+    
     context = {
         "input_filename": input_filename,
         "version": nineml.__version__,
@@ -116,17 +149,32 @@ def build_context(component, weight_variables, input_filename):
         "deriv_func_args": deriv_func_args,
         "threshold_crossing": threshold_crossing,
         "ode_for": ode_for,
+        
+        # Added by Mike:
+        "reduce_port_terminations": reduce_port_terminations,
+        "weights_as_states": weights_as_states,
     }
     return context
 
 
-def write_nmodl(nineml_file, weight_variables={}): # weight_variables should probably be within component described in nineml_file
+def write_nmodl(nineml_file, weight_variables={},hierarchical_mode=False): # weight_variables should probably be within component described in nineml_file
     component = nineml.parse(nineml_file)
     output_filename = nineml_file.replace(".xml", ".mod").replace("-", "_")
     print "Converting %s to %s" % (nineml_file, output_filename)
     with open(output_filename, "w") as f:
-        context = build_context(component, weight_variables, nineml_file) # weight_variables should probably be within component
+        context = build_context(component, weight_variables, nineml_file,hierarchical_mode=hierarchical_mode) # weight_variables should probably be within component
         f.write(nmodl_template.render(context))
+
+
+
+def write_nmodldirect(component, output_filename, weight_variables={}):
+    
+    print "Writing Mod-File %s" % output_filename
+    with open(output_filename, "w") as f:
+        context = build_context(component, weight_variables) # weight_variables should probably be within component
+        f.write(nmodl_template.render(context))
+     
+
 
 if __name__ == "__main__":
     import sys

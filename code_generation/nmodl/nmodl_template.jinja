@@ -37,13 +37,22 @@ PARAMETER {
   {%- for p in unconnected_receive_ports %}
   {{ p }} = 0
   {%- endfor %}
+  
+  {{ reduce_port_terminations|join('\n ') }}
 }
 
-STATE { {{ component.integrated_variables|join(' ') }} }
+STATE { 
+	{{ component.integrated_variables|join(' ') }}
+	
+	{%- if weights_as_states %}
+	{{ weight_variables.values()|join(' ') }} 
+	{%- endif %}
+}
 
 ASSIGNED {
   regime
   {{ assigned_variables|join('\n ') }}
+    
 }
 
 BREAKPOINT {
@@ -80,9 +89,10 @@ NET_RECEIVE(w, channel) {
     {%- for regime in component.regimes %}
     if (regime == {{ regime.label }}) {
       {%- for transition in regime.transitions if on_input_event(transition) %}
-      if (channel == {{ transition.condition.channel }}) {
+      if (channel == {{ transition.condition.channel_ }}) {
+      		printf("  Resolved to channel {{transition.condition.channel_ }} \n" )
         {% if weight_variables %}
-        {{ get_weight_variable(transition.condition.channel, weight_variables) }} = w
+        {{ get_weight_variable(transition.condition.channel_, weight_variables) }} = w
         {% endif %}
         {%- for node in transition.nodes %}
         {{ as_expr(node) }}
