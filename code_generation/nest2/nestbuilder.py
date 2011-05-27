@@ -158,9 +158,12 @@ class NestModel(object):
         for t in component.transitions:
             event_ports = list(t.event_port_nodes)
             if event_ports:
-                if event_ports != [nineml.SpikeOutputEvent]:
-                    print event_ports
+                if len( event_ports) != 1:
                     raise ValueError, "Only one nineml.SpikeOutputEvent allowed as a transition node EventPort for neuron models."
+                
+                #if event_ports != [nineml.SpikeOutputEvent]:
+                #    print event_ports
+                #    raise ValueError, "Only one nineml.SpikeOutputEvent allowed as a transition node EventPort for neuron models."
 
         # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -182,7 +185,8 @@ class NestModel(object):
         self.regime_map = {}
         for r in self.regimes:
             self.regime_map[r.regime.name] = r
-
+            
+        print self.regime_map.keys()
         self.initial_regime = self.regime_map[initial_regime].symbol
 
         # NB: iteration order accross iterations is assumed in the template
@@ -216,7 +220,7 @@ def restore_working_directory( func ):
 
 class NestFileBuilder(object):
 
-    def __init__(self, nest_classname, iaf_cond_exp_9ML, synapse_ports, initial_regime, initial_values, default_values):
+    def __init__(self, nest_classname, iaf_cond_exp_9ML, synapse_ports, initial_regime, initial_values, default_values, hack_fixed_values={}):
         
         # Output Files:
         self.build_dir = "nest_model"
@@ -224,6 +228,7 @@ class NestFileBuilder(object):
         self.output_cpp_file = Join(self.build_dir, "nest_9ml_neuron.cpp")
 
         self.nm = NestModel(nest_classname, iaf_cond_exp_9ML, synapse_ports, initial_regime, initial_values, default_values)
+        self.hack_fixed_values = hack_fixed_values
         self.buildCPPFiles()
 
     
@@ -235,7 +240,13 @@ class NestFileBuilder(object):
             os.mkdir(self.build_dir)
 
         f_h = file(self.output_h_file,'w')
+
+        #TODO: Remove Nasty Hack:
+        for k,v in self.hack_fixed_values.iteritems():
+            print >> f_h, "const float %s = %f;\n"%(k,v)
+
         t_h = Template(file="nest_9ml_neuron_h_cheetah.tmpl", searchList={'model':self.nm})
+                    
         print >> f_h, str(t_h)
         f_h.close()
 

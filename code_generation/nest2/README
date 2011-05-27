@@ -18,7 +18,7 @@ python concept1.py
 
 # Build mymodule for NEST
 cd nest_model
-./boostrap.sh
+./bootsrap.sh
 mkdir build
 cd build
 ../configure --with-nest=/opt/nest2/bin/nest-config
