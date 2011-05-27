@@ -6,6 +6,13 @@
 # See: README for the build process for the "MyModule" required
 # by nest.Install below which contains iaf_cond_exp_9ml
 
+
+import os
+os.environ['LD_LIBRARY_PATH']=os.environ['LD_LIBRARY_PATH']+ ':/home/hull/src/nineml-svn-model-tree/code_generation/nest2/nest_model/build/.libs'
+
+for k,v in os.environ.iteritems():
+    print k,v
+
 import nest
 nest.Install("mymodule")
 import numpy
@@ -132,7 +139,7 @@ v_9ml = data_9ml["V_m"]
 regime = data_9ml["Regime9ML"]
 
 
-
+from pylab import *
 subplot(211)
 plot(t,regime,'r-')
 ylabel('regime')
@@ -146,4 +153,4 @@ ylabel("voltage [mV]")
 axis([0, 500,-72, -55])
 legend()
 
-
+show()

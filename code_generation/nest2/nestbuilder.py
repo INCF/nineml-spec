@@ -269,6 +269,7 @@ class NestFileBuilder(object):
         os.system("make -j2")
         os.system("make -j2")
         #"export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/src/nineml-svn-trunk/code_generation/nest2/nest_model/build/.libs"
+        #sys.environ['LD_LIBRARY_PATH']=sys.environ['LD_LIBRARY_PATH']+['$HOME/src/nineml-svn-trunk/code_generation/nest2/nest_model/build/.libs']
         os.chdir('../..')
         #"cd ../.."
 

@@ -19,7 +19,7 @@ Copyright (C) 2011 Eilif Muller. All Rights Reserved.
 
     3. The name of the authors or the INCF may not be used to endorse or promote
     products derived from this software without specific prior written
-    permission.
+    permission. 
 
     THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
     CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
@@ -90,30 +90,13 @@ parameters = {
     'cobaInhib.tau': 5.0,
     'cobaExcit.vrev': 0.0,
     'cobaInhib.vrev': -70.0,
+    'cobaExcit.q': 2.0,
+    'cobaInhib.q': 2.0,
+    'iaf.ISyn':0.0,
 }
 
+
 default_values = ModelToSingleComponentReducer.flatten_namespace_dict( parameters )
-
-
-#
-#default_values = {
-#    'tau_syn_ex': 1.5,
-#    'tau_syn_in': 10.0,
-#    'E_ex': 0.0,
-#    'E_in': -80.0,
-#    'Isyn': 0.0,
-#    'C_m': 1.0,
-#    'g_L': 10.0,
-#    'q_ex': 2.0,
-#    'q_in': 2.0,
-#    't_ref': 5.0,
-#    'V_th': -55.0,
-#    'E_L': -70.0,
-#    'V_reset': -70.0
-#    }
-
-
-# CG specific stuff which needs to be determined somehow
 
 
 
@@ -125,7 +108,7 @@ nfb = NestFileBuilder(  nest_classname = nest_classname,
                         initial_values = initial_values,
                         default_values = default_values,
                         
-                        hack_fixed_values = {"cobaInhib_q": 1.0, "cobaExcit_q":1.0, "iaf_ISyn":0.0 },
+                        hack_fixed_values = {"iaf_ISyn":0.0} #"cobaInhib_q": 2.0, "cobaExcit_q":2.0, " },
                         
                         )
 nfb.compile_files()

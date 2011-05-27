@@ -91,7 +91,8 @@ def get_hierachical_iaf_2coba():
     
                 analog_ports = [ nineml.RecvPort("V"), 
                           nineml.SendPort("I=g*(vrev-V)"), 
-                          nineml.RecvPort("q") ]
+                          #nineml.RecvPort("q") 
+                          ]
                 )
     
     
