@@ -15,40 +15,28 @@ sys.path.append(join(root, "lib9ml/python/examples/AL"))
 sys.path.append(join(root, "code_generation/nmodl"))     
            
 
-
-
 from nineml.abstraction_layer.example_models import  get_hierachical_iaf_2coba
 from nineml.abstraction_layer.models import ModelToSingleComponentReducer
 
 import pyNN.neuron as sim
-from pyNN.neuron.nineml import nineml_cell_type
-import pyNN.neuron.nineml as pyNN_nrn_9ml
+import pyNN.neuron.nineml as pyNNml
+
 from pyNN.utility import init_logging
-
-
-from nineml.abstraction_layer.models.pynn_builder import create_celltypeclass_from_model, CoBaSyn
 
 
 init_logging(None, debug=True)
 sim.setup(timestep=0.1, min_delay=0.1)
 
 
-
-
-
-
-
-from nineml.abstraction_layer.models.pynn_builder import create_celltypeclass_from_model, CoBaSyn
-
 testModel = get_hierachical_iaf_2coba()
 
 
-celltype_cls = create_celltypeclass_from_model(
+celltype_cls = pyNNml.nineml_celltype_from_model(
                                         name = "iaf_2coba",
                                         nineml_model = testModel,
                                         synapse_components = [
-                                            CoBaSyn( namespace='cobaExcit',  weight_connector='q' ),
-                                            CoBaSyn( namespace='cobaInhib',  weight_connector='q' ),
+                                            pyNNml.CoBaSyn( namespace='cobaExcit',  weight_connector='q' ),
+                                            pyNNml.CoBaSyn( namespace='cobaInhib',  weight_connector='q' ),
                                                    ]
                                         )
 

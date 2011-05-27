@@ -37,7 +37,8 @@ hh_regime = Regime(
 )
 
 # the rest are not "parameters" but bindings, assigned vars, state vars, indep vars, ports, etc.
-parameters = ['el', 'C', 'ek', 'ena', 'gkbar', 'gnabar', 'theta', 'gl','celsius']
+parameters = ['el', 'C', 'ek', 'ena', 'gkbar', 'gnabar', 'theta', 'gl','celsius',
+              'Isyn']
 
 ports = [SendPort("V"),
          ReducePort("Isyn",op="+")]

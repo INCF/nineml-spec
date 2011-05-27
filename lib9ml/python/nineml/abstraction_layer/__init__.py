@@ -783,6 +783,14 @@ class Component(object):
             yield p
 
     @property
+    def reduce_ports(self):    
+        """ yield all reduce ports for component"""
+        for p in self.analog_ports:
+            if p.mode=='reduce':
+                yield p 
+    
+
+    @property
     def event_ports(self):
         """ return all event ports in regime transitions"""
         for t in self.transitions:
@@ -1007,7 +1015,7 @@ class Component(object):
         symbols = symbols.difference(self.non_parameter_symbols)
         symbols = symbols.difference(math_namespace.symbols)
         # remove symbols of AnalogPorts with mode='recv'
-        symbols = symbols.difference([p.symbol for p in self.filter_ports(cls=AnalogPort,mode=('recv','reduce'))])
+        symbols = symbols.difference([p.symbol for p in self.filter_ports(cls=AnalogPort,mode=('recv'))])
         return symbols.difference(math_namespace.reserved_symbols)
 
                  
