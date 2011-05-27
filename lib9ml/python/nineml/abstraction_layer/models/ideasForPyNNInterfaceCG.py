@@ -99,25 +99,13 @@ class _mh_build_nineml_celltype(type):
         reduction_process = models.ModelToSingleComponentReducer(nineml_model, componentname="iaf_2coba")
         reduced_component = reduction_process.reducedcomponent
         
-        #reduced_component.regimes
-        
-        
-        
-        models.dump_reduced(component=reduced_component, filename="testNRNCodeGen.txt")
-        
-        reduced_component.write("/tmp/model1.xml")
-        c = nineml.abstraction_layer.parse("/tmp/model1.xml")
-        
-        
-        #import sys
-        #sys.exit(0)
         
         
         # New:
         dct["combined_model"] = reduction_process.reducedcomponent
         dct["default_parameters"] = dict( (name, 1.0) for name in reduced_component.parameters )
         dct["default_initial_values"] = dict((name, 0.0) for name in reduced_component.state_variables)
-        dct["synapse_types"] = ['cobaExcit','cobaInhib']
+        dct["synapse_types"] = [syn.namespace for syn in synapse_components] 
         dct["standard_receptor_type"] = (dct["synapse_types"] == ('excitatory', 'inhibitory'))
         dct["injectable"] = True # need to determine this. How??
         dct["conductance_based"] = True # how to determine this??
@@ -125,7 +113,7 @@ class _mh_build_nineml_celltype(type):
         
         
         dct["recordable"] = [port.name for port in reduced_component.analog_ports] + ['spikes', 'regime']
-        dct["weight_variables"] = {'cobaInhib':'cobaInhib_q', 'cobaExcit':'cobaExcit_q',}
+        dct["weight_variables"] = dict([ (syn.namespace,syn.namespace+'_'+syn.weight_connector ) for syn in synapse_components ]) #{'cobaInhib':'cobaInhib_q', 'cobaExcit':'cobaExcit_q',}
         
         
         pyNN_nrn_9ml.logger.debug("Creating class '%s' with bases %s and dictionary %s" % (name, bases, dct))
@@ -224,25 +212,6 @@ celltype = create_celltypeclass_from_model(
                                         )
 
 
-
-parameters = {
-    'iaf.C': 1.0,
-    'iaf.gL': 50.0,
-    'iaf.t_ref': 5.0,
-    'iaf.theta': -50.0,
-    'iaf.vL': -65.0,
-    'iaf.Vreset': -65.0,
-    'cobaExcit.tau': 2.0,
-    'cobaInhib.tau': 5.0,
-    'cobaExcit.E': 0.0,
-    'cobaInhib.E': -70.0,
-    
-    'bf':123
-
-}
-
-
-
 parameters = {
     'iaf.cm': 1.0,
     'iaf.gl': 50.0,
@@ -258,7 +227,7 @@ parameters = {
 
 #parameters['cobaExcit.vrev']
 
-
+ModelToSingleComponentReducer.get_flat_ns_dict(parameters)
 
 newParams = {}
 for k,v in parameters.iteritems():
@@ -267,36 +236,6 @@ parameters = newParams
     
 
     
-    
-## OLD VERSION ##
-######################
-#celltype_cls = mh_nineml_cell_type("if_cond_exp",
-#                                leaky_iaf.c1,
-#                                port_map={
-#                                    'excitatory': [('V', 'V'), ('Isyn', 'Isyn')],
-#                                    'inhibitory': [('V', 'V'), ('Isyn', 'Isyn')]
-#                                },
-#                                weight_variables={
-#                                    'excitatory': 'q',
-#                                    'inhibitory': 'q'
-#                                },
-#                                excitatory=coba_synapse.c1,
-#                                inhibitory=deepcopy(coba_synapse.c1),
-#                                   )
-#
-#parameters = {
-#    'C': 1.0,
-#    'gL': 50.0,
-#    't_ref': 5.0,
-#    'excitatory_tau': 2.0,
-#    'inhibitory_tau': 5.0,
-#    'excitatory_E': 0.0,
-#    'inhibitory_E': -70.0,
-#    'theta': -50.0,
-#    'vL': -65.0,
-#    'V_reset': -65.0
-#}
-
 
 
 celltype_cls = celltype

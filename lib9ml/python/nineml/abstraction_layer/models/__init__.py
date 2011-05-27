@@ -408,6 +408,21 @@ class NamespaceAddress(object):
 
 
 class ModelToSingleComponentReducer(object):
+    
+    @classmethod
+    def flatten_namespace(cls, ns):
+        return ns.replace('.','_')
+    
+    @classmethod
+    def flatten_namespace_dict(cls, ns):
+        newParams = {}
+        for k,v in ns.iteritems():
+            newParams[ cls.flatten_namespace(k) ] = v
+        return newParams
+     
+    
+    
+    
     def __init__(self,model, componentname):
         self.model = model 
         self.componentname=componentname

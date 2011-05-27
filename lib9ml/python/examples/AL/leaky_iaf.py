@@ -22,6 +22,10 @@ ports = [nineml.SendPort("V"),
 
 c1 = nineml.Component("LeakyIAF", regimes = [subthreshold_regime, refractory_regime], ports=ports)
 
+
+for eqn in c1.odes:
+    print "Eqn:",eqn
+
 # write to file object f if defined
 try:
     # This case is used in the test suite for examples.
