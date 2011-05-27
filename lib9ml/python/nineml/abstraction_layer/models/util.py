@@ -1,3 +1,5 @@
+import itertools
+
 
 def invertDictionary(d):
     # Check for duplicated values:

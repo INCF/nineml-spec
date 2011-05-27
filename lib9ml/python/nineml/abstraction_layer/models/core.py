@@ -11,7 +11,7 @@ import util
 
 
 
-
+import nineml.abstraction_layer as nineml
 
 
 
@@ -279,3 +279,46 @@ class ComponentQueryer(object):
         raise UnimplementedError
 
 
+
+
+
+
+class NamespaceAddress(object):
+    def __init__(self, loc):
+        if isinstance(loc, basestring):
+            self.loctuple = loc.split('.')
+        elif isinstance(loc, tuple):
+            self.loctuple = loc
+        else:
+            assert False
+
+    
+    def __hash__(self):
+        return hash(self.loctuple)
+
+    def __eq__(self,rhs):
+        if not isinstance(rhs, self.__class__): 
+            return False
+        return self.loctuple == rhs.loctuple
+
+
+    def get_subns_addr(self, component_name):
+        return NamespaceAddress( loc = tuple( list(self.loctuple) + [component_name] ) )
+    def get_parent_addr(self):
+        assert len(self.loctuple) > 0
+        return NamespaceAddress( loc = self.loctuple[:-1] )
+
+    def __repr__(self):
+        return "NSAddr: '" + "//" + "/".join( self.loctuple) + "/'"
+
+    @classmethod
+    def create_root(cls):
+        return NamespaceAddress( loc=() )
+
+    def get_str_prefix(self):
+        return "_".join( self.loctuple ) + "_"
+
+    @classmethod
+    def concat(cls,*args):
+        loctuple = tuple( util.flattenFirstLevel( [ list(a.loctuple) for a in args ] ) )
+        return NamespaceAddress(loc=loctuple)

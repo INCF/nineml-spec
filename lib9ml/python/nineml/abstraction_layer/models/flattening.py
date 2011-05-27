@@ -5,10 +5,11 @@ import copy
 import itertools
 
 
-
+import nineml.abstraction_layer as nineml
 # Relative Imports:
 import util
 
+from visitors import ModelVisitorDF_ComponentCollector, ModelVisitorDF_ModelCollector
 
 
 class ModelToSingleComponentReducer(object):
@@ -60,7 +61,7 @@ class ModelToSingleComponentReducer(object):
         
         # Copy accross all the nodes from each regime. We need to 
         # prefix all nodes with the names to prevent collision.
-        regime_equations = flattenFirstLevel( [ self.copy_and_prefix_odes_from_regime(*rc) for rc in component_regimes_zip ] )
+        regime_equations = util.flattenFirstLevel( [ self.copy_and_prefix_odes_from_regime(*rc) for rc in component_regimes_zip ] )
         
         
         return nineml.Regime(*regime_equations, name = regime_name )
@@ -200,7 +201,7 @@ class ModelToSingleComponentReducer(object):
 
         # Create a maps { Namespaces -> Ports}
         old_port_dicts = [ comp.query.get_fully_addressed_analogports_new() for comp in self.modelcomponents ]
-        old_ports = safe_dictionary_merge( old_port_dicts )
+        old_ports = util.safe_dictionary_merge( old_port_dicts )
 
         # Create the new analog ports with prefixed names:
         new_ports = {}
