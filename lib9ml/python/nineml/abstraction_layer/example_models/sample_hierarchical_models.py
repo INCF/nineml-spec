@@ -107,6 +107,23 @@ def get_hierachical_iaf_2coba():
     
     return iaf_2coba_model
 
+def get_hierachical_iaf_3coba():
+
+    
+    # Create a model, composed of an iaf neuron, and 
+    iaf_3coba_model = models.Model( name="iaf_2coba", subnodes = {"iaf" : iaf, "AMPA" : coba, "GABAa" : coba, "GABAb": coba} )
+    
+    # Connections have to be setup as strings, because we are deep-copying objects.
+    iaf_3coba_model.connect_ports( "iaf.V", "AMPA.V" )
+    iaf_3coba_model.connect_ports( "iaf.V", "GABAa.V" )
+    iaf_3coba_model.connect_ports( "iaf.V", "GABAb.V" )
+    iaf_3coba_model.connect_ports( "AMPA.I", "iaf.ISyn" )
+    iaf_3coba_model.connect_ports( "GABAa.I", "iaf.ISyn" )
+    iaf_3coba_model.connect_ports( "GABAb.I", "iaf.ISyn" )
+    
+    return iaf_3coba_model
+
+
 
 
 def get_hierachical_iaf_nmda():
