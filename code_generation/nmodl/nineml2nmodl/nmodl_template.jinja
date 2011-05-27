@@ -14,7 +14,7 @@ CONSTANT {
   {%- for regime in component.regimes %}
   {{ regime.label }} = {{ regime.flag }}
   {%- endfor %}
-  {%- for channel in channels %}
+  {%- for channel in channels|sort %}
   {{ channel }} = {{ loop.index0 }}
   {%- endfor %}
 }

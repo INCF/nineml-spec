@@ -6,9 +6,8 @@ using that mechanism and the results compared to expected values.
 """
 
 from __future__ import with_statement
-import sys, os
-sys.path.append('..')
-nineml2nmodl = __import__("9ml2nmodl")
+import os
+import nineml2nmodl
 from subprocess import Popen, PIPE
 
 models = ["izhikevich", "morris-lecar", "leaky_iaf", "if_cond_exp"]
@@ -22,7 +21,7 @@ for model in models:
     # run the example script, saving the XML to file
     xml_file = os.path.join(output_dir, "%s.xml" % model)
     with open(xml_file, 'w') as f:
-        execfile('../../../lib9ml/python/examples/AL/%s.py' % model, {'f': f})
+        execfile('../../../../lib9ml/python/nineml/examples/AL/%s.py' % model, {'f': f})
     # parse the XML and convert to NMODL
     nineml2nmodl.write_nmodl(xml_file)
 
