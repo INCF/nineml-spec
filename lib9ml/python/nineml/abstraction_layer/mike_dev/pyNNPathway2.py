@@ -3,6 +3,23 @@ Example of using a cell type defined in 9ML with pyNN.neuron
 """
 
 
+class HOCIntercept(object):
+    def __init__(self, h):
+        self.__dict__['h'] = h
+        
+    def __getattr__(self, name):
+        print "HOC:__getattr__: ", name
+        return getattr( self.__dict__['h'], name )
+    def __setattr__(self, name, value):
+        print "HOC:__setattr__: ", name
+        return setattr( self.__dict__['h'], name, value )
+    
+    def __call__(self, *args,**kwargs):
+        print "HOC:__Call__: ", args, kwargs
+        return self.__dict__['h'](*args,**kwargs)
+    
+    
+
 import sys
 from os.path import abspath, realpath, join
 import nineml
@@ -12,7 +29,30 @@ sys.path.append(join(root, "lib9ml/python/examples/AL"))
 sys.path.append(join(root, "code_generation/nmodl"))                
 leaky_iaf = __import__("leaky_iaf")
 coba_synapse = __import__("coba_synapse")
+
+import neuron
+
+hIntercept = HOCIntercept(neuron.h)
+neuron.h = hIntercept
+
+
+#hIntercept = HOCIntercept(sim.simulator.h)
+#sim.simulator.h = hIntercept
+
+
+
 import pyNN.neuron as sim
+
+
+    
+
+
+
+
+
+
+
+
 from pyNN.neuron.nineml import nineml_cell_type
 
 import pyNN.neuron.nineml as pyNN_nrn_9ml
@@ -140,6 +180,7 @@ parameters = {
 
 #c = celltype_cls()
 
+    
 
 cells = sim.Population(1, celltype_cls, parameters)
 cells.initialize('V', parameters['vL'])
@@ -149,15 +190,22 @@ cells.initialize('regime', 1002) # temporary hack
 input = sim.Population(2, sim.SpikeSourcePoisson, {'rate': 100})
 
 connector = sim.OneToOneConnector(weights=1.0, delays=0.5)
+
+print "========BUILDING CONNECTIONS=========="
 conn = [sim.Projection(input[0:1], cells, connector, target='excitatory'),
         sim.Projection(input[1:2], cells, connector, target='inhibitory')]
+print "========DONE BUILDING CONNECTIONS====="
+
 
 cells._record('V')
 cells._record('excitatory_g')
 cells._record('inhibitory_g')
 cells.record()
 
+print "========run()================"
 sim.run(100.0)
+print "========run() done =========="
+
 
 cells.recorders['V'].write("Results/nineml_neuron.V", filter=[cells[0]])
 cells.recorders['excitatory_g'].write("Results/nineml_neuron.g_exc", filter=[cells[0]])
