@@ -226,7 +226,6 @@ class Expression(object):
         
         
     
-MIKE_math_namespace = ('log','exp')
     
     
 
@@ -255,7 +254,8 @@ class Binding(Expression, RegimeElement):
 
         rhs = self.rhs
         for n in itertools.chain( self.names, self.funcs, self.args):
-            if n in MIKE_math_namespace: continue
+            #if n in MIKE_math_namespace: continue
+            if math_namespace.is_in_math_namespace(n): continue
             if not n in transform_dict: continue
             rhs = re.sub( r'\b%s\b'%n, transform_dict[n], rhs )
         
@@ -329,7 +329,7 @@ class Binding(Expression, RegimeElement):
         rhs = self.rhs
         for n in itertools.chain( self.names, self.funcs,self.args):
             if n in prefix_excludes: continue
-            if n in MIKE_math_namespace: continue
+            if math_namespace.is_in_math_namespace(n): continue
             rhs = re.sub( r'\b%s\b'%n, prefix+n, rhs )
         
         return Binding( lhs=lhs, rhs=rhs)

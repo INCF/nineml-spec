@@ -23,3 +23,7 @@ namespace = {
     "e":numpy.e
     }
 # TODO complete this list
+
+
+def is_in_math_namespace( func ):
+    return func in functions
