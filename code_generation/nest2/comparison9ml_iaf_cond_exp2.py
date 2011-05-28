@@ -7,8 +7,8 @@
 # by nest.Install below which contains iaf_cond_exp_9ml
 
 import os
-os.environ['LD_LIBRARY_PATH']=os.environ['LD_LIBRARY_PATH']+ ':/home/hull/src/nineml-svn-model-tree/code_generation/nest2/nest_model/build/.libs'
-
+os.environ['LD_LIBRARY_PATH']=os.environ['LD_LIBRARY_PATH']+ ':'+os.getcwd()+ '/nest_model/build/.libs'
+print os.environ['LD_LIBRARY_PATH']
 
 import nest
 nest.Install("mymodule")
