@@ -48,26 +48,52 @@ coba = models.Component( "CobaSyn",
                          )
 
 
+#def nmda():
+#    inter_event_regime = nineml.Regime(
+#        "tau_peak := tau_r*tau_d/(tau_d - tau_r)*log(tau_d/tau_r)",
+#        "factor := 1/(exp(-tau_peak/tau_d) - exp(-tau_peak/tau_r))",
+#        "gB(V) := 1/(1 + mg_conc*exp(-1*gamma*V)/beta)",
+#        "g(V,A,B) := gB(V)*gmax*(B-A)",
+#        "dA/dt = -A/tau_r",
+#        "dB/dt = -B/tau_d",
+#        name="inter_event_regime",
+#        transitions=nineml.On(nineml.SpikeInputEvent,
+#                              do=["A = A + weight*factor",
+#                                  "B = B + weight*factor"])
+#        )
+#
+#    ports = [nineml.RecvPort("V"),
+#             nineml.SendPort("I = g(V,A,B)*(E - V)"), # this notation takes the assignment of Isyn out of the Regime
+#             nineml.SendPort("gSyn = g(V,A,B)")]
+#
+#    nmda = models.Component("NMDA_PSR",
+#                     regimes=[inter_event_regime],
+#                     analog_ports = ports
+#                     )
+#    # deal with bindings
+#    #nmda.backsub_bindings()
+#    #nmda.backsub_equations()
+#    return nmda
 
 def nmda():
     inter_event_regime = nineml.Regime(
-        "tau_peak := tau_r*tau_d/(tau_d - tau_r)*log(tau_d/tau_r)",
-        "factor := 1/(exp(-tau_peak/tau_d) - exp(-tau_peak/tau_r))",
-        "gB(V) := 1/(1 + mg_conc*exp(-1*gamma*V)/beta)",
+        "taupeak := taur*taud/(taud - taur)*log(taud/taur)",
+        "factor := 1/(exp(-taupeak/taud) - exp(-taupeak/taur))",
+        "gB(V) := 1/(1 + mgconc*exp(-1*gamma*V)/beta)",
         "g(V,A,B) := gB(V)*gmax*(B-A)",
-        "dA/dt = -A/tau_r",
-        "dB/dt = -B/tau_d",
-        name="inter_event_regime",
+        "dA/dt = -A/taur",
+        "dB/dt = -B/taud",
+        name="intereventregime",
         transitions=nineml.On(nineml.SpikeInputEvent,
                               do=["A = A + weight*factor",
                                   "B = B + weight*factor"])
         )
 
     ports = [nineml.RecvPort("V"),
-             nineml.SendPort("I = g(V,A,B)*(E - V)"), # this notation takes the assignment of Isyn out of the Regime
+             nineml.SendPort("I = g(V,A,B)*(E - V) "), # this notation takes the assignment of Isyn out of the Regime
              nineml.SendPort("gSyn = g(V,A,B)")]
 
-    nmda = models.Component("NMDA_PSR",
+    nmda = models.Component("NMDAPSR",
                      regimes=[inter_event_regime],
                      analog_ports = ports
                      )
@@ -131,11 +157,11 @@ def get_hierachical_iaf_nmda():
     
     
     # Create a model, composed of an iaf neuron, and 
-    iaf_nmda_model = models.Model( name="iaf_2coba", subnodes = {"iaf" : iaf, "nmda" : nmda()} )
+    iaf_nmda_model = models.Model( name="iaf_2coba", subnodes = {"iaf" : iaf, "nmda" : nmda(), 'cobaExcit':coba} )
     
-    # Connections have to be setup as strings, because we are deep-copying objects.
     iaf_nmda_model.connect_ports( "iaf.V", "cobaExcit.V" )
     iaf_nmda_model.connect_ports( "iaf.V", "nmda.V" )
+    iaf_nmda_model.connect_ports( "cobaExcit.I", "iaf.ISyn" )
     iaf_nmda_model.connect_ports( "nmda.I", "iaf.ISyn" )
     
     return iaf_nmda_model

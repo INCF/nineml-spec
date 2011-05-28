@@ -30,6 +30,11 @@ def as_expr(node):
     else:
         raise Exception("Don't know how to handle nodes of type %s" % type(node))
 
+
+
+     
+    
+
 def deriv_func_args(component, variable):
     """ """
     args = set([variable])
@@ -131,7 +136,13 @@ def build_context(component, weight_variables, input_filename="[Unknown-Filename
     if hierarchical_mode:
         reduce_port_terminations = ['%s = 0'%p.name for p in component.analog_ports if p.mode=='reduce']
         weights_as_states = True
-    
+   
+
+    from nineml.abstraction_layer.models import dump_reduced
+    dump_reduced( component, '/tmp/reducedcomponent.txt')
+    component.backsub_bindings()
+    component.backsub_equations()
+    dump_reduced( component, '/tmp/reducedcomponent.txt')
         
     
     context = {
@@ -153,6 +164,8 @@ def build_context(component, weight_variables, input_filename="[Unknown-Filename
         # Added by Mike:
         "reduce_port_terminations": reduce_port_terminations,
         "weights_as_states": weights_as_states,
+        'binding_names': [b.name for b in component.bindings],
+        'list':list, #This is a hack so we can build lists from inside jinja
     }
     return context
 

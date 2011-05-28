@@ -47,7 +47,15 @@ class ModelToSingleComponentReducer(object):
         # TODO: Proper prefixing:
         prefix = component.getTreePosition(jointoken="_") + "_"
         excludes = ['t']
-        return [ expr.clone(prefix=prefix,prefix_excludes=excludes) for expr in regime.nodes ]
+
+        #nodeClasses = [nineml.Equation, nineml.Binding]
+        #nodes={}
+        #for nc in nodeClasses:
+        #    nodes[nc] = FilterType( regime.nodes )
+        
+        newnodes= [ expr.clone(prefix=prefix,prefix_excludes=excludes,prefix_name=True) for expr in regime.nodes ]
+
+        return newnodes
 
 
 
@@ -151,24 +159,28 @@ class ModelToSingleComponentReducer(object):
                     
         for p in new_ports.values():
             if not p.expr: continue
-            print '  ', p, p.expr
+            #print '  ', p, p.expr
             p.expr.rhs = p.expr.rhs_name_transform( {originalname:targetname} )
             p.expr.parse()
-            print '->', p, p.expr
+            #print '->', p, p.expr
         
         for regime in newRegimeLookupMap.values():
+            
+            for binding in regime.bindings:
+                binding.name_transform_inplace( {originalname:targetname} )
+
             for eqn in regime.equations:
-                print '  ', eqn, 
+                #print '  ', eqn, 
                 eqn.rhs = eqn.rhs_name_transform( {originalname:targetname} )
                 eqn.parse()
-                print '->', eqn
+                #print '->', eqn
             
             
             for av in regime.assignments:
-                print '  ', av,
+                #print '  ', av,
                 av.rhs = av.rhs_name_transform( {originalname:targetname} )
                 av.parse()
-                print '->', av
+                #print '->', av
             
             for transition in regime.transitions:
                 
@@ -177,10 +189,10 @@ class ModelToSingleComponentReducer(object):
                     if  isinstance(node, nineml.EventPort):
                         if node.symbol == originalname: node.symbol = targetname
                     elif isinstance(node, nineml.Assignment):
-                        print '  ', node, 
+                        #print '  ', node, 
                         node.rhs = node.rhs_name_transform( {originalname:targetname} )
                         node.parse()
-                        print '->', node
+                        #print '->', node
                     else:
                         assert False
 
@@ -219,6 +231,8 @@ class ModelToSingleComponentReducer(object):
             return srcPort.name 
 
 
+        #for ns,port in new_ports.iteritems():
+        #    print ns, port
 
         # Handle port mappings:
         # portconnections = [ (NS -> NS),(NS -> NS ), (NS -> NS) ]
@@ -252,6 +266,9 @@ class ModelToSingleComponentReducer(object):
             reduce_expr= dstport.reduce_op.join(terms) 
             globalRemapPort( dstport.name, reduce_expr )
 
+
+
+        
         self.reducedcomponent = nineml.Component( self.componentname, regimes = newRegimeLookupMap.values(), ports=new_ports.values() )
         
         

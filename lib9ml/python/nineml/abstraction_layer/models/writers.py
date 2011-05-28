@@ -24,6 +24,14 @@ def dump_reduced(component, filename):
       Parameter: $up
     #end for
 
+
+    BINDINGS:
+    ==================
+    #for b in $component.bindings:
+        Binding: $b
+    #end for
+
+
     REGIMES:
     ========
     #for regime in $component.regimes:

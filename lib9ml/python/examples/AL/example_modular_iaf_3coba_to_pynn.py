@@ -102,15 +102,15 @@ gExc = cells.recorders['AMPA_g'].get()[:,2]
 import pylab
 pylab.subplot(211)
 pylab.plot(t,v)
-ylabel('voltage [mV]')
+pylab.ylabel('voltage [mV]')
 pylab.suptitle("AMPA, GABA_A, GABA_B")
 pylab.subplot(212)
 pylab.plot(t,gInhA,label='GABA_A')
 pylab.plot(t,gInhB, label='GABA_B')
 pylab.plot(t,gExc, label='AMPA')
-ylabel('conductance [nS]')
-xlabel('t [ms]')
-legend()
+pylab.ylabel('conductance [nS]')
+pylab.xlabel('t [ms]')
+pylab.legend()
 
 pylab.show()
 

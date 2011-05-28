@@ -1,6 +1,6 @@
 
 import nineml.abstraction_layer as nineml
-import os
+import os, shutil
 from Cheetah.Template import Template
 from os.path import join as Join
 
@@ -217,14 +217,29 @@ def restore_working_directory( func ):
         return res
     return wrapped_func
 
+def ensure_directory_exists( location ):
+    if not os.path.exists(location):
+        os.mkdir(location)
+
 
 class NestFileBuilder(object):
-
+    
     def __init__(self, nest_classname, iaf_cond_exp_9ML, synapse_ports, initial_regime, initial_values, default_values, hack_fixed_values={}):
         
+        # The template files are in the same directory as this file, 
+        # but we could call it from anywhere, so lets set up the locations:
+        self.src_dir = os.path.dirname(__file__)
+        self.src_tmpl_h   = os.path.join(self.src_dir, "nest_9ml_neuron_h_cheetah.tmpl")
+        self.src_tmpl_cpp = os.path.join(self.src_dir, "nest_9ml_neuron_cpp_cheetah.tmpl")
+
+        self.src_bootstrap = os.path.join(self.src_dir, "nest_model/bootstrap.sh")
+        self.src_configure_ac = os.path.join(self.src_dir, "nest_model/configure.ac")
+        self.src_makefile_am = os.path.join(self.src_dir, "nest_model/Makefile.am")
+
+
         # Output Files:
         self.build_dir = "nest_model"
-        self.output_h_file = Join(self.build_dir, "nest_9ml_neuron.h")
+        self.output_h_file   = Join(self.build_dir, "nest_9ml_neuron.h")
         self.output_cpp_file = Join(self.build_dir, "nest_9ml_neuron.cpp")
 
         self.nm = NestModel(nest_classname, iaf_cond_exp_9ML, synapse_ports, initial_regime, initial_values, default_values)
@@ -232,37 +247,39 @@ class NestFileBuilder(object):
         self.buildCPPFiles()
 
     
+    @restore_working_directory
     def buildCPPFiles(self):
         print "Building NEST CPP and H files... "
+        os.chdir(self.src_dir)
+        print os.getcwd()
 
         # make the destination subdir
-        if not os.path.exists(self.build_dir):
-            os.mkdir(self.build_dir)
+        ensure_directory_exists(self.build_dir)
 
-        f_h = file(self.output_h_file,'w')
+        # Write the .h file:
+        with open( self.output_h_file,'w') as f_h:
+            f_h.write( Template(file=self.src_tmpl_h, searchList= {'model':self.nm}).respond() )
 
-        #TODO: Remove Nasty Hack:
-        for k,v in self.hack_fixed_values.iteritems():
-            print >> f_h, "const float %s = %f;\n"%(k,v)
+        #Write the .cpp file
+        with open( self.output_cpp_file,'w') as f_h:
+            f_h.write( Template(file=self.src_tmpl_cpp, searchList= {'model':self.nm}).respond() )
+        
 
-        t_h = Template(file="nest_9ml_neuron_h_cheetah.tmpl", searchList={'model':self.nm})
-                    
-        print >> f_h, str(t_h)
-        f_h.close()
-
-        f_cpp = file(self.output_cpp_file,'w')
-        t_cpp = Template(file="nest_9ml_neuron_cpp_cheetah.tmpl", searchList=[{'model':self.nm}])
-        print >> f_cpp, str(t_cpp)
-        f_cpp.close()
 
     @restore_working_directory
     def compile_files(self):
         print 'Compiling for NEST...'
+        os.chdir(self.src_dir)
+        os.chdir(self.build_dir)
+        
+        #Copy some files accross:
+        #shutil.copy(self.src_bootstrap, 'bootstrap.sh')
+        #shutil.copy(self.src_configure_ac, 'configure.ac')
+        #shutil.copy(self.src_makefile_am, 'Makefile.am')
 
-        os.chdir( self.build_dir)
+
         os.system("./bootstrap.sh")
-        if not os.path.exists('build'):
-            os.mkdir("build")
+        ensure_directory_exists('build')
         os.chdir("build")
 
         os.system("../configure --with-nest=/opt/nest2/bin/nest-config")

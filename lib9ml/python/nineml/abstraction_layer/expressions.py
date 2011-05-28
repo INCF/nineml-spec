@@ -2,6 +2,7 @@
 
 from nineml.abstraction_layer.xmlns import *
 from nineml.abstraction_layer import math_namespace
+import itertools,re
 
 def get_args(s):
     """ return arguments of a function in a list,
@@ -216,6 +217,7 @@ class Expression(object):
         
         
     def _clone(self, prefix, prefix_excludes, name ):
+        print "ERROR: _clone is not implemented in the subclass:", self.__class__.__name__
         raise NotImplementedError()
         
         
@@ -224,6 +226,7 @@ class Expression(object):
         
         
     
+MIKE_math_namespace = ('log','exp')
     
     
 
@@ -239,8 +242,26 @@ class Binding(Expression, RegimeElement):
     
     element_name = "binding"
     
-    def __init__(self, lhs,rhs):
 
+
+
+
+    def name_transform_inplace(self, transform_dict ):
+        # Note, this is IN PLACE  !!!:
+        argStr = ""
+        if self.args:
+            argStr = "(%s)"%( ",".join( transform_dict.get(a,a) for a in self.args ) ) 
+        lhs = transform_dict.get(self.name,self.name) + argStr
+
+        rhs = self.rhs
+        for n in itertools.chain( self.names, self.funcs, self.args):
+            if n in MIKE_math_namespace: continue
+            if not n in transform_dict: continue
+            rhs = re.sub( r'\b%s\b'%n, transform_dict[n], rhs )
+        
+        self.build_self(lhs,rhs)
+
+    def build_self(self,lhs,rhs):
         import re
 
         self.name, self.args, self.value = Binding.pre_parse(lhs + ":=" + rhs)
@@ -267,6 +288,52 @@ class Binding(Expression, RegimeElement):
         if self.name in self.args:
             raise ValueError, "Binding expression '%s': function binding has argument symbol = binding symbol." % self.name
 
+
+    def __init__(self, lhs,rhs):
+        self.build_self(lhs,rhs)
+#        import re
+#
+#        self.name, self.args, self.value = Binding.pre_parse(lhs + ":=" + rhs)
+#
+#        if self.name in math_namespace.symbols:
+#            raise ValueError, "binding '%s' redefines math symbols (such as 'e','pi')" % self.as_expr()
+#
+#        self.parse()
+#
+#        if self.name in self.names:
+#            raise ValueError, "Binding expression '%s': may not self reference." % self.name
+#
+#        # detect recursive binding
+#        if self.args and self.name in self.funcs:
+#            raise ValueError, "Binding expression '%s': is recursive." % self.as_expr()
+#
+#        # check that rhs depends on all args
+#        if self.args and self.names.intersection(self.args)!=set(self.args):
+#            raise ValueError, "Binding expression '%s': rhs does not depend on some of the arguments ." % self.as_expr()
+#
+#        # remove args from names 
+#        self.names.difference_update(self.args)
+#
+#        if self.name in self.args:
+#            raise ValueError, "Binding expression '%s': function binding has argument symbol = binding symbol." % self.name
+#
+
+    
+
+
+
+    def _clone(self, prefix, prefix_excludes, name ):
+
+        lhs = name + '(%s)'% ",".join([ (prefix+a if not a in prefix_excludes else a) for a in self.args] ) if self.args else name
+        
+        rhs = self.rhs
+        for n in itertools.chain( self.names, self.funcs,self.args):
+            if n in prefix_excludes: continue
+            if n in MIKE_math_namespace: continue
+            rhs = re.sub( r'\b%s\b'%n, prefix+n, rhs )
+        
+        return Binding( lhs=lhs, rhs=rhs)
+        
 
     def __repr__(self):
         return "<Binding: %s>" % self.as_expr()
