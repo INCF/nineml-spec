@@ -107,9 +107,6 @@ nfb = NestFileBuilder(  nest_classname = nest_classname,
                         initial_regime =  initial_regime,
                         initial_values = initial_values,
                         default_values = default_values,
-                        
-                        hack_fixed_values = {"iaf_ISyn":0.0} #"cobaInhib_q": 2.0, "cobaExcit_q":2.0, " },
-                        
                         )
 nfb.compile_files()
 

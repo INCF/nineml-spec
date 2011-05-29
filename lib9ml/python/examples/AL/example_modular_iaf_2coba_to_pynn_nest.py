@@ -61,7 +61,8 @@ parameters = {
 
 }
 
-
+# TODO: PyNN namespace translation should be able to handle this
+# *automatically*
 parameters = ModelToSingleComponentReducer.flatten_namespace_dict( parameters )
 
 

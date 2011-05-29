@@ -7,7 +7,8 @@
 # by nest.Install below which contains iaf_cond_exp_9ml
 
 import os
-os.environ['LD_LIBRARY_PATH']=os.environ['LD_LIBRARY_PATH']+ ':'+os.getcwd()+ '/nest_model/build/.libs'
+# TODO: improve nest dl-module build and path support
+os.environ['LD_LIBRARY_PATH']=os.environ['LD_LIBRARY_PATH']+':%s/../code_generation/nest2/nest_model/build/.libs' % os.getcwd()
 print os.environ['LD_LIBRARY_PATH']
 
 import nest
