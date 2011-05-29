@@ -224,13 +224,16 @@ def ensure_directory_exists( location ):
 
 class NestFileBuilder(object):
     
-    def __init__(self, nest_classname, iaf_cond_exp_9ML, synapse_ports, initial_regime, initial_values, default_values, hack_fixed_values={}):
+    def __init__(self, nest_classname, component, synapse_ports, initial_regime, initial_values, default_values, hack_fixed_values={}):
         
         # The template files are in the same directory as this file, 
         # but we could call it from anywhere, so lets set up the locations:
         self.src_dir = os.path.dirname(__file__)
         self.src_tmpl_h   = os.path.join(self.src_dir, "nest_9ml_neuron_h_cheetah.tmpl")
         self.src_tmpl_cpp = os.path.join(self.src_dir, "nest_9ml_neuron_cpp_cheetah.tmpl")
+
+        self.mymodule_tmpl_cpp = os.path.join(self.src_dir, "mymodule_cpp_cheetah.tmpl")
+
 
         self.src_bootstrap = os.path.join(self.src_dir, "nest_model/bootstrap.sh")
         self.src_configure_ac = os.path.join(self.src_dir, "nest_model/configure.ac")
@@ -241,9 +244,9 @@ class NestFileBuilder(object):
         self.build_dir = "nest_model"
         self.output_h_file   = Join(self.build_dir, "nest_9ml_neuron.h")
         self.output_cpp_file = Join(self.build_dir, "nest_9ml_neuron.cpp")
+        self.output_mymodule_cpp_file = Join(self.build_dir, "mymodule.cpp")
 
-        self.nm = NestModel(nest_classname, iaf_cond_exp_9ML, synapse_ports, initial_regime, initial_values, default_values)
-        self.hack_fixed_values = hack_fixed_values
+        self.nm = NestModel(nest_classname, component, synapse_ports, initial_regime, initial_values, default_values)
         self.buildCPPFiles()
 
     
@@ -264,6 +267,10 @@ class NestFileBuilder(object):
         with open( self.output_cpp_file,'w') as f_h:
             f_h.write( Template(file=self.src_tmpl_cpp, searchList= {'model':self.nm}).respond() )
         
+        #Write the mymodule.cpp file
+        with open( self.output_mymodule_cpp_file,'w') as f_h:
+            f_h.write( Template(file=self.mymodule_tmpl_cpp, searchList= {'model':self.nm}).respond() )
+
 
 
     @restore_working_directory

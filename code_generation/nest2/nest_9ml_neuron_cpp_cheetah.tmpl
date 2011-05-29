@@ -200,6 +200,10 @@ void nest_nineml::$model.nest_classname::State_::set(const DictionaryDatum& d, c
 
   //TODO: set regime?
 
+  double d_regime;
+  updateValue<double>(d, $mynames::Regime9ML, d_regime);
+  regime_ = nest_nineml::$model.nest_classname::Regimes(d_regime); 
+
 }
 
 void nest_nineml::$model.nest_classname::Variables_::get(DictionaryDatum &d) const

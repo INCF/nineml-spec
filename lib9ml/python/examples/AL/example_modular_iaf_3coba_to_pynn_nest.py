@@ -1,6 +1,6 @@
 
 """
-Example of using a cell type defined in 9ML with pyNN.neuron
+Example of using a cell type defined in 9ML with pyNN.nest
 """
 
 
@@ -8,28 +8,38 @@ Example of using a cell type defined in 9ML with pyNN.neuron
 
 import sys
 from os.path import abspath, realpath, join
+import numpy
 import nineml
 
 root = abspath(join(realpath(nineml.__path__[0]), "../../.."))
 sys.path.append(join(root, "lib9ml/python/examples/AL"))
-sys.path.append(join(root, "code_generation/nmodl"))     
+#sys.path.append(join(root, "code_generation/nmodl"))     
 sys.path.append(join(root, "code_generation/nest2"))       
+
+import os
+# TODO: improve nest dl-module build and path support
+os.environ['LD_LIBRARY_PATH']=os.environ['LD_LIBRARY_PATH']+':%s/../code_generation/nest2/nest_model/build/.libs' % os.getcwd()
+print os.environ['LD_LIBRARY_PATH']
            
 
 from nineml.abstraction_layer.example_models import  get_hierachical_iaf_3coba
 from nineml.abstraction_layer.models import ModelToSingleComponentReducer
 
-import pyNN.neuron as sim
-import pyNN.neuron.nineml as pyNNml
+#import pyNN.neuron as sim
+#import pyNN.neuron.nineml as pyNNml
 
-#import pyNN.nest as sim
-#import pyNN.nest.nineml as pyNNml
+import pyNN.nest as sim
+import pyNN.nest.nineml as pyNNml
+from pyNN.nest import simulator
+from pyNN import common, recording
+common.simulator = simulator
+recording.simulator = simulator
 
 from pyNN.utility import init_logging
 
 
 init_logging(None, debug=True)
-sim.setup(timestep=0.1, min_delay=0.1)
+sim.setup(timestep=0.01, min_delay=0.1)
 
 
 testModel = get_hierachical_iaf_3coba()
@@ -68,17 +78,27 @@ parameters = ModelToSingleComponentReducer.flatten_namespace_dict( parameters )
 
 cells = sim.Population(1, celltype_cls, parameters)
 cells.initialize('iaf_V', parameters['iaf_vrest'])
-cells.initialize('tspike', -1e99) # neuron not refractory at start
-cells.initialize('regime', 1002) # temporary hack
+#cells.initialize('tspike', -1e99) # neuron not refractory at start
+#cells.initialize('regime', 1002) # temporary hack
+cells.initialize('Regime9ML', 1.0) # temporary hack
 
-input = sim.Population(3, sim.SpikeSourcePoisson, {'rate': 100})
+#from numpy import r
+
+
+input = sim.Population(3, sim.SpikeSourceArray)
+
+numpy.random.seed(12345)
+input[0].spike_times = numpy.add.accumulate(numpy.random.exponential(1000.0/100.0, size=1000))
+input[1].spike_times = numpy.add.accumulate(numpy.random.exponential(1000.0/20.0, size=1000))
+input[2].spike_times = numpy.add.accumulate(numpy.random.exponential(1000.0/50.0, size=1000))
+
 
 connector = sim.OneToOneConnector(weights=1.0, delays=0.5)
 
 
-conn = [sim.Projection(input[0:1], cells, connector, target='AMPA'),
-        sim.Projection(input[1:2], cells, connector, target='GABAa'),
-        sim.Projection(input[2:3], cells, connector, target='GABAb')]
+conn = [sim.Projection(input[0:1], cells, connector, target='AMPA_spikeinput'),
+        sim.Projection(input[1:2], cells, connector, target='GABAa_spikeinput'),
+        sim.Projection(input[2:3], cells, connector, target='GABAb_spikeinput')]
 
 
 cells._record('iaf_V')

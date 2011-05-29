@@ -14,22 +14,22 @@
  */
 
 // include necessary NEST headers
-#include "config.h"
-#include "network.h"
-#include "model.h"
-#include "dynamicloader.h"
-#include "genericmodel.h"
-#include "generic_connector.h"
-#include "booldatum.h"
-#include "integerdatum.h"
-#include "tokenarray.h"
-#include "exceptions.h"
-#include "sliexceptions.h"
-#include "nestmodule.h"
+\#include "config.h"
+\#include "network.h"
+\#include "model.h"
+\#include "dynamicloader.h"
+\#include "genericmodel.h"
+\#include "generic_connector.h"
+\#include "booldatum.h"
+\#include "integerdatum.h"
+\#include "tokenarray.h"
+\#include "exceptions.h"
+\#include "sliexceptions.h"
+\#include "nestmodule.h"
 
 // include headers with your own stuff
-#include "mymodule.h"
-#include "nest_9ml_neuron.h"
+\#include "mymodule.h"
+\#include "nest_9ml_neuron.h"
 
 // -- Interface to dynamic module loader ---------------------------------------
 
@@ -75,7 +75,7 @@ mynest::MyModule::~MyModule()
            to load it.
       */
      return std::string(
-       "/mymodule /C++ ($Revision: 8512 $) provide-component "
+       "/mymodule /C++ (\$Revision: 8512 \$) provide-component "
        "/mymodule /SLI (7165) require-component"
        );
    }
@@ -90,8 +90,8 @@ mynest::MyModule::~MyModule()
        The first argument is always a reference to the network.
        Return value is a handle for later unregistration.
     */
-    nest::register_model<nest_nineml::iaf_3coba>(nest::NestModule::get_network(), 
-                                        "iaf_3coba");
+    nest::register_model<nest_nineml::$model.nest_classname>(nest::NestModule::get_network(), 
+                                        "$model.nest_classname");
 
     /* Register a synapse type.
        Give synapse type as template argument and the name as second argument.

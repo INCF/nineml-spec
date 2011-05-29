@@ -102,7 +102,7 @@ default_values = ModelToSingleComponentReducer.flatten_namespace_dict( parameter
 
 from nestbuilder import NestFileBuilder
 nfb = NestFileBuilder(  nest_classname = nest_classname, 
-                        iaf_cond_exp_9ML = iaf_cond_exp_9ML_reduced, 
+                        component = iaf_cond_exp_9ML_reduced, 
                         synapse_ports = synapse_ports,
                         initial_regime =  initial_regime,
                         initial_values = initial_values,

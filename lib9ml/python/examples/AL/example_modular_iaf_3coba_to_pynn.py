@@ -8,6 +8,7 @@ Example of using a cell type defined in 9ML with pyNN.neuron
 
 import sys
 from os.path import abspath, realpath, join
+import numpy
 import nineml
 
 root = abspath(join(realpath(nineml.__path__[0]), "../../.."))
@@ -70,7 +71,12 @@ cells.initialize('iaf_V', parameters['iaf_vrest'])
 cells.initialize('tspike', -1e99) # neuron not refractory at start
 cells.initialize('regime', 1002) # temporary hack
 
-input = sim.Population(3, sim.SpikeSourcePoisson, {'rate': 100})
+input = sim.Population(3, sim.SpikeSourceArray)
+
+numpy.random.seed(12345)
+input[0].spike_times = numpy.add.accumulate(numpy.random.exponential(1000.0/100.0, size=1000))
+input[1].spike_times = numpy.add.accumulate(numpy.random.exponential(1000.0/20.0, size=1000))
+input[2].spike_times = numpy.add.accumulate(numpy.random.exponential(1000.0/50.0, size=1000))
 
 connector = sim.OneToOneConnector(weights=1.0, delays=0.5)
 
