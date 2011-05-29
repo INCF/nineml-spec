@@ -4,7 +4,7 @@ import random, os
 import nineml.abstraction_layer as nineml
 import nineml.abstraction_layer.models as models
 
-iaf = models.Component( "iaf",
+iaf = models.ComponentNode( "iaf",
                         regimes = [
                             nineml.Regime(
                                 "dV/dt = ( gl*( vrest - V ) + ISyn)/(cm)",
@@ -30,7 +30,7 @@ iaf = models.Component( "iaf",
                         )
 
 
-coba = models.Component( "CobaSyn",
+coba = models.ComponentNode( "CobaSyn",
                          regimes = [
                              nineml.Regime(
                                  "dg/dt = -g/tau",
@@ -93,7 +93,7 @@ def nmda():
              nineml.SendPort("I = g(V,A,B)*(E - V) "), # this notation takes the assignment of Isyn out of the Regime
              nineml.SendPort("gSyn = g(V,A,B)")]
 
-    nmda = models.Component("NMDAPSR",
+    nmda = models.ComponentNode("NMDAPSR",
                      regimes=[inter_event_regime],
                      analog_ports = ports
                      )
@@ -172,7 +172,7 @@ def get_hierachical_iaf_nmda():
 def get_hierachical_iaf_2coba_network(nNeurons = 2):
     assert False, "This is out of date. See Mike Hull before use"
     
-    iaf = models.Component( "iaf",
+    iaf = models.ComponentNode( "iaf",
             regimes = [
                 nineml.Regime(
                     "dV/dt = ( (gl+gSynapticInput)*(v_rest - V) + i + i_offset)/(cm)",
@@ -192,7 +192,7 @@ def get_hierachical_iaf_2coba_network(nNeurons = 2):
                 )
         
     
-    coba = models.Component( "CobaSyn",
+    coba = models.ComponentNode( "CobaSyn",
             regimes = [
                 nineml.Regime(
                     "dg/dt = -g/tau",

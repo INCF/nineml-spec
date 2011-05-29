@@ -113,71 +113,25 @@ class Model(TreeNode):
 
 
 
-class Component(TreeNode):
+
+from nineml.abstraction_layer import Component
+
+class ComponentNode(Component,TreeNode, ):
     def __init__(self, name, parameters = [], regimes = [],  analog_ports = [], bindings = [], model=None):
-        super(Component,self).__init__()
-        self._regimes = regimes
-        #self._transitions = transitions
-        self._analog_ports = analog_ports
-        self._bindings = bindings
+        TreeNode.__init__(self, )
+        Component.__init__(self, name=name, parameters = parameters, regimes=regimes, ports=analog_ports,bindings=bindings)
 
         self.query = ComponentQueryer(self)
-        self._parent = None
-        self._name = name
 
-        # Do some checking:
-        self._parameters = parameters
-
-
-
-    @property
-    def name(self):
-        return self._name
-
-    #Interface
+#Interface
     def getAllComponents(self,):
         return [self]
 
-
-    # Setting the parent model. [Used for working out our name]
-
-
-    ## Querying:
-    ############
-    # Basic properties as lists:
-    @property
-    def regimes(self):
-        return self._regimes 
-
-    @property 
-    def transitions(self):
-        for r in self.regimes:
-            for t in r.transitions:
-                yield t
-        #return self._transitions
-
-    @property
-    def ports(self):
-        for p in self._analog_ports:
-            yield p
-        for t in self.transitions:
-            for e in t.event_ports:
-                yield e
-                 
-
-   # @property
-   # def subcomponents(self):
-   #     return self.
-
-    @property
-    def bindings(self):
-        raise UnimplementedError
-        
-
-
-
     def AcceptVisitor(self,visitor):
         return visitor.AcceptComponentNode(self)
+
+
+
 
 
 def ExpectSingle(lst):

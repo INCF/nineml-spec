@@ -131,7 +131,7 @@ class AnalogPort(Port):
     """ Port which may be in a Regime """
     
     
-    def clone(self, prefix="", expr_prefix=None):
+    def clone(self, prefix="", expr_prefix=None, prefix_excludes=[]):
         if expr_prefix is None:
             expr_prefix = prefix
         elif expr_prefix is False:
@@ -139,8 +139,9 @@ class AnalogPort(Port):
         else:
             pass
 
-        expr = self.expr.clone( prefix=expr_prefix ) if self.expr else None
-        return AnalogPort(internal_symbol = prefix + self.symbol,
+        symbol = prefix + self.symbol if not self.symbol in prefix_excludes else self.symbol
+        expr = self.expr.clone( prefix=expr_prefix,prefix_excludes=prefix_excludes ) if self.expr else None
+        return AnalogPort(internal_symbol = symbol,
                           mode=self.mode, 
                           op=self.reduce_op, 
                           expr=expr

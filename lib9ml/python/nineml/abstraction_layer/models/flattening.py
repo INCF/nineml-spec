@@ -54,6 +54,9 @@ class ModelToSingleComponentReducer(object):
         #    nodes[nc] = FilterType( regime.nodes )
         
         newnodes= [ expr.clone(prefix=prefix,prefix_excludes=excludes,prefix_name=True) for expr in regime.nodes ]
+        print "Remapped Transition"
+        for n in newnodes:
+            print n
 
         return newnodes
 
@@ -218,7 +221,7 @@ class ModelToSingleComponentReducer(object):
         # Create the new analog ports with prefixed names:
         new_ports = {}
         for ns,port in old_ports.iteritems():
-            new_ports[ns] = port.clone( prefix=ns.get_parent_addr().get_str_prefix() )
+            new_ports[ns] = port.clone( prefix=ns.get_parent_addr().get_str_prefix(), prefix_excludes=['t'] )
         
 
         # [Forwarding function]
@@ -268,6 +271,8 @@ class ModelToSingleComponentReducer(object):
 
 
 
+        for ns,p in new_ports.iteritems():
+            print p, p.symbol
         
         self.reducedcomponent = nineml.Component( self.componentname, regimes = newRegimeLookupMap.values(), ports=new_ports.values() )
         
