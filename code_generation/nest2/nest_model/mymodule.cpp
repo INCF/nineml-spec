@@ -90,8 +90,8 @@ mynest::MyModule::~MyModule()
        The first argument is always a reference to the network.
        Return value is a handle for later unregistration.
     */
-    nest::register_model<nest_nineml::iaf_3coba>(nest::NestModule::get_network(), 
-                                        "iaf_3coba");
+    nest::register_model<nest_nineml::iaf_cond_exp_9ml>(nest::NestModule::get_network(), 
+                                        "iaf_cond_exp_9ml");
 
     /* Register a synapse type.
        Give synapse type as template argument and the name as second argument.

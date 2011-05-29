@@ -86,7 +86,7 @@ nest_classname = "iaf_cond_exp_9ml"
 
 from nestbuilder import NestFileBuilder
 nfb = NestFileBuilder(  nest_classname = nest_classname, 
-                        iaf_cond_exp_9ML = iaf_cond_exp_9ML, 
+                        component = iaf_cond_exp_9ML, 
                         synapse_ports = synapse_ports,
                         initial_regime =  initial_regime,
                         initial_values = initial_values,
