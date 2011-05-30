@@ -2,7 +2,6 @@
 from nineml.helpers import curry
 from nineml.abstraction_layer.xmlns import *
 from nineml.abstraction_layer.expressions import expr_to_obj, Assignment
-from reportlab.graphics.shapes import EVEN_ODD
 
 class Port(object):
     """ Base class for EventPort and AnalogPort, etc."""
