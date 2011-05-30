@@ -289,7 +289,14 @@ class NestFileBuilder(object):
         ensure_directory_exists('build')
         os.chdir("build")
 
-        os.system("../configure --with-nest=/opt/nest2/bin/nest-config")
+        nest_config = os.popen("which nest-config").read()
+        if nest_config=='':
+            raise RuntimeError("Please put 'nest-config' in your path.")
+            
+            
+        e = os.system("../configure --with-nest=%s" % nest_config)
+        if e!=0:
+            raise RuntimeError("NEST MyModule configure failed.")
         os.system("make -j2")
         os.system("make -j2")
         #"export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/src/nineml-svn-trunk/code_generation/nest2/nest_model/build/.libs"
