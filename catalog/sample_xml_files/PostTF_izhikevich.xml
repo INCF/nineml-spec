@@ -9,9 +9,9 @@
     <Parameter name="theta" dimension='voltage'/>
 
     <!-- AnalogPort or Exposure?? -->
-    <AnalogPort name="iSyn", mode='reduce' dimension='current'/>
-    <AnalogPort name="U" mode="send"/>
-    <AnalogPort name="V" mode="send"/>
+    <AnalogPort name="iSyn" mode='reduce' dimension='current'/>
+    <AnalogPort name="U" mode="send" dimension='none'/>
+    <AnalogPort name="V" mode="send" dimension='voltage'/>
     <EventPort name="spikeoutput" mode="send"/>
     
 
@@ -19,12 +19,12 @@
         <Regime name="subthreshold_regime">
           <!-- if 'independent_variable' is missing, it should be assumed to be 't' -->
           <!-- Should this 'ODE' be called 'Rate', RateODE, 'RateEqn' ??-->
-          <ODE variable="U">
+          <TimeDerivative variable="U">
             <MathInline>a*(b*V - U)</MathInline>
-          </ODE>
-          <ODE variable="V">
+          </TimeDerivative>
+          <TimeDerivative variable="V">
             <MathInline>0.04*V*V + 5*V + 140.0 - U + iSyn</MathInline>
-          </ODE>
+          </TimeDerivative>
 
           
           <OnCondition>
