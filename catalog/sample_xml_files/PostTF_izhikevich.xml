@@ -1,0 +1,48 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<Nineml xmlns="http://nineml.org/9ML/0.1">
+  <ComponentClass name="Izhikevich">
+
+    <Parameter name="a" dimension='none'/>
+    <Parameter name="c" dimension='none'/>
+    <Parameter name="b" dimension='none'/>
+    <Parameter name="d" dimension='none'/>
+    <Parameter name="theta" dimension='voltage'/>
+
+    <!-- AnalogPort or Exposure?? -->
+    <AnalogPort name="iSyn", mode='reduce' dimension='current'/>
+    <AnalogPort name="U" mode="send"/>
+    <AnalogPort name="V" mode="send"/>
+    <EventPort name="spikeoutput" mode="send"/>
+    
+
+    <Dynamics>
+        <Regime name="subthreshold_regime">
+          <!-- if 'independent_variable' is missing, it should be assumed to be 't' -->
+          <!-- Should this 'ODE' be called 'Rate', RateODE, 'RateEqn' ??-->
+          <ODE variable="U">
+            <MathInline>a*(b*V - U)</MathInline>
+          </ODE>
+          <ODE variable="V">
+            <MathInline>0.04*V*V + 5*V + 140.0 - U + iSyn</MathInline>
+          </ODE>
+
+          
+          <OnCondition>
+            <Trigger>
+              <MathInline>V &gt; theta </MathInline>
+            </Trigger>
+
+            <StateAssignment variable="V" >
+              <MathInline>c</MathInline>
+            </StateAssignment>
+            <StateAssignment variable="U" >
+              <MathInline>U+d</MathInline>
+            </StateAssignment>
+            <EventOut port="spikeoutput" />
+          </OnCondition>
+
+        </Regime>
+    </Dynamics>
+
+  </Component>
+</Nineml>
