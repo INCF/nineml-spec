@@ -1,0 +1,1 @@
+Suggested schema for NineML has been moved to: trunk/catalog/sample_xml_files/
