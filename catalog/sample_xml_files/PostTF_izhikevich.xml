@@ -1,6 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<Nineml xmlns="http://nineml.org/9ML/0.1">
-  <ComponentClass name="Izhikevich">
+<NineML xmlns="comodl"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="comodl CommonModelLang_v0.1.xsd">
+
+  <ComponentClass name="izhikevichCell">
 
     <Parameter name="a" dimension='none'/>
     <Parameter name="c" dimension='none'/>
@@ -44,5 +47,5 @@
         </Regime>
     </Dynamics>
 
-  </Component>
-</Nineml>
+  </ComponentClass>
+</NineML>
