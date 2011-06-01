@@ -1,9 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<NineML xmlns="comodl"
+<NineML xmlns="http://nineml.org/9ML/0.1"
+    xmlns:comodl="CoModL"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="comodl CommonModelLang_v0.1.xsd">
+    xsi:schemaLocation="http://nineml.org/9ML/0.1 NineML_v0.2.xsd">
 
-  <ComponentClass name="izhikevichCell">
+  <ComponentClass name="izhikevichCell" xmlns="CoModL">
 
     <Parameter name="a" dimension='none'/>
     <Parameter name="c" dimension='none'/>
@@ -15,11 +16,18 @@
     <AnalogPort name="iSyn" mode='reduce' dimension='current'/>
     <AnalogPort name="U" mode="send" dimension='none'/>
     <AnalogPort name="V" mode="send" dimension='voltage'/>
-    <EventPort name="spikeoutput" mode="send"/>
+    <EventPort name="spikeOutput" mode="send"/>
     
 
     <Dynamics>
-        <Regime name="subthreshold_regime">
+        
+        <!-- Suggested addition Wednesday morning...-->
+        <StateVariable name="V" dimension="voltage"/>
+        <StateVariable name="U" dimension="none"/> 
+          
+        <Regime name="subthresholdRegime">
+            
+              
           <!-- if 'independent_variable' is missing, it should be assumed to be 't' -->
           <!-- Should this 'ODE' be called 'Rate', RateODE, 'RateEqn' ??-->
           <TimeDerivative variable="U">
@@ -38,10 +46,13 @@
             <StateAssignment variable="V" >
               <MathInline>c</MathInline>
             </StateAssignment>
+            
             <StateAssignment variable="U" >
               <MathInline>U+d</MathInline>
             </StateAssignment>
-            <EventOut port="spikeoutput" />
+            
+            <EventOut port="spikeOutput" />
+            
           </OnCondition>
 
         </Regime>
