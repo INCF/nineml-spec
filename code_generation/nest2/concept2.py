@@ -69,7 +69,7 @@ iaf_cond_exp_9ML_reduced.short_description = "Standard integrate and fire with e
 synapse_ports = ['cobaExcit_spikeinput', 'cobaInhib_spikeinput']
 AP_port = 'spike_output'
 V_port = 'V_m'
-initial_regime = "Regime3"
+initial_regime = "Regime7"
 
 initial_values = {
     'iaf_V': -70.0,

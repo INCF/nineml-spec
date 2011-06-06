@@ -2,31 +2,28 @@ from nineml.abstraction_layer import expressions
 
 class Condition(expressions.Expression):
 
-    def __init__(self, cond, name=None):
+
+    def __init__(self, rhs, name=None):
         
-        self.cond = cond
-        self.parse()
         self.name = name
+        self.rhs = rhs 
 
     def _clone(self, prefix, prefix_excludes, name ):
     
         return Condition( 
-                    cond = expressions.Expression.prefix(self,prefix=prefix,exclude=prefix_excludes,expr=self.cond),
+                    rhs = expressions.Expression.prefix(self,prefix=prefix,exclude=prefix_excludes,expr=self.rhs),
                     name=name
                     )
 
 
-
-    def parse(self):
-        """ parses and checks validity of condtional """
-        # overrides Expression.parse
-
+    def _parse_rhs(self,rhs):
         from nineml.abstraction_layer.cond_parse import cond_parse
-        self.names, self.funcs = cond_parse(self.cond)
+        return cond_parse(rhs)
+        
+
 
     def is_bool(self):
         """ Checks if conditions is pure bool: True, False"""
-        
         if self.names==set() and self.funcs==set():
             val = self.python_func()()
             if val==False:
@@ -42,7 +39,7 @@ class Condition(expressions.Expression):
         from nineml.abstraction_layer import math_namespace
 
         
-        expr = self.cond
+        expr = self.rhs
         # fix syntax to match python
         expr = expr.replace('&', ' and ')
         expr = expr.replace('|', ' or ')
@@ -55,16 +52,10 @@ class Condition(expressions.Expression):
 
     def as_expr(self):
         """ This is to behave as an expr"""
-        return self.cond
-
-    @property
-    def rhs(self):
-        """ This is to behave as an Expression"""
-        return self.cond
-        
+        return self.rhs
 
     def __repr__(self):
-        return "Condition('%s')" % (self.cond)
+        return "Condition('%s')" % (self.rhs)
 
 
     def encode(self, encoding):
@@ -76,14 +67,15 @@ class Condition(expressions.Expression):
         if not isinstance(other, self.__class__):
             return False
 
-        return self.cond == other.cond
+        return self.rhs == other.rhs
+
 
 
 
 
 ##     def to_xml(self):
 ##         return E(self.element_name,
-##                  E("conditional-inline", self.cond),
+##                  E("conditional-inline", self.rhs),
 ##                  name=self.name)
                  
 ##     @classmethod

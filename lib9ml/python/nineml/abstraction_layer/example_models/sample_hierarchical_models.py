@@ -79,10 +79,11 @@ def nmda():
     inter_event_regime = nineml.Regime(
         "taupeak := taur*taud/(taud - taur)*log(taud/taur)",
         "factor := 1/(exp(-taupeak/taud) - exp(-taupeak/taur))",
-        "gB(V) := 1/(1 + mgconc*exp(-1*gamma*V)/beta)",
-        "g(V,A,B) := gB(V)*gmax*(B-A)",
+        "gB := 1/(1 + mgconc*exp(-1*gamma*V)/beta)",
+        "g := gB*gmax*(B-A)",
         "dA/dt = -A/taur",
         "dB/dt = -B/taud",
+        "I := g * (E-V)",
         name="intereventregime",
         transitions=nineml.On(nineml.SpikeInputEvent,
                               do=["A = A + weight*factor",
@@ -90,30 +91,17 @@ def nmda():
         )
 
     ports = [nineml.RecvPort("V"),
-             nineml.SendPort("I = g(V,A,B)*(E - V) "), # this notation takes the assignment of Isyn out of the Regime
-             nineml.SendPort("gSyn = g(V,A,B)")]
+             nineml.SendPort("I"), # this notation takes the assignment of Isyn out of the Regime
+            ]
 
     nmda = models.ComponentNode("NMDAPSR",
                      regimes=[inter_event_regime],
                      analog_ports = ports
                      )
-    # deal with bindings
-    #nmda.backsub_bindings()
-    #nmda.backsub_equations()
     return nmda
 
 
 
-def get_hierachical_iaf_1coba():
-    assert False, "This is out of date. See Mike Hull before use"
-    
-    # Create a model, composed of an iaf neuron, and 
-    iaf_1coba_model = models.Model( name="iaf_1coba", subnodes = {"iaf" : iaf, "cobaExcit" : coba} )
-    iaf_1coba_model.connect_ports( "iaf.V", "cobaExcit.V" )
-    iaf_2coba_model.connect_ports( "cobaExcit.I", "iaf.ISyn" )
-    
-    
-    return iaf_1coba_model
 
 
 
@@ -169,6 +157,25 @@ def get_hierachical_iaf_nmda():
     
     
     
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 def get_hierachical_iaf_2coba_network(nNeurons = 2):
     assert False, "This is out of date. See Mike Hull before use"
     

@@ -23,7 +23,7 @@ CONSTANT {
 
 COMMENT
   MIKE: COMMENTED OUT, bindings are really functions, not variables
-  {%- for binding in component.bindings if not binding.args  %}
+  {%- for binding in component.bindings %}
   {{ binding.lhs }} = {{ binding.rhs }}
   {%- endfor %}
 ENDCOMMENT

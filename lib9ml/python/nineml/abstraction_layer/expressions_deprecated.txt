@@ -30,6 +30,37 @@ class Binding():
         return self.names
     args = property(getArgs)
 
+    def build_self(self,lhs,rhs):
+        self.name = lhs
+        self.rhs = rhs
+        
+        return 
+#        import re
+#        self.name, self.args, self.value =  []       
+#
+#
+#        if self.name in math_namespace.symbols:
+#            raise ValueError, "binding '%s' redefines math symbols (such as 'e','pi')" % self.as_expr()
+#
+#        self.parse()
+#
+#        if self.name in self.names:
+#            raise ValueError, "Binding expression '%s': may not self reference." % self.name
+#
+#        # detect recursive binding
+#        if self.args and self.name in self.funcs:
+#            raise ValueError, "Binding expression '%s': is recursive." % self.as_expr()
+#
+#        # check that rhs depends on all args
+#        if self.args and self.names.intersection(self.args)!=set(self.args):
+#            raise ValueError, "Binding expression '%s': rhs does not depend on some of the arguments ." % self.as_expr()
+#
+#        # remove args from names 
+#        self.names.difference_update(self.args)
+#
+#        if self.name in self.args:
+#            raise ValueError, "Binding expression '%s': function binding has argument symbol = binding symbol." % self.name
+#
 
 
 def get_args(s):

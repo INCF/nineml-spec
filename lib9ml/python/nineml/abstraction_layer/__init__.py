@@ -413,7 +413,7 @@ class Transition(object):
         if isinstance(node,str):
             node = expr_to_obj(node)
         
-        if isinstance(node, (Assignment, Inplace)):
+        if isinstance(node, (Assignment)):
             self.nodes.append(node)
         elif isinstance(node, EventPort):
             if node.mode=="recv":
@@ -502,7 +502,8 @@ class Transition(object):
         if isinstance(self.condition,EventPort):
             args+=[E("condition-on-event-port", self.condition.to_xml())]
         else:
-            attrs["condition"] = self.condition.cond
+            attrs["condition"] = self.condition.rhs
+            #attrs["condition"] = self.condition.cond
 
             
         if self.to:
@@ -557,7 +558,7 @@ class Transition(object):
         name = element.get("name")
         nodes = []
         tag_class_map = {}
-        for node_cls in (EventPort, Assignment, Inplace):
+        for node_cls in (EventPort, Assignment):
             tag_class_map[NINEML+node_cls.element_name] = node_cls
         for elem in element.iterchildren():
             if elem.tag==NINEML+"condition-on-event-port": continue
@@ -750,7 +751,7 @@ class Component(object):
         self.parameters = self.user_parameters
 
         # check bindings only have static parameters and functions on rhs
-        self.check_binding_expressions()
+        #self.check_binding_expressions()
         
         # check we aren't redefining math symbols (like e,pi)
         self.check_non_parameter_symbols()
@@ -807,9 +808,11 @@ class Component(object):
             # may only write to user_parameters
             if p.mode=="recv" and p.symbol in self.non_parameter_symbols:
                 raise ValueError, "'recv' AnalogPorts may not target existing binding symbols,"+\
-                      "ODE lhs vars, or lhs of Assignments/Inplace ops."
+                      "ODE lhs vars, or lhs of Assignments ops."
 
-            if p.mode=="send" and p.expr==None and (p.symbol not in self.variables):
+            binding_names = [b.lhs for b in self.bindings]
+            print binding_names
+            if p.mode=="send" and p.expr==None and (p.symbol not in self.variables and not p.symbol in binding_names) :
                 raise ValueError, "'send' AnalogPort with symbol='%s' source undefined in component." % (p.symbol,)
         
 
@@ -864,11 +867,11 @@ class Component(object):
                     e.substitute_binding(self.bindings_map[f])
                 else:
                     raise ValueError, "Equation '%s' calls unresolvable functions." % e.as_expr()
-            e.parse()
+            #e.parse()
             for n in e.names:
                 if n in self.bindings_map:
                     e.substitute_binding(self.bindings_map[n])
-            e.parse()
+            #e.parse()
 
         # There should be no missing functions now.
         assert [f for e in self.equations for f in e.missing_functions] == []
@@ -999,11 +1002,6 @@ class Component(object):
             symbols.update( e.names )
             
             
-            
-            
-        #print 'Eqns'
-        #print symbols
-        
         # now same for conditions
         for c in self.conditions:
             symbols.update(c.names)
@@ -1059,8 +1057,7 @@ class Component(object):
         if statics.intersection(self.integrated_variables)!=set():
             raise ValueError, "Error: user bound symbols which appear on lhs of ODEs"
         if statics.intersection(self.assigned_variables)!=set():
-            raise ValueError, "Error: user bound symbols which appear on lhs of Assignments"+\
-                  "and Inplace OPs"
+            raise ValueError, "Error: user bound symbols which appear on lhs of Assignments OPs"
         
         return statics
 
@@ -1073,7 +1070,7 @@ class Component(object):
         # TODO: cache once determined
         variables = set([])
         for equation in self.equations:
-            if isinstance(equation, (Assignment,Inplace)):
+            if isinstance(equation, (Assignment)):
                 variables.add(equation.to)
         return variables
 

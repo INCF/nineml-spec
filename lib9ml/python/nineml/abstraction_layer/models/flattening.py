@@ -162,10 +162,7 @@ class ModelToSingleComponentReducer(object):
                     
         for p in new_ports.values():
             if not p.expr: continue
-            #print '  ', p, p.expr
-            p.expr.rhs = p.expr.rhs_name_transform( {originalname:targetname} )
-            p.expr.parse()
-            #print '->', p, p.expr
+            p.expr.rhs_name_transform_inplace( {originalname:targetname} )
         
         for regime in newRegimeLookupMap.values():
             
@@ -173,17 +170,11 @@ class ModelToSingleComponentReducer(object):
                 binding.name_transform_inplace( {originalname:targetname} )
 
             for eqn in regime.equations:
-                #print '  ', eqn, 
-                eqn.rhs = eqn.rhs_name_transform( {originalname:targetname} )
-                eqn.parse()
-                #print '->', eqn
+                eqn.rhs_name_transform_inplace( {originalname:targetname} )
             
             
             for av in regime.assignments:
-                #print '  ', av,
                 av.rhs = av.rhs_name_transform( {originalname:targetname} )
-                av.parse()
-                #print '->', av
             
             for transition in regime.transitions:
                 
@@ -192,10 +183,7 @@ class ModelToSingleComponentReducer(object):
                     if  isinstance(node, nineml.EventPort):
                         if node.symbol == originalname: node.symbol = targetname
                     elif isinstance(node, nineml.Assignment):
-                        #print '  ', node, 
-                        node.rhs = node.rhs_name_transform( {originalname:targetname} )
-                        node.parse()
-                        #print '->', node
+                        node.rhs_name_transform_inplace( {originalname:targetname} )
                     else:
                         assert False
 
@@ -204,8 +192,9 @@ class ModelToSingleComponentReducer(object):
                     if  transition.condition.symbol == originalname: 
                         transition.condition.symbol = targetname
                 elif isinstance(transition.condition, nineml.Condition):
-                        transition.condition.cond = transition.condition.rhs_name_transform( {originalname:targetname} )
-                        transition.condition.parse()
+                        #transition.condition.cond = transition.condition.rhs_name_transform( {originalname:targetname} )
+                        transition.condition.rhs_name_transform_inplace( {originalname:targetname} )
+                        #transition.condition.parse()
                 else: 
                     assert False
 

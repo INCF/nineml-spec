@@ -23,8 +23,8 @@ FIRST_REGIME_FLAG = 1001
 def as_expr(node):
     if isinstance(node, nineml.Assignment):
         return node.as_expr()
-    elif isinstance(node, nineml.Inplace):
-        return node.as_assignment().as_expr()
+    #elif isinstance(node, nineml.Inplace):
+    #    return node.as_assignment().as_expr()
     elif isinstance(node, nineml.EventPort):
         return ""
     else:
