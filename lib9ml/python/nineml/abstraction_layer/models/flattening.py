@@ -54,9 +54,9 @@ class ModelToSingleComponentReducer(object):
         #    nodes[nc] = FilterType( regime.nodes )
         
         newnodes= [ expr.clone(prefix=prefix,prefix_excludes=excludes,prefix_name=True) for expr in regime.nodes ]
-        print "Remapped Transition"
-        for n in newnodes:
-            print n
+        #print "Remapped Transition"
+        #for n in newnodes:
+        #    print n
 
         return newnodes
 
@@ -158,7 +158,7 @@ class ModelToSingleComponentReducer(object):
     # This is a mess, to be cleaned:
     @classmethod
     def global_remap_port_ext(cls, originalname, targetname, new_ports, newRegimeLookupMap):
-        print 'Global-Remap [%s- >%s]'%(originalname,targetname)
+        #print 'Global-Remap [%s- >%s]'%(originalname,targetname)
                     
         for p in new_ports.values():
             if not p.expr: continue
@@ -260,8 +260,8 @@ class ModelToSingleComponentReducer(object):
 
 
 
-        for ns,p in new_ports.iteritems():
-            print p, p.symbol
+        #for ns,p in new_ports.iteritems():
+        #    print p, p.symbol
         
         self.reducedcomponent = nineml.Component( self.componentname, regimes = newRegimeLookupMap.values(), ports=new_ports.values() )
         

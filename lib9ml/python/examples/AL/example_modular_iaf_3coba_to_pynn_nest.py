@@ -18,7 +18,7 @@ sys.path.append(join(root, "code_generation/nest2"))
 
 import os
 # TODO: improve nest dl-module build and path support
-os.environ['LD_LIBRARY_PATH']=os.environ['LD_LIBRARY_PATH']+':%s/../code_generation/nest2/nest_model/build/.libs' % os.getcwd()
+os.environ['LD_LIBRARY_PATH']=os.environ.get('LD_LIBRARY_PATH','')+':%s/code_generation/nest2/nest_model/build/.libs' % root
 print os.environ['LD_LIBRARY_PATH']
            
 

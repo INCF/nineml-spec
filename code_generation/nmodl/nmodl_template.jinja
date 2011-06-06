@@ -2,11 +2,14 @@ TITLE Spiking node generated from the 9ML file {{input_filename}} using 9ml2nmod
 
 {%- set assigned_variables = component.assigned_variables.difference(component.integrated_variables) %}
 {%- set range_variables = component.user_parameters.union(assigned_variables).union(unconnected_receive_ports) %}
-{%- set neuron_variables = list(range_variables) + list(binding_names) %}
+{%- set neuron_variables = sorted( list(range_variables) + list(binding_names) ) %}
 
 NEURON {
   POINT_PROCESS {{ component.name|replace('-', '_') }}
-  RANGE {{ neuron_variables|join(', ') }}, regime
+  {#RANGE {{ neuron_variables|join(', ') }}, regime #}
+  {% for nv in neuron_variables %} RANGE {{nv}} 
+  {% endfor %}
+  RANGE regime
 }
 
 CONSTANT {

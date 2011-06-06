@@ -17,6 +17,36 @@ class RegimeElement(object):
 
 
 
+from nineml.abstraction_layer.expr_parse import expr_parse
+
+
+
+#class MathStringUtils(object):
+#    @classmethod
+#    def prefix(cls, prefix="", exclude=[], expr=None):
+#        assert expr
+#        """ Applies a prefix to all names & funcs if not in math_namespace
+#        returns new expr ... does not modify inplace
+#
+#        Exclude is a list of names (not functions) to be excluded from prefixing
+#
+#        If expr is None, the prefixing is computed for self.rhs and returned.
+#        self.rhs is not modified.
+#        
+#        """
+#
+#        # names that are in math_symbol space do not show up in self.names
+#        for name in self.names:
+#            if name in exclude: continue
+#            expr = Expression.name_replace(name,prefix+name,expr)
+#        for func in self.funcs:
+#            if func not in math_namespace.namespace:
+#                expr = Expression.name_replace(func,prefix+func,expr, func_ok=True)
+#        return expr
+
+
+
+
 
 class Expression(object):
 
@@ -25,8 +55,10 @@ class Expression(object):
     C equivalents, binding and name substitution """
 
 
+    # Subclasses can over-ride this, if need be.
     def _parse_rhs(self,rhs):
-        from nineml.abstraction_layer.expr_parse import expr_parse
+        # A temporary measure, this is until the parser is 
+        # generalised to handle conditionals
         return expr_parse(rhs)
 
     def set_rhs(self, rhs):
@@ -81,6 +113,7 @@ class Expression(object):
 
         # names that are in math_symbol space do not show up in self.names
         if expr==None:
+            assert False
             expr = self.rhs
         for name in self.names:
             if name in exclude: continue
@@ -152,17 +185,12 @@ class Expression(object):
         
 
     def substitute_binding(self,b):
-        """ replaces all occurences of binding symbol or function with the binding rhs with arguments substituted """
-        import re
         # check b.name is not used as a function
         p_func = re.compile(r"(^|([ */+-,(]+))%s\(" % b.name)
         if p_func.search(self.rhs):
             raise ValueError, "substituting non-function binding '%s', found use in '%s' as function." % (b.name, self.rhs)
         self.rhs = Expression.name_replace(b.name,"(%s)" % b.rhs,self.rhs)
-
-
-
-
+        
     @property
     def missing_functions(self):
         """ yield names of functions in the rhs which are not in the math namespace"""
@@ -182,201 +210,167 @@ class Expression(object):
 
 
 
+# TO GO:
+class Equation(Expression):
+    pass
 
-        
-        
-class ExpressionWithLHS(Expression):
 
-    def __init__(self, lhs, rhs):
-        self.lhs = lhs
-        self.rhs = rhs
 
+class ExpressionWithLHS(Equation):
     # Sub-classes should over ride this, to allow 
     # proper-prefixing:
-    def _prefix_lhs(self, prefix="", prefix_excludes=[] ):
-        raise NotImplementedError()
-
-    def lhs_name_transform_inplace(self, name_map):
-        raise NotImplementedError()
-
-
         
     def name_transform_inplace(self, name_map):
         # Transform the lhs & rhs:
         self.lhs_name_transform_inplace( name_map )
         self.rhs_name_transform_inplace( name_map ) 
+
+
+    def get_atoms(self):
+        return itertools.chain(self.names, self.funcs, self.get_lhs_atoms() )
+    atoms = property(get_atoms)
     
-    
-    
-
-class Binding(Expression, RegimeElement):
-    # EM: In the context of NEST and GPU code generation, bindings make sense:
-    #  They are constants, i.e. a binding which takes state vars or ports in rhs
-    #  should throw an exception.
-    #  Users can specify them manually for eash of short hands,
-    #  but automatic symbolic symplification of the expressions may well produce
-    #  new bindings which can be pre-calculated outside of the integration loop.
-    #
-    #  Let's keep this in mind, and keep Bindings as we move forward!
-    
-    element_name = "binding"
-    
-
-
-
-
-    def name_transform_inplace(self, transform_dict ):
-        assert False, "This needs to be pushed higher"
-        # Note, this is IN PLACE  !!!:
-        #argStr = ""
-        #if self.args:
-        #    argStr = "(%s)"%( ",".join( transform_dict.get(a,a) for a in self.args ) ) 
-        lhs = transform_dict.get(self.name,self.name) #+ argStr
-
-        rhs = self.rhs
-        for n in itertools.chain( self.names, self.funcs): #, self.args):
-            if math_namespace.is_in_math_namespace(n): continue
-            if not n in transform_dict: continue
-            rhs = re.sub( r'\b%s\b'%n, transform_dict[n], rhs )
-        
-        self.build_self(lhs,rhs)
-
-
-
-
-    def _parse_rhs(self,rhs):
-        from nineml.abstraction_layer.expr_parse import expr_parse
-        return expr_parse(rhs)
-
-
-    def build_self(self,lhs,rhs):
-        self.name = lhs
-        self.rhs = rhs
-        
-
-    def __init__(self, lhs,rhs):
-        
-        self.build_self(lhs,rhs)
-    
-
-    def _clone(self, prefix, prefix_excludes, name ):
-        lhs = name
-        rhs = self.rhs
-
-        for n in self.atoms:
-            if n in prefix_excludes: continue
-            if math_namespace.is_in_math_namespace(n): continue
-            rhs = re.sub( r'\b%s\b'%n, prefix+n, rhs )
-        
-        return   Binding( lhs=lhs, rhs=rhs)
-
-    def __repr__(self):
-        return "<Binding: %s>" % self.as_expr()
-
-
-    @classmethod
-    def match(cls,s):
-        """ Checks the syntax of the lhs to be that of a binding
-        rhs parsing is not yet performed """
-
-        try:
-            cls.pre_parse(s)
-        except ValueError:
-            return False
-
-        return True
-
-    @classmethod
-    def pre_parse(cls,s):
-        """ Determines if the lhs is a symbol binding, or function binding
-
-        If symbol:
-
-        return symbol, (), rhs
-
-        If function:
-
-        return symbol, args, rhs
-        where args is a tuple of function argument symbols
-        """
-
-        import re
-        
-        if s.count(':=')!=1:
-            raise ValueError, "Invalid binding syntax. Must contain ':=' once"
-
-        lhs,rhs = s.split(":=")
-
-        lhs = lhs.strip()
-        rhs = rhs.strip()
-
-        p_binding_symbol = re.compile("^[a-zA-Z_]+[a-zA-Z_0-9]*$")
-
-        # not a function
-        if p_binding_symbol.match(lhs):
-            return lhs,(),rhs
-
-        # lhs matches a function?
-
-        func_regex = r"[a-zA-Z_]+[a-zA-Z_0-9]*[ ]*\([ ]*([a-zA-Z_]+[a-zA-Z_0-9]*)([ ]*,[ ]*[a-zA-Z_]+[a-zA-Z_0-9]*)*[ ]*\)"
-
-        p_binding_func = re.compile(func_regex)
-
-        if not p_binding_func.match(lhs):
-            raise ValueError, "Invalid binding lhs syntax '%s'. Not symbol binding, and not a function" % lhs
-
-        symbol,rest = lhs.split("(")
-        symbol = symbol.strip()
-
-        args = rest.split(",")
-        args[-1] = args[-1].replace(")","")
-        args = [arg.strip() for arg in args]
-        
-        return symbol,tuple(args),rhs
-
-    #def get_rhs(self):
-    #    return self.value
-    #
-    #def set_rhs(self,v):
-    #    self.value = v
-
-    #rhs = property(get_rhs, set_rhs)
-
-    @property
-    def lhs(self):
-        return self.name
-        if self.args:
-            return self.name+"("+", ".join(self.args)+")"
-        else:
-            return self.name
-
-    @property
-    def to(self):
-        return self.name
+    def lhs_name_transform_inplace(self, name_map):
+        raise NotImplementedError()
+    def get_lhs_atoms(self):
+        raise NotImplementedError()
+    def get_lhs():
+        raise NotImplementedError() 
 
     def __eq__(self, other):
         if not isinstance(other, self.__class__):
             return False
-        return self.name == other.name and self.value == other.value
+        return self.lhs == other.lhs and self.rhs == other.rhs
 
+
+
+
+
+        
+        
+class ExpressionWithSimpleLHS(ExpressionWithLHS):
+
+    def __init__(self, lhs, rhs):
+        single_symbol = re.compile("^[a-zA-Z_]+[a-zA-Z_0-9]*$")
+        assert single_symbol.match( lhs ) 
+        self.lhs = lhs
+        self.rhs = rhs
+
+    def get_lhs_atoms(self):
+        return [self.lhs]
+
+    def lhs_name_transform_inplace( self, name_map ):
+        self.lhs = name_map.get(self.lhs,self.lhs) 
+   
+
+    # Syntactic Sugar - to remove:
+    # -----------------------------
+    @property
+    def to(self):
+        return self.lhs
+    @property
+    def name(self):
+        return self.lhs
+    
+
+
+
+
+
+class Binding(ExpressionWithSimpleLHS, RegimeElement):
+    
+    element_name = "binding"
+    
+
+    def __init__(self, lhs,rhs):
+        ExpressionWithSimpleLHS.__init__(self, lhs, rhs)
+
+    def __repr__(self):
+        return "<Binding: %s := %s>" % (self.lhs,self.rhs)
+
+    def _clone(self, prefix, prefix_excludes, name ):
+
+        def doPrefix(atom):
+            if a in prefix_excludes: return False
+            if math_namespace.is_in_math_namespace(a): return False
+            return True
+
+        b = Binding( lhs = self.lhs, rhs = self.rhs )
+        name_map = dict( [ (a, prefix+a) for a in self.atoms if doPrefix(a) ])
+        b.name_transform_inplace( name_map = name_map )
+        return b
+
+    # XML Serialisation:
     def to_xml(self):
         return E(self.element_name,
                  E("math-inline", self.rhs),
                  name=self.lhs)
-
-    def as_expr(self):
-        return "%s := %s" % (self.lhs, self.rhs)
 
     @classmethod
     def from_xml(cls, element):
         return cls(element.get("name"), element.find(NINEML+"math-inline").text)
 
 
+    # Deprecated - to remove:
+    def as_expr(self):
+        return "%s := %s" % (self.lhs, self.rhs)
+
+
+
+
+
+
+
+
+#class Assignment(Equation, RegimeElement):
+class Assignment(ExpressionWithSimpleLHS, RegimeElement):
+    element_name = "assignment"
+    n = 0
+        
+    # Interface:
+    def _clone(self, prefix, prefix_excludes, name ):
+    
+        to = self.to if self.to in prefix_excludes else prefix + self.to
+        return Assignment( 
+                    to = to,
+                    expr = Expression.prefix(self,prefix=prefix,exclude=prefix_excludes,expr=self.rhs),
+                    name = name
+                    )
+    
+   
+    def __init__(self, to, expr, name=None):
+        ExpressionWithSimpleLHS.__init__(self, lhs=to, rhs=expr)
+
+
+    def self_referencing(self):
+        """ Returns True if the assignment is of the form U = f(U,...), otherwise False"""
+        return self.to in self.names
+
+    def __repr__(self):
+        return "Assignment('%s', '%s')" % (self.to, self.rhs)
+
+    def as_expr(self):
+        return "%s = %s" % (self.lhs, self.rhs)
+
+    def to_xml(self):
+        return E(self.element_name,
+                 E("math-inline", self.rhs),
+                 name=self.name,
+                 to=self.to)
+                 
+    @classmethod
+    def from_xml(cls, element):
+        assert element.tag == NINEML+cls.element_name
+        math = element.find(NINEML+"math-inline").text
+        return cls(to=element.get("to"), name=element.get("name"),
+                   expr=math)
+
+
+
+
 
 
             
-class Equation(Expression):
-    pass
         
 
 
@@ -469,159 +463,9 @@ class ODE(Equation, RegimeElement):
 
 
 
-class Assignment(Equation, RegimeElement):
-    element_name = "assignment"
-    n = 0
-        
-    # Interface:
-    def _clone(self, prefix, prefix_excludes, name ):
-    
-        to = self.to if self.to in prefix_excludes else prefix + self.to
-        return Assignment( 
-                    to = to,
-                    expr = Expression.prefix(self,prefix=prefix,exclude=prefix_excludes,expr=self.rhs),
-                    name = name
-                    )
-    
-   
-    def __init__(self, to, expr, name=None):
-        self.to = to
-        self.rhs = expr
-        self.name = name or ("Assignment%d" % Assignment.n)
-
-        if self.to in math_namespace.symbols:
-            raise ValueError, "Assignment '%s' redefines math symbols (such as 'e','pi')" % self.as_expr()
-
-        Assignment.n += 1
-
-
-    @property
-    def lhs(self):
-        return self.to
-
-    def self_referencing(self):
-        """ Returns True if the assignment is of the form U = f(U,...), otherwise False"""
-        return self.to in self.names
-
-    def __repr__(self):
-        return "Assignment('%s', '%s')" % (self.to, self.rhs)
-
-    def as_expr(self):
-        return "%s = %s" % (self.to,
-                            self.rhs)
-
-
-    def __eq__(self, other):
-        from operator import and_
-
-        if not isinstance(other, self.__class__):
-            return False
-
-        return reduce(and_, (self.name == other.name,
-                             self.to == other.to,
-                             self.rhs == other.expr))
-
-    def to_xml(self):
-        return E(self.element_name,
-                 E("math-inline", self.rhs),
-                 name=self.name,
-                 to=self.to)
-                 
-    @classmethod
-    def from_xml(cls, element):
-        assert element.tag == NINEML+cls.element_name
-        math = element.find(NINEML+"math-inline").text
-        return cls(to=element.get("to"), name=element.get("name"),
-                   expr=math)
 
 
 
-#class Inplace(Equation):
-#    element_name = "inplace"
-#    n = 0
-#    op_name_map = {'+=':'Add','-=':'Sub','*=':'Mul','/=':'Div'}
-#
-#    op = "+="
-#    
-#    def get_rhs(self):
-#        return self.expr
-#    def set_rhs(self,v):
-#        self.expr = v
-#    rhs = property(get_rhs, set_rhs)
-#
-#    @property
-#    def lhs(self):
-#        return self.to
-#
-#    def __init__(self, to, op, expr, name=None):
-#        
-#        self.to = to
-#        self.op = op
-#
-#        # catch invalid ops and give the user feedback
-#        try:
-#            self.op_name = self.op_name_map[op]
-#        except KeyError:
-#            raise ValueError, "Unsupported inplace operation '%s', supported ops: %s" %(self.op_name, str(self.op_name_map))
-#        
-#        self.expr = expr
-#
-#        if self.to in math_namespace.symbols:
-#            raise ValueError, "Inplace '%s' operates on math symbols (such as 'e','pi')" % self.as_expr()
-#
-#        self.name = name or ("Inplace%s%d" % (self.op_name,Inplace.n))
-#        Inplace.n += 1
-#        self.parse()
-#
-#
-#    def __repr__(self):
-#        return "Inplace('%s', '%s', '%s')" % (self.to,self.op,self.expr)
-#
-#    def as_expr(self):
-#        return "%s %s %s" % (self.to,self.op, self.expr)
-#
-#    def as_assignment(self):
-#        expr = "%s %s %s" % (self.to, self.op[0], self.expr)
-#        return Assignment(self.to, expr, self.name)
-#
-#
-#    def __eq__(self, other):
-#        from operator import and_
-#
-#        if not isinstance(other, self.__class__):
-#            return False
-#
-#        return reduce(and_, (self.name == other.name,
-#                             self.to == other.to,
-#                             self.op == other.op,
-#                             self.expr == other.expr))
-#
-#    def to_xml(self):
-#        return E(self.element_name,
-#                 E("math-inline", self.expr),
-#                 name=self.name,
-#                 to=self.to, op=self.op)
-#                 
-#    @classmethod
-#    def from_xml(cls, element):
-#        assert element.tag == NINEML+cls.element_name
-#        math = element.find(NINEML+"math-inline").text
-#        return cls(to=element.get("to"), op=element.get("op"), expr=math,
-#                   name=element.get("name"))
-#
-## factories for Inplace ops
-#def InplaceAdd(to,expr):
-#    return Inplace(to,'+=',expr)
-#
-#def InplaceSub(to,expr):
-#    return Inplace(to,'-=',expr)
-#
-#def InplaceMul(to,expr):
-#    return Inplace(to,'*=',expr)
-#
-#def InplaceDiv(to,expr):
-#    return Inplace(to,'/=',expr)
-#
 
 def expr_to_obj(s, name = None):
     """ Construct nineml objects from expressions """ 
@@ -637,9 +481,13 @@ def expr_to_obj(s, name = None):
     s = s.strip()
 
     # Do we have a binding?
-    if Binding.match(s):
+    if ":=" in s:
         lhs, rhs = [x.strip() for x in s.split(":=")]
         return Binding(lhs, rhs)
+
+    #if Binding.match(s):
+    #    lhs, rhs = [x.strip() for x in s.split(":=")]
+    #    return Binding(lhs, rhs)
 
     # re for an expression -> groups into lhs, op, rhs
     p_eqn = re.compile(r"(?P<lhs>[a-zA-Z_]+[a-zA-Z_0-9]*(/?[a-zA-Z_]+[a-zA-Z_0-9]*)?)\s*(?P<op>[+\-*/:]?=)\s*(?P<rhs>.*)")

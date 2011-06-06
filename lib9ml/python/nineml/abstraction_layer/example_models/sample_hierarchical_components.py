@@ -51,13 +51,15 @@ hh_k =  models.ComponentNode("Hodgkin-Huxley-K",
 
                       bindings=[
 			    "q10 := 3.0**((celsius - 6.3)/10.0)",  
-			    "alpha_n(V) := -0.01*(V+55.0)/(exp(-(V+55.0)/10.0) - 1.0)",
-			    "beta_n(V) := 0.125*exp(-(V+65.0)/80.0)",
-			    "ntau(V) := 1.0/(q10*(alpha_n(V) + beta_n(V)))",
-			    "ninf(V) := alpha_n(V)/(alpha_n(V) + beta_n(V))",
-			    "gk(n) := gkbar*n*n*n*n"
+			    "alpha_n := -0.01*(V+55.0)/(exp(-(V+55.0)/10.0) - 1.0)",
+			    "beta_n := 0.125*exp(-(V+65.0)/80.0)",
+			    "ntau := 1.0/(q10*(alpha_n(V) + beta_n(V)))",
+			    "ninf := alpha_n(V)/(alpha_n(V) + beta_n(V))",
+			    "gk := gkbar*n*n*n*n",
+                "i := gk*(ek - V)",
 				],
-		      analog_ports=[ 	SendPort("i=gk(n)*(ek - V)"),
+		      analog_ports=[ 	
+                SendPort("i"),
 				RecvPort("V") ]
 		)
 

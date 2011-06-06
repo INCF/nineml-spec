@@ -710,9 +710,9 @@ class Component(object):
         bindings_map = {}
         for b in bindings:
             assert isinstance(b, Binding), "Received invalid binding."
-            if b.name in bindings_map and b.as_expr()!=bindings_map[b.name].as_expr():
-                raise ValueError, "Multiple non-equal bindings on '%s' " % b.name
-            bindings_map[b.name] = b
+            if b.lhs in bindings_map and b.as_expr()!=bindings_map[b.lhs].as_expr():
+                raise ValueError, "Multiple non-equal bindings on '%s' " % b.lhs
+            bindings_map[b.lhs] = b
         self.bindings_map = bindings_map
 
 
@@ -757,11 +757,11 @@ class Component(object):
         self.check_non_parameter_symbols()
 
         # We should not do this for the user
-        #self.backsub_bindings()
+        #self.backsub _bindings()
 
         # now would be a good time to backsub expressions
         # but we should not do this for the user.
-        #self.backsub_equations()
+        #self.backsub _equations()
 
 
     def __getattr__(self, name):
@@ -811,7 +811,7 @@ class Component(object):
                       "ODE lhs vars, or lhs of Assignments ops."
 
             binding_names = [b.lhs for b in self.bindings]
-            print binding_names
+            #print binding_names
             if p.mode=="send" and p.expr==None and (p.symbol not in self.variables and not p.symbol in binding_names) :
                 raise ValueError, "'send' AnalogPort with symbol='%s' source undefined in component." % (p.symbol,)
         
@@ -852,7 +852,7 @@ class Component(object):
                 else:
                     raise ValueError, "binding '%s' calls unresolvable functions." % b.as_expr()
             return _bd_tree  
-
+        
         bd_tree = {}
         for b in self.bindings_map.itervalues():
             bd_tree[b.name] = build_and_resolve_bdtree(b)
@@ -876,7 +876,24 @@ class Component(object):
         # There should be no missing functions now.
         assert [f for e in self.equations for f in e.missing_functions] == []
 
-    # TODO: backsub_conditions
+#    def backsub_ports(self):
+#        """ this function finds all send ports that are not connected to state_variables, and substitutes
+#        in the relevant bindings"""
+#        
+#        for port in self.analog_ports:
+#            print port
+#            if port.name in self.bindings_map:
+#                b = self.bindings_map[port.name]
+#                port.expr = b
+#                print '  (Binding -> %s'% b
+#                print port
+#            else:
+#                pass
+#
+#        #assert False
+
+
+
     
     def resolve_references(self):
         """ Uses self.regimes_map and self.transitions_map to resolve references in self.regimes and self.transitions"""
