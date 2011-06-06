@@ -8,3 +8,30 @@ nineml_mechanisms/
 lib9ml/python/examples/AL/*.dot
 lib9ml/python/examples/AL/*.png
 lib9ml/python/examples/AL/*.xml
+
+# /code_generation/lems/
+/code_generation/lems/TestLEMS.xml
+/code_generation/lems/*.9ml
+/code_generation/lems/*.png
+/code_generation/lems/*.dot
+/code_generation/lems/*_parsetab.py
+/code_generation/lems/izhikevich.xml
+/code_generation/lems/*.mod
+/code_generation/lems/*.c
+/code_generation/lems/*.dll
+/code_generation/lems/*_nrn.py
+/code_generation/lems/*.sbml
+/code_generation/lems/*.xml
+
+# /lib9ml/python/
+/lib9ml/python/build
+
+# /lib9ml/python/examples/AL/
+/lib9ml/python/examples/AL/*.png
+/lib9ml/python/examples/AL/*.dot
+/lib9ml/python/examples/AL/*.xml
+/lib9ml/python/examples/AL/expr_parse_Calc_parsetab.py
+/lib9ml/python/examples/AL/cond_parse_Calc_parsetab.py
+
+# /lib9ml/python/nineml/abstraction_layer/models/
+/lib9ml/python/nineml/abstraction_layer/models/coba_synapse.dot
