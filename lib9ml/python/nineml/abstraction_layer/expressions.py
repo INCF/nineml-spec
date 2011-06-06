@@ -306,6 +306,10 @@ class Alias(ExpressionWithSimpleLHS, RegimeElement):
                  E("math-inline", self.rhs),
                  name=self.lhs)
 
+    def AcceptVisitor(self, visitor,**kwargs):
+        return visitor.VisitAlias(self, **kwargs)
+
+
     @classmethod
     def from_xml(cls, element):
         return cls(element.get("name"), element.find(NINEML+"math-inline").text)
@@ -324,6 +328,12 @@ class Alias(ExpressionWithSimpleLHS, RegimeElement):
 
 #class Assignment(Equation, RegimeElement):
 class Assignment(ExpressionWithSimpleLHS, RegimeElement):
+
+    def AcceptVisitor(self, visitor, **kwargs):
+        return visitor.VisitAssignment(self, **kwargs)
+
+
+
     element_name = "assignment"
     n = 0
         
@@ -444,6 +454,10 @@ class ODE(Equation, RegimeElement):
                                  self.rhs)
 
     
+    def AcceptVisitor(self, visitor, **kwargs):
+        return visitor.VisitODE(self,**kwargs)
+
+
     def to_xml(self):
         return E(self.element_name,
                  E("math-inline", self.rhs),

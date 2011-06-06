@@ -69,6 +69,9 @@ class Regime(object):
     element_name = "regime"
     n = 0
     
+    def AcceptVisitor(self, visitor):
+        return visitor.VisitRegime(self)
+
     def __init__(self, *nodes, **kwargs):
         """A node may either be an Equation or a Regime."""
         self.nodes = set()
@@ -266,12 +269,12 @@ class Regime(object):
                 
         return regimes_set
 
-    def to_xml(self):
-        kwargs = {}
-        return E(self.element_name,
-                 name=self.name,
-                 *[node.to_xml() for node in self.nodes],
-                 **kwargs)
+    #def to_xml(self):
+    #    kwargs = {}
+    #    return E(self.element_name,
+    #             name=self.name,
+    #             *[node.to_xml() for node in self.nodes],
+    #             **kwargs)
 
     @classmethod
     def from_xml(cls, element):
@@ -493,6 +496,11 @@ class Transition(object):
                              self.condition == other.condition,
                              sorted(self.nodes, key=sort_key) == sorted(other.nodes, key=sort_key)))
 
+
+    def AcceptVisitor(self, visitor, **kwargs):
+        return visitor.VisitTransition(self, **kwargs)
+
+
     def to_xml(self):
         attrs = {"name": self.name}
         args = []
@@ -597,6 +605,9 @@ class Transition(object):
 
 class Component(object):
     element_name = "component"
+
+    def AcceptVisitor(self,visitor):
+        return visitor.VisitComponent(self)
     
     def __init__(self, name, parameters = [], regimes = [], transitions=[],
                  ports = [], aliases = []):
@@ -1138,6 +1149,9 @@ class Component(object):
         # See also: test_expressions.py -> test_prefixing
     
     def to_xml(self):
+        from visitors import XMLWriterOld
+        return XMLWriterOld().VisitComponent(self)
+
         elements = [E.parameter(name=p) for p in self.parameters] + \
                    [p.to_xml() for p in self.analog_ports] +\
                    [r.to_xml() for r in self.regimes] + \

@@ -108,6 +108,10 @@ class Port(object):
         return E(self.element_name, symbol=self.symbol,
                  mode=self.mode, **kwargs)
 
+
+    def AcceptVisitor(self,visitor,**kwargs):
+        return visitor.VisitPort(self,**kwargs)
+
     #@property
     #def name(self):
     #    return self.element_name+"_"+self.symbol
