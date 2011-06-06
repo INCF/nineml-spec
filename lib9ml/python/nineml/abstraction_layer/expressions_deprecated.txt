@@ -1,0 +1,61 @@
+
+
+
+class Expression():
+    # Deprecated:    
+    def parse(self):
+        assert False, "Deprecated, this should now be taken care of by a property: rhs"
+        """ parses and checks validity of rhs """
+        from nineml.abstraction_layer.expr_parse import expr_parse
+        self.names, self.funcs = expr_parse(self.rhs)
+
+class Conditional():
+    def parse(self):
+        assert False
+        """ parses and checks validity of condtional """
+        # overrides Expression.parse
+
+        from nineml.abstraction_layer.cond_parse import cond_parse
+        self.names, self.funcs = cond_parse(self.rhs)
+
+    # Deprecated:
+    def get_cond(self):
+        return self.rhs
+    cond = property(get_cond)
+
+
+class Binding():
+    def getArgs(self):
+        assert False
+        return self.names
+    args = property(getArgs)
+
+
+
+def get_args(s):
+    assert False
+    """ return arguments of a function in a list,
+    handling functions in the arguments. """
+
+    # bracket level count
+    bl = 0
+    last_arg_end = 0
+    args = []
+
+    if s[0]==",":
+        raise ValueError, "get_args: missing first arg."
+
+    if s[0]==")":
+        return 0,[]
+    
+    for i in xrange(len(s)):
+        if s[i]=="(":
+            bl+=1
+        elif s[i]=="," and bl==0:
+            args+=[s[last_arg_end:i].strip()]
+            last_arg_end=i+1
+        elif s[i]==")":
+            if bl==0:
+                args+=[s[last_arg_end:i].strip()]
+                return i, args
+            bl-=1

@@ -1,0 +1,10 @@
+*.pyc
+*_parse_*_parsetab.*
+mike_dev/*
+reduced.txt
+/code_generation/nest2/nest_model/*
+Results/
+nineml_mechanisms/
+lib9ml/python/examples/AL/*.dot
+lib9ml/python/examples/AL/*.png
+lib9ml/python/examples/AL/*.xml
