@@ -117,9 +117,9 @@ class Model(TreeNode):
 from nineml.abstraction_layer import Component
 
 class ComponentNode(Component,TreeNode, ):
-    def __init__(self, name, parameters = [], regimes = [],  analog_ports = [], bindings = [], model=None):
+    def __init__(self, name, parameters = [], regimes = [],  analog_ports = [], aliases = [], model=None):
         TreeNode.__init__(self, )
-        Component.__init__(self, name=name, parameters = parameters, regimes=regimes, ports=analog_ports,bindings=bindings)
+        Component.__init__(self, name=name, parameters = parameters, regimes=regimes, ports=analog_ports,aliases=aliases)
 
         self.query = ComponentQueryer(self)
 

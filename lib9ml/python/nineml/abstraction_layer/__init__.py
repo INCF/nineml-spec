@@ -126,7 +126,7 @@ class Regime(object):
 
         if isinstance(node, (RegimeElement)):
             if isinstance(node, Assignment):
-                raise ValueError, "Assignments are now only allowed in Transitions.  Use a function binding instead"
+                raise ValueError, "Assignments are now only allowed in Transitions.  Use a function alias instead"
             else:
                 if node.to in self.symbol_map:
                         raise ValueError, "Adding node to Regime '%s', expression '%s' symbol='%s' collides with existing node '%s'" %\
@@ -203,14 +203,14 @@ class Regime(object):
     
 
     @property
-    def bindings(self):
+    def aliases(self):
         """
-        Yields all the bindings contained within this Regime or any of its
+        Yields all the aliases contained within this Regime or any of its
         children.
 
         As nodes_filter is a generator, so too is this function.
         """
-        return self.nodes_filter(lambda x: isinstance(x,Binding))
+        return self.nodes_filter(lambda x: isinstance(x,Alias))
 
     @property
     def odes(self):
@@ -280,7 +280,7 @@ class Regime(object):
         kwargs = {}
         tag_class_map = {}
         name = element.get("name")
-        for node_cls in (ODE, Binding):
+        for node_cls in (ODE, Alias):
             tag_class_map[NINEML+node_cls.element_name] = node_cls
         for elem in element.iterchildren():
             node_cls = tag_class_map[elem.tag]
@@ -599,7 +599,7 @@ class Component(object):
     element_name = "component"
     
     def __init__(self, name, parameters = [], regimes = [], transitions=[],
-                 ports = [], bindings = []):
+                 ports = [], aliases = []):
         """
         Regime graph should not be edited after contructing a component
 
@@ -696,24 +696,24 @@ class Component(object):
             assert len(self.regimes)==1, "User Error: Component contains island regimes"+\
                    "and more than one regime."
 
-        # Allow strings for bindings, map using expr_to_obj
+        # Allow strings for aliases, map using expr_to_obj
         # Eliminate duplicates
 
         # This should not be a set, but a list!
-        # We resolve later colliding bindings
-        bindings = map(expr_to_obj,set(bindings))
+        # We resolve later colliding aliases
+        aliases = map(expr_to_obj,set(aliases))
         for r in self.regimes:
-            bindings+=list(r.bindings)
-        #self.bindings = bindings
+            aliases+=list(r.aliases)
+        #self.aliases = aliases
 
-        # build bindings map
-        bindings_map = {}
-        for b in bindings:
-            assert isinstance(b, Binding), "Received invalid binding."
-            if b.lhs in bindings_map and b.as_expr()!=bindings_map[b.lhs].as_expr():
-                raise ValueError, "Multiple non-equal bindings on '%s' " % b.lhs
-            bindings_map[b.lhs] = b
-        self.bindings_map = bindings_map
+        # build aliases map
+        aliases_map = {}
+        for b in aliases:
+            assert isinstance(b, Alias), "Received invalid alias."
+            if b.lhs in aliases_map and b.as_expr()!=aliases_map[b.lhs].as_expr():
+                raise ValueError, "Multiple non-equal aliases on '%s' " % b.lhs
+            aliases_map[b.lhs] = b
+        self.aliases_map = aliases_map
 
 
         # Get the user defined ports and check them
@@ -750,14 +750,14 @@ class Component(object):
 
         self.parameters = self.user_parameters
 
-        # check bindings only have static parameters and functions on rhs
-        #self.check_binding_expressions()
+        # check aliases only have static parameters and functions on rhs
+        #self.check_alias_expressions()
         
         # check we aren't redefining math symbols (like e,pi)
         self.check_non_parameter_symbols()
 
         # We should not do this for the user
-        #self.backsub _bindings()
+        #self.backsub _aliases()
 
         # now would be a good time to backsub expressions
         # but we should not do this for the user.
@@ -807,12 +807,12 @@ class Component(object):
                       "EventPorts go in Transition conditions(recv) and Transition nodes (send)"
             # may only write to user_parameters
             if p.mode=="recv" and p.symbol in self.non_parameter_symbols:
-                raise ValueError, "'recv' AnalogPorts may not target existing binding symbols,"+\
+                raise ValueError, "'recv' AnalogPorts may not target existing alias symbols,"+\
                       "ODE lhs vars, or lhs of Assignments ops."
 
-            binding_names = [b.lhs for b in self.bindings]
-            #print binding_names
-            if p.mode=="send" and p.expr==None and (p.symbol not in self.variables and not p.symbol in binding_names) :
+            alias_names = [b.lhs for b in self.aliases]
+            #print alias_names
+            if p.mode=="send" and p.expr==None and (p.symbol not in self.variables and not p.symbol in alias_names) :
                 raise ValueError, "'send' AnalogPort with symbol='%s' source undefined in component." % (p.symbol,)
         
 
@@ -834,43 +834,43 @@ class Component(object):
             if symb and p.symbol not in symb: continue
             yield p
 
-    def backsub_bindings(self):
-        """ This function finds bindings with undefined functions, and uses
-        the binding_map to attempt to resolve them. """
+    def backsub_aliases(self):
+        """ This function finds aliases with undefined functions, and uses
+        the alias_map to attempt to resolve them. """
 
-        # build binding dependency tree
+        # build alias dependency tree
         # and perform substitution, recursively
         def build_and_resolve_bdtree(b):
             _bd_tree = {}
             for f in b.missing_functions:
-                if f in self.bindings_map:
-                    _bd_tree[f] = build_and_resolve_bdtree(self.bindings_map[f])
+                if f in self.aliases_map:
+                    _bd_tree[f] = build_and_resolve_bdtree(self.aliases_map[f])
                     # resolve (lower level is already resolved now) 
-                    b.substitute_binding(self.bindings_map[f])
+                    b.substitute_alias(self.aliases_map[f])
                     # re-calc functions
                     b.parse()
                 else:
-                    raise ValueError, "binding '%s' calls unresolvable functions." % b.as_expr()
+                    raise ValueError, "alias '%s' calls unresolvable functions." % b.as_expr()
             return _bd_tree  
         
         bd_tree = {}
-        for b in self.bindings_map.itervalues():
+        for b in self.aliases_map.itervalues():
             bd_tree[b.name] = build_and_resolve_bdtree(b)
 
     def backsub_equations(self):
         """ this function finds all undefined functions in equations, and uses
-        the binding_map to resolve them """
+        the alias_map to resolve them """
 
         for e in self.equations:
             for f in e.missing_functions:
-                if f in self.bindings_map:
-                    e.substitute_binding(self.bindings_map[f])
+                if f in self.aliases_map:
+                    e.substitute_alias(self.aliases_map[f])
                 else:
                     raise ValueError, "Equation '%s' calls unresolvable functions." % e.as_expr()
             #e.parse()
             for n in e.names:
-                if n in self.bindings_map:
-                    e.substitute_binding(self.bindings_map[n])
+                if n in self.aliases_map:
+                    e.substitute_alias(self.aliases_map[n])
             #e.parse()
 
         # There should be no missing functions now.
@@ -878,14 +878,14 @@ class Component(object):
 
 #    def backsub_ports(self):
 #        """ this function finds all send ports that are not connected to state_variables, and substitutes
-#        in the relevant bindings"""
+#        in the relevant aliases"""
 #        
 #        for port in self.analog_ports:
 #            print port
-#            if port.name in self.bindings_map:
-#                b = self.bindings_map[port.name]
+#            if port.name in self.aliases_map:
+#                b = self.aliases_map[port.name]
 #                port.expr = b
-#                print '  (Binding -> %s'% b
+#                print '  (Alias -> %s'% b
 #                print port
 #            else:
 #                pass
@@ -941,7 +941,7 @@ class Component(object):
                              self.parameters == other.parameters,
                              sorted(self.transitions, key=sort_key) == sorted(other.transitions, key=sort_key),
                              sorted(self.regimes, key=sort_key) == sorted(other.regimes, key=sort_key),
-                             sorted(self.bindings, key=sort_key) == sorted(other.bindings, key=sort_key)))
+                             sorted(self.aliases, key=sort_key) == sorted(other.aliases, key=sort_key)))
 
     @property
     def odes(self):
@@ -970,32 +970,32 @@ class Component(object):
             yield t.condition
 
     @property
-    def bindings(self):
-        return self.bindings_map.itervalues()
+    def aliases(self):
+        return self.aliases_map.itervalues()
 
 
-    def check_binding_expressions(self):
+    def check_alias_expressions(self):
         """ Bound symbols (which are static when running the model)
         can depend only on 'user parameters' (which are static when running the model)
 
-        This parses the binding rhs expressions to verify this is so.
+        This parses the alias rhs expressions to verify this is so.
         """
 
         params = self.user_parameters
         
-        for binding in self.bindings:
+        for alias in self.aliases:
             # It is up to the user to call backsub at the appropriate time,
             # or implement other facilities for resolving user defined functions
-            # bindings ...
+            # aliases ...
             # There for the following check is removed:
-            #for f in binding.missing_functions:
-            #    raise ValueError, "Binding '%s' calls undefined function '%s' " % str(binding.as_expr(),f)
+            #for f in alias.missing_functions:
+            #    raise ValueError, "Alias '%s' calls undefined function '%s' " % str(alias.as_expr(),f)
             
-            non_param_names = self.non_parameter_symbols.intersection(binding.names)
-            # may reference other bindings
-            non_param_names = non_param_names.difference(self.bindings_map.iterkeys())
+            non_param_names = self.non_parameter_symbols.intersection(alias.names)
+            # may reference other aliases
+            non_param_names = non_param_names.difference(self.aliases_map.iterkeys())
             if non_param_names:
-                raise ValueError, "Binding symbols referencing variables is illegal: %s" % str(non_param_names)
+                raise ValueError, "Alias symbols referencing variables is illegal: %s" % str(non_param_names)
 
     def check_non_parameter_symbols(self):
         """ Check that non-parameters symbols are not conflicting
@@ -1023,8 +1023,8 @@ class Component(object):
         for c in self.conditions:
             symbols.update(c.names)
 
-        # now same for bindings
-        for b in self.bindings:
+        # now same for aliases
+        for b in self.aliases:
             symbols.update(b.names)
 
         symbols = symbols.difference(self.non_parameter_symbols)
@@ -1037,7 +1037,7 @@ class Component(object):
     @property
     @cache
     def non_parameter_symbols(self):
-        """ All bindings, assignment and inplace left-hand-sides, plus X for ODE dX/dt = ...""" 
+        """ All aliases, assignment and inplace left-hand-sides, plus X for ODE dX/dt = ...""" 
         # TODO: cache once determined
         symbols = set([])
         symbols.update(self.variables)
@@ -1066,9 +1066,9 @@ class Component(object):
     @cache
     def bound_symbols(self):
         # TODO: cache once determined
-        """ Return symbols which are subject to bindings (static assignments)"""
+        """ Return symbols which are subject to aliases (static assignments)"""
         # construct set of keys (bound symbols)
-        statics = set(self.bindings_map)
+        statics = set(self.aliases_map)
 
         # check user is not writing to bound variables
         if statics.intersection(self.integrated_variables)!=set():
@@ -1082,7 +1082,7 @@ class Component(object):
     @cache
     def assigned_variables(self):
         """ All assignment and inplace lhs' (which may also be ODE integrated variables),
-        but not bindings (which are not variables, but static) """
+        but not aliases (which are not variables, but static) """
 
         # TODO: cache once determined
         variables = set([])
@@ -1141,7 +1141,7 @@ class Component(object):
         elements = [E.parameter(name=p) for p in self.parameters] + \
                    [p.to_xml() for p in self.analog_ports] +\
                    [r.to_xml() for r in self.regimes] + \
-                   [b.to_xml() for b in self.bindings] +\
+                   [b.to_xml() for b in self.aliases] +\
                    [t.to_xml() for t in self.transitions]
         attrs = {"name": self.name}
         return E(self.element_name, *elements, **attrs)
@@ -1159,7 +1159,7 @@ class Component(object):
         """
         assert element.tag == NINEML+cls.element_name
         parameters = [p.get("name") for p in element.findall(NINEML+"parameter")]
-        bindings = [Binding.from_xml(b) for b in element.findall(NINEML+Binding.element_name)] 
+        aliases = [Alias.from_xml(b) for b in element.findall(NINEML+Alias.element_name)] 
         regimes = [Regime.from_xml(e) for e in element.findall(NINEML+Regime.element_name)]
 
         analog_ports = []
@@ -1175,7 +1175,7 @@ class Component(object):
         #    print p
         #print "-----------------"
         # allocate new component
-        new_comp = cls(element.get("name"), parameters, regimes=regimes, transitions=transitions, bindings=bindings, ports=analog_ports)
+        new_comp = cls(element.get("name"), parameters, regimes=regimes, transitions=transitions, aliases=aliases, ports=analog_ports)
 
         return new_comp
 
@@ -1302,7 +1302,7 @@ class Component(object):
 
         hh_im = hh.join(im,prefix="Im",I=im.I)
 
-        This will prefix the im component state vars, bindings, parameters with Im_ in the resulting Component hh_im.
+        This will prefix the im component state vars, aliases, parameters with Im_ in the resulting Component hh_im.
 
         Notes:
 
@@ -1330,7 +1330,7 @@ class Component(object):
         # setup new transitions
 
         # component name prefixing:
-        # bindings: lhs, rhs names & funcs if not in math_namespace
+        # aliases: lhs, rhs names & funcs if not in math_namespace
         # ode dep var, rhs names & funcs if not in math_namespace
         # assignment lhs, rhs names & funcs if not in math_namespace
         # inplace lhs, rhs names & funcs if not in math_namespace

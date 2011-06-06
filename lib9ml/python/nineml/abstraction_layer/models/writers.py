@@ -27,8 +27,8 @@ def dump_reduced(component, filename):
 
     BINDINGS:
     ==================
-    #for b in $component.bindings:
-        Binding: $b
+    #for b in $component.aliases:
+        Alias: $b
     #end for
 
 

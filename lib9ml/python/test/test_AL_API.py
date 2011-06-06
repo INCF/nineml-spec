@@ -35,7 +35,7 @@ class ComponentTestCase(unittest.TestCase):
         e = expr_to_obj("U = V+1")
         assert not e.self_referencing()
 
-    def test_binding_backsub(self):
+    def test_alias_backsub(self):
         from nineml.abstraction_layer import expr_to_obj, get_args
 
         # Determine missing functions
@@ -53,10 +53,10 @@ class ComponentTestCase(unittest.TestCase):
 
         e = expr_to_obj("U(x,y):= exp(x) + _q10(y,x)")
         b = expr_to_obj("_q10 := 20")
-        self.assertRaises(ValueError, e.substitute_binding, b)
+        self.assertRaises(ValueError, e.substitute_alias, b)
 
         e = expr_to_obj("U = exp(x) + _q10")
-        e.substitute_binding(b)
+        e.substitute_alias(b)
         #print e.rhs
         assert e.rhs == "exp(x) + (20)"
 
@@ -66,37 +66,37 @@ class ComponentTestCase(unittest.TestCase):
     
         e = expr_to_obj("U(x,y):= exp(x) + _q10(y,x) + 1/_q10(z,w)")
         b = expr_to_obj("_q10(a,b) := a+b")
-        e.substitute_binding(b)
+        e.substitute_alias(b)
         #print e.rhs
         assert e.rhs == "exp(x) + (y+x) + 1/(z+w)"
 
         e = expr_to_obj("dA/dt = exp(x) + _q10(exp(exp(z)+1),cos(sin(q)-tan(z))) + 1/_q10(z,w)")
         b = expr_to_obj("_q10(a,b) := a+b")
-        e.substitute_binding(b)
+        e.substitute_alias(b)
         assert e.rhs == "exp(x) + (exp(exp(z)+1)+cos(sin(q)-tan(z))) + 1/(z+w)"
 
-        # check that it does all levels of binding resolution (i.e. also in arguments of a binding)
+        # check that it does all levels of alias resolution (i.e. also in arguments of a alias)
         e = expr_to_obj("dA/dt = exp(x) + _q10(_q10(exp(z),1),cos(sin(q)-tan(z))) + 1/_q10(z,w)")
         b = expr_to_obj("_q10(a,b) := a+b")
-        e.substitute_binding(b)
+        e.substitute_alias(b)
         assert e.rhs == "exp(x) + ((exp(z)+1)+cos(sin(q)-tan(z))) + 1/(z+w)"
 
         # catch number of args mismatch
         e = expr_to_obj("U(x,y):= exp(x) + _q10(y,x,z) + 1/_q10(z,w)")
-        self.assertRaises(ValueError, e.substitute_binding, b)
+        self.assertRaises(ValueError, e.substitute_alias, b)
         
-        # check recursive binding is caught
+        # check recursive alias is caught
         self.assertRaises(ValueError, expr_to_obj, "a(x) := a(x) + 1")
 
         # check
         b1 = expr_to_obj("v1(x) := exp(x)")
         b2 = expr_to_obj("p := e")
-        b1.substitute_binding(b2)
+        b1.substitute_alias(b2)
         #print b1.rhs
         assert b1.rhs == "exp(x)"
         
 
-        # check catch of binding rhs having no dependance on lhs args
+        # check catch of alias rhs having no dependance on lhs args
         self.assertRaises(ValueError, expr_to_obj, "a(x) := exp(z) + 1")
         self.assertRaises(ValueError, expr_to_obj, "a(x,y,z) := exp(z) + x")
         b = expr_to_obj("a(x,y,z) := exp(z) + x + y")
@@ -104,13 +104,13 @@ class ComponentTestCase(unittest.TestCase):
         b1 = expr_to_obj("v1(x) := 1/v2(x+1,v3(x)+1) + v3(x)")
         b2 = expr_to_obj("v2(x,y) := v3(x)*y + 10")
         b3 = expr_to_obj("v3(x) := exp(x)")
-        b2.substitute_binding(b3)
+        b2.substitute_alias(b3)
         #print b2.rhs
         assert b2.rhs == "(exp(x))*y + 10"
-        b1.substitute_binding(b2)
+        b1.substitute_alias(b2)
         #print b1.rhs
         assert b1.rhs == "1/((exp(x+1))*v3(x)+1 + 10) + v3(x)"
-        b1.substitute_binding(b3)
+        b1.substitute_alias(b3)
         #print b1.rhs
         assert b1.rhs == "1/((exp(x+1))*(exp(x))+1 + 10) + (exp(x))"
         #assert e.rhs == "exp(x) + ((exp(z)+1)+cos(sin(q)-tan(z))) + 1/(z+w)"
@@ -119,18 +119,18 @@ class ComponentTestCase(unittest.TestCase):
 
         # now to components
 
-        bindings = [
+        aliases = [
             "v1(x) := 1/v2(x+1,v3(x)+1) + v3(x)",
             "v2(x,y) := v3(x)*y + 10",
             "v3(x) := exp(x)**2"
             ]
         r = nineml.Regime("dV/dt = 0.04*V*V + 5*V + 140.0 - U + Isyn + v1(v3(x))")
 
-        c1 = nineml.Component("Izhikevich", regimes = [r], bindings=bindings )
-        c1.backsub_bindings()
+        c1 = nineml.Component("Izhikevich", regimes = [r], aliases=aliases )
+        c1.backsub_aliases()
         c1.backsub_equations()
 
-        bm = c1.bindings_map
+        bm = c1.aliases_map
         assert bm['v1'].rhs == "1/((exp(x+1)**2)*(exp(x)**2)+1 + 10) + (exp(x)**2)"
         assert bm['v2'].rhs == "(exp(x)**2)*y + 10"
         assert bm['v3'].rhs == "exp(x)**2"
@@ -162,7 +162,7 @@ class ComponentTestCase(unittest.TestCase):
         assert p.symbol == 'q'
         assert p.expr.rhs == "v**2"
 
-        # catch a binding expression ...
+        # catch a alias expression ...
         self.assertRaises(ValueError, nineml.AnalogPort, "q := v**2",mode='send')
         # ode
         self.assertRaises(ValueError, nineml.AnalogPort, "dq/dt = v**2",mode='send')
@@ -246,10 +246,10 @@ class ComponentTestCase(unittest.TestCase):
             "dV/dt = 0.04*V*V + 5*V + 140.0 - U + Isyn",
             transitions = nineml.On(nineml.SpikeInputEvent,do="V+=10"))
 
-        # ok to read from a binding, where function bindings are most interesting.
-        # TODO: read from binding
+        # ok to read from a alias, where function aliases are most interesting.
+        # TODO: read from alias
         #c1 = nineml.Component("Izhikevich", regimes = [r], ports=[nineml.AnalogPort("_q10","send")] )
-        # may not write to a binding
+        # may not write to a alias
         self.assertRaises(ValueError,nineml.Component, "Izhikevich", regimes = [r], ports=[nineml.AnalogPort("_q10","recv")])
 
         # may not read from an undefined symbol
@@ -396,7 +396,7 @@ class ComponentTestCase(unittest.TestCase):
             "dV/dt = 0.04*V*V + 5*V + 140.0 - U + Isyn",
             transitions = nineml.On(nineml.SpikeInputEvent,do=["V+=10", "U+=d"]))
 
-        #TODO: ok to read from a binding, where function bindings are most interesting.
+        #TODO: ok to read from a alias, where function aliases are most interesting.
         #p_q10 = nineml.AnalogPort("_q10(V)","send")
         #ports = [p_q10]
         c1 = nineml.Component("Izhikevich", regimes = [r] )

@@ -48,7 +48,7 @@ class ModelToSingleComponentReducer(object):
         prefix = component.getTreePosition(jointoken="_") + "_"
         excludes = ['t']
 
-        #nodeClasses = [nineml.Equation, nineml.Binding]
+        #nodeClasses = [nineml.Equation, nineml.Alias]
         #nodes={}
         #for nc in nodeClasses:
         #    nodes[nc] = FilterType( regime.nodes )
@@ -166,8 +166,8 @@ class ModelToSingleComponentReducer(object):
         
         for regime in newRegimeLookupMap.values():
             
-            for binding in regime.bindings:
-                binding.name_transform_inplace( {originalname:targetname} )
+            for alias in regime.aliases:
+                alias.name_transform_inplace( {originalname:targetname} )
 
             for eqn in regime.equations:
                 eqn.rhs_name_transform_inplace( {originalname:targetname} )

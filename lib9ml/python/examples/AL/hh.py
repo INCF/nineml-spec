@@ -7,7 +7,7 @@ Andrew Davison, 2010
 from nineml.abstraction_layer import *
 import os
 
-bindings = [
+aliases = [
     "q10 := 3.0**((celsius - 6.3)/10.0)",  # temperature correction factor
     "alpha_m(V) := -0.1*(V+40.0)/(exp(-(V+40.0)/10.0) - 1.0)",  # m
     "beta_m(V) := 4.0*exp(-(V+65.0)/18.0)",
@@ -36,7 +36,7 @@ hh_regime = Regime(
     transitions=On("V > theta",do=[SpikeOutputEvent])
 )
 
-# the rest are not "parameters" but bindings, assigned vars, state vars, indep vars, ports, etc.
+# the rest are not "parameters" but aliases, assigned vars, state vars, indep vars, ports, etc.
 parameters = ['el', 'C', 'ek', 'ena', 'gkbar', 'gnabar', 'theta', 'gl','celsius',
               'Isyn']
 
@@ -45,7 +45,7 @@ ports = [SendPort("V"),
 
 c1 = Component("Hodgkin-Huxley", parameters=parameters,
                       regimes=(hh_regime,),
-                      bindings=bindings, ports=ports)
+                      aliases=aliases, ports=ports)
 
 # write to file object f if defined
 try:

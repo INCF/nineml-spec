@@ -123,7 +123,7 @@
 #                                          for name in combined_model.state_variables)
 #        dct["synapse_types"] = dct["synapse_models"].keys() #really need an ordered dict
 #        dct["injectable"] = True # need to determine this. How??
-#        dct["recordable"] = [port.name for port in combined_model.analog_ports] + ['spikes', 'regime'] #+ [binding.name for binding in combined_model.bindings]
+#        dct["recordable"] = [port.name for port in combined_model.analog_ports] + ['spikes', 'regime'] #+ [alias.name for alias in combined_model.aliases]
 #
 #        #print dct['recordable']
 #        #print

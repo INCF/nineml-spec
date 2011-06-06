@@ -32,7 +32,7 @@ import os
 import nineml.abstraction_layer as al
 
 
-bindings = [
+aliases = [
     "q10 := 3.0**((celsius - 6.3)/10.0)", # Taking from hh.py - no formula in paper, but constant value 5 (which can be achieved with celsius = 20.95)
     "alpha_m(V) := -0.1*(V+35.0)/(exp(-(V+35.0)/10.0) - 1.0)",  # m - just a change of constant from hh.py
     "beta_m(V) := 4.0 * exp(-(V+60.0)/18.0)",
@@ -116,7 +116,7 @@ ports = [al.SendPort("V"),
          ]
 c1 = al.Component("Hodgkin-Huxley-id14", parameters=parameters,
                       regimes=(hh_regime,),
-                      bindings=bindings, ports=ports)
+                      aliases=aliases, ports=ports)
 
 
 # write to file object f if defined

@@ -140,7 +140,7 @@ def build_context(component, weight_variables, input_filename="[Unknown-Filename
 
     from nineml.abstraction_layer.models import dump_reduced
     dump_reduced( component, '/tmp/reducedcomponent.txt')
-    component.backsub_bindings()
+    component.backsub_aliases()
     component.backsub_equations()
     dump_reduced( component, '/tmp/reducedcomponent.txt')
         
@@ -164,7 +164,7 @@ def build_context(component, weight_variables, input_filename="[Unknown-Filename
         # Added by Mike:
         "reduce_port_terminations": reduce_port_terminations,
         "weights_as_states": weights_as_states,
-        'binding_names': [b.name for b in component.bindings],
+        'alias_names': [b.name for b in component.aliases],
         'list':list, #This is a hack so we can build lists from inside jinja
         'sorted':sorted, #This is a hack so we can build lists from inside jinja
     }

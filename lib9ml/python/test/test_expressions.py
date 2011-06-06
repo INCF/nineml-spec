@@ -17,7 +17,7 @@ class ExpressionsTestCase(unittest.TestCase):
         assert pfx_c == "PRE_x>10 & pi < 3 & exp(pi,PRE_y)==1"
         assert isinstance(pfx_c, str) 
 
-        b = Binding("ntau(V)","1/(q10*(alpha_n(V) + beta_n(V)))")
+        b = Alias("ntau(V)","1/(q10*(alpha_n(V) + beta_n(V)))")
         pfx_b = b.prefix("PRE_")
         assert pfx_b == "PRE_ntau(V) := 1/(PRE_q10*(PRE_alpha_n(V) + PRE_beta_n(V)))"
 

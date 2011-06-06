@@ -52,7 +52,7 @@ class Expression(object):
 
     """ This is a base class for Expressions and Conditionals which provides
     the basic interface for parsing, yielding of python functions,
-    C equivalents, binding and name substitution """
+    C equivalents, alias and name substitution """
 
 
     # Subclasses can over-ride this, if need be.
@@ -184,11 +184,11 @@ class Expression(object):
         return p_func.sub(to, rhs)
         
 
-    def substitute_binding(self,b):
+    def substitute_alias(self,b):
         # check b.name is not used as a function
         p_func = re.compile(r"(^|([ */+-,(]+))%s\(" % b.name)
         if p_func.search(self.rhs):
-            raise ValueError, "substituting non-function binding '%s', found use in '%s' as function." % (b.name, self.rhs)
+            raise ValueError, "substituting non-function alias '%s', found use in '%s' as function." % (b.name, self.rhs)
         self.rhs = Expression.name_replace(b.name,"(%s)" % b.rhs,self.rhs)
         
     @property
@@ -277,16 +277,16 @@ class ExpressionWithSimpleLHS(ExpressionWithLHS):
 
 
 
-class Binding(ExpressionWithSimpleLHS, RegimeElement):
+class Alias(ExpressionWithSimpleLHS, RegimeElement):
     
-    element_name = "binding"
+    element_name = "alias"
     
 
     def __init__(self, lhs,rhs):
         ExpressionWithSimpleLHS.__init__(self, lhs, rhs)
 
     def __repr__(self):
-        return "<Binding: %s := %s>" % (self.lhs,self.rhs)
+        return "<Alias: %s := %s>" % (self.lhs,self.rhs)
 
     def _clone(self, prefix, prefix_excludes, name ):
 
@@ -295,7 +295,7 @@ class Binding(ExpressionWithSimpleLHS, RegimeElement):
             if math_namespace.is_in_math_namespace(a): return False
             return True
 
-        b = Binding( lhs = self.lhs, rhs = self.rhs )
+        b = Alias( lhs = self.lhs, rhs = self.rhs )
         name_map = dict( [ (a, prefix+a) for a in self.atoms if doPrefix(a) ])
         b.name_transform_inplace( name_map = name_map )
         return b
@@ -480,14 +480,14 @@ def expr_to_obj(s, name = None):
     # strip surrounding whitespace
     s = s.strip()
 
-    # Do we have a binding?
+    # Do we have a alias?
     if ":=" in s:
         lhs, rhs = [x.strip() for x in s.split(":=")]
-        return Binding(lhs, rhs)
+        return Alias(lhs, rhs)
 
-    #if Binding.match(s):
+    #if Alias.match(s):
     #    lhs, rhs = [x.strip() for x in s.split(":=")]
-    #    return Binding(lhs, rhs)
+    #    return Alias(lhs, rhs)
 
     # re for an expression -> groups into lhs, op, rhs
     p_eqn = re.compile(r"(?P<lhs>[a-zA-Z_]+[a-zA-Z_0-9]*(/?[a-zA-Z_]+[a-zA-Z_0-9]*)?)\s*(?P<op>[+\-*/:]?=)\s*(?P<rhs>.*)")

@@ -18,7 +18,7 @@ hh_na = models.ComponentNode(
 			     name="hh_regime_na") 
 			],
 
-                bindings=[
+                aliases=[
 			    "q10 := 3.0**((celsius - 6.3)/10.0)",  
 			    "alpha_m := -0.1*(V+40.0)/(exp(-(V+40.0)/10.0) - 1.0)",  
 			    "beta_m := 4.0*exp(-(V+65.0)/18.0)",
@@ -49,7 +49,7 @@ hh_k =  models.ComponentNode("Hodgkin-Huxley-K",
 				      )
 			      ],
 
-                      bindings=[
+                      aliases=[
 			    "q10 := 3.0**((celsius - 6.3)/10.0)",  
 			    "alpha_n := -0.01*(V+55.0)/(exp(-(V+55.0)/10.0) - 1.0)",
 			    "beta_n := 0.125*exp(-(V+65.0)/80.0)",
@@ -72,7 +72,7 @@ hh_pas = models.ComponentNode("Hodgkin-Huxley-Pas",
 				)
 			      ],
 
-                      bindings=[],
+                      aliases=[],
 		      analog_ports=[ 	SendPort("i=gl*(el - V)"),
 				RecvPort("V") ]
 		)
@@ -87,7 +87,7 @@ hh_base = models.ComponentNode("Hodgkin-Huxley-Base",
 			    transitions=On("V > theta",do=[SpikeOutputEvent])
  				)
 			      ],
-                      bindings=[], 
+                      aliases=[], 
 		      analog_ports=[ ReducePort("i", op="+"), 
                               SendPort("V") ]
 		)

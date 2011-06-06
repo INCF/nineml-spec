@@ -11,9 +11,9 @@ def component_to_native_brian(c):
 
     assert len(c.regime_map)==1, "brian supports 1 regime natively"
 
-    # back substitute bindings which need bindings
-    hh.backsub_bindings()
-    # substitute bindings in equations
+    # back substitute aliases which need aliases
+    hh.backsub_aliases()
+    # substitute aliases in equations
     hh.backsub_equations()
 
     eqns = []
