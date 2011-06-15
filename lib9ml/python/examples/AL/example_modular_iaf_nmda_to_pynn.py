@@ -22,7 +22,7 @@ sys.path.append(join(root, "code_generation/nmodl"))
            
 
 from nineml.abstraction_layer.example_models import  get_hierachical_iaf_nmda
-from nineml.abstraction_layer.models import ModelToSingleComponentReducer
+from nineml.abstraction_layer.flattening import ComponentFlattener
 
 import pyNN.neuron as sim
 import pyNN.neuron.nineml as pyNNml
@@ -64,7 +64,7 @@ parameters = {
 }
 
 
-parameters = ModelToSingleComponentReducer.flatten_namespace_dict( parameters )
+parameters = ComponentFlattener.flatten_namespace_dict( parameters )
 
 
 cells = sim.Population(1, celltype_cls, parameters)

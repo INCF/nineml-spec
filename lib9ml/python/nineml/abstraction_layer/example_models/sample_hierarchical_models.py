@@ -72,27 +72,33 @@ def get_coba():
 
 def nmda():
     inter_event_regime = al.Regime(
-        "taupeak := taur*taud/(taud - taur)*log(taud/taur)",
-        "factor := 1/(exp(-taupeak/taud) - exp(-taupeak/taur))",
-        "gB := 1/(1 + mgconc*exp(-1*gamma*V)/beta)",
-        "g := gB*gmax*(B-A)",
-        "dA/dt = -A/taur",
-        "dB/dt = -B/taud",
-        "I := g * (E-V)",
         name="intereventregime",
-        transitions=al.DoOn(al.InputEvent('spikeinput'),
+        time_derivatives = ["dA/dt = -A/taur", "dB/dt = -B/taud" ],
+        transitions=[al.DoOn(al.InputEvent('spikeinput'),
                               do=["A = A + weight*factor",
-                                  "B = B + weight*factor"])
+                                  "B = B + weight*factor"])] 
         )
 
-    ports = [al.RecvPort("V"),
-             al.SendPort("I"), 
-             al.RecvEventPort('spikeinput')
-            ]
+    analog_ports = [al.RecvPort("V"), al.SendPort("I"), ]
+    event_ports =  [al.RecvEventPort('spikeinput')      ]
 
-    nmda = al.ComponentNode("NMDAPSR",
-                     regimes=[inter_event_regime],
-                     analog_ports = ports
+    dynamics = al.Dynamics(
+                    aliases = [
+                                "taupeak := taur*taud/(taud - taur)*log(taud/taur)",
+                                "factor := 1/(exp(-taupeak/taud) - exp(-taupeak/taur))",
+                                "gB := 1/(1 + mgconc*exp(-1*gamma*V)/beta)",
+                                "g := gB*gmax*(B-A)",
+                                "I := g * (E-V)",
+                              ],
+                    state_variables = [al.StateVariable(o) for o in ('A','B') ] , 
+                    regimes = [inter_event_regime],
+                          ) 
+
+    nmda = al.ComponentNodeCombined(name="NMDAPSR",
+                     dynamics = dynamics,
+                     analog_ports = analog_ports,
+                     event_ports = event_ports,
+                     parameters = [ al.Parameter(p) for p in ['taur','taud','gmax','mgconc','gamma','beta','E','weight']  ]
                      )
     return nmda
 
@@ -118,11 +124,9 @@ def get_hierachical_iaf_2coba():
     return iaf_2coba_model
 
 def get_hierachical_iaf_3coba():
-    assert False
-
     
     # Create a model, composed of an iaf neuron, and 
-    iaf_3coba_model = al.Model( name="iaf_2coba", subnodes = {"iaf" : iaf, "AMPA" : coba, "GABAa" : coba, "GABAb": coba} )
+    iaf_3coba_model = al.ComponentNodeCombined( name="iaf_2coba", subnodes = {"iaf" : get_iaf(), "AMPA" : get_coba(), "GABAa" : get_coba(), "GABAb": get_coba()} )
     
     # Connections have to be setup as strings, because we are deep-copying objects.
     iaf_3coba_model.connect_ports( "iaf.V", "AMPA.V" )
@@ -142,7 +146,7 @@ def get_hierachical_iaf_nmda():
     
     
     # Create a model, composed of an iaf neuron, and 
-    iaf_nmda_model = models.Model( name="iaf_2coba", subnodes = {"iaf" : iaf, "nmda" : nmda(), 'cobaExcit':coba} )
+    iaf_nmda_model = al.ComponentNodeCombined( name="iaf_2coba", subnodes = {"iaf" : get_iaf(), "nmda" : nmda(), 'cobaExcit':get_coba()} )
     
     iaf_nmda_model.connect_ports( "iaf.V", "cobaExcit.V" )
     iaf_nmda_model.connect_ports( "iaf.V", "nmda.V" )
