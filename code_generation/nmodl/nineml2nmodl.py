@@ -13,6 +13,9 @@ import nineml.abstraction_layer as al
 
 import itertools
 
+from nineml.utility import FilterExpectSingle
+
+
 template_file = os.path.join(os.path.dirname(__file__), "nmodl_template.jinja")
 with open(template_file) as f:
     nmodl_template = Template(f.read())
@@ -70,43 +73,33 @@ def ode_for(regime, variable):
     """
     Yields the ODE for the given variable in the regime
     """
-    odes = [eq for eq in regime.odes if eq.to == variable]
+    print 'Ode for %s in Regime %s '%(variable, regime)
+    odes = [eq for eq in regime.odes if eq.to == variable.name]
     if len(odes) == 0:
         odes.append(al.ODE(variable, "t", "0.0"))
+    assert len(odes) == 1
     return odes[0]
 
 def on_input_event(transition):
+    assert False
     return isinstance(transition.condition, al.EventPort) and transition.condition.mode in ('recv', 'reduce')
 
+
+def get_on_event_channel(on_event, component):
+    print 'Looking for port:', on_event
+    for ep in component.event_ports:
+        print ep.name
+    port = FilterExpectSingle( component.event_ports, lambda ep:ep.name==on_event.src_port)
+    return port.channel_
+
+
 def build_channels(component):
-    #channels = set()
-    #for transition in component.transitions:
-    #    if on_input_event(transition):
-    #        channel = transition.condition.name.upper()
-    #        if channel not in channels:
-    #            channels.add(channel)
-    #        transition.condition.channel_ = channel
     channels = set()
     for event_port in component.event_ports:
-        channel = event_port.src_port.upper()
+        channel = event_port.name.upper()
         if channel not in channels:
              channels.add(channel)
         event_port.channel_ = channel
-   
-    
-    
-    if True:
-        chls = list(channels)
-        chls.sort(reverse=False)
-        #chls.sort(reverse=True)
-        return chls
-
-
-    
-    # MH: Construct a dictionary mapping channels to 0,1,2,....        
-    #d =  dict( zip( channels, itertools.count() ) )
-    #return d 
-    
     
     return channels
 
@@ -123,11 +116,6 @@ def guess_weight_variable(component):
         raise Exception("Can't yet handle multiple weight variables \n(%s)"%weight_variables)
 
 def get_weight_variable(channel, weight_variables):
-    # ugly hack
-    #import pdb; pdb.set_trace()
-    print 'get_weight_variables'
-    print channel, '-', type(channel)
-    print weight_variables
    
     for k in weight_variables.keys():
         if k.upper() in channel:
@@ -197,6 +185,8 @@ def build_context(component, weight_variables, input_filename="[Unknown-Filename
         'alias_names': [b.name for b in component.aliases],
         'list':list, #This is a hack so we can build lists from inside jinja
         'sorted':sorted, #This is a hack so we can build lists from inside jinja
+
+        'get_on_event_channel':get_on_event_channel,
     }
     return context
 

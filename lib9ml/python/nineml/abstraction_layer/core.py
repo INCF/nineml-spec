@@ -1885,6 +1885,8 @@ class ComponentClass(object):
     def backsub_aliases(self):
         """ This function finds aliases with undefined functions, and uses
         the alias_map to attempt to resolve them. """
+        print 'Pre Backsub aliases:'
+        print list( self.aliases )
 
         # build alias dependency tree
         # and perform substitution, recursively
@@ -1904,11 +1906,21 @@ class ComponentClass(object):
         bd_tree = {}
         for b in self.aliases_map.itervalues():
             bd_tree[b.name] = build_and_resolve_bdtree(b)
+        print 'Post:'
+        print list( self.aliases )
 
     def backsub_equations(self):
-        return
         """ this function finds all undefined functions in equations, and uses
         the alias_map to resolve them """
+        print 'Backsub Equations'
+        from nineml.abstraction_layer.visitors import InPlaceTransform
+
+        for alias in self.aliases:
+            print 'Substituting Alias: %s -> %s'%(alias.lhs,alias.rhs)
+            trans = InPlaceTransform( originalname = alias.lhs, targetname = "(%s)"%alias.rhs )
+            for r in self.regimes:
+                r.AcceptVisitor(trans)
+        return
 
         for e in self.state_assignments:
             for f in e.missing_functions:

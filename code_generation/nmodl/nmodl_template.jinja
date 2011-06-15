@@ -18,6 +18,14 @@ NEURON {
   RANGE {{ var.name }}
   {%- endfor %}
 
+  {%- for p in component.parameters %}
+  RANGE {{ p.name }} 
+  {%- endfor %}
+
+  {%- for var in component.state_variables %} 
+  RANGE {{ var.name }}
+  {%- endfor %}
+
   RANGE regime
 }
 
@@ -84,10 +92,9 @@ BREAKPOINT {
   SOLVE states METHOD derivimplicit
 
 
-  {%- for binding in component.bindings  %}
-  {{ binding.name }} = {{binding.rhs}}
-  {%- endfor %}
-  
+  {% for alias in component.aliases %} 
+  {{ alias.lhs  }} = {{ alias.rhs }}
+  {% endfor %}
 
 }
 
@@ -97,11 +104,11 @@ DERIVATIVE states {
   {%- endfor %}
 }
 
-{% for var in component.integrated_variables %}
-FUNCTION deriv_{{ var }}({{ deriv_func_args(component, var)|join(', ') }}) {
+{% for var in component.state_variables %}
+FUNCTION deriv_{{ var.name }}({{ deriv_func_args(component, var.name)|join(', ') }}) {
   {%- for regime in component.regimes %}
   if (regime=={{ regime.label }}) {
-    deriv_{{ var }} = {{ ode_for(regime, var).rhs }}
+    deriv_{{ var.name }} = {{ ode_for(regime, var).rhs }}
   }
   {%- endfor %}
 }
@@ -118,10 +125,12 @@ NET_RECEIVE(w, channel) {
     {%- for regime in component.regimes %}
     if (regime == {{ regime.label }}) {
       {%- for on_event in regime.on_events %}
-      if (channel == {{ on_event.channel_ }}) {
+
+      {%- set channel = get_on_event_channel(on_event,component) %}
+      if (channel == {{ channel }}) {
       		printf("  Resolved to channel {{on_event.channel_ }} \n" )
         {% if weight_variables %}
-        {{ get_weight_variable(on_event.channel_, weight_variables) }} = w
+        {{ get_weight_variable(channel, weight_variables) }} = w
         {% endif %}
         {%- for node in on_event.nodes %}
         {{ as_expr(node) }}

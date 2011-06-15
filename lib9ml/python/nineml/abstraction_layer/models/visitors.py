@@ -5,21 +5,19 @@ class ModelVisitorDF(object):
     def Visit(self,model):
         model.AcceptVisitor(self)
 
-    def AcceptComponentNode(self,node):
-        self.VisitComponentNode(node)
+    def VisitComponentNode(self,node):
+        self.ActionComponentNode(node)
 
-    def AcceptModelNode(self,node):
-        self.VisitModelNode(node)
+    def VisitModelNode(self,node):
+        self.ActionModelNode(node)
         for sn in sorted(node.subnodes.values(), key=lambda sn:sn.getContainedNamespaceName() ):
             sn.AcceptVisitor(self)
-
-
     # To be overridden
-    def VisitComponentNode(self, node):
+    def ActionComponentNode(self, node):
         pass
 
     # To be overridden
-    def VisitModelNode(self, node):
+    def ActionModelNode(self, node):
         pass
 
 
@@ -32,9 +30,9 @@ class ModelVisitorDF_NodeCollector(ModelVisitorDF):
         self.nodes = []
         if model: self.Visit(model)
 
-    def VisitComponentNode(self, node):
+    def ActionComponentNode(self, node):
         self.nodes.append(node)
-    def VisitModelNode(self, node):
+    def ActionModelNode(self, node):
         self.nodes.append(node)
 
     def __iter__(self):
@@ -45,7 +43,7 @@ class ModelVisitorDF_ComponentCollector(ModelVisitorDF):
         self.components = []
         if model: self.Visit(model)
 
-    def VisitComponentNode(self, node):
+    def ActionComponentNode(self, node):
         self.components.append(node)
 
     def __iter__(self):
@@ -58,9 +56,9 @@ class ModelVisitorDF_ModelCollector(ModelVisitorDF):
         self.models = []
         if model: self.Visit(model)
 
-    def VisitModelNode(self, node):
+    def ActionModelNode(self, node):
         self.models.append(node)
 
     def __iter__(self):
-        return iter(self.components)
+        return iter(self.models)
 

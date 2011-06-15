@@ -16,6 +16,10 @@
     
 
     <Dynamics>
+
+        <Alias name="I">
+              <MathInline> g * (V-vrev) </MathInline>
+        </Alias>
         <StateVariable name="g" dimension=""/>
 
         <Regime name="defaultregime">

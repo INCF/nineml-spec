@@ -1,4 +1,5 @@
 
+from nineml.utility import ExpectSingle, FilterExpectSingle, Filter, FilterType
 
 # System Imports:
 import copy
@@ -51,9 +52,6 @@ class TreeNode(object):
             return NamespaceAddress.create_root()
         else:
             return self.getParentModel().get_node_addr().get_subns_addr( self.getContainedNamespaceName() ) 
-
-
-
 
 
     # Parenting:
@@ -130,27 +128,7 @@ class ComponentNode(ComponentClass,TreeNode, ):
 
 
 
-    # HORRIBLE HORRIBLE. TO FIX
-    def get_fully_qualified_statevars_objects(self):
-        self.namespace = self.get_node_addr()
-        def make_fqname(target):
-            return NamespaceAddress( tuple( list(self.namespace.loctuple)+ [target] ) )
-        import nineml.abstraction_layer as al
-        conns = [ al.StateVariable( "_".join( make_fqname(sv.name).loctuple ) ) for sv in self.dynamics.state_variables ]
-        print conns
-        return conns
 
-    # HORRIBLE HORRIBLE. TO FIX
-    def get_fully_qualified_param_objects(self):
-        self.namespace = self.get_node_addr()
-        def make_fqname(target):
-            return NamespaceAddress( tuple( list(self.namespace.loctuple)+ [target] ) )
-        import nineml.abstraction_layer as al
-        conns = [ al.Parameter( "_".join( make_fqname(sv.name).loctuple ) ) for sv in self.parameters ]
-        print conns
-        return conns
-
-from nineml.utility import ExpectSingle, FilterExpectSingle, Filter, FilterType
 
 
 
@@ -274,6 +252,9 @@ class NamespaceAddress(object):
     def create_root(cls):
         return NamespaceAddress( loc=() )
 
+    def getstr(self):
+        return "_".join( self.loctuple )
+
     def get_str_prefix(self):
         return "_".join( self.loctuple ) + "_"
 
@@ -282,4 +263,6 @@ class NamespaceAddress(object):
         print 'Concatenating:', args
         from nineml.utility import flattenFirstLevel
         loctuple = tuple( flattenFirstLevel( [ list(a.loctuple) for a in args  ] ) )
-        return NamespaceAddress(loc=loctuple)
+        res = NamespaceAddress(loc=loctuple)
+        print 'yields:', res
+        return res
