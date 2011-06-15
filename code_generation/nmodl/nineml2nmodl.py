@@ -9,7 +9,7 @@ from __future__ import with_statement
 import os.path
 from textwrap import dedent
 from jinja2 import Template 
-import nineml.abstraction_layer as nineml
+import nineml.abstraction_layer as al
 
 import itertools
 
@@ -21,11 +21,11 @@ FIRST_REGIME_FLAG = 1001
 
 
 def as_expr(node):
-    if isinstance(node, nineml.Assignment):
+    if isinstance(node, al.Assignment):
         return node.as_expr()
     #elif isinstance(node, nineml.Inplace):
     #    return node.as_assignment().as_expr()
-    elif isinstance(node, nineml.EventPort):
+    elif isinstance(node, al.EventPort):
         return ""
     else:
         raise Exception("Don't know how to handle nodes of type %s" % type(node))
@@ -53,11 +53,11 @@ def ode_for(regime, variable):
     """
     odes = [eq for eq in regime.odes if eq.to == variable]
     if len(odes) == 0:
-        odes.append(nineml.ODE(variable, "t", "0.0"))
+        odes.append(al.ODE(variable, "t", "0.0"))
     return odes[0]
 
 def on_input_event(transition):
-    return isinstance(transition.condition, nineml.EventPort) and transition.condition.mode in ('recv', 'reduce')
+    return isinstance(transition.condition, al.EventPort) and transition.condition.mode in ('recv', 'reduce')
 
 def build_channels(component):
     channels = set()
@@ -109,7 +109,7 @@ def get_weight_variable(channel, weight_variables):
 
 def unconnected_analog_receive_ports(component, weight_variables):
     receive_ports = [p.symbol for p in
-                     component.filter_ports(cls=nineml.AnalogPort,
+                     component.filter_ports(cls=al.AnalogPort,
                                             mode=('recv', 'reduce')
                                             )
                      if hasattr(p, 'connected') and not p.connected]
@@ -147,7 +147,7 @@ def build_context(component, weight_variables, input_filename="[Unknown-Filename
     
     context = {
         "input_filename": input_filename,
-        "version": nineml.__version__,
+        "version": al.__version__,
         "component": component,
         "channels": build_channels(component),
         "weight_variables": weight_variables,
@@ -155,7 +155,7 @@ def build_context(component, weight_variables, input_filename="[Unknown-Filename
         "unconnected_receive_ports": unconnected_analog_receive_ports(component, weight_variables),
         "on_input_event": on_input_event,
         "initial_regime": list(component.regimes)[0].label,
-        "emit_spike": lambda node: isinstance(node, nineml.EventPort) and node.name == 'spike_output',
+        "emit_spike": lambda node: isinstance(node, al.EventPort) and node.name == 'spike_output',
         "as_expr": as_expr,
         "deriv_func_args": deriv_func_args,
         "threshold_crossing": threshold_crossing,
@@ -175,17 +175,21 @@ def write_nmodl(nineml_file, weight_variables={},hierarchical_mode=False): # wei
     component = nineml.parse(nineml_file)
     output_filename = nineml_file.replace(".xml", ".mod").replace("-", "_")
     print "Converting %s to %s" % (nineml_file, output_filename)
-    with open(output_filename, "w") as f:
-        context = build_context(component, weight_variables, nineml_file,hierarchical_mode=hierarchical_mode) # weight_variables should probably be within component
-        f.write(nmodl_template.render(context))
 
-
-
-def write_nmodldirect(component, output_filename, weight_variables={}):
+    write_nmodldirect(component=component, mod_filename=output_filename, weight_variables=weight_variables, hierarchical_mode=hierarchical_mode)
     
-    print "Writing Mod-File %s" % output_filename
-    with open(output_filename, "w") as f:
-        context = build_context(component, weight_variables) # weight_variables should probably be within component
+    #with open(output_filename, "w") as f:
+    #    weight_variables should probably be within component
+    #    context = build_context(component, weight_variables, nineml_file,hierarchical_mode=hierarchical_mode) 
+    #    f.write(nmodl_template.render(context))
+
+
+
+def write_nmodldirect(component, mod_filename, weight_variables={},hierarchical_mode=False):
+    
+    print "Writing Mod-File %s" % mod_filename
+    with open(mod_filename, "w") as f:
+        context = build_context(component, weight_variables,hierarchical_mode=hierarchical_mode) # weight_variables should probably be within component
         f.write(nmodl_template.render(context))
      
 

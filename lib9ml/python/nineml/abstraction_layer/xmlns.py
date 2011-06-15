@@ -1,7 +1,5 @@
 from lxml import etree
 from lxml.builder import E
-#from mathml.lmathdom import MathDOM
-#from mathml.utils import pyterm
 
 
 MATHML = "{http://www.w3.org/1998/Math/MathML}"

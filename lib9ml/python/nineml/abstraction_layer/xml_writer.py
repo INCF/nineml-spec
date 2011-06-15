@@ -37,13 +37,13 @@ class XMLWriter(object):
                    [b.AcceptVisitor(self) for b in dynamics.state_variables] 
         return E(dynamics.element_name, *elements)
         
-
     def VisitRegime(self,regime):
         nodes = [node.AcceptVisitor(self) for node in regime.time_derivatives] +\
                 [node.AcceptVisitor(self) for node in regime.on_events] +\
                 [node.AcceptVisitor(self) for node in regime.on_conditions] 
+        #nodes =[]
+        print "RegimeName", regime.name
         return E(regime.element_name, name=regime.name, *nodes )
-
 
     def VisitStateVariable(self, state_variable):
         return E(state_variable.element_name, name=state_variable.name,dimension='??')
@@ -62,8 +62,7 @@ class XMLWriter(object):
     def VisitAssignment(self, assignment, **kwargs):
         return E(assignment.element_name,
                  E("MathInline", assignment.rhs),
-                 name=assignment.name,
-                 to=assignment.to)
+                 variable=assignment.lhs)
 
     def VisitAlias(self, alias, **kwargs):
         return E(alias.element_name,
@@ -79,13 +78,22 @@ class XMLWriter(object):
     def VisitOnCondition(self, on_condition):
         nodes = chain( on_condition.state_assignments, on_condition.event_outputs, [on_condition.condition] )
         newNodes = [ n.AcceptVisitor(self) for n in nodes ] 
-        return E(on_condition.element_name,*newNodes) 
+        kwargs = {}
+        if on_condition._target_regime:
+            kwargs['target_regime'] = on_condition._target_regime
+        return E(on_condition.element_name,*newNodes,**kwargs) 
 
     def VisitCondition(self, condition):
-        return E('Trigger',
-                 E("MathInline", condition.rhs),
+        return E('Trigger', 
+                 E("MathInline" , condition.rhs),
                  )
 
     # TODO:
     def VisitOnEvent(self, on_event, **kwargs):
+        elements =  [p.AcceptVisitor(self) for p in on_event.state_assignments] +\
+                    [p.AcceptVisitor(self) for p in on_event.event_outputs] 
+        kwargs ={'src_port':on_event._src_port}
+        if on_event._target_regime:
+            kwargs['target_regime'] = on_event._target_regime
+        return E('OnEvent', *elements,  **kwargs )
         assert False

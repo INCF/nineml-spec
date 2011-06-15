@@ -11,8 +11,8 @@ import util
 
 
 
-import nineml.abstraction_layer as nineml
-
+#import nineml.abstraction_layer as al
+from nineml.abstraction_layer import ComponentClass
 
 
 
@@ -114,10 +114,8 @@ class Model(TreeNode):
 
 
 
-from nineml.abstraction_layer import ComponentClass
 
 class ComponentNode(ComponentClass,TreeNode, ):
-    #def __init__(self, name, parameters = [], regimes = [],  analog_ports = [], aliases = [], model=None):
     def __init__(self, name, parameters = [],  analog_ports = [], event_ports=[], dynamics=None, model=None):
         TreeNode.__init__(self, )
         ComponentClass.__init__(self, name=name, parameters = parameters, analog_ports=analog_ports, event_ports = event_ports, dynamics = dynamics)

@@ -5,7 +5,8 @@ import copy
 import itertools
 
 
-import nineml.abstraction_layer as nineml
+#import nineml.abstraction_layer as nineml
+import nineml.abstraction_layer as al
 # Relative Imports:
 import util
 
@@ -62,46 +63,13 @@ class ModelToSingleComponentReducer(object):
         time_derivatives = util.flattenFirstLevel( [ self.copy_and_prefix_odes_from_regime(*rc) for rc in component_regimes_zip ] )
         
         # Don't worry about transitions yet, 
-        return nineml.Regime(name=None, time_derivatives=time_derivatives, on_events=[], on_conditions=[] )
+        r =  al.Regime(name=None, time_derivatives=time_derivatives, on_events=[], on_conditions=[] )
+        assert r.name
+        return r
 
-#    def create_transition(self, oldtransition, oldcomponent, fromRegime, toRegime):
-#        transitionName = None
-#        oldtransitionnamespace = oldcomponent.getTreePosition("_") + "_"
-#
-#
-#            
-#        # Remap all the nodes:
-#        node_remapper = { 
-#                     nineml.Assignment: lambda n: n.clone( prefix = oldtransitionnamespace, prefix_excludes=['t'] ),
-#                     #nineml.EventPort:  lambda e: e.clone( prefix = oldtransitionnamespace, prefix_excludes=['t'] ),
-#                     nineml.OutputEvent:  lambda e: e.clone( prefix = oldtransitionnamespace, prefix_excludes=['t'] ),
-#                     nineml.InputEvent:  lambda e: e.clone( prefix = oldtransitionnamespace, prefix_excludes=['t'] ),
-#                    }
-#        
-#        mappednodes = [ node_remapper[ type(n) ] (n) for n in oldtransition.nodes ] 
-#        
-#
-#
-#        # Remap the condition:
-#        condition_remapper = { 
-#                nineml.Condition:  lambda c: c.clone( prefix=oldtransitionnamespace, prefix_excludes=['t'] ) , 
-#                nineml.EventPort : lambda p: p.clone( prefix=oldtransitionnamespace, prefix_excludes=['t'] ) 
-#        }
-#        newcondition = condition_remapper[ type(oldtransition.condition) ](oldtransition.condition)
-#
-#
-#
-#        t = nineml.Transition(  *mappednodes, 
-#                                from_=fromRegime,
-#                                to=toRegime.name,
-#                                condition= newcondition,
-#                                name= transitionName )
-#        return t
-#
 
 
     def create_on_condition(self, oldtransition, oldcomponent, fromRegime, toRegime):
-        #transitionName = None
         oldtransitionnamespace = oldcomponent.getTreePosition("_") + "_"
 
         newAssignments = [ a.clone(prefix=oldtransitionnamespace, prefix_excludes=['t']) for a in oldtransition.state_assignments]  
@@ -109,7 +77,20 @@ class ModelToSingleComponentReducer(object):
 
 
 
-        t = nineml.OnCondition(  trigger = oldtransition.trigger.clone(prefix=oldtransitionnamespace, prefix_excludes=['t'] ),
+        t = al.OnCondition(  trigger = oldtransition.trigger.clone(prefix=oldtransitionnamespace, prefix_excludes=['t'] ),
+                                  state_assignments = newAssignments,
+                                  event_outputs = newEventOutputs )
+        return t
+
+    def create_on_event(self, oldtransition, oldcomponent, fromRegime, toRegime):
+        oldtransitionnamespace = oldcomponent.getTreePosition("_") + "_"
+
+        newAssignments = [ a.clone(prefix=oldtransitionnamespace, prefix_excludes=['t']) for a in oldtransition.state_assignments]  
+        newEventOutputs = [ e.clone(prefix=oldtransitionnamespace, prefix_excludes=['t']) for e in oldtransition.event_outputs]  
+
+        
+        #TODO: We should provide a clone function on OnEvent (and also on OnCondition, that does this method automatically.
+        t = al.OnEvent(  src_port = oldtransitionnamespace + oldtransition._src_port,
                                   state_assignments = newAssignments,
                                   event_outputs = newEventOutputs )
         return t
@@ -153,7 +134,8 @@ class ModelToSingleComponentReducer(object):
 
                     oldcomponent = self.modelcomponents[regimeIndex]
                     print oldtransition
-                    t = self.create_transition(oldtransition=oldtransition,oldcomponent=oldcomponent, fromRegime=regimeNew, toRegime=newRegimeTo)
+                    #t = self.create_transition(oldtransition=oldtransition,oldcomponent=oldcomponent, fromRegime=regimeNew, toRegime=newRegimeTo)
+                    t = self.create_on_event(oldtransition=oldtransition,oldcomponent=oldcomponent, fromRegime=regimeNew, toRegime=newRegimeTo)
                     regimeNew.add_on_event( on_event=t )
         
                 for oldtransition in regime.on_conditions:
@@ -179,7 +161,7 @@ class ModelToSingleComponentReducer(object):
     # This is a mess, to be cleaned:
     @classmethod
     def global_remap_port_ext(cls, originalname, targetname, new_ports, newRegimeLookupMap):
-        #print 'Global-Remap [%s- >%s]'%(originalname,targetname)
+        print 'Global-Remap [%s -> %s]'%(originalname,targetname)
                     
         for p in new_ports.values():
             if not p.expr: continue
@@ -196,28 +178,23 @@ class ModelToSingleComponentReducer(object):
             
             for av in regime.assignments:
                 av.rhs = av.rhs_name_transform( {originalname:targetname} )
-            
-            for transition in regime.transitions:
-                
-                # Transform Transition
-                for node in transition.nodes:
-                    if  isinstance(node, nineml.EventPort):
-                        if node.symbol == originalname: node.symbol = targetname
-                    elif isinstance(node, nineml.Assignment):
-                        node.rhs_name_transform_inplace( {originalname:targetname} )
-                    else:
-                        assert False
 
-                #print "Condition type:", type(transition.condition)
-                if isinstance(transition.condition, nineml.EventPort):
-                    if  transition.condition.symbol == originalname: 
-                        transition.condition.symbol = targetname
-                elif isinstance(transition.condition, nineml.Condition):
-                        #transition.condition.cond = transition.condition.rhs_name_transform( {originalname:targetname} )
-                        transition.condition.rhs_name_transform_inplace( {originalname:targetname} )
-                        #transition.condition.parse()
-                else: 
-                    assert False
+            # Time Derivatives:
+            for time_derivative in regime.time_derivatives:
+                time_derivative.name_transform_inplace( {originalname:targetname} )
+
+            # OnEvent transitions
+            for on_event in regime.on_events:
+                for state_assignment in on_event._state_assignments:
+                    state_assignment.name_transform_inplace( {originalname:targetname} )
+
+            # OnCondition transitions
+            for on_condition in regime.on_conditions:
+                for state_assignment in on_condition._state_assignments:
+                    state_assignment.name_transform_inplace( {originalname:targetname} )
+
+                on_condition.trigger.name_transform_inplace( {originalname:targetname} )
+
 
 
 
@@ -283,8 +260,8 @@ class ModelToSingleComponentReducer(object):
 
         #for ns,p in new_ports.iteritems():
         #    print p, p.symbol
-        dynamics = nineml.Dynamics( regimes = newRegimeLookupMap.values())  
-        self.reducedcomponent = nineml.models.ComponentNode( self.componentname, dynamics=dynamics, analog_ports=new_ports.values() )
+        dynamics = al.Dynamics( regimes = newRegimeLookupMap.values())  
+        self.reducedcomponent = al.models.ComponentNode( self.componentname, dynamics=dynamics, analog_ports=new_ports.values() )
 
         
         

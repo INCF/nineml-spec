@@ -1,56 +1,56 @@
 
 
 import random, os
-import nineml.abstraction_layer as nineml
+import nineml.abstraction_layer as al
 import nineml.abstraction_layer.models as models
 
 iaf = models.ComponentNode( "iaf",
                         regimes = [
-                            nineml.Regime(
+                            al.Regime(
                                 "dV/dt = ( gl*( vrest - V ) + ISyn)/(cm)",
-                                transitions = [nineml.On("V > vthresh",
+                                transitions = [al.On("V > vthresh",
                                                          do=["tspike = t",
                                                              "V = vreset",
-                                                             nineml.SpikeOutputEvent],
+                                                             al.SpikeOutputEvent],
                                                          to="refractoryregime"),
                                                ],
                                 name = "subthresholdregime"
                                 ),
 
-                            nineml.Regime(
+                            al.Regime(
                                 "dV/dt = 0",
-                                transitions = [ nineml.On("t >= tspike + taurefrac",
+                                transitions = [ al.On("t >= tspike + taurefrac",
                                                           to="subthresholdregime") ],
                                 name = "refractoryregime"
                                 )
                             ],
-                        analog_ports = [   nineml.SendPort("V"), 
-                                           nineml.ReducePort("ISyn", op="+"),
+                        analog_ports = [   al.SendPort("V"), 
+                                           al.ReducePort("ISyn", op="+"),
                                            ]
                         )
 
 
 coba = models.ComponentNode( "CobaSyn",
                          regimes = [
-                             nineml.Regime(
+                             al.Regime(
                                  "dg/dt = -g/tau",
                                  "I:=g*(vrev-V)", 
                                  transitions = [
-                                     nineml.On(nineml.EventPort('spikeinput', mode="recv"), do="g=g+q"),
+                                     al.On(al.EventPort('spikeinput', mode="recv"), do="g=g+q"),
                                      ],
                                  name = "defaultregime"
                                  )
                              ],
                          
-                         analog_ports = [ nineml.RecvPort("V"), 
-                                          nineml.SendPort("I"), 
+                         analog_ports = [ al.RecvPort("V"), 
+                                          al.SendPort("I"), 
                                           ]
                          )
 
 
 
 def nmda():
-    inter_event_regime = nineml.Regime(
+    inter_event_regime = al.Regime(
         "taupeak := taur*taud/(taud - taur)*log(taud/taur)",
         "factor := 1/(exp(-taupeak/taud) - exp(-taupeak/taur))",
         "gB := 1/(1 + mgconc*exp(-1*gamma*V)/beta)",
@@ -59,13 +59,13 @@ def nmda():
         "dB/dt = -B/taud",
         "I := g * (E-V)",
         name="intereventregime",
-        transitions=nineml.On(nineml.SpikeInputEvent,
+        transitions=al.On(al.SpikeInputEvent,
                               do=["A = A + weight*factor",
                                   "B = B + weight*factor"])
         )
 
-    ports = [nineml.RecvPort("V"),
-             nineml.SendPort("I"), # this notation takes the assignment of Isyn out of the Regime
+    ports = [al.RecvPort("V"),
+             al.SendPort("I"), # this notation takes the assignment of Isyn out of the Regime
             ]
 
     nmda = models.ComponentNode("NMDAPSR",
@@ -155,36 +155,36 @@ def get_hierachical_iaf_2coba_network(nNeurons = 2):
     
     iaf = models.ComponentNode( "iaf",
             regimes = [
-                nineml.Regime(
+                al.Regime(
                     "dV/dt = ( (gl+gSynapticInput)*(v_rest - V) + i + i_offset)/(cm)",
-                    transitions = [nineml.On("V > v_thresh", do=["t_spike = t", "V = v_reset", nineml.SpikeOutputEvent], to="refractoryregime"), ],
+                    transitions = [al.On("V > v_thresh", do=["t_spike = t", "V = v_reset", al.SpikeOutputEvent], to="refractoryregime"), ],
                     name = "subthresholdregime"
                     ),
     
-                nineml.Regime(
+                al.Regime(
                     "dV/dt = 0",
-                    transitions = [ nineml.On("t >= t_spike + tau_refrac", to="subthresholdregime") ],
+                    transitions = [ al.On("t >= t_spike + tau_refrac", to="subthresholdregime") ],
                     name = "refractoryregime"
                     )
                     ],
-            ports = [   nineml.SendPort("V"), 
-                        nineml.ReducePort("gSynapticInput", op="+"), 
-                        nineml.RecvPort("q") ]
+            ports = [   al.SendPort("V"), 
+                        al.ReducePort("gSynapticInput", op="+"), 
+                        al.RecvPort("q") ]
                 )
         
     
     coba = models.ComponentNode( "CobaSyn",
             regimes = [
-                nineml.Regime(
+                al.Regime(
                     "dg/dt = -g/tau",
                     transitions = [
-                           nineml.On(nineml.EventPort('spikeinput', mode="recv"), do="g=g+q"),
+                           al.On(al.EventPort('spikeinput', mode="recv"), do="g=g+q"),
                            ],
                     name = "default-regime"
                     )
                     ],
     
-                ports = [ nineml.RecvPort("V"), nineml.SendPort("g"), nineml.RecvPort("q") ]
+                ports = [ al.RecvPort("V"), al.SendPort("g"), al.RecvPort("q") ]
                 )
     
     

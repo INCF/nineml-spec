@@ -326,16 +326,15 @@ class Alias(ExpressionWithSimpleLHS, RegimeElement):
 
 
 
-#class Assignment(Equation, RegimeElement):
 class Assignment(ExpressionWithSimpleLHS, RegimeElement):
+    element_name = "StateAssignment"
+    n = 0
 
     def AcceptVisitor(self, visitor, **kwargs):
         return visitor.VisitAssignment(self, **kwargs)
 
 
 
-    element_name = "assignment"
-    n = 0
         
     # Interface:
     def _clone(self, prefix, prefix_excludes, name ):

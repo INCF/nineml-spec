@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<NineML xmlns="http://nineml.org/9ML/0.1"
+    xmlns:comodl="CoModL"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://nineml.org/9ML/0.1 NineML_v0.2.xsd">
+
+<Include file="comp_iaf.9ml"/>
+<Include file="comp_coba.9ml"/>
+
+
+<ModelClass xmlns="CoModL">
+    <Subnode namespace="iaf" node="iaf" />
+    <Subnode namespace="cobaExcit" node="coba" />
+    <Subnode namespace="cobaInhib" node="coba" />
+    <ConnectPorts source="iaf.V" sink="cobaExcit.V"/>
+    <ConnectPorts source="iaf.V" sink="cobaInhib.V"/>
+    <ConnectPorts source="cobaExcit.I" sink="iaf.iSyn"/>
+    <ConnectPorts source="cobaInhib.I" sink="iaf.iSyn"/>
+</ModelClass>
+
+
+</NineML>

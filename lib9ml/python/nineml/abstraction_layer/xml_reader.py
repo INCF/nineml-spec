@@ -1,34 +1,25 @@
 
 from nineml.utility import LocationMgr, Join, ExpectSingle, FilterExpectSingle
 
-from nineml.abstraction_layer import *
-from nineml.abstraction_layer.xmlns import *
 
 from collections import defaultdict
 
-import logging
 
-logger = logging.getLogger('nineml.xmlreader')
-logger.setLevel(logging.DEBUG)
-# create file handler which logs even debug messages
-fh = logging.FileHandler('/tmp/nineml_xmlreader.log')
-fh.setLevel(logging.DEBUG)
-# create console handler with a higher log level
-ch = logging.StreamHandler()
-ch.setLevel(logging.ERROR)
-logger.addHandler(fh)
-logger.addHandler(ch)
+import os
 
 
 
 
+import core as al_core
+from xmlns import etree,E,MATHML,nineml_namespace,NINEML
 
 
-from nineml.abstraction_layer.models.core import ComponentNode
+NS = "{CoModL}"
+
 
 def load_ComponentClass(element):
+    from nineml.abstraction_layer.models import ComponentNode
     name = element.get("name")
-    logger.info("Loading ComponentClass: %s"%name)
      
     subnodes = loadBlocks( element,blocks=('Parameter','AnalogPort','EventPort','Dynamics' ) )
     return ComponentNode(   name=name,
@@ -40,28 +31,24 @@ def load_ComponentClass(element):
    
 def load_Parameter(element):
     name = element.get("name")
-    logger.info("Loading Parameter: %s"%name)
-    return nineml.Parameter(name=name) 
+    return al_core.Parameter(name=name) 
 
 def load_AnalogPort(element):
     name = element.get("name")
     mode = element.get("mode")
     reduce_op = element.get("reduce_op",None)
-    logger.info("Loading AnalogPort: %s"%name)
-    return nineml.AnalogPort( internal_symbol = name, mode = mode, op = reduce_op )
+    return al_core.AnalogPort( internal_symbol = name, mode = mode, op = reduce_op )
 
 def load_EventPort(element):
     name = element.get("name")
     mode = element.get("mode")
-    logger.info("Loading EventPort: %s"%name)
-    return nineml.EventPort( internal_symbol = name, mode = mode )
+    return al_core.EventPort( internal_symbol = name, mode = mode )
 
 
 
 def load_Dynamics(element):
-    logger.info("Loading Dynamics") 
     subnodes = loadBlocks( element, blocks=('Regime','Alias','StateVariable' )  )
-    return nineml.Dynamics(  regimes = subnodes["Regime"] ,
+    return al_core.Dynamics(  regimes = subnodes["Regime"] ,
                              aliases = subnodes["Alias"] ,
                              state_variables = subnodes["StateVariable"] ,
                              )
@@ -69,9 +56,8 @@ def load_Dynamics(element):
 
 def load_RegimeClass(element):
     name = element.get("name")
-    logger.info("Loading Regime: %s"%name) 
     subnodes = loadBlocks( element, blocks=('TimeDerivative','OnCondition','OnEvent' )  )
-    return nineml.Regime( name=name,
+    return al_core.Regime( name=name,
                           time_derivatives = subnodes["TimeDerivative"],
                           on_events = subnodes["OnEvent"],
                           on_conditions = subnodes["OnCondition"] )
@@ -80,34 +66,38 @@ def load_RegimeClass(element):
 
 def load_StateVariable(element):
     name = element.get("name")
-    logger.info("Loading StateVariable: %s"%name) 
-    return nineml.StateVariable( name=name)
+    return al_core.StateVariable( name=name)
 
 
 def load_TimeDerivative(element):
     variable = element.get("variable")
     expr = load_SingleInternalMathsBlock(element)
-    logger.info("Loading TimeDerivative: %s :-> %s"%(variable, expr)  )
-    return nineml.ODE( dependent_variable=variable, indep_variable='t', rhs=expr)
+    return al_core.ODE( dependent_variable=variable, indep_variable='t', rhs=expr)
     
 def load_Alias(element):
     name = element.get("name")
     rhs =  load_SingleInternalMathsBlock(element)
-    logger.info("Loading Alias: %s := %s"%(name, rhs)  )
-    return nineml.Alias( lhs=name,  rhs=rhs)
+    return al_core.Alias( lhs=name,  rhs=rhs)
 
 
 def load_OnCondition(element):
     subnodes = loadBlocks( element, blocks=('Trigger','StateAssignment','EventOut' )  )
-    logger.info("Loading OnCondition:") 
+    target_regime = element.get('target_regime',None)
 
-    return nineml.OnCondition(  trigger = ExpectSingle( subnodes["Trigger"] ),
-                                state_assignments = subnodes[ "StateAssignment"],
-                                event_outputs = subnodes[ "EventOut" ], )
+    return al_core.OnCondition(  trigger = ExpectSingle( subnodes["Trigger"] ),
+                                 state_assignments = subnodes[ "StateAssignment"],
+                                 event_outputs = subnodes[ "EventOut" ],
+                                 target_regime = target_regime)
                                 
 
 def load_OnEvent(element):
-    logger.info("Loading OnEvent") 
+    subnodes = loadBlocks( element, blocks=('StateAssignment','EventOut' )  )
+    target_regime = element.get('target_regime',None)
+    src_port = element.get('port')
+    return al_core.OnEvent(  src_port = src_port,
+                             state_assignments = subnodes[ "StateAssignment"],
+                             event_outputs = subnodes[ "EventOut" ],
+                             target_regime = target_regime)
     assert False, 'Not implemented yet'
 
 def load_Trigger(element):
@@ -115,25 +105,20 @@ def load_Trigger(element):
 
 
 def load_StateAssignment(element):
-    logger.info("Loading State Assignement") 
     to = element.get('variable')
     expr = load_SingleInternalMathsBlock(element)
-    return nineml.Assignment(to=to, expr=expr)
+    return al_core.Assignment(to=to, expr=expr)
 
 def load_EventOut(element):
-    logger.info("Loading EventOut") 
     port = element.get('port')
-    return nineml.OutputEvent(port=port)
+    return al_core.OutputEvent(port=port)
 
 
 def load_EventIn(element):
-    logger.info("Loading EventIn") 
-    return nineml.InputEvent( port = element.get('port') )
+    return al_core.InputEvent( port = element.get('port') )
 
 
 def load_SingleInternalMathsBlock(element, checkOnlyBlock=True):
-    print element
-
     if checkOnlyBlock:
         elements = list(element.iterchildren(tag=etree.Element ) ) 
         if  len( elements ) != 1:
@@ -166,7 +151,10 @@ tag_to_loader = {
     "EventIn": load_EventIn,
         }
 
-NS = "{CoModL}"
+
+
+
+
 
 
 # These blocks map directly in to classes:
@@ -191,22 +179,98 @@ def loadBlocks( element, blocks=None, checkForSpuriousBlocks=True ):
 
 
 
-#def new_parse( filename):
-#    doc = etree.parse(filename)
-#    root = doc.getroot()
-#    assert root.nsmap[None] == nineml_namespace
-#
-#    component = root.find(NS + "ComponentClass")
-#    return load_ComponentClass( component )
-
-
 class XMLReader(object):
+
+
     @classmethod
-    def read(filename):
+    def _load_include(cls,include_element, basedir):
+        filename = include_element.get('file')
+        print "Loading 'Include:' %s" % filename
+
+        # Load the new XML
+        included_xml = cls._loadNestedXML( os.path.join(basedir,filename) )
+
+        #Insert it into the parent node:
+        include_element.getparent().extend( included_xml.getchildren() )
+        include_element.getparent().remove( include_element )
+
+
+    @classmethod
+    def _loadNestedXML(cls,filename):
+        """ Load the XML, including Include files """
         doc = etree.parse(filename)
         root = doc.getroot()
         assert root.nsmap[None] == nineml_namespace
 
-        component = root.find(NS + "ComponentClass")
-        return load_ComponentClass( component )
+        for include_element in root.getiterator(tag=NINEML+'Include'):
+            cls._load_include(include_element=include_element, basedir=os.path.dirname(filename) )
+        return root
+
+
+    @classmethod
+    def read_component(cls, filename, component_name=None):
+        components = cls.read_components(filename)
+        if component_name == None:
+            return ExpectSingle(components)
+        else:
+            return FilterExpectSingle( components, lambda c:c.name==component_name )
+
+    @classmethod
+    def read_components(cls,filename):
+        root = cls._loadNestedXML(filename)
+        component_blocks = root.findall(NS + "ComponentClass")
+        components = [ load_ComponentClass(comp) for comp in component_blocks ]
+        return components
         
+
+
+    @classmethod
+    def read_model(cls, filename, model_name=None):
+        models = cls.read_models(filename)
+        if model_name == None:
+            return ExpectSingle(models)
+        else:
+            return FilterExpectSingle( models, lambda m:m.name==model_name )
+
+
+
+
+
+    @classmethod
+    def read_models(cls, filename, ):
+        root = cls._loadNestedXML(filename)
+
+        # Read the Components
+        component_blocks = root.findall(NS + "ComponentClass")
+        components = [ load_ComponentClass(comp) for comp in component_blocks ]
+        component_map = dict( [ (c.name,c) for c in components ] )
+
+        # Read the Models:
+        models = [cls._build_model(e,component_map) for e in root.findall(NS+'ModelClass') ]
+        for sn in root.getchildren():
+            print sn, sn.tag
+        
+    
+        
+        return models
+        pass
+
+
+    @classmethod
+    def _build_model( cls, modelclass_element, component_map):
+
+        # Create the model:
+        from nineml.abstraction_layer import models
+        model = models.Model( name= modelclass_element.get('name') )
+
+        # Insert the subnodes:
+        for sn in modelclass_element.iterchildren(tag=NS+'Subnode'):
+            ns = sn.get('namespace')
+            component = component_map[ sn.get('node')]
+            model.insert_subnode( subnode = component, namespace=ns )
+
+        # Insert the Connections:
+        for sn in modelclass_element.iterchildren(tag=NS+'ConnectPorts'):
+            model.connect_ports( src=sn.get('source'), sink=sn.get('sink') )
+        
+        return model

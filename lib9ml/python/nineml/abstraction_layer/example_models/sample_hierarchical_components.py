@@ -2,7 +2,8 @@
 import nineml.abstraction_layer.models as models
 import os
 
-import nineml.abstraction_layer as nineml
+#import nineml.abstraction_layer as nineml
+import nineml.abstraction_layer as al
 from nineml.abstraction_layer import Regime, Transition, SendPort, RecvPort, On, SpikeInputEvent, SpikeOutputEvent, ReducePort
 
 #from nineml import Regime, Transition
@@ -12,7 +13,7 @@ hh_na = models.ComponentNode(
 		"Hodgkin-Huxley-Na", 
 		#parameters= [ 'ena', 'gnabar',  'celsius'],
        		regimes=[ 
-			   nineml.Regime(
+			   al.Regime(
 			     "dm/dt = (minf(V)-m)/mtau(V)",
 			     "dh/dt = (hinf(V)-h)/htau(V)",
 			     name="hh_regime_na") 

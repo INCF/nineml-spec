@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<NineML xmlns="http://nineml.org/9ML/0.1"
+    xmlns:comodl="CoModL"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://nineml.org/9ML/0.1 NineML_v0.2.xsd">
+
+  <ComponentClass name="coba" xmlns="CoModL">
+
+    <Parameter name="vrev" dimension='none'/>
+    <Parameter name="tau" dimension='none'/>
+    <Parameter name="q" dimension='none'/>
+
+    <AnalogPort name="I" mode='send' dimension=''/>
+    <AnalogPort name="V" mode="recv" dimension=''/>
+    <EventPort name="spike_input" mode="recv"/>
+    
+
+    <Dynamics>
+        <StateVariable name="g" dimension=""/>
+
+        <Regime name="defaultregime">
+              
+          <TimeDerivative variable="g">
+              <MathInline> -g/tau </MathInline>
+          </TimeDerivative>
+          
+          <OnEvent port='spike_input'>
+            <StateAssignment variable="g" >
+              <MathInline>g+q</MathInline>
+            </StateAssignment>
+          </OnEvent>
+
+        </Regime>
+    </Dynamics>
+
+  </ComponentClass>
+</NineML>

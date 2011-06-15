@@ -1,0 +1,83 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<NineML xmlns="http://nineml.org/9ML/0.1"
+    xmlns:comodl="CoModL"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://nineml.org/9ML/0.1 NineML_v0.2.xsd">
+
+  <ComponentClass name="iaf" xmlns="CoModL">
+
+    <Parameter name="gl" dimension='none'/>
+    <Parameter name="vrest" dimension='none'/>
+    <Parameter name="vreset" dimension='none'/>
+    <Parameter name="cm" dimension='none'/>
+    <Parameter name="vthresh" dimension='none'/>
+    <Parameter name="taurefrac" dimension='none'/>
+
+    <AnalogPort name="iSyn" mode='reduce' reduce_op='+' dimension=''/>
+    <AnalogPort name="V" mode="send" dimension=''/>
+    <EventPort name="spike_output" mode="send"/>
+    
+
+    <Dynamics>
+        
+        <!-- Suggested addition Wednesday morning...-->
+        <StateVariable name="V" dimension=""/>
+        <StateVariable name="tspike" dimension="none"/> 
+          
+
+        <Regime name="subthresholdregime">
+              
+          <TimeDerivative variable="V">
+              <MathInline> (gl *(vrest-V)  + iSyn)/(cm)</MathInline>
+          </TimeDerivative>
+          
+          <OnCondition target_regime="refactoryregime">
+            <Trigger>
+              <MathInline>V &gt; theta </MathInline>
+            </Trigger>
+
+            <StateAssignment variable="V" >
+              <MathInline>vrest</MathInline>
+            </StateAssignment>
+            
+            <StateAssignment variable="tspike" >
+              <MathInline>t</MathInline>
+            </StateAssignment>
+            
+            <EventOut port="spikeOutput" />
+            
+          </OnCondition>
+
+        </Regime>
+
+
+        <Regime name="refractoryregime">
+              
+          <TimeDerivative variable="V">
+              <MathInline> 0</MathInline>
+          </TimeDerivative>
+          
+          <OnCondition target_regime='subthresholdregime'>
+            <Trigger>
+                <MathInline>t &gt; tspike + taurefrac </MathInline>
+            </Trigger>
+
+            <StateAssignment variable="V" >
+              <MathInline>vrest</MathInline>
+            </StateAssignment>
+            
+            <StateAssignment variable="tspike" >
+              <MathInline>t</MathInline>
+            </StateAssignment>
+            
+            <EventOut port="spikeOutput" />
+            
+          </OnCondition>
+
+        </Regime>
+
+
+    </Dynamics>
+
+  </ComponentClass>
+</NineML>
