@@ -4,7 +4,7 @@ import nineml
 root = abspath(join(realpath(nineml.__path__[0]), "../../.."))
 sys.path.append(join(root, "code_generation/nmodl"))     
 
-from nineml import abstraction_layer as nineml
+from nineml import abstraction_layer as al
 
 from nineml.abstraction_layer import example_models 
 import nineml.abstraction_layer.models as models

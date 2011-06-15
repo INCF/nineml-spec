@@ -8,7 +8,6 @@ Copyright Andrew P. Davison, Eilif B. Muller, 2010, Michael Hull, 2011  # if you
 
 
 from core import *
-from visitors import ComponentVisitor
 from nineml import __version__
 
 

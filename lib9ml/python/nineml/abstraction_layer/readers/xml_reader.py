@@ -10,148 +10,176 @@ import os
 
 
 
-#import core as al_core
 import nineml.abstraction_layer as al
-import al.core as al_core
-from xmlns import etree,E,MATHML,nineml_namespace,NINEML
+import nineml.abstraction_layer.core as core
+from ..xmlns import etree,E,MATHML,nineml_namespace,NINEML
 
 
 NS = "{CoModL}"
 
 
-def load_ComponentClass(element):
-    from nineml.abstraction_layer.models import ComponentNode
-    name = element.get("name")
-     
-    subnodes = loadBlocks( element,blocks=('Parameter','AnalogPort','EventPort','Dynamics' ) )
-    return ComponentNode(   name=name,
-                                   parameters = subnodes["Parameter" ] ,
-                                   analog_ports = subnodes["AnalogPort"] ,
-                                   event_ports = subnodes["EventPort"],
-                                   dynamics = ExpectSingle( subnodes["Dynamics"] )
-                                   )
-   
-def load_Parameter(element):
-    name = element.get("name")
-    return al_core.Parameter(name=name) 
-
-def load_AnalogPort(element):
-    name = element.get("name")
-    mode = element.get("mode")
-    reduce_op = element.get("reduce_op",None)
-    return al_core.AnalogPort( internal_symbol = name, mode = mode, op = reduce_op )
-
-def load_EventPort(element):
-    name = element.get("name")
-    mode = element.get("mode")
-    return al_core.EventPort( internal_symbol = name, mode = mode )
 
 
 
-def load_Dynamics(element):
-    subnodes = loadBlocks( element, blocks=('Regime','Alias','StateVariable' )  )
-    return al_core.Dynamics(  regimes = subnodes["Regime"] ,
-                             aliases = subnodes["Alias"] ,
-                             state_variables = subnodes["StateVariable"] ,
-                             )
-
-
-def load_RegimeClass(element):
-    name = element.get("name")
-    subnodes = loadBlocks( element, blocks=('TimeDerivative','OnCondition','OnEvent' )  )
-    return al_core.Regime( name=name,
-                          time_derivatives = subnodes["TimeDerivative"],
-                          on_events = subnodes["OnEvent"],
-                          on_conditions = subnodes["OnCondition"] )
 
 
 
-def load_StateVariable(element):
-    name = element.get("name")
-    return al_core.StateVariable( name=name)
+class XMLLoader1(object):
+
+    def __init__(self, xmlroot, xmlNodeFilenameMap):
+        
+        self.components = []
+        self.component_srcs = {}
+        for comp_block in xmlroot.findall(NS + "ComponentClass"):
+            component = self.load_ComponentClass( comp_block )
+            src_filename = xmlNodeFilenameMap[comp_block]
+
+            self.components.append(component)
+            self.component_srcs[component] = xmlNodeFilenameMap[comp_block]
 
 
-def load_TimeDerivative(element):
-    variable = element.get("variable")
-    expr = load_SingleInternalMathsBlock(element)
-    return al_core.ODE( dependent_variable=variable, indep_variable='t', rhs=expr)
+
+    def load_ConnectPorts(self, element ):
+        return element.get('source'), element.get('sink')
+
+
+
+    def load_Subnode(self, subnode):
+        namespace = subnode.get('namespace')
+        component = FilterExpectSingle( self.components, lambda c: c.name==subnode.get('node') )
+        return namespace,component
     
-def load_Alias(element):
-    name = element.get("name")
-    rhs =  load_SingleInternalMathsBlock(element)
-    return al_core.Alias( lhs=name,  rhs=rhs)
 
 
-def load_OnCondition(element):
-    subnodes = loadBlocks( element, blocks=('Trigger','StateAssignment','EventOut' )  )
-    target_regime = element.get('target_regime',None)
+    def load_ComponentClass(self,element):
+        
 
-    return al_core.OnCondition(  trigger = ExpectSingle( subnodes["Trigger"] ),
+        from nineml.abstraction_layer import ComponentNodeCombined
+        name = element.get("name")
+         
+
+        subnodes = self.loadBlocks( element,blocks=('Parameter','AnalogPort','EventPort','Dynamics','Subnode','ConnectPorts' ) )
+
+        component = ComponentNodeCombined(  name=name,
+                                       parameters = subnodes["Parameter" ] ,
+                                       analog_ports = subnodes["AnalogPort"] ,
+                                       event_ports = subnodes["EventPort"],
+                                       dynamics = ExpectSingle( subnodes["Dynamics"] )
+                                       )
+
+        # Load namespaces:
+        for namespace,componentclass in subnodes['Subnode']:
+            component.insert_subnode(subnode = componentclass, namespace=namespace)
+        
+        for src,sink in subnodes['ConnectPorts']:
+            component.connect_ports(src=src,sink=sink)
+
+        return component
+
+       
+    def load_Parameter(self,element):
+        name = element.get("name")
+        return al.Parameter(name=name) 
+
+    def load_AnalogPort(self,element):
+        name = element.get("name")
+        mode = element.get("mode")
+        reduce_op = element.get("reduce_op",None)
+        return al.AnalogPort( internal_symbol = name, mode = mode, op = reduce_op )
+
+    def load_EventPort(self,element):
+        name = element.get("name")
+        mode = element.get("mode")
+        return al.EventPort( internal_symbol = name, mode = mode )
+
+
+
+    def load_Dynamics(self,element):
+        subnodes = self.loadBlocks( element, blocks=('Regime','Alias','StateVariable' )  )
+        return al.Dynamics(  regimes = subnodes["Regime"] ,
+                                 aliases = subnodes["Alias"] ,
+                                 state_variables = subnodes["StateVariable"] ,
+                                 )
+
+
+    def load_RegimeClass(self,element):
+        name = element.get("name")
+        subnodes = self.loadBlocks( element, blocks=('TimeDerivative','OnCondition','OnEvent' )  )
+        return al.Regime( name=name,
+                              time_derivatives = subnodes["TimeDerivative"],
+                              on_events = subnodes["OnEvent"],
+                              on_conditions = subnodes["OnCondition"] )
+
+
+
+    def load_StateVariable(self,element):
+        name = element.get("name")
+        return al.StateVariable( name=name)
+
+
+    def load_TimeDerivative(self,element):
+        variable = element.get("variable")
+        expr = self.load_SingleInternalMathsBlock(element)
+        return al.ODE( dependent_variable=variable, indep_variable='t', rhs=expr)
+        
+    def load_Alias(self,element):
+        name = element.get("name")
+        rhs =  self.load_SingleInternalMathsBlock(element)
+        return al.Alias( lhs=name,  rhs=rhs)
+
+
+    def load_OnCondition(self,element):
+        subnodes = self.loadBlocks( element, blocks=('Trigger','StateAssignment','EventOut' )  )
+        target_regime = element.get('target_regime',None)
+
+        return al.OnCondition(  trigger = ExpectSingle( subnodes["Trigger"] ),
+                                     state_assignments = subnodes[ "StateAssignment"],
+                                     event_outputs = subnodes[ "EventOut" ],
+                                     target_regime_name = target_regime)
+                                    
+
+    def load_OnEvent(self,element):
+        subnodes = self.loadBlocks( element, blocks=('StateAssignment','EventOut' )  )
+        target_regime = element.get('target_regime',None)
+        src_port = element.get('port')
+        return al.OnEvent(  src_port = src_port,
                                  state_assignments = subnodes[ "StateAssignment"],
                                  event_outputs = subnodes[ "EventOut" ],
-                                 target_regime = target_regime)
-                                
+                                 target_regime_name = target_regime)
+        assert False, 'Not implemented yet'
 
-def load_OnEvent(element):
-    subnodes = loadBlocks( element, blocks=('StateAssignment','EventOut' )  )
-    target_regime = element.get('target_regime',None)
-    src_port = element.get('port')
-    return al_core.OnEvent(  src_port = src_port,
-                             state_assignments = subnodes[ "StateAssignment"],
-                             event_outputs = subnodes[ "EventOut" ],
-                             target_regime = target_regime)
-    assert False, 'Not implemented yet'
-
-def load_Trigger(element):
-    return load_SingleInternalMathsBlock ( element ) 
+    def load_Trigger(self,element):
+        return self.load_SingleInternalMathsBlock ( element ) 
 
 
-def load_StateAssignment(element):
-    to = element.get('variable')
-    expr = load_SingleInternalMathsBlock(element)
-    return al_core.Assignment(to=to, expr=expr)
+    def load_StateAssignment(self,element):
+        to = element.get('variable')
+        expr = self.load_SingleInternalMathsBlock(element)
+        return al.Assignment(to=to, expr=expr)
 
-def load_EventOut(element):
-    port = element.get('port')
-    return al_core.OutputEvent(port=port)
-
-
-def load_EventIn(element):
-    return al_core.InputEvent( port = element.get('port') )
+    def load_EventOut(self,element):
+        port = element.get('port')
+        return al.OutputEvent(port=port)
 
 
-def load_SingleInternalMathsBlock(element, checkOnlyBlock=True):
-    if checkOnlyBlock:
-        elements = list(element.iterchildren(tag=etree.Element ) ) 
-        if  len( elements ) != 1:
-            print elements
-            assert False, 'Unexpected tags found'
+    def load_EventIn(self,element):
+        return al.InputEvent( port = element.get('port') )
 
-    assert len( element.findall(NS+"MathML") ) == 0
-    assert len( element.findall(NS+"MathInline") ) == 1
-    
-    return ExpectSingle( element.findall(NS+'MathInline') ).text
+
+    def load_SingleInternalMathsBlock(self,element, checkOnlyBlock=True):
+        if checkOnlyBlock:
+            elements = list(element.iterchildren(tag=etree.Element ) ) 
+            if  len( elements ) != 1:
+                print elements
+                assert False, 'Unexpected tags found'
+
+        assert len( element.findall(NS+"MathML") ) == 0
+        assert len( element.findall(NS+"MathInline") ) == 1
+        
+        return ExpectSingle( element.findall(NS+'MathInline') ).text
 
 
 
-tag_to_loader = {
-    "ComponentClass" : load_ComponentClass,
-    "Dynamics" : load_Dynamics,
-    "Regime" : load_RegimeClass,
-    "StateVariable" : load_StateVariable,
-    "Parameter": load_Parameter,
-    "EventPort": load_EventPort,
-    "AnalogPort": load_AnalogPort,
-    "Dynamics": load_Dynamics,
-    "OnCondition": load_OnCondition,
-    "OnEvent": load_OnEvent,
-    "Alias": load_Alias,
-    "TimeDerivative": load_TimeDerivative,
-    "Trigger": load_Trigger,
-    "StateAssignment": load_StateAssignment,
-    "EventOut": load_EventOut,
-    "EventIn": load_EventIn,
-        }
 
 
 
@@ -160,24 +188,66 @@ tag_to_loader = {
 
 
 # These blocks map directly in to classes:
-def loadBlocks( element, blocks=None, checkForSpuriousBlocks=True ):
-    """ 
-    Creates a dictionary that maps class-types to instantiated objects
-    """
+    def loadBlocks(self, element, blocks=None, checkForSpuriousBlocks=True ):
+        """ 
+        Creates a dictionary that maps class-types to instantiated objects
+        """
 
-    if blocks:
-        for t in element.iterchildren(tag=etree.Element):
-            assert t.tag[len(NS):] in blocks  or t.tag in blocks
+        if blocks:
+            for t in element.iterchildren(tag=etree.Element):
+                assert t.tag[len(NS):] in blocks  or t.tag in blocks
 
-    
-    blocks = blocks if blocks is not None else tag_to_class_dict.keys()
+        
+        blocks = blocks if blocks is not None else tag_to_class_dict.keys()
 
-    res = defaultdict( list )
-    for blk in blocks:
-        loader = tag_to_loader[blk]
-        res[blk].extend( [ loader( e ) for e in element.findall(NS+blk) ] )
+        res = {}
+        for blk in blocks:
+            elements =list ( element.findall(NS+blk) ) 
+            res[blk] = []
+            if elements:
+                loader = tag_to_loader[blk]
+                res[blk].extend( [ loader(self, e ) for e in elements ] )
 
-    return dict( res.iteritems() )
+        return res
+
+
+
+
+
+
+
+tag_to_loader = {
+    "ComponentClass" : XMLLoader1.load_ComponentClass,
+    "Dynamics" : XMLLoader1.load_Dynamics,
+    "Regime" : XMLLoader1.load_RegimeClass,
+    "StateVariable" : XMLLoader1.load_StateVariable,
+    "Parameter": XMLLoader1.load_Parameter,
+    "EventPort": XMLLoader1.load_EventPort,
+    "AnalogPort": XMLLoader1.load_AnalogPort,
+    "Dynamics": XMLLoader1.load_Dynamics,
+    "OnCondition": XMLLoader1.load_OnCondition,
+    "OnEvent": XMLLoader1.load_OnEvent,
+    "Alias": XMLLoader1.load_Alias,
+    "TimeDerivative": XMLLoader1.load_TimeDerivative,
+    "Trigger": XMLLoader1.load_Trigger,
+    "StateAssignment": XMLLoader1.load_StateAssignment,
+    "EventOut": XMLLoader1.load_EventOut,
+    "EventIn": XMLLoader1.load_EventIn,
+    "Subnode": XMLLoader1.load_Subnode,
+    "ConnectPorts": XMLLoader1.load_ConnectPorts,
+        }
+
+
+
+
+
+
+
+
+
+
+
+xmlNodeFilenameMap = {}
 
 
 
@@ -193,7 +263,10 @@ class XMLReader(object):
         included_xml = cls._loadNestedXML( os.path.join(basedir,filename) )
 
         #Insert it into the parent node:
-        include_element.getparent().extend( included_xml.getchildren() )
+        indexOfNode = include_element.getparent().index(include_element)
+        for i,newchild in enumerate(included_xml.getchildren()):
+            include_element.getparent().insert(  i+indexOfNode,newchild)
+
         include_element.getparent().remove( include_element )
 
 
@@ -201,78 +274,90 @@ class XMLReader(object):
     def _loadNestedXML(cls,filename):
         """ Load the XML, including Include files """
         doc = etree.parse(filename)
+
+        # Store the source filenames of all the nodes:
+        for node in doc.getroot().getiterator():
+            xmlNodeFilenameMap[node] = filename
+
+        
         root = doc.getroot()
         assert root.nsmap[None] == nineml_namespace
-
+        
+        # Recursively Load Include Nodes:
         for include_element in root.getiterator(tag=NINEML+'Include'):
             cls._load_include(include_element=include_element, basedir=os.path.dirname(filename) )
+
         return root
 
 
     @classmethod
     def read_component(cls, filename, component_name=None):
-        components = cls.read_components(filename)
+        root = cls._loadNestedXML(filename)
+        loader1 = XMLLoader1( root, xmlNodeFilenameMap = xmlNodeFilenameMap  )
         if component_name == None:
-            return ExpectSingle(components)
+            return FilterExpectSingle( loader1.components, lambda c: loader1.component_srcs[c] == filename)
         else:
-            return FilterExpectSingle( components, lambda c:c.name==component_name )
+            return FilterExpectSingle( loader1.components, lambda c:c.name==component_name )
 
     @classmethod
     def read_components(cls,filename):
         root = cls._loadNestedXML(filename)
-        component_blocks = root.findall(NS + "ComponentClass")
-        components = [ load_ComponentClass(comp) for comp in component_blocks ]
-        return components
+        loader1 = XMLLoader1( root, xmlNodeFilenameMap = xmlNodeFilenameMap  )
+        return loader1.components
+
         
 
 
-    @classmethod
-    def read_model(cls, filename, model_name=None):
-        models = cls.read_models(filename)
-        if model_name == None:
-            return ExpectSingle(models)
-        else:
-            return FilterExpectSingle( models, lambda m:m.name==model_name )
 
 
-
-
-
-    @classmethod
-    def read_models(cls, filename, ):
-        root = cls._loadNestedXML(filename)
-
-        # Read the Components
-        component_blocks = root.findall(NS + "ComponentClass")
-        components = [ load_ComponentClass(comp) for comp in component_blocks ]
-        component_map = dict( [ (c.name,c) for c in components ] )
-
-        # Read the Models:
-        models = [cls._build_model(e,component_map) for e in root.findall(NS+'ModelClass') ]
-        for sn in root.getchildren():
-            print sn, sn.tag
-        
-    
-        
-        return models
-        pass
-
-
-    @classmethod
-    def _build_model( cls, modelclass_element, component_map):
-
-        # Create the model:
-        from nineml.abstraction_layer import models
-        model = models.Model( name= modelclass_element.get('name') )
-
-        # Insert the subnodes:
-        for sn in modelclass_element.iterchildren(tag=NS+'Subnode'):
-            ns = sn.get('namespace')
-            component = component_map[ sn.get('node')]
-            model.insert_subnode( subnode = component, namespace=ns )
-
-        # Insert the Connections:
-        for sn in modelclass_element.iterchildren(tag=NS+'ConnectPorts'):
-            model.connect_ports( src=sn.get('source'), sink=sn.get('sink') )
-        
-        return model
+#
+#    @classmethod
+#    def read_model(cls, filename, model_name=None):
+#        models = cls.read_models(filename)
+#        if model_name == None:
+#            return ExpectSingle(models)
+#        else:
+#            return FilterExpectSingle( models, lambda m:m.name==model_name )
+#
+#
+#
+#
+#
+#    @classmethod
+#    def read_models(cls, filename, ):
+#        root = cls._loadNestedXML(filename)
+#
+#        # Read the Components
+#        component_blocks = root.findall(NS + "ComponentClass")
+#        components = [ load_ComponentClass(comp) for comp in component_blocks ]
+#        component_map = dict( [ (c.name,c) for c in components ] )
+#
+#        # Read the Models:
+#        models = [cls._build_model(e,component_map) for e in root.findall(NS+'ModelClass') ]
+#        for sn in root.getchildren():
+#            print sn, sn.tag
+#        
+#    
+#        
+#        return models
+#        pass
+#
+#
+#    @classmethod
+#    def _build_model( cls, modelclass_element, component_map):
+#
+#        # Create the model:
+#        from nineml.abstraction_layer import models
+#        model = models.Model( name= modelclass_element.get('name') )
+#
+#        # Insert the subnodes:
+#        for sn in modelclass_element.iterchildren(tag=NS+'Subnode'):
+#            ns = sn.get('namespace')
+#            component = component_map[ sn.get('node')]
+#            model.insert_subnode( subnode = component, namespace=ns )
+#
+#        # Insert the Connections:
+#        for sn in modelclass_element.iterchildren(tag=NS+'ConnectPorts'):
+#            model.connect_ports( src=sn.get('source'), sink=sn.get('sink') )
+#        
+#        return model

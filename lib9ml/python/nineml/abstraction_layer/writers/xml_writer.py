@@ -1,12 +1,17 @@
 
 from itertools import chain
 
-from nineml.abstraction_layer.xmlns import *
-from nineml.abstraction_layer import ComponentVisitor
+#from nineml.abstraction_layer.xmlns import *
+from nineml.abstraction_layer.visitors import ComponentVisitor
+
+import nineml.abstraction_layer as al
+import nineml.abstraction_layer.flattening as flattening
 
 
 
 
+from nineml.abstraction_layer.xmlns import nineml_namespace
+from nineml.abstraction_layer.xmlns import E, etree
 
 
 
@@ -14,14 +19,17 @@ class XMLWriter(ComponentVisitor):
 
     @classmethod 
     def write( cls, component, file, flatten=True):
-        assert flatten
+        assert isinstance( component,al.ComponentNodeCombined )
+        if not component.isflat():
+            if not flatten: 
+                assert False, 'Trying to save nested models not yet supported'
+            else:
+                component = flattening.ComponentFlattener(component)
 
-        xml = XMLWriter().VisitComponent(component)
+        xml = XMLWriter().Visit(component)
         doc = E.nineml(xml, xmlns=nineml_namespace)
         etree.ElementTree(doc).write(file, encoding="UTF-8", pretty_print=True, xml_declaration=True)
 
-    def VisitComponent(self,component):
-        assert False
 
     def VisitComponentNodeCombined(self,component):
         elements =  [p.AcceptVisitor(self) for p in component.analog_ports] +\
@@ -79,8 +87,8 @@ class XMLWriter(ComponentVisitor):
         nodes = chain( on_condition.state_assignments, on_condition.event_outputs, [on_condition.trigger] )
         newNodes = [ n.AcceptVisitor(self) for n in nodes ] 
         kwargs = {}
-        if on_condition._target_regime:
-            kwargs['target_regime'] = on_condition._target_regime
+        if on_condition.target_regime:
+            kwargs['target_regime'] = on_condition._target_regime.name
         return E(on_condition.element_name,*newNodes,**kwargs) 
 
     def VisitCondition(self, condition):
@@ -93,7 +101,7 @@ class XMLWriter(ComponentVisitor):
         elements =  [p.AcceptVisitor(self) for p in on_event.state_assignments] +\
                     [p.AcceptVisitor(self) for p in on_event.event_outputs] 
         kwargs ={'src_port':on_event._src_port}
-        if on_event._target_regime:
-            kwargs['target_regime'] = on_event._target_regime
+        if on_event.target_regime:
+            kwargs['target_regime'] = on_event.target_regime.name
         return E('OnEvent', *elements,  **kwargs )
         assert False

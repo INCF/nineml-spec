@@ -44,6 +44,7 @@ class ComponentClass(object):
         self._event_ports = event_ports or []
         self._dynamics = dynamics
 
+
     # Basic properties:
     @property
     def name(self):
@@ -109,10 +110,9 @@ class ComponentClass(object):
             for c in r.on_conditions:
                 yield c
 
-    #def get_regimes_to(self,regime):
-    #    """ Gets as a list all regimes that transition to regime"""
-    #    
-    #    return [t.from_ for t in self.transitions if t.to==regime]
+
+
+    
 
 
     def backsub_aliases(self):
@@ -251,6 +251,25 @@ class ComponentNodeCombined( ComponentClass, TreeNode ):
 
         ComponentClass.__init__(self, name=name, parameters = parameters, analog_ports=analog_ports, event_ports = event_ports, dynamics = dynamics)
         TreeNode.__init__(self,subnodes=subnodes)
+
+        #Finalise Initiation:
+        self.ResolveTransitionRegimeNames()
+
+
+        
+    def ResolveTransitionRegimeNames(self):
+        # Check that the names of the regimes are unique:
+        names = [ r.name for r in self.regimes ]
+        nineml.utility.AssertNoDuplicates(names)
+
+        #Create a map of regime names to regimes:
+        regimeMap = dict( [ (r.name,r) for r in self.regimes] )
+
+        # We only worry about 'target' regimes, since source regimes are taken 
+        # care of for us by the Regime objects they are attached to.
+        for t in self.transitions:
+            assert t.target_regime_name in regimeMap, "Can't resolve transition's target regime: %s"%t.target_regime_name
+            t.set_target_regime( regimeMap[t.target_regime_name] )
 
 
         

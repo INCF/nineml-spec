@@ -49,6 +49,7 @@ class ComponentFlattener(object):
         self.modelsubmodels = ModelVisitorDF_ModelCollector(self.model, include_root=True).models
 
         self.componentswithregimes = [ m for m in ModelVisitorDF_ModelCollector(self.model, include_root=True).models if list(m.regimes) ] 
+        print 'Components with Regimes:', self.componentswithregimes
         
         self.build_new_regime_space()
         self.remap_ports()
@@ -133,11 +134,11 @@ class ComponentFlattener(object):
                 dstRegimeTuple = srcRegime[:]
 
                 # Points to another node:
-                name = oldtransition.target_regime
+                name = oldtransition.target_regime_name
                 dstRegimeOld = self.componentswithregimes[regimeIndex].query.regime(name=name) 
                 dstRegimeTuple[regimeIndex] = dstRegimeOld
 
-                print 'New Regime Transition:', currentRegimeTuple, '->', tuple( dstRegimeTuple )
+                #print 'New Regime Transition:', currentRegimeTuple, '->', tuple( dstRegimeTuple )
                 return tuple(dstRegimeTuple)
 
         def distribute_event(event_output):
@@ -151,12 +152,6 @@ class ComponentFlattener(object):
 
             
 
-
-
-        
-
-        for i,m in enumerate(self.modelcomponents):
-            print 'Regime Space:',i,m, m.name
 
         for regimetuple,regimeNew in newRegimeLookupMap.iteritems():
 
@@ -194,7 +189,7 @@ class ComponentFlattener(object):
                     
 
                     targetRegime = newRegimeLookupMap[ newRegimeTuple ]
-                    newOnCondition = al.OnCondition(oldtransition.trigger, state_assignments=state_assignments, event_outputs = output_events, target_regime = targetRegime.name)
+                    newOnCondition = al.OnCondition(oldtransition.trigger, state_assignments=state_assignments, event_outputs = output_events, target_regime_name = targetRegime.name)
                     regimeNew.add_on_condition( newOnCondition)
 
                 for oldtransition in regime.on_events:
@@ -224,7 +219,7 @@ class ComponentFlattener(object):
                         handled_events.append(ev)
 
                     targetRegime = newRegimeLookupMap[ newRegimeTuple ]
-                    newOnCondition = al.OnEvent(oldtransition.src_port, state_assignments=state_assignments, event_outputs = output_events, target_regime = targetRegime.name)
+                    newOnCondition = al.OnEvent(oldtransition.src_port, state_assignments=state_assignments, event_outputs = output_events, target_regime_name = targetRegime.name)
                     regimeNew.add_on_event( newOnCondition)
                     
         self.newRegimeLookupMap = newRegimeLookupMap

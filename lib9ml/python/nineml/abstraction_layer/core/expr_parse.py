@@ -19,6 +19,7 @@ import os
 
 import math_namespace
 
+
 class NineMLMathParseError(ValueError):
     pass
 

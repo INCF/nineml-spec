@@ -16,7 +16,7 @@ def run(plot_and_show=True):
     sys.path.append(join(root, "code_generation/nmodl"))     
                
 
-    from nineml.abstraction_layer.example_models import  get_hierachical_iaf_2coba, get_coba
+    from nineml.abstraction_layer.example_models import  get_hierachical_iaf_2coba
     from nineml.abstraction_layer.flattening import ComponentFlattener
 
     import pyNN.neuron as sim

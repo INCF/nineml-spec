@@ -31,9 +31,9 @@
               <MathInline> (gl *(vrest-V)  + iSyn)/(cm)</MathInline>
           </TimeDerivative>
           
-          <OnCondition target_regime="refactoryregime">
+          <OnCondition target_regime="refractoryregime">
             <Trigger>
-              <MathInline>V &gt; theta </MathInline>
+              <MathInline>V &gt; vthresh </MathInline>
             </Trigger>
 
             <StateAssignment variable="V" >

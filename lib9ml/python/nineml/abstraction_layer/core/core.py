@@ -25,26 +25,72 @@ class UnimplementedError(RuntimeError):
 
 class Transition(object):
 
-    def __init__(self,state_assignments=None, event_outputs=None, target_regime=None):
-        if target_regime:
-            assert isinstance(target_regime, basestring)
+    def __init__(self,state_assignments=None, event_outputs=None, target_regime_name=None):
+        if target_regime_name:
+            assert isinstance(target_regime_name, basestring)
 
         self._state_assignments = state_assignments or []
         self._event_outputs = event_outputs or [] 
-        self._target_regime = target_regime 
+
+        self._target_regime_name = target_regime_name
+        self._source_regime_name = None
+
+        # Set later, once attached to a regime:
+        self._target_regime = None
         self._source_regime = None
     
+
     def set_source_regime(self, source_regime):
-        assert isinstance( source_regime, basestring)
-        assert not self._source_regime 
+        assert isinstance( source_regime, Regime)
+        assert not self._source_regime
+        if self._source_regime_name: 
+            assert self._source_regime_name == source_regime.name
+        else:
+            self._source_regime_name = source_regime.name
         self._source_regime = source_regime
         
+    def set_target_regime_name(self, target_regime_name):
+        assert isinstance( target_regime_name, basestring)
+        assert not self._target_regime
+        assert not self._target_regime_name 
+        self._target_regime_name = target_regime_name
+
+
     def set_target_regime(self, target_regime):
-        assert isinstance( target_regime, basestring)
-        assert not self._target_regime 
+        assert isinstance( target_regime, Regime)
+        if self._target_regime:
+            assert self.target_regime == target_regime
+            return 
+
+        # Did we already set the target_regime_name
+        if self._target_regime_name: 
+            assert self._target_regime_name == target_regime.name
+        else:
+            self._target_regime_name = target_regime.name
         self._target_regime = target_regime
     
+    @property
+    def target_regime_name(self):
+        if self._target_regime_name:
+            assert isinstance( self._target_regime_name, basestring) 
+        return self._target_regime_name
+    @property
+    def source_regime_name(self):
+        if self._source_regime:
+            assert False, 'This function should not be called by users. Use source_regime.name instead'
+        assert self._source_regime_name
+        return self._source_regime_name
+
+    @property
+    def target_regime(self):
+        assert self._target_regime
+        return self._target_regime
+    @property
+    def source_regime(self):
+        assert self._source_regime
+        return self._source_regime
     
+
     @property
     def state_assignments(self):
         return self._state_assignments
@@ -54,31 +100,7 @@ class Transition(object):
         return self._event_outputs
 
 
-    @property
-    def target_regime(self):
-        if self._target_regime:
-            assert isinstance( self._target_regime, basestring) 
-        return self._target_regime
-    @property
-    def source_regime(self):
-        assert self._source_regime
-        return self._source_regime
 
-    #-- Syntactic Sugar -- @ 
-    @property
-    def to(self):
-        assert isinstance( self._target_regime, basestring)
-        return self._target_regime
-
-    @property
-    def _from(self):
-        return self._source_regime
-
-    # TODO: Remove:
-    @property
-    def nodes(self):
-        #assert False
-        return chain( self._state_assignments, self._event_outputs)
 
 
 
@@ -88,8 +110,8 @@ class OnEvent(Transition):
     def AcceptVisitor(self, visitor,**kwargs):
         return visitor.VisitOnEvent(self,**kwargs)
 
-    def __init__(self, src_port, state_assignments=None, event_outputs=None, target_regime=None):
-        Transition.__init__(self,state_assignments=state_assignments, event_outputs=event_outputs, target_regime=target_regime)
+    def __init__(self, src_port, state_assignments=None, event_outputs=None, target_regime_name=None):
+        Transition.__init__(self,state_assignments=state_assignments, event_outputs=event_outputs, target_regime_name=target_regime_name)
         self._src_port = src_port
 
     @property
@@ -104,12 +126,12 @@ class OnCondition(Transition):
     def AcceptVisitor(self, visitor,**kwargs):
         return visitor.VisitOnCondition(self,**kwargs)
 
-    def __init__(self, trigger, state_assignments=None, event_outputs=None, target_regime=None):
+    def __init__(self, trigger, state_assignments=None, event_outputs=None, target_regime_name=None):
         if isinstance( trigger, Condition):    self._trigger = trigger.clone()
         elif isinstance( trigger, basestring): self._trigger = Condition( rhs = trigger )
         else:  assert False
 
-        Transition.__init__(self,state_assignments=state_assignments, event_outputs=event_outputs, target_regime=target_regime)
+        Transition.__init__(self,state_assignments=state_assignments, event_outputs=event_outputs, target_regime_name=target_regime_name)
 
 
     def __str__(self):
@@ -183,33 +205,24 @@ class Regime(object):
 
 
 
+    def _resolve_references_on_transition(self,transition):
+        if not transition.target_regime_name:
+            transition.set_target_regime(self)
+        
+        assert not transition._source_regime_name
+        transition.set_source_regime( self )
+
+
     def add_on_event(self, on_event):
         assert isinstance(on_event, OnEvent)
-        
-        if not on_event.target_regime:
-            on_event.set_target_regime(self.name)
-        
-        on_event.set_source_regime( self.name )
+        self._resolve_references_on_transition(on_event)
         self._on_events.append( on_event )
 
     def add_on_condition(self, on_condition):
         assert isinstance(on_condition, OnCondition)
-        
-        if not on_condition.target_regime:
-            on_condition.set_target_regime(self.name)
-            
-        on_condition.set_source_regime( self.name )
+        self._resolve_references_on_transition(on_condition)
         self._on_conditions.append( on_condition )
 
-                
-    def __eq__(self, other):
-        if not isinstance(other, self.__class__):
-            return False
-        
-        sort_key = lambda node: node.name
-        return reduce(and_, (self.name == other.name, 
-                             sorted(self.nodes, key=sort_key) == sorted(other.nodes, key=sort_key),
-                             sorted(self.transitions, key=sort_key) == sorted(other.transitions, key=sort_key)))
 
     def __repr__(self):
         return "%s(%s)" % (self.__class__.__name__, self.name)
@@ -300,7 +313,7 @@ def DoOnEvent(input_event, do=None, to=None):
     return OnEvent( src_port=input_event.port,
                     state_assignments = assignments,
                     event_outputs=output_events,
-                    target_regime = to )
+                    target_regime_name = to )
 
 
 
@@ -309,7 +322,7 @@ def DoOnCondition( condition, do=None, to=None ):
     return OnCondition( trigger=condition,
                         state_assignments = assignments,
                         event_outputs=output_events,
-                        target_regime = to )
+                        target_regime_name = to )
 
 
 

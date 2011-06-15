@@ -8,7 +8,9 @@
 <Include file="comp_coba.9ml"/>
 
 
-<ModelClass xmlns="CoModL">
+<ComponentClass name='iaf_2coba' xmlns="CoModL">
+    <Dynamics/>
+    
     <Subnode namespace="iaf" node="iaf" />
     <Subnode namespace="cobaExcit" node="coba" />
     <Subnode namespace="cobaInhib" node="coba" />
@@ -16,7 +18,8 @@
     <ConnectPorts source="iaf.V" sink="cobaInhib.V"/>
     <ConnectPorts source="cobaExcit.I" sink="iaf.iSyn"/>
     <ConnectPorts source="cobaInhib.I" sink="iaf.iSyn"/>
-</ModelClass>
+    
+</ComponentClass>
 
 
 </NineML>
