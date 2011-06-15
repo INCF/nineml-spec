@@ -107,7 +107,7 @@ class ModelToSingleComponentReducer(object):
             
             #Update dstRegime
             dstRegimeName = oldtransition.to.get_ref() if oldtransition.to else regime
-            dstRegime = self.modelcomponents[regimeIndex].query.regime(name=dstRegimeName.name) 
+            dstRegime = self.componentswithregimes[regimeIndex].query.regime(name=dstRegimeName.name) 
             newRegimeTuple[index] = dstRegime
 
 
@@ -126,7 +126,7 @@ class ModelToSingleComponentReducer(object):
         #print "Building new Regime Space"
         #print "  Taking cross-product of existing regime-spaces"
         newRegimeLookupMap = {}
-        regimes = [ comp.regimes for comp in self.modelcomponents]
+        regimes = [ comp.regimes for comp in self.componentswithregimes]
         print "Regimes:", regimes
         for i,regimetuple in enumerate( itertools.product(*regimes) ):
             newRegime = self.create_compound_regime( regimetuple, i ) 
@@ -153,7 +153,7 @@ class ModelToSingleComponentReducer(object):
 
                 # Points to another node:
                 dstRegimeName = oldtransition.to.get_ref() if oldtransition.to else regime
-                dstRegimeOld = self.modelcomponents[regimeIndex].query.regime(name=dstRegimeName.name) 
+                dstRegimeOld = self.componentswithregimes[regimeIndex].query.regime(name=dstRegimeName.name) 
                 dstRegime[regimeIndex] = dstRegimeOld
                 return tuple(dstRegime)
 
