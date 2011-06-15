@@ -13,7 +13,7 @@ import util
 
 
 #import nineml.abstraction_layer as al
-from nineml.abstraction_layer import ComponentClass
+from nineml.abstraction_layer import ComponentClass, Dynamics
 
 
 
@@ -62,19 +62,21 @@ class TreeNode(object):
         return self._parentmodel
         
     # Visitation
-    def AcceptVisitor(self,visitor):
+    def AcceptVisitor(self,visitor,**kwargs):
         raise NotImplementedException
 
 
 
-
+#name=None, 
     
 class Model(TreeNode):
-    def __init__(self, name=None, subnodes={}, model=None):
+    def __init__(self, subnodes={}, model=None):
         super(Model,self).__init__()
         
-        self.name = name
-        assert not self.name
+        #self.name = name
+        #print self.name
+        #assert not self.name
+
         self.subnodes = {}
         self.portconnections = []
 
@@ -99,20 +101,20 @@ class Model(TreeNode):
         conns = [ (make_fqname(src),make_fqname(sink)) for (src,sink) in self.portconnections ]
         return conns
         
-
-
-
-
     # Visitation 
-    def AcceptVisitor(self,visitor):
-        return visitor.VisitModelNode(self)
+    def AcceptVisitor(self,visitor,**kwargs):
+        return visitor.VisitModelNode(self,**kwargs)
 
 
 
 
 
 class ComponentNode(ComponentClass,TreeNode, ):
-    def __init__(self, name, parameters = [],  analog_ports = [], event_ports=[], dynamics=None, model=None):
+    def __init__(self, name, parameters = None,  analog_ports = None, event_ports=None, dynamics=None, model=None):
+        parameters = parameters or []
+        analog_ports = analog_ports or []
+        event_ports = event_ports or []
+
         TreeNode.__init__(self, )
         ComponentClass.__init__(self, name=name, parameters = parameters, analog_ports=analog_ports, event_ports = event_ports, dynamics = dynamics)
         self.query = ComponentQueryer(self)
@@ -123,8 +125,30 @@ class ComponentNode(ComponentClass,TreeNode, ):
     def getAllComponents(self,):
         return [self]
 
-    def AcceptVisitor(self,visitor):
-        return visitor.VisitComponentNode(self)
+    def AcceptVisitor(self,visitor,**kwargs):
+        return visitor.VisitComponentNode(self,**kwargs)
+
+
+
+
+
+
+class ComponentNodeCombined( ComponentNode, Model ):
+
+    def __init__(self, name, parameters=[],  analog_ports=[], event_ports=[], dynamics=None, subnodes={}, model=None):
+        if dynamics == None:
+            dynamics = Dynamics()
+        ComponentNode.__init__(self, name=name, parameters = parameters, analog_ports = analog_ports, event_ports=event_ports, dynamics=dynamics, model=model)
+        Model.__init__(self,  subnodes=subnodes, model=model)
+
+    def getAllComponents(self,):
+        assert False
+        return [self]  
+
+    def AcceptVisitor(self,visitor,**kwargs):
+        return visitor.VisitComponentNodeCombined(self)
+
+
 
 
 
@@ -142,76 +166,21 @@ class ComponentQueryer(object):
         rFunc = lambda r:r.name==name 
         return FilterExpectSingle( self.component.regimes,rFunc ) 
         
-    def transition(self, name=None):
-        return FilterExpectSingle( self.component.transitions, lambda c:c.name==name ) 
-        
-    def port(self, cls=None, mode=None, symb=None):
-        raise UnimplementedError
+    def event_send_ports(self):
+        return [ p for p in self.component.event_ports if p.mode=='send']
 
-    def subcomponent(self, name):
-        raise UnimplementedError
-
-
+    def event_recv_ports(self):
+        return [ p for p in self.component.event_ports if p.mode=='recv']
     
     def get_fully_addressed_analogports_new(self):
         comp_addr = self.component.get_node_addr()
         return dict( [ (comp_addr.get_subns_addr(port.name), port) for port in self.component.analog_ports] )
 
-    ## TO GO:
-    #def get_fully_addressed_ports_new(self):
-    #    assert False
-    #    comp_addr = self.component.get_node_addr()
-    #    return dict( [ (comp_addr.get_subns_addr(port.name), port) for port in self.component.ports ] )
-
-    #def get_fully_addressed_ports(self):
-    #    assert False
-    #    comp_addr = self.component.getTreePosition()
-    #    return dict( [ (tuple(comp_addr + [port.name]),port) for port in self.component.ports ] )
-    ############
-
-
-
     #More advanced searches on just this node:
     @property
-    def conditions(self):
-        raise UnimplementedError
-
-    @property
-    def odes(self):
-        raise UnimplementedError
-
-    @property
-    def equations(self):
-        raise UnimplementedError
-    
-    @property
-    def non_parameter_symbols(self):
-        raise UnimplementedError
-
-    @property
-    def variables(self):
-        raise UnimplementedError
-
-    @property
-    def state_variables(self):
-        raise UnimplementedError
-
-    @property
-    def bound_symbols(self):
-        raise UnimplementedError
-
-    @property
-    def assigned_variables(self):
-        raise UnimplementedError
-
-    @property
-    def independent_variables(self):
-        raise UnimplementedError
-
-    @property
-    def integrated_variables(self):
-        raise UnimplementedError
-
+    def analog_reduce_ports(self):
+        reduce_ports = [ p for p in self.component.analog_ports if p.mode=='reduce' ]
+        return reduce_ports
 
 
 
@@ -256,7 +225,7 @@ class NamespaceAddress(object):
         return "_".join( self.loctuple )
 
     def get_str_prefix(self):
-        return "_".join( self.loctuple ) + "_"
+        return self.getstr() + "_" 
 
     @classmethod
     def concat(cls,*args):

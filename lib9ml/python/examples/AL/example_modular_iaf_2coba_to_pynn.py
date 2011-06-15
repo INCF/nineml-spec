@@ -15,7 +15,7 @@ sys.path.append(join(root, "lib9ml/python/examples/AL"))
 sys.path.append(join(root, "code_generation/nmodl"))     
            
 
-from nineml.abstraction_layer.example_models import  get_hierachical_iaf_2coba
+from nineml.abstraction_layer.example_models import  get_hierachical_iaf_2coba, get_coba
 from nineml.abstraction_layer.models import ModelToSingleComponentReducer
 
 import pyNN.neuron as sim
@@ -28,12 +28,35 @@ init_logging(None, debug=True)
 sim.setup(timestep=0.1, min_delay=0.1)
 
 
+
+
+from nineml.abstraction_layer.models.modelmodifier import ModelModifier
+from nineml.abstraction_layer.models import reduce_to_single_component, dump_reduced
+from nineml.abstraction_layer.component_checker import ComponentTypeChecker, ComponentPortChecker
+
+
+
 testModel = get_hierachical_iaf_2coba()
+
+#for arp in testModel.query.analog_reduce_ports:
+#    print arp
+
+
+flat = reduce_to_single_component( testModel, componentname = 'iaf_2coba' )
+
+
+
+#ModelModifier.CloseAnalogPort(component=flat, port_name='iaf_ISyn', value='0' )
+print flat
+ComponentTypeChecker().VisitComponent( flat )
+ComponentPortChecker().VisitComponent( flat )
+
+
 
 
 celltype_cls = pyNNml.nineml_celltype_from_model(
                                         name = "iaf_2coba",
-                                        nineml_model = testModel,
+                                        nineml_model = flat,
                                         synapse_components = [
                                             pyNNml.CoBaSyn( namespace='cobaExcit',  weight_connector='q' ),
                                             pyNNml.CoBaSyn( namespace='cobaInhib',  weight_connector='q' ),

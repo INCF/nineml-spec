@@ -21,6 +21,8 @@ from nineml.abstraction_layer.cond_parse import cond_parse
 from nineml.abstraction_layer.expr_parse import expr_parse
 from nineml.abstraction_layer.xmlns import *
 
+from nineml.utility import *
+
 
 #from nineml.abstraction_layer.xml_writer import XMLWriter
 #from nineml.abstraction_layer.xml_reader import XMLReader
@@ -77,8 +79,8 @@ class Reference(object):
 
 class OnEvent(object):
 
-    def AcceptVisitor(self, visitor):
-        return visitor.VisitOnEvent(self)
+    def AcceptVisitor(self, visitor,**kwargs):
+        return visitor.VisitOnEvent(self,**kwargs)
 
     def __init__(self, src_port,state_assignments=[], event_outputs=[], target_regime=None):
 
@@ -114,8 +116,8 @@ class OnEvent(object):
 class OnCondition(object):
     element_name = "OnCondition"
 
-    def AcceptVisitor(self, visitor):
-        return visitor.VisitOnCondition(self)
+    def AcceptVisitor(self, visitor,**kwargs):
+        return visitor.VisitOnCondition(self,**kwargs)
 
     def __init__(self, trigger, state_assignments=[], event_outputs=[], target_regime=None):
         if isinstance( trigger, Condition):
@@ -132,7 +134,8 @@ class OnCondition(object):
         #self._to=None
         self._from=None
 
-    
+    def __str__(self):
+        return 'OnCondition( %s )'%self.trigger
 
     def clone(self, *args,**kwargs):
         assert False
@@ -174,8 +177,8 @@ class Regime(object):
     
     # Visitation:
     # -------------
-    def AcceptVisitor(self, visitor):
-        return visitor.VisitRegime(self)
+    def AcceptVisitor(self, visitor,**kwargs):
+        return visitor.VisitRegime(self,**kwargs)
 
     # Regime Properties:
     # ------------------
@@ -200,16 +203,38 @@ class Regime(object):
         return self._name
 
 
-    def __init__(self, name, time_derivatives, on_events=[], on_conditions=[]):
+    def __init__(self, name, time_derivatives, on_events=None, on_conditions=None, transitions=None):
+        on_events = on_events or []
+        on_conditions = on_conditions or []
+        transitions = transitions or []
+
         self._name = name if name else "Regime%d"%Regime.n
         Regime.n = Regime.n+1
 
-        self._time_derivatives = time_derivatives
+        # This is not nice, but we support passing in 'transitions', which is a list of 
+        # both OnEvents and OnConditions. So lets filter this by type and add them 
+        # appropriately:
+        fDict = FilterDiscreteTypes(transitions, (OnEvent,OnCondition) ) 
+        on_events.extend( fDict[OnEvent] ) 
+        on_conditions.extend( fDict[OnCondition] )
+
+
+        # Time Derivatives may be specified as strings:
+        def strToTimeDeriv(s):
+            r = re.compile(r"""\s* d(?P<var>[a-zA-Z][a-zA-Z0-9_]*)/dt \s* = \s* (?P<rhs> .*) """, re.VERBOSE) 
+            m = r.match(s)
+            return ODE( dependent_variable = m.groupdict()['var'], indep_variable='t', rhs=m.groupdict()['rhs'] )
+        tdTypeDict = FilterDiscreteTypes( time_derivatives, (basestring, ODE ) )
+        tds = tdTypeDict[ODE] + [ strToTimeDeriv(o) for o in tdTypeDict[basestring] ] 
+
+
+        self._time_derivatives = tds
         self._on_events = on_events
         self._on_conditions = on_conditions
 
         for s in self._on_conditions:
             s.to = self
+
 
     def add_on_event(self, on_event):
         assert isinstance(on_event, OnEvent)
@@ -479,6 +504,66 @@ def On(condition, do=None, to=None, name=None):
 
 
 
+
+
+def doToAsssignmentsAndEvents(doList):
+    # 'do' is a list of strings, OutputEvents, and StateAssignments.
+    doTypes = FilterDiscreteTypes(doList, (OutputEvent,basestring, Assignment) )
+    
+    #Convert strings to StateAssignments:
+    for s in doTypes[basestring]:
+        print s
+        lhs,rhs = s.split('=')
+        print lhs,rhs
+        sa = Assignment( to=lhs, expr=rhs )
+        doTypes[Assignment].append(sa)
+    del doTypes[basestring]
+
+    return doTypes[Assignment], doTypes[OutputEvent]
+
+
+
+
+# Forwarding Function:
+def DoOn( trigger, do=[], to=None ):
+    if isinstance( trigger, InputEvent):
+        return DoOnEvent(input_event=trigger, do=do,to=to)
+    elif isinstance( trigger, (OnCondition, basestring)):
+        return DoOnCondition(condition=trigger, do=do,to=to)
+    else:
+        assert False
+
+
+
+
+
+
+
+def DoOnEvent( input_event, do=[], to=None):
+    assert isinstance( input_event, InputEvent) 
+    
+    assignments,output_events = doToAsssignmentsAndEvents( do ) 
+    return OnEvent( src_port=input_event.port,
+                    state_assignments = assignments,
+                    event_outputs=output_events,
+                    target_regime = to )
+
+
+
+def DoOnCondition( condition, do=[], to=None ):
+    assignments,output_events = doToAsssignmentsAndEvents( do ) 
+    return OnCondition( trigger=condition,
+                        state_assignments = assignments,
+                        event_outputs=output_events,
+                        target_regime = to )
+
+
+
+
+
+
+
+
     
 
 
@@ -512,7 +597,19 @@ class StateVariable(object):
 
 class Dynamics(object):
     element_name = 'Dynamics'
-    def __init__(self, regimes = [], aliases = [], state_variables = []):
+    def __init__(self, regimes = None, aliases = None, state_variables = None):
+        aliases = aliases or  []
+        regimes = regimes or []
+        state_variables = state_variables or []
+
+
+        # Time Derivatives may be specified as strings:
+        def strToAlias(s):
+            lhs,rhs = s.split(':=')
+            return Alias( lhs = lhs.strip(), rhs = rhs.strip() )
+        aliasTD = FilterDiscreteTypes( aliases, (basestring, Alias ) )
+        aliases = aliasTD[Alias] + [ strToAlias(o) for o in aliasTD[basestring] ] 
+
         self._regimes = regimes
         self._aliases = aliases
         self._state_variables = state_variables
@@ -549,10 +646,14 @@ class Dynamics(object):
 class ComponentClass(object):
     element_name = "ComponentClass"
 
-    def AcceptVisitor(self,visitor):
-        return visitor.VisitComponent(self)
+    def AcceptVisitor(self,visitor,**kwargs):
+        return visitor.VisitComponent(self,**kwargs)
     
     def __init__(self, name, parameters = [], analog_ports = [], event_ports = [], dynamics=None):
+        parameters = parameters or []
+        analog_ports = analog_ports or []
+        event_ports = event_ports or []
+
         self._name = name
         self._parameters = parameters
         self._analog_ports = analog_ports

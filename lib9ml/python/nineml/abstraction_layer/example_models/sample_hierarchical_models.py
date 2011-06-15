@@ -4,48 +4,70 @@ import random, os
 import nineml.abstraction_layer as al
 import nineml.abstraction_layer.models as models
 
-iaf = models.ComponentNode( "iaf",
-                        regimes = [
-                            al.Regime(
-                                "dV/dt = ( gl*( vrest - V ) + ISyn)/(cm)",
-                                transitions = [al.On("V > vthresh",
-                                                         do=["tspike = t",
-                                                             "V = vreset",
-                                                             al.SpikeOutputEvent],
-                                                         to="refractoryregime"),
-                                               ],
-                                name = "subthresholdregime"
-                                ),
 
-                            al.Regime(
-                                "dV/dt = 0",
-                                transitions = [ al.On("t >= tspike + taurefrac",
-                                                          to="subthresholdregime") ],
-                                name = "refractoryregime"
-                                )
-                            ],
-                        analog_ports = [   al.SendPort("V"), 
-                                           al.ReducePort("ISyn", op="+"),
-                                           ]
-                        )
+def get_iaf():
+    iaf = models.ComponentNodeCombined( 
+                            name = "iaf",
+                            dynamics = al.Dynamics( 
+                                regimes = [
+                                    al.Regime(
+                                        time_derivatives = ["dV/dt = ( gl*( vrest - V ) + ISyn)/(cm)"],
+                                        transitions = [al.DoOn("V > vthresh",
+                                                                 do=["tspike = t",
+                                                                     "V = vreset",
+                                                                     al.OutputEvent('spikeoutput')],
+                                                                 to="refractoryregime"),
+                                                       ],
+                                        name = "subthresholdregime"
+                                        ),
 
+                                    al.Regime(
+                                        time_derivatives = ["dV/dt = 0"],
+                                        transitions = [ al.DoOn("t >= tspike + taurefrac",
+                                                                  to="subthresholdregime") ],
+                                        name = "refractoryregime"
+                                        )
+                                    ],
+                                aliases = [],
+                                state_variables = [
+                                    al.StateVariable( 'V'),
+                                    al.StateVariable( 'tspike'),
+                                                
+                                    ]
+                            ),
+                            analog_ports = [   al.SendPort("V"), 
+                                               al.ReducePort("ISyn", op="+"),],
+                                               
+                            event_ports = [ al.SendEventPort('spikeoutput'),],
+                             parameters = [ al.Parameter(p) for p in ['cm','taurefrac','gl','vreset','vrest','vthresh']  ]
+                            )
+    return iaf
 
-coba = models.ComponentNode( "CobaSyn",
-                         regimes = [
-                             al.Regime(
-                                 "dg/dt = -g/tau",
-                                 "I:=g*(vrev-V)", 
-                                 transitions = [
-                                     al.On(al.EventPort('spikeinput', mode="recv"), do="g=g+q"),
-                                     ],
-                                 name = "defaultregime"
-                                 )
-                             ],
-                         
-                         analog_ports = [ al.RecvPort("V"), 
-                                          al.SendPort("I"), 
-                                          ]
-                         )
+def get_coba():
+    print 'getCoba()::Start'
+    coba = models.ComponentNodeCombined( 
+                             name = "CobaSyn",
+                             dynamics = 
+                                al.Dynamics(
+                                    aliases = ["I:=g*(vrev-V)", ],
+                                    regimes = [
+                                      al.Regime(
+                                         name = "cobadefaultregime",
+                                         time_derivatives = ["dg/dt = -g/tau",],
+                                         transitions = [
+                                             al.DoOn(al.InputEvent('spikeinput'), do=["g=g+q"]),
+                                             ],
+                                         )
+                                        ],
+                                    state_variables = [ al.StateVariable('g') ]
+                                    ),
+                             
+                             analog_ports = [ al.RecvPort("V"), al.SendPort("I"), ],
+                             event_ports = [al.RecvEventPort('spikeinput') ],
+                             parameters = [ al.Parameter(p) for p in ['tau','gl','q','vrest','vrev']  ]
+                             )
+    print 'getCoba()::End'
+    return coba
 
 
 
@@ -59,13 +81,14 @@ def nmda():
         "dB/dt = -B/taud",
         "I := g * (E-V)",
         name="intereventregime",
-        transitions=al.On(al.SpikeInputEvent,
+        transitions=al.DoOn(al.InputEvent('spikeinput'),
                               do=["A = A + weight*factor",
                                   "B = B + weight*factor"])
         )
 
     ports = [al.RecvPort("V"),
-             al.SendPort("I"), # this notation takes the assignment of Isyn out of the Regime
+             al.SendPort("I"), 
+             al.RecvEventPort('spikeinput')
             ]
 
     nmda = models.ComponentNode("NMDAPSR",
@@ -85,7 +108,7 @@ def get_hierachical_iaf_2coba():
 
     
     # Create a model, composed of an iaf neuron, and 
-    iaf_2coba_model = models.Model( name="iaf_2coba", subnodes = {"iaf" : iaf, "cobaExcit" : coba, "cobaInhib" : coba} )
+    iaf_2coba_model = models.ComponentNodeCombined( name="iaf_2coba", subnodes = {"iaf" : get_iaf(), "cobaExcit" : get_coba(), "cobaInhib" : get_coba()} )
     
     # Connections have to be setup as strings, because we are deep-copying objects.
     iaf_2coba_model.connect_ports( "iaf.V", "cobaExcit.V" )

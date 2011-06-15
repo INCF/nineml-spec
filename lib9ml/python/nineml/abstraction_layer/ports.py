@@ -200,13 +200,15 @@ class OutputEvent(object):
         portname = prefix + self.port if not self.port in prefix_excludes else self.port
         return OutputEvent(portname)
 
+    def __str__(self):
+        return 'OutputEvent( port: %s)'%self.port
 
 class InputEvent(object):
     def AcceptVisitor(self, visitor, **kwargs):
         return self.visitor.VisitInputEvent(self, **kwargs)
 
     def __init__(self,port):
-        self.port
+        self.port = port
     
     def clone(self, prefix="", prefix_excludes=[]):
         portname = prefix + self.port if not self.port in prefix_excludes else self.port
@@ -231,3 +233,7 @@ RecvPort = curry(AnalogPort,mode="recv")
 SendPort = curry(AnalogPort,mode="send")
 
 # allows: RecvPort("V")
+
+
+RecvEventPort = curry(EventPort,mode="recv")
+SendEventPort = curry(EventPort,mode="send")

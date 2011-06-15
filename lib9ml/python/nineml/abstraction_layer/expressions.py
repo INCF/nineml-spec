@@ -251,6 +251,7 @@ class ExpressionWithLHS(Equation):
 class ExpressionWithSimpleLHS(ExpressionWithLHS):
 
     def __init__(self, lhs, rhs):
+        lhs=lhs.strip()
         single_symbol = re.compile("^[a-zA-Z_]+[a-zA-Z_0-9]*$")
         assert single_symbol.match( lhs ) 
         self.lhs = lhs

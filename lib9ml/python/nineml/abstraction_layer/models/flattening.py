@@ -13,6 +13,7 @@ import util
 
 from visitors import ModelVisitorDF_ComponentCollector, ModelVisitorDF_ModelCollector
 
+from nineml.abstraction_layer.visitors import ClonerVisitor, ModelPrefixerVisitor
 
 class ModelToSingleComponentReducer(object):
     
@@ -33,8 +34,8 @@ class ModelToSingleComponentReducer(object):
     def __init__(self,model, componentname):
         # Are we trying to flatten something that it already flattened
         from nineml.abstraction_layer import ComponentClass
-        from nineml.abstraction_layer.models import ComponentNode, Model
-        if isinstance( model, (ComponentClass,ComponentNode) ):
+        from nineml.abstraction_layer.models import ComponentNode, Model, ComponentNodeCombined
+        if isinstance( model, (ComponentClass,ComponentNode) ) and not isinstance( model, ComponentNodeCombined):
             self.reducedcomponent = model
             return
 
@@ -45,10 +46,19 @@ class ModelToSingleComponentReducer(object):
 
         # Flatten all the namespaces:
         from nineml.abstraction_layer.visitors import ClonerVisitor, ModelPrefixerVisitor
-        self.model = ModelPrefixerVisitor().VisitModelClass(model)
+#        self.model = ModelPrefixerVisitor().VisitModelClass(model)
+#        self.model = ClonerlPrefixerVisitor().VisitModelClass(model)
+
+        print model
+        print model.dynamics
+
+        from nineml.abstraction_layer.visitors.cloner import ClonerVisitorPrefixNamespace
+        self.model = ClonerVisitorPrefixNamespace().Visit(model)
 
         self.modelcomponents = ModelVisitorDF_ComponentCollector(self.model).components
         self.modelsubmodels = ModelVisitorDF_ModelCollector(self.model, include_root=True).models
+
+        self.componentswithregimes = [ m for m in ModelVisitorDF_ModelCollector(self.model, include_root=True).models if m.regimes ] 
         
         self.build_new_regime_space()
         self.remap_ports()
@@ -77,11 +87,41 @@ class ModelToSingleComponentReducer(object):
         from nineml.abstraction_layer.visitors import ClonerVisitor
         return oldtransition.AcceptVisitor( ClonerVisitor(prefix='',prefix_excludes=[]) )
 
+
+
+    def getRegimeTupleResponseToEvent( self, regimeTuple, eventName ):
+        " Do not recurse, but iterate once over each regime in the tuple"
+
+        state_assignments = []
+        event_outputs = []
+        newRegimeTuple = list( regimeTuple )
+
+        for index,regime in enumerate(regimeTuple):
+            on_events = [ oe for oe in regime.on_events if oe.src_port == eventName ] 
+            assert len(on_events) in [0,1]
+            if not on_events: continue
+
+            on_event = on_events[0]
+            state_assignments.extend( [sa.AcceptVisitor( ClonerVisitor() ) for sa in on_event.state_assignments ]) 
+            event_outputs.extend( [eo.AcceptVisitor( ClonerVisitor() ) for eo in one_event.event_outputs ]) 
+            
+            #Update dstRegime
+            dstRegimeName = oldtransition.to.get_ref() if oldtransition.to else regime
+            dstRegime = self.modelcomponents[regimeIndex].query.regime(name=dstRegimeName.name) 
+            newRegimeTuple[index] = dstRegime
+
+
+
+        return state_assignments, event_outputs, tuple( newRegimeTuple )
     
+
+
     def build_new_regime_space(self):
 
         # Create our new 'Regime-Space'. This is the cross product off all
         # the 'Regime-Spaces' from each component.
+
+        print 'MODELCOMPONENTS', self.modelcomponents
         
         #print "Building new Regime Space"
         #print "  Taking cross-product of existing regime-spaces"
@@ -92,52 +132,177 @@ class ModelToSingleComponentReducer(object):
             newRegime = self.create_compound_regime( regimetuple, i ) 
             newRegimeLookupMap[regimetuple] = newRegime
 
+        print "RegimeMap:", newRegimeLookupMap
         
-        # Now we are in a position to setup the transitions:
-        # Lets reiterate over the regime-space:
+
+        # Check for event-emission cycles:
+        # TODO
+        recv_event_input_ports = flattenFirstLevel( [comp.query.event_recv_ports() for comp in self.modelcomponents] )
+        event_port_map = flattenFirstLevel( [comp.get_fully_qualified_port_connections() for comp in self.modelsubmodels] )
+        event_port_map = [ (p1.getstr(), p2.getstr() ) for (p1,p2) in event_port_map ] 
+        print event_port_map
         
-        for regimetuple,regimeNew in newRegimeLookupMap.iteritems():
-            #For each regime in the regimetuple, lets see what we can reach from there:
+        print recv_event_input_ports
+        import sys
+        #sys.exit(0)
+
+
+        def getNewRegimeTupleFromTransition( currentRegimeTuple, regimeIndex, oldtransition ):
+                srcRegime = list( currentRegimeTuple )
+                dstRegime = srcRegime[:]
+
+                # Points to another node:
+                dstRegimeName = oldtransition.to.get_ref() if oldtransition.to else regime
+                dstRegimeOld = self.modelcomponents[regimeIndex].query.regime(name=dstRegimeName.name) 
+                dstRegime[regimeIndex] = dstRegimeOld
+                return tuple(dstRegime)
+
+        def distribute_event(event_output):
+            print 'Distributing Event', event_output, event_output.port
+            events = set()
+            for p1,p2 in event_port_map:
+                if p1 == event_output.port:
+                    events.append( p2 )
+                    events = events + distribute_event(p2)
+            return events
+
             
-            #print "RegimeTuple:",regimetuple
+
+
+
+        
+
+        for i,m in enumerate(self.modelcomponents):
+            print 'Regime Space:',i,m, m.name
+
+        for regimetuple,regimeNew in newRegimeLookupMap.iteritems():
+
             for regimeIndex, regime in enumerate( regimetuple ):
-                #print 'RegimeIndex:',regimeIndex, "NTransitions:", len(regime.transitions)
+                print 'Regime Index:',regimeIndex
+                
+                # Lets see what happens if we get events. The simple case is just changing the
+                
+                for oldtransition in regime.on_conditions:
+                    # Horrible Hack: Sort this out. What are we doing with 'to'
+                    to = oldtransition.to
+                    oldtransition = oldtransition.AcceptVisitor( ClonerVisitor(prefix='', prefix_excludes=[]) )
+                    oldtransition.to = to
+
+
+                    print 'Working out what happens if transition happens:', oldtransition
+                    handled_events = []
+                    unhandled_events = []
+
+                    state_assignments = oldtransition.state_assignments
+                    output_events = oldtransition.event_outputs
+                    unhandled_events.extend( flattenFirstLevel( [distribute_event( ev) for ev in output_events ]) ) 
+
+                    newRegimeTuple = getNewRegimeTupleFromTransition( currentRegimeTuple = regimetuple, regimeIndex=regimeIndex, oldtransition=oldtransition)
+                    
+                    while unhandled_events:
+                        ev = unhandled_events.pop()
+                        new_state_assignments, new_event_outputs, newRegimeTuple = self.getRegimeTupleResponseToEvent(newRegimeTuple, ev ) 
+                        
+                        # Check for event recursion:
+                        for new_ev in new_event_outputs: assert not new_ev in handled_events and new_ev != ev
+                        
+                        state_assignments.extend( new_state_assignments )
+                        output_events.extend( new_event_outputs )
+                        unhandled_events.extend( flattenFirstLevel( distribute_event( new_event_outputs ) ) )
+                        handled_events.append(ev)
+
+                    finalRegime = newRegimeLookupMap[ newRegimeTuple ]
+
+                    newOnCondition = al.OnCondition(oldtransition.trigger, state_assignments=state_assignments, event_outputs = output_events)
+                    finalRegime.add_on_condition( newOnCondition)
 
                 for oldtransition in regime.on_events:
-                    # We calculate the tuple of the Regime this transitions should jump to:
-                    #print oldtransition
-                    srcRegime = list( regimetuple )
-                    dstRegime = srcRegime[:]
+                    # Horrible Hack: Sort this out. What are we doing with 'to'
+                    to = oldtransition.to
+                    oldtransition = oldtransition.AcceptVisitor( ClonerVisitor(prefix='', prefix_excludes=[]) )
+                    assert oldtransition.to == to
 
-                    # Points to another node:
-                    dstRegimeName = oldtransition.to.get_ref() if oldtransition.to else regime
-                    dstRegimeOld = self.modelcomponents[regimeIndex].query.regime(name=dstRegimeName.name) 
-                    dstRegime[regimeIndex] = dstRegimeOld
-                    newRegimeTo = newRegimeLookupMap[ tuple(dstRegime) ] 
-                    transName = newRegimeTo.name
 
-                    oldcomponent = self.modelcomponents[regimeIndex]
-                    print oldtransition
-                    #t = self.create_transition(oldtransition=oldtransition,oldcomponent=oldcomponent, fromRegime=regimeNew, toRegime=newRegimeTo)
-                    t = self.create_on_event(oldtransition=oldtransition,oldcomponent=oldcomponent, fromRegime=regimeNew, toRegime=newRegimeTo)
-                    regimeNew.add_on_event( on_event=t )
-        
-                for oldtransition in regime.on_conditions:
-                    # We calculate the tuple of the Regime this transitions should jump to:
-                    #print oldtransition
-                    srcRegime = list( regimetuple )
-                    dstRegime = srcRegime[:]
+                    print 'Working out what happens if transition happens:', oldtransition
+                    handled_events = []
+                    unhandled_events = []
 
-                    # Points to another node:
-                    dstRegimeName = oldtransition.to.get_ref() if oldtransition.to else regime
-                    dstRegimeOld = self.modelcomponents[regimeIndex].query.regime(name=dstRegimeName.name) 
-                    dstRegime[regimeIndex] = dstRegimeOld
-                    newRegimeTo = newRegimeLookupMap[ tuple(dstRegime) ] 
-                    transName = newRegimeTo.name
+                    state_assignments = oldtransition.state_assignments
+                    output_events = oldtransition.event_outputs
+                    unhandled_events.extend( flattenFirstLevel( [distribute_event( ev) for ev in output_events ]) ) 
 
-                    oldcomponent = self.modelcomponents[regimeIndex]
-                    t = self.create_on_condition(oldtransition=oldtransition,oldcomponent=oldcomponent, fromRegime=regimeNew, toRegime=newRegimeTo)
-                    regimeNew.add_on_condition( on_condition = t )
+                    newRegimeTuple = getNewRegimeTupleFromTransition( currentRegimeTuple = regimetuple, regimeIndex=regimeIndex, oldtransition=oldtransition)
+                    
+                    while unhandled_events:
+                        ev = unhandled_events.pop()
+                        new_state_assignments, new_event_outputs, newRegimeTuple = self.getRegimeTupleResponseToEvent(newRegimeTuple, ev ) 
+                        
+                        # Check for event recursion:
+                        for new_ev in new_event_outputs: assert not new_ev in handled_events and new_ev != ev
+                        
+                        state_assignments.extend( new_state_assignments )
+                        output_events.extend( new_event_outputs )
+                        unhandled_events.extend( flattenFirstLevel( distribute_event( new_event_outputs ) ) )
+                        handled_events.append(ev)
+
+                    finalRegime = newRegimeLookupMap[ newRegimeTuple ]
+
+                    newOnCondition = al.OnEvent(oldtransition.src_port, state_assignments=state_assignments, event_outputs = output_events)
+                    finalRegime.add_on_event( newOnCondition)
+                    
+        self.newRegimeLookupMap = newRegimeLookupMap
+                
+
+
+#        import sys
+#        #sys.exit(0)
+#
+#
+#        # Now we are in a position to setup the transitions:
+#        # Lets reiterate over the regime-space:
+#        
+#        for regimetuple,regimeNew in newRegimeLookupMap.iteritems():
+#            #For each regime in the regimetuple, lets see what we can reach from there:
+#            
+#            #print "RegimeTuple:",regimetuple
+#            for regimeIndex, regime in enumerate( regimetuple ):
+#                #print 'RegimeIndex:',regimeIndex, "NTransitions:", len(regime.transitions)
+#
+#                for oldtransition in regime.on_events:
+#                    # We calculate the tuple of the Regime this transitions should jump to:
+#                    #print oldtransition
+#                    srcRegime = list( regimetuple )
+#                    dstRegime = srcRegime[:]
+#
+#                    # Points to another node:
+#                    dstRegimeName = oldtransition.to.get_ref() if oldtransition.to else regime
+#                    dstRegimeOld = self.modelcomponents[regimeIndex].query.regime(name=dstRegimeName.name) 
+#                    dstRegime[regimeIndex] = dstRegimeOld
+#                    newRegimeTo = newRegimeLookupMap[ tuple(dstRegime) ] 
+#                    transName = newRegimeTo.name
+#
+#                    oldcomponent = self.modelcomponents[regimeIndex]
+#                    print oldtransition
+#                    #t = self.create_transition(oldtransition=oldtransition,oldcomponent=oldcomponent, fromRegime=regimeNew, toRegime=newRegimeTo)
+#                    t = self.create_on_event(oldtransition=oldtransition,oldcomponent=oldcomponent, fromRegime=regimeNew, toRegime=newRegimeTo)
+#                    regimeNew.add_on_event( on_event=t )
+#        
+#                for oldtransition in regime.on_conditions:
+#                    # We calculate the tuple of the Regime this transitions should jump to:
+#                    #print oldtransition
+#                    srcRegime = list( regimetuple )
+#                    dstRegime = srcRegime[:]
+#
+#                    # Points to another node:
+#                    dstRegimeName = oldtransition.to.get_ref() if oldtransition.to else regime
+#                    dstRegimeOld = self.modelcomponents[regimeIndex].query.regime(name=dstRegimeName.name) 
+#                    dstRegime[regimeIndex] = dstRegimeOld
+#                    newRegimeTo = newRegimeLookupMap[ tuple(dstRegime) ] 
+#                    transName = newRegimeTo.name
+#
+#                    oldcomponent = self.modelcomponents[regimeIndex]
+#                    t = self.create_on_condition(oldtransition=oldtransition,oldcomponent=oldcomponent, fromRegime=regimeNew, toRegime=newRegimeTo)
+#                    regimeNew.add_on_condition( on_condition = t )
         self.newRegimeLookupMap = newRegimeLookupMap
 
     
@@ -156,13 +321,17 @@ class ModelToSingleComponentReducer(object):
 
         new_ports = flattenFirstLevel( [comp.analog_ports for comp in self.modelcomponents]) 
         new_ports = dict( [ (p.name, p) for p in new_ports ] ) 
-
-
+        
+        print "PORTS:"
+        for p,pname in new_ports.iteritems():
+            print p, pname
+        print "PORTS END"
 
 
         from nineml.utility import flattenFirstLevel
         from nineml.abstraction_layer import ComponentClass
 
+        print 'Regimes:', newRegimeLookupMap.values()
         dynamics = al.Dynamics( regimes = newRegimeLookupMap.values(),
                                 aliases = flattenFirstLevel( [ m.aliases for m in self.modelcomponents ] ),
                                 state_variables = flattenFirstLevel( [ m.state_variables for m in self.modelcomponents ]  ),

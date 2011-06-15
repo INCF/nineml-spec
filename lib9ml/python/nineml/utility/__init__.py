@@ -27,8 +27,25 @@ def FilterType(lst, acceptedtype):
     return Filter( lst, lambda x: isinstance(x,acceptedtype))
 
 
+def FilterDiscreteTypes(lst, acceptedtypes):
+    # Starting with a list, splits into a dictionary which maps class types to
+    # a list of objects of that type.
+    res = {}
+    for a in acceptedtypes:
+        res[a] = Filter( lst, lambda x: isinstance(x,a))
+
+    nCounted = sum([ len(l) for l in res.values()])
+    if nCounted != len(lst):
+        print 'Initial/Final: %d/%d'%( len(lst), nCounted)
+        print 'Object Types:', [ type(o) for o in lst]
+        print 'Class Counts', [ (a, len( res[a])) for a in acceptedtypes ] 
+        assert False
+    return res
 
 
+
+def AssertNoDuplicates(lst):
+    assert len(lst) == len( set(lst) )
 
 
 
