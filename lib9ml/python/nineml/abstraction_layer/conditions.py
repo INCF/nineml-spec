@@ -2,6 +2,8 @@ from nineml.abstraction_layer import expressions
 
 class Condition(expressions.Expression):
 
+    def AcceptVisitor(self, visitor, **kwargs):
+        return visitor.VisitCondition(self, **kwargs)
 
     def __init__(self, rhs, name=None):
         

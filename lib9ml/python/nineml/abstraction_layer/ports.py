@@ -181,6 +181,9 @@ class EventPort(Port):
 
 
 class OutputEvent(object):
+    def AcceptVisitor(self, visitor, **kwargs):
+        return visitor.VisitOutputEvent(self, **kwargs)
+
     def __init__(self, port):
         self.port = port
 
@@ -188,7 +191,11 @@ class OutputEvent(object):
         portname = prefix + self.port if not self.port in prefix_excludes else self.port
         return OutputEvent(portname)
 
+
 class InputEvent(object):
+    def AcceptVisitor(self, visitor, **kwargs):
+        return self.visitor.VisitInputEvent(self, **kwargs)
+
     def __init__(self,port):
         self.port
     

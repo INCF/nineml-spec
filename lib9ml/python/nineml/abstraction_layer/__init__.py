@@ -22,7 +22,7 @@ from nineml.abstraction_layer.expr_parse import expr_parse
 from nineml.abstraction_layer.xmlns import *
 
 
-from nineml.abstraction_layer.visitors import XMLWriterNew
+from nineml.abstraction_layer.xml_writer import XMLWriter
 
 
 from itertools import chain
@@ -78,6 +78,7 @@ class OnEvent(object):
     pass
 
 class OnCondition(object):
+    element_name = "OnCondition"
 
     def AcceptVisitor(self, visitor):
         return visitor.VisitOnCondition(self)
@@ -96,7 +97,6 @@ class OnCondition(object):
         self._to=None
         self._from=None
 
-        print "OnCondition::Trigger:", self.trigger
 
     def clone(self, *args,**kwargs):
         assert False
@@ -122,6 +122,7 @@ class OnCondition(object):
 
     @property
     def nodes(self):
+        assert False
         return chain( self._state_assignments, self._event_outputs)
 
 
@@ -132,7 +133,7 @@ class Regime(object):
     which occur based on conditions, and can be join the Regimes to other Regimes.
 
     """
-    element_name = "regime"
+    element_name = "Regime"
     n = 0
     
     def AcceptVisitor(self, visitor):
@@ -1488,6 +1489,9 @@ class Parameter(object):
         return visitor.VisitParameter(self, **kwargs)
 
 class StateVariable(object):
+    element_name = 'StateVariable'
+    def AcceptVisitor(self, visitor, **kwargs):
+        return visitor.VisitStateVariable(self, **kwargs)
     def __init__(self, name, ):
         self.name = name
 
@@ -1512,6 +1516,13 @@ class Dynamics(object):
     def transitions(self):
         return chain( *[r.transitions for r in self._regimes] )
 
+    @property
+    def aliases(self):
+        return iter( self._aliases )
+
+    @property
+    def state_variables(self):
+        return iter( self._state_variables )
     
     @property
     def aliases_map(self):

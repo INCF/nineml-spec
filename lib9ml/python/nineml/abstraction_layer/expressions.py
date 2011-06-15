@@ -279,7 +279,7 @@ class ExpressionWithSimpleLHS(ExpressionWithLHS):
 
 class Alias(ExpressionWithSimpleLHS, RegimeElement):
     
-    element_name = "alias"
+    element_name = "Alias"
     
 
     def __init__(self, lhs,rhs):
@@ -389,7 +389,7 @@ class ODE(Equation, RegimeElement):
     """ 
     Represents a first-order, ordinary differential equation.
     """
-    element_name = "ode"
+    element_name = "TimeDerivative"
     n = 0
     
 
