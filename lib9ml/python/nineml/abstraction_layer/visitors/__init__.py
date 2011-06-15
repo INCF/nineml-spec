@@ -1,2 +1,2 @@
 
-from cloner import ClonerVisitor
+from cloner import ClonerVisitor, ModelPrefixerVisitor

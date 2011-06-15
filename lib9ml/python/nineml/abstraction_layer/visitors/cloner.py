@@ -89,16 +89,19 @@ class ClonerVisitor(object):
                 state_assignments = [ s.AcceptVisitor(self) for s in on_event.state_assignments])
 
 
+
 class ModelPrefixerVisitor( object ):
     
-    def VisitModelClass( modelclass, **kwargs)
+    def VisitModelClass( modelclass, **kwargs):
         
         newsubnodes = {}
         for ns,node in modelclass.subnodes.iteritems():
             newsubnodes[ns] = node.AcceptVisitor(self)
 
         from nineml.abstraction_layer import models
-        newModel = models.Model(name=modelclass.name, subnodes=newsubnodes
+        newModel = models.Model(name=modelclass.name, subnodes=newsubnodes)
+        for src,sink in modelclass.portconnections:
+            newModel.connect_ports(src=src,sink=sink)
         return newModel
              
 
