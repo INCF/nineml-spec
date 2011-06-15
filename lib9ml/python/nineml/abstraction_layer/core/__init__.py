@@ -15,6 +15,4 @@ from nineml import __version__
 from core_component import *
 
 import math_namespace 
-#from writers import XMLWriter
-#from readers import XMLReader
 

@@ -24,7 +24,6 @@ class XMLWriter(ComponentVisitor):
         assert False
 
     def VisitComponentNodeCombined(self,component):
-        assert False
         elements =  [p.AcceptVisitor(self) for p in component.analog_ports] +\
                     [p.AcceptVisitor(self) for p in component.event_ports] +\
                     [p.AcceptVisitor(self) for p in component.parameters] +\

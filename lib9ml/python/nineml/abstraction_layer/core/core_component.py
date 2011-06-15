@@ -31,8 +31,8 @@ from nineml.utility import invertDictionary
 class ComponentClass(object):
     element_name = "ComponentClass"
 
-    def AcceptVisitor(self,visitor,**kwargs):
-        return visitor.VisitComponent(self,**kwargs)
+    #def AcceptVisitor(self,visitor,**kwargs):
+    #    return visitor.VisitComponent(self,**kwargs)
     
     def __init__(self, name, parameters = [], analog_ports = [], event_ports = [], dynamics=None):
         parameters = parameters or []
@@ -729,10 +729,6 @@ class ComponentNodeCombined( ComponentClass, TreeNode ):
         return self.isLeaf()
 
     def __init__(self, name, parameters=None, analog_ports=None, event_ports=None, dynamics=None, subnodes=None, model=None):
-        parameters = parameters or []
-        analog_ports = analog_ports or []
-        event_ports = event_ports or []
-        #subnodes = subnodes or {}
 
         self.query = ComponentQueryer(self)
 

@@ -10,11 +10,12 @@ import itertools
 import nineml.abstraction_layer as al
 # Relative Imports:
 
-from nineml.abstraction_layer.model_visitors import ModelVisitorDF_ComponentCollector, ModelVisitorDF_ModelCollector
+from nineml.abstraction_layer.visitors.model_visitors import ModelVisitorDF_ComponentCollector, ModelVisitorDF_ModelCollector
 
 from nineml.abstraction_layer.visitors import ClonerVisitor, ClonerVisitorPrefixNamespace
 
-class ModelToSingleComponentReducer(object):
+#class ModelToSingleComponentReducer(object):
+class ComponentFlattener(object):
     
     @classmethod
     def flatten_namespace(cls, ns):
@@ -396,5 +397,10 @@ class ModelToSingleComponentReducer(object):
 
 
 def reduce_to_single_component( model, componentname ):
-    reducer = ModelToSingleComponentReducer(model,componentname)
+    reducer = ComponentFlattener(model,componentname)
     return reducer.reducedcomponent
+
+def flatten( model, componentname ):
+    reducer = ComponentFlattener(model,componentname)
+    return reducer.reducedcomponent
+

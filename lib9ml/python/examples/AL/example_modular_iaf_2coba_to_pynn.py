@@ -16,7 +16,7 @@ sys.path.append(join(root, "code_generation/nmodl"))
            
 
 from nineml.abstraction_layer.example_models import  get_hierachical_iaf_2coba, get_coba
-from nineml.abstraction_layer.flattening import ModelToSingleComponentReducer
+from nineml.abstraction_layer.flattening import ComponentFlattener
 
 import pyNN.neuron as sim
 import pyNN.neuron.nineml as pyNNml
@@ -30,34 +30,12 @@ sim.setup(timestep=0.1, min_delay=0.1)
 
 
 
-from nineml.abstraction_layer.componentmodifiers import ModelModifier
-from nineml.abstraction_layer.flattening import reduce_to_single_component
-from nineml.abstraction_layer.writers import dump_reduced
-from nineml.abstraction_layer.component_checker import ComponentTypeChecker, ComponentPortChecker
-
-
-
 testModel = get_hierachical_iaf_2coba()
-
-
-flat = reduce_to_single_component( testModel, componentname = 'iaf_2coba' )
-
-leave_open = ['V','t']
-for arp in flat.query.analog_reduce_ports:
-    if arp.name in leave_open: continue
-    print 'Closing ARP Port:', arp
-    ModelModifier.CloseAnalogPort(component=flat, port_name=arp.name, value='0' )
-    
-ComponentTypeChecker().Visit( flat )
-ComponentPortChecker().Visit( flat )
-
-flat.backsub_aliases()
-flat.backsub_equations()
 
 
 celltype_cls = pyNNml.nineml_celltype_from_model(
                                         name = "iaf_2coba",
-                                        nineml_model = flat,
+                                        nineml_model = testModel,
                                         synapse_components = [
                                             pyNNml.CoBaSyn( namespace='cobaExcit',  weight_connector='q' ),
                                             pyNNml.CoBaSyn( namespace='cobaInhib',  weight_connector='q' ),
@@ -78,7 +56,7 @@ parameters = {
 }
 
 
-parameters = ModelToSingleComponentReducer.flatten_namespace_dict( parameters )
+parameters = ComponentFlattener.flatten_namespace_dict( parameters )
 
 
 cells = sim.Population(1, celltype_cls, parameters)

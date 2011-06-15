@@ -205,7 +205,7 @@ class ClonerVisitor(object):
 
     def VisitComponentNodeCombined(self, component, **kwargs ):
 
-        ccn =  al.ComponentNodeCombined( name = component.name,
+        ccn =  nineml.abstraction_layer.ComponentNodeCombined( name = component.name,
                                parameters  = [ p.AcceptVisitor(self,**kwargs) for p in component.parameters  ],
                                analog_ports= [ p.AcceptVisitor(self,**kwargs) for p in component.analog_ports],
                                event_ports = [ p.AcceptVisitor(self,**kwargs) for p in component.event_ports ],
@@ -220,14 +220,14 @@ class ClonerVisitor(object):
         return ccn
 
     def VisitComponentNode(self, component,**kwargs):
-        return al.ComponentNode( name = component.name,
+        return nineml.abstraction_layer.ComponentNode( name = component.name,
                                parameters  = [ p.AcceptVisitor(self,**kwargs) for p in component.parameters  ],
                                analog_ports= [ p.AcceptVisitor(self,**kwargs) for p in component.analog_ports],
                                event_ports = [ p.AcceptVisitor(self,**kwargs) for p in component.event_ports ],
                                dynamics    = component.dynamics.AcceptVisitor(self,**kwargs)  )
 
     def VisitComponent(self, component,**kwargs):
-        return al.ComponentNode( name = component.name,
+        return nineml.abstraction_layer.ComponentNode( name = component.name,
                                parameters  = [ p.AcceptVisitor(self,**kwargs) for p in component.parameters  ],
                                analog_ports= [ p.AcceptVisitor(self,**kwargs) for p in component.analog_ports],
                                event_ports = [ p.AcceptVisitor(self,**kwargs) for p in component.event_ports ],
@@ -235,12 +235,12 @@ class ClonerVisitor(object):
                                
 
     def VisitDynamics(self, dynamics, **kwargs):
-        return al.Dynamics( regimes =       [ r.AcceptVisitor(self,**kwargs) for r in dynamics.regimes ],
+        return nineml.abstraction_layer.Dynamics( regimes =       [ r.AcceptVisitor(self,**kwargs) for r in dynamics.regimes ],
                          aliases =          [ a.AcceptVisitor(self,**kwargs) for a in dynamics.aliases ],
                          state_variables =  [ s.AcceptVisitor(self,**kwargs) for s in dynamics.state_variables ] )
         
     def VisitRegime(self,regime,**kwargs):
-        return al.Regime(  name = regime.name,
+        return nineml.abstraction_layer.Regime(  name = regime.name,
                         time_derivatives =  [t.AcceptVisitor(self,**kwargs) for t in regime.time_derivatives],
                         on_events =         [t.AcceptVisitor(self,**kwargs) for t in regime.on_events],
                         on_conditions =     [t.AcceptVisitor(self,**kwargs) for t in regime.on_conditions],
@@ -249,34 +249,34 @@ class ClonerVisitor(object):
         
 
     def VisitStateVariable(self, state_variable,**kwargs):
-        return al.StateVariable(name = self.prefixVariable( state_variable.name,**kwargs) )
+        return nineml.abstraction_layer.StateVariable(name = self.prefixVariable( state_variable.name,**kwargs) )
 
         
     def VisitParameter(self, parameter, **kwargs):
-        return al.Parameter(name = self.prefixVariable( parameter.name,**kwargs) )
+        return nineml.abstraction_layer.Parameter(name = self.prefixVariable( parameter.name,**kwargs) )
 
     def VisitAnalogPort(self, port, **kwargs):
-        p =al.AnalogPort( internal_symbol= self.prefixVariable(port.name,**kwargs) , mode=port.mode, op=port.reduce_op )
+        p =nineml.abstraction_layer.AnalogPort( internal_symbol= self.prefixVariable(port.name,**kwargs) , mode=port.mode, op=port.reduce_op )
         print p
         return p
 
     def VisitEventPort(self, port, **kwargs):
-        return al.EventPort( internal_symbol= self.prefixVariable(port.name,**kwargs), mode=port.mode, op=port.reduce_op )
+        return nineml.abstraction_layer.EventPort( internal_symbol= self.prefixVariable(port.name,**kwargs), mode=port.mode, op=port.reduce_op )
 
 
     def VisitOutputEvent(self, output_event, **kwargs):
-        return al.OutputEvent( port= self.prefixVariable( output_event.port,**kwargs) )
+        return nineml.abstraction_layer.OutputEvent( port= self.prefixVariable( output_event.port,**kwargs) )
 
     def VisitInputEvent(self, input_event, **kwargs):
-        return al.InputEvent( port= self.prefixVariable( input_event.port,**kwargs) )
+        return nineml.abstraction_layer.InputEvent( port= self.prefixVariable( input_event.port,**kwargs) )
 
     def VisitAssignment(self, assignment, **kwargs):
         prefix = kwargs.get( 'prefix','')
         prefix_excludes = kwargs.get('prefix_excludes',[] )
         to = assignment.to if assignment.to in prefix_excludes else prefix + assignment.to
-        return al.Assignment( 
+        return nineml.abstraction_layer.Assignment( 
                     to = to,
-                    expr = al.Expression.prefix(assignment, prefix=prefix,exclude=prefix_excludes,expr=assignment.rhs),
+                    expr = nineml.abstraction_layer.Expression.prefix(assignment, prefix=prefix,exclude=prefix_excludes,expr=assignment.rhs),
                     name = assignment.name
                     )
 
@@ -297,7 +297,7 @@ class ClonerVisitor(object):
 
 
     def VisitOnCondition(self, on_condition,**kwargs):
-        return al.OnCondition(
+        return nineml.abstraction_layer.OnCondition(
                 trigger = on_condition.trigger.AcceptVisitor(self,**kwargs),
                 event_outputs = [ e.AcceptVisitor(self,**kwargs) for e in on_condition.event_outputs ],
                 state_assignments = [ s.AcceptVisitor(self,**kwargs) for s in on_condition.state_assignments],
@@ -305,7 +305,7 @@ class ClonerVisitor(object):
                 )
 
     def VisitOnEvent(self, on_event, **kwargs):
-        return al.OnEvent(
+        return nineml.abstraction_layer.OnEvent(
                 src_port = self.prefixVariable(on_event.src_port,**kwargs),
                 event_outputs = [ e.AcceptVisitor(self,**kwargs) for e in on_event.event_outputs ],
                 state_assignments = [ s.AcceptVisitor(self,**kwargs) for s in on_event.state_assignments],
@@ -330,7 +330,7 @@ class ClonerVisitorPrefixNamespace(ClonerVisitor):
         prefix_excludes = ['t']
         kwargs = {'prefix':prefix, 'prefix_excludes':prefix_excludes }
 
-        ccn =  al.ComponentNodeCombined( name = component.name,
+        ccn =  nineml.abstraction_layer.ComponentNodeCombined( name = component.name,
                                parameters  = [ p.AcceptVisitor(self,**kwargs) for p in component.parameters  ],
                                analog_ports= [ p.AcceptVisitor(self,**kwargs) for p in component.analog_ports],
                                event_ports = [ p.AcceptVisitor(self,**kwargs) for p in component.event_ports ],
