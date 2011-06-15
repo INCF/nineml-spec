@@ -5,6 +5,9 @@ from itertools import chain
 
 class InplaceActionVisitorDF(object):
 
+    def Visit(self,obj):
+        obj.AcceptVisitor(self)
+
     def VisitComponentNodeCombined(self, componentNodeCombined):
         self.ActionComponentNodeCombined(componentNodeCombined)
 
@@ -16,16 +19,8 @@ class InplaceActionVisitorDF(object):
         if comp.dynamics:
             comp.dynamics.AcceptVisitor(self)
 
-        for subnode in componentNodeCombined.subnodes.keys():
+        for subnode in componentNodeCombined.subnodes.values():
             subnode.AcceptVisitor(self)
-
-    def VisitComponent(self, component):
-        self.ActionComponent(component)
-        nodes = chain(component.parameters, component.analog_ports, component.event_ports, [component.dynamics])
-        l = list( nodes )
-        for p in l:
-            p.AcceptVisitor(self)
-
 
     def VisitComponentNode(self, component):
         self.ActionComponent(component)
@@ -303,13 +298,17 @@ class ClonerVisitor(object):
         return al.OnCondition(
                 trigger = on_condition.trigger.AcceptVisitor(self,**kwargs),
                 event_outputs = [ e.AcceptVisitor(self,**kwargs) for e in on_condition.event_outputs ],
-                state_assignments = [ s.AcceptVisitor(self,**kwargs) for s in on_condition.state_assignments])
+                state_assignments = [ s.AcceptVisitor(self,**kwargs) for s in on_condition.state_assignments],
+                target_regime = on_condition.target_regime 
+                )
 
     def VisitOnEvent(self, on_event, **kwargs):
         return al.OnEvent(
-                src_port = self.prefixVariable(on_event.src_port),
+                src_port = self.prefixVariable(on_event.src_port,**kwargs),
                 event_outputs = [ e.AcceptVisitor(self,**kwargs) for e in on_event.event_outputs ],
-                state_assignments = [ s.AcceptVisitor(self,**kwargs) for s in on_event.state_assignments])
+                state_assignments = [ s.AcceptVisitor(self,**kwargs) for s in on_event.state_assignments],
+                target_regime = on_event.target_regime
+                )
 
 
 

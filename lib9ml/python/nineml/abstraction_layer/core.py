@@ -71,25 +71,21 @@ class Reference(object):
 
 
 
-
-
-#class Trigger(str):
-#   pass 
-
-
 class OnEvent(object):
 
     def AcceptVisitor(self, visitor,**kwargs):
         return visitor.VisitOnEvent(self,**kwargs)
 
     def __init__(self, src_port,state_assignments=[], event_outputs=[], target_regime=None):
+        if target_regime:
+            print target_regime
+            assert isinstance(target_regime, basestring)
 
         self._src_port = src_port
         self._state_assignments = state_assignments
         self._event_outputs = event_outputs
         self._target_regime = target_regime
 
-        #self._to=None
         self._from=None
 
     @property
@@ -113,6 +109,14 @@ class OnEvent(object):
         #assert False
         return chain( self._state_assignments, self._event_outputs)
 
+    @property
+    def target_regime(self):
+        return self._target_regime
+    @property
+    def to(self):
+        assert isinstance( self._target_regime, basestring)
+        return self._target_regime
+
 class OnCondition(object):
     element_name = "OnCondition"
 
@@ -126,6 +130,9 @@ class OnCondition(object):
             self._trigger = Condition( rhs = trigger )
         else:
             assert False
+
+        if target_regime:
+            assert isinstance(target_regime, basestring)
 
         self._state_assignments = state_assignments
         self._event_outputs = event_outputs
@@ -144,6 +151,11 @@ class OnCondition(object):
     @property
     def trigger(self):
         return self._trigger
+
+    @property
+    def target_regime(self):
+        assert isinstance( self._target_regime, basestring)
+        return self._target_regime
 
 
     @property
@@ -164,6 +176,10 @@ class OnCondition(object):
         #assert False
         return chain( self._state_assignments, self._event_outputs)
 
+    @property
+    def to(self):
+        assert isinstance( self._target_regime, basestring)
+        return self._target_regime
 
 
 class Regime(object):
@@ -229,17 +245,26 @@ class Regime(object):
 
 
         self._time_derivatives = tds
-        self._on_events = on_events
-        self._on_conditions = on_conditions
+        self._on_events = [] #on_events
+        self._on_conditions = [] #on_conditions
 
-        for s in self._on_conditions:
-            s.to = self
+        for s in on_events:
+            self.add_on_event(s)
+        for s in on_conditions:
+            self.add_on_condition(s)
+
+#        for s in chain(self._on_conditions, self._on_events):
+#            s._from = self.name
+#            if not s._target_regime:
+#                s._target_regime = self.name
 
 
     def add_on_event(self, on_event):
         assert isinstance(on_event, OnEvent)
-        assert not ( on_event._target_regime or  on_event._from)
-        on_event._target_regime = self.name
+        if not on_event.target_regime:
+            assert not ( on_event._target_regime or  on_event._from)
+            on_event._target_regime = self.name
+        #on_event._target_regime = self.name
         on_event._from = self.name
         self._on_events.append( on_event )
 
@@ -247,8 +272,11 @@ class Regime(object):
         """ Add a transition to the regime"""
         print on_condition
         assert isinstance(on_condition, OnCondition)
-        assert not ( on_condition._target_regime or  on_condition._from)
-        on_condition._target_regime = self.name
+
+        if not on_condition.target_regime:
+            assert not ( on_condition._target_regime or  on_condition._from)
+            on_condition.target_regime = self.name
+        #on_condition._target_regime = self.name
         on_condition._from = self.name
         self._on_conditions.append( on_condition )
 
@@ -711,7 +739,11 @@ class ComponentClass(object):
         return self._dynamics.state_variables
 
 
-
+    @property
+    def on_conditions(self):
+        for r in self.regimes:
+            for c in r.on_conditions:
+                yield c
 
     def get_regimes_to(self,regime):
         """ Gets as a list all regimes that transition to regime"""

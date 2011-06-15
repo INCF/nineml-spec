@@ -126,12 +126,14 @@ NET_RECEIVE(w, channel) {
     }
     {%- endfor %}
   } else if (flag == INIT) {
-    {%- for transition in component.on_conditions if threshold_crossing(transition) %}
-    WATCH ({{transition.condition.as_expr()|replace('=','')}}) {{ transition.to.flag }}
+    {%- for transition in component.on_conditions %} {#if threshold_crossing(transition) %} #}
+    WATCH ({{transition.condition.as_expr()|replace('=','')}}) {{ regimeNameToRegimeDict[transition.to].flag }}
+    {#WATCH ({{transition.condition.as_expr()|replace('=','')}}) {{ transition.to.flag }}#}
     {%- endfor %}
 
-  {%- for transition in component.on_conditions %}
-  } else if (flag == {{ transition.to.label }}) {
+  {%- for regime in component.regimes %}
+  {%- for transition in regime.on_conditions %}
+  } else if (regime == {{regime.label }} && flag == {{ regimeNameToRegimeDict[transition.to].label }} ) {
     regime = flag
     {%- for node in transition.nodes %}
     {%- if emit_spike(node) %}
@@ -140,6 +142,7 @@ NET_RECEIVE(w, channel) {
     {{ as_expr(node) }}
     {%- endif %}
     {%- endfor %}
+  {%- endfor %}
   {%- endfor %}
   }
 }

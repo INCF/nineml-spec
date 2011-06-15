@@ -29,6 +29,9 @@ def as_expr(node):
     elif isinstance(node, al.EventPort):
         assert False
         return ""
+    elif isinstance(node, al.OutputEvent):
+        return ""
+        return "OUTPUTEVENT"
     else:
         raise Exception("Don't know how to handle nodes of type %s" % type(node))
     
@@ -80,7 +83,7 @@ def get_on_event_channel(on_event, component):
 
 def build_channels(component):
     channels = set()
-    for event_port in component.event_ports:
+    for event_port in [ep for ep in component.event_ports if ep.mode=='recv']:
         channel = event_port.name.upper()
         if channel not in channels:
              channels.add(channel)
@@ -120,6 +123,12 @@ def build_context(component, weight_variables, input_filename="[Unknown-Filename
     if not weight_variables:
         weight_variables = {'': guess_weight_variable(component)}
         
+
+    #Regime Name To label:
+    regimeNameToRegimeDict = {}
+    for i, regime in enumerate(component.regimes):
+        regimeNameToRegimeDict[regime.name]=regime
+
         
     
     reduce_port_terminations = []
@@ -159,6 +168,8 @@ def build_context(component, weight_variables, input_filename="[Unknown-Filename
         #'list':list, #This is a hack so we can build lists from inside jinja
         #'sorted':sorted, #This is a hack so we can build lists from inside jinja
         'get_on_event_channel':get_on_event_channel,
+        'regimeNameToRegimeDict': regimeNameToRegimeDict,
+        
     }
     return context
 

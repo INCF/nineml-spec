@@ -1,5 +1,5 @@
 
-from nineml.utility import invertDictionary,flattenFirstLevel
+from nineml.utility import invertDictionary,flattenFirstLevel, ExpectSingle
 
 # System Imports:
 import copy
@@ -40,7 +40,7 @@ class ModelToSingleComponentReducer(object):
             return
 
         # Check we have a model:
-        assert isinstance( model, Model )
+        assert isinstance( model, (Model,ComponentNodeCombined) )
 
         self.componentname=componentname
 
@@ -58,7 +58,7 @@ class ModelToSingleComponentReducer(object):
         self.modelcomponents = ModelVisitorDF_ComponentCollector(self.model).components
         self.modelsubmodels = ModelVisitorDF_ModelCollector(self.model, include_root=True).models
 
-        self.componentswithregimes = [ m for m in ModelVisitorDF_ModelCollector(self.model, include_root=True).models if m.regimes ] 
+        self.componentswithregimes = [ m for m in ModelVisitorDF_ModelCollector(self.model, include_root=True).models if list(m.regimes) ] 
         
         self.build_new_regime_space()
         self.remap_ports()
@@ -149,13 +149,15 @@ class ModelToSingleComponentReducer(object):
 
         def getNewRegimeTupleFromTransition( currentRegimeTuple, regimeIndex, oldtransition ):
                 srcRegime = list( currentRegimeTuple )
-                dstRegime = srcRegime[:]
+                dstRegimeTuple = srcRegime[:]
 
                 # Points to another node:
-                dstRegimeName = oldtransition.to.get_ref() if oldtransition.to else regime
-                dstRegimeOld = self.componentswithregimes[regimeIndex].query.regime(name=dstRegimeName.name) 
-                dstRegime[regimeIndex] = dstRegimeOld
-                return tuple(dstRegime)
+                name = oldtransition.target_regime
+                dstRegimeOld = self.componentswithregimes[regimeIndex].query.regime(name=name) 
+                dstRegimeTuple[regimeIndex] = dstRegimeOld
+
+                print 'New Regime Transition:', currentRegimeTuple, '->', tuple( dstRegimeTuple )
+                return tuple(dstRegimeTuple)
 
         def distribute_event(event_output):
             print 'Distributing Event', event_output, event_output.port
@@ -183,13 +185,10 @@ class ModelToSingleComponentReducer(object):
                 # Lets see what happens if we get events. The simple case is just changing the
                 
                 for oldtransition in regime.on_conditions:
-                    # Horrible Hack: Sort this out. What are we doing with 'to'
-                    to = oldtransition.to
-                    oldtransition = oldtransition.AcceptVisitor( ClonerVisitor(prefix='', prefix_excludes=[]) )
-                    oldtransition.to = to
+                    # Clone the node:
+                    oldtransition = oldtransition.AcceptVisitor( ClonerVisitor(), prefix='', prefix_excludes=[] )
 
 
-                    print 'Working out what happens if transition happens:', oldtransition
                     handled_events = []
                     unhandled_events = []
 
@@ -211,19 +210,17 @@ class ModelToSingleComponentReducer(object):
                         unhandled_events.extend( flattenFirstLevel( distribute_event( new_event_outputs ) ) )
                         handled_events.append(ev)
 
-                    finalRegime = newRegimeLookupMap[ newRegimeTuple ]
+                    
 
-                    newOnCondition = al.OnCondition(oldtransition.trigger, state_assignments=state_assignments, event_outputs = output_events)
-                    finalRegime.add_on_condition( newOnCondition)
+                    targetRegime = newRegimeLookupMap[ newRegimeTuple ]
+                    newOnCondition = al.OnCondition(oldtransition.trigger, state_assignments=state_assignments, event_outputs = output_events, target_regime = targetRegime.name)
+                    regimeNew.add_on_condition( newOnCondition)
 
                 for oldtransition in regime.on_events:
-                    # Horrible Hack: Sort this out. What are we doing with 'to'
-                    to = oldtransition.to
-                    oldtransition = oldtransition.AcceptVisitor( ClonerVisitor(prefix='', prefix_excludes=[]) )
-                    assert oldtransition.to == to
+                    # Clone the Node:
+                    oldtransition = oldtransition.AcceptVisitor( ClonerVisitor(), prefix='', prefix_excludes=[] )
 
 
-                    print 'Working out what happens if transition happens:', oldtransition
                     handled_events = []
                     unhandled_events = []
 
@@ -245,10 +242,9 @@ class ModelToSingleComponentReducer(object):
                         unhandled_events.extend( flattenFirstLevel( distribute_event( new_event_outputs ) ) )
                         handled_events.append(ev)
 
-                    finalRegime = newRegimeLookupMap[ newRegimeTuple ]
-
-                    newOnCondition = al.OnEvent(oldtransition.src_port, state_assignments=state_assignments, event_outputs = output_events)
-                    finalRegime.add_on_event( newOnCondition)
+                    targetRegime = newRegimeLookupMap[ newRegimeTuple ]
+                    newOnCondition = al.OnEvent(oldtransition.src_port, state_assignments=state_assignments, event_outputs = output_events, target_regime = targetRegime.name)
+                    regimeNew.add_on_event( newOnCondition)
                     
         self.newRegimeLookupMap = newRegimeLookupMap
                 
@@ -337,12 +333,11 @@ class ModelToSingleComponentReducer(object):
                                 state_variables = flattenFirstLevel( [ m.state_variables for m in self.modelcomponents ]  ),
                                 )  
 
-        self.reducedcomponent = al.models.ComponentNode( self.componentname, 
+        self.reducedcomponent = al.models.ComponentNodeCombined( name=self.componentname, 
                                                          dynamics=dynamics, 
                                                          analog_ports=new_ports.values() , 
                                                          event_ports= flattenFirstLevel( [comp.event_ports for comp in self.modelcomponents] ), 
                                                          parameters=flattenFirstLevel( [ m.parameters for m in self.modelcomponents ] ) )
-
 
 
 
@@ -356,8 +351,6 @@ class ModelToSingleComponentReducer(object):
             print 'Global-Remap [%s -> %s]'%(originalname,targetname)
             from nineml.abstraction_layer.visitors import InPlaceTransform
             transform = InPlaceTransform( originalname=originalname, targetname=targetname)
-#            for regime in newRegimeLookupMap.values():
-#                regime.AcceptVisitor(transform)
 
             self.reducedcomponent.AcceptVisitor(transform)
 
@@ -375,7 +368,10 @@ class ModelToSingleComponentReducer(object):
             dstPort = new_ports[dstAddr.getstr()]
             if dstPort.mode == 'recv':
                 globalRemapPort( dstPort.name, srcPort.name )
+                
                 del new_ports[ dstAddr.getstr() ]
+                self.reducedcomponent._analog_ports.remove( ExpectSingle([p for p in self.reducedcomponent.analog_ports if p.name == dstAddr.getstr()]) )
+
                 portconnections.remove( (srcAddr,dstAddr) )
 
 
@@ -398,20 +394,6 @@ class ModelToSingleComponentReducer(object):
 
 
 
-#        from nineml.utility import flattenFirstLevel
-#        from nineml.abstraction_layer import ComponentClass
-#
-#        dynamics = al.Dynamics( regimes = newRegimeLookupMap.values(),
-#                                aliases = flattenFirstLevel( [ m.aliases for m in self.modelcomponents ] ),
-#                                state_variables = flattenFirstLevel( [ m.state_variables for m in self.modelcomponents ]  ),
-#                                )  
-#
-#        self.reducedcomponent = al.models.ComponentNode( self.componentname, 
-#                                                         dynamics=dynamics, 
-#                                                         analog_ports=new_ports.values() , 
-#                                                         event_ports= flattenFirstLevel( [comp.event_ports for comp in self.modelcomponents] ), 
-#                                                         parameters=flattenFirstLevel( [ m.parameters for m in self.modelcomponents ] ) )
-#
         
         
 
@@ -435,5 +417,4 @@ class ModelToSingleComponentReducer(object):
 
 def reduce_to_single_component( model, componentname ):
     reducer = ModelToSingleComponentReducer(model,componentname)
-    #print reducer.portmappings
     return reducer.reducedcomponent

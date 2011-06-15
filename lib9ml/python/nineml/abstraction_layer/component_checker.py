@@ -82,6 +82,17 @@ class ComponentPortChecker(InplaceActionVisitorDF):
         self.recv_analog_port_names = [ p.name for p in component.analog_ports if p.mode=='recv']
         self.send_analog_port_names = [ p.name for p in component.analog_ports if p.mode=='send']
 
+    def ActionComponentNodeCombined(self, component):
+        assert isinstance( component, al.models.ComponentNodeCombined )
+        
+        # Check for name duplication:
+        portNames = [ p.name for p in chain( component.event_ports, component.analog_ports )] 
+        AssertNoDuplicates(portNames)
+
+        self.recv_event_port_names = [ p.name for p in component.event_ports if p.mode=='recv']
+        self.send_event_port_names = [ p.name for p in component.event_ports if p.mode=='send']
+        self.recv_analog_port_names = [ p.name for p in component.analog_ports if p.mode=='recv']
+        self.send_analog_port_names = [ p.name for p in component.analog_ports if p.mode=='send']
 
     def ActionDynamics(self, dynamics):
         pass

@@ -38,20 +38,20 @@ from nineml.abstraction_layer.component_checker import ComponentTypeChecker, Com
 
 testModel = get_hierachical_iaf_2coba()
 
-#for arp in testModel.query.analog_reduce_ports:
-#    print arp
-
 
 flat = reduce_to_single_component( testModel, componentname = 'iaf_2coba' )
 
+leave_open = ['V','t']
+for arp in flat.query.analog_reduce_ports:
+    if arp.name in leave_open: continue
+    print 'Closing ARP Port:', arp
+    ModelModifier.CloseAnalogPort(component=flat, port_name=arp.name, value='0' )
+    
+ComponentTypeChecker().Visit( flat )
+ComponentPortChecker().Visit( flat )
 
-
-#ModelModifier.CloseAnalogPort(component=flat, port_name='iaf_ISyn', value='0' )
-print flat
-ComponentTypeChecker().VisitComponent( flat )
-ComponentPortChecker().VisitComponent( flat )
-
-
+flat.backsub_aliases()
+flat.backsub_equations()
 
 
 celltype_cls = pyNNml.nineml_celltype_from_model(
@@ -87,7 +87,8 @@ cells.initialize('regime', 1002) # temporary hack
 
 input = sim.Population(2, sim.SpikeSourcePoisson, {'rate': 100})
 
-connector = sim.OneToOneConnector(weights=1.0, delays=0.5)
+#connector = sim.OneToOneConnector(weights=1.0, delays=0.5)
+connector = sim.OneToOneConnector(weights=20.0, delays=0.5)
 
 
 conn = [sim.Projection(input[0:1], cells, connector, target='cobaExcit'),
@@ -97,22 +98,32 @@ conn = [sim.Projection(input[0:1], cells, connector, target='cobaExcit'),
 cells._record('iaf_V')
 cells._record('cobaExcit_g')
 cells._record('cobaInhib_g')
+cells._record('regime')
 cells.record()
 
 sim.run(100.0)
 
 cells.recorders['iaf_V'].write("Results/nineml_neuron.V", filter=[cells[0]])
+cells.recorders['regime'].write("Results/nineml_neuron.regime", filter=[cells[0]])
 cells.recorders['cobaExcit_g'].write("Results/nineml_neuron.g_exc", filter=[cells[0]])
 cells.recorders['cobaInhib_g'].write("Results/nineml_neuron.g_inh", filter=[cells[0]])
 
 
 t = cells.recorders['iaf_V'].get()[:,1]
 v = cells.recorders['iaf_V'].get()[:,2]
+regime = cells.recorders['regime'].get()[:,2]
 gInh = cells.recorders['cobaInhib_g'].get()[:,2]
 gExc = cells.recorders['cobaExcit_g'].get()[:,2]
 
 import pylab
+pylab.subplot(311)
 pylab.plot(t,v)
+pylab.subplot(312)
+pylab.plot(t,gInh)
+pylab.plot(t,gExc)
+pylab.subplot(313)
+pylab.plot(t,regime)
+pylab.ylim( (999,1005) )
 pylab.suptitle("From Tree-Model Pathway")
 pylab.show()
 
