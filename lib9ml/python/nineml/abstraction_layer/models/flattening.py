@@ -46,7 +46,11 @@ class ModelToSingleComponentReducer(object):
         self.componentname=componentname
 
 
-        from nineml.abstraction_layer.visitors import ClonerVisitor 
+        from nineml.abstraction_layer.visitors import ClonerVisitor, ModelPrefixerVisitor
+        newModel = ModelPrefixerVisitor().VisitModelClass(model)
+        
+        assert False
+
         modelcomponents = ModelVisitorDF_ComponentCollector(self.model).components
         self.modelcomponents=[]
         for mc in modelcomponents:

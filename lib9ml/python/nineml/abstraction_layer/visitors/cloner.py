@@ -88,3 +88,24 @@ class ClonerVisitor(object):
                 event_outputs = [ e.AcceptVisitor(self) for e in on_event.event_outputs ],
                 state_assignments = [ s.AcceptVisitor(self) for s in on_event.state_assignments])
 
+
+class ModelPrefixerVisitor( object ):
+    
+    def VisitModelClass( modelclass, **kwargs)
+        
+        newsubnodes = {}
+        for ns,node in modelclass.subnodes.iteritems():
+            newsubnodes[ns] = node.AcceptVisitor(self)
+
+        from nineml.abstraction_layer import models
+        newModel = models.Model(name=modelclass.name, subnodes=newsubnodes
+        return newModel
+             
+
+
+    def VisitComponentClass( self, componentclass):
+        prefix = component.getTreePosition(jointoken="_") + "_"
+        prefix_excludes = ['t']
+        return ClonerVisitor(prefix=prefix, prefix_excludes=prefix_excludes).VisitComponent(componentclass)
+
+
