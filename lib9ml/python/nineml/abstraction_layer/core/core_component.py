@@ -254,7 +254,7 @@ class ComponentNodeCombined( ComponentClass, TreeNode ):
 
         #Finalise Initiation:
         self.ResolveTransitionRegimeNames()
-
+ 
 
         
     def ResolveTransitionRegimeNames(self):

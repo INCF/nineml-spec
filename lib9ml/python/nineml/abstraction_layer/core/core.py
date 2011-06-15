@@ -18,8 +18,6 @@ from itertools import chain
 
 
 
-class UnimplementedError(RuntimeError):
-    pass
 
 
 

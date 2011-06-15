@@ -60,22 +60,6 @@ def ode_for(regime, variable):
         odes.append(al.ODE(variable, "t", "0.0"))
     return ExpectSingle( odes )
 
-#def on_input_event(transition):
-#    assert False
-#    return isinstance(transition.condition, al.EventPort) and transition.condition.mode in ('recv', 'reduce')
-#
-#def unconnected_analog_receive_ports(component, weight_variables):
-#    assert False, "deprecated"
-#    receive_ports = [p.symbol for p in
-#                     component.filter_ports(cls=al.AnalogPort,
-#                                            mode=('recv', 'reduce')
-#                                            )
-#                     if hasattr(p, 'connected') and not p.connected]
-#    for weight_var in weight_variables:
-#        if weight_var in receive_ports:
-#            receive_ports.remove(weight_var)
-#    return receive_ports
-
 def get_on_event_channel(on_event, component):
     port = FilterExpectSingle( component.event_ports, lambda ep:ep.name==on_event.src_port)
     return port.channel_
@@ -123,26 +107,14 @@ def build_context(component, weight_variables, input_filename="[Unknown-Filename
     if not weight_variables:
         weight_variables = {'': guess_weight_variable(component)}
         
-
-    #Regime Name To label:
-    regimeNameToRegimeDict = {}
-    for i, regime in enumerate(component.regimes):
-        regimeNameToRegimeDict[regime.name]=regime
-
-        
-    
-    reduce_port_terminations = []
+    assert component.isflat()
     weights_as_states = False
     if hierarchical_mode:
-        reduce_port_terminations = ['%s = 0'%p.name for p in component.analog_ports if p.mode=='reduce']
         weights_as_states = True
    
 
-    #from nineml.abstraction_layer.models import dump_reduced
-    #dump_reduced( component, '/tmp/reducedcomponent.txt')
     component.backsub_aliases()
     component.backsub_equations()
-    #dump_reduced( component, '/tmp/reducedcomponent.txt')
         
     
     context = {
@@ -152,23 +124,14 @@ def build_context(component, weight_variables, input_filename="[Unknown-Filename
         "channels": build_channels(component),
         "weight_variables": weight_variables,
         "get_weight_variable": get_weight_variable,
-        #"unconnected_receive_ports": unconnected_analog_receive_ports(component, weight_variables),
-        #"on_input_event": on_input_event,
         "initial_regime": list(component.regimes)[0].label,
-        "emit_spike": lambda node: isinstance(node, al.EventPort) and node.name == 'spike_output',
         "as_expr": as_expr,
         "deriv_func_args": deriv_func_args,
-        #"threshold_crossing": threshold_crossing,
         "ode_for": ode_for,
         
         # Added by Mike:
-        #"reduce_port_terminations": reduce_port_terminations,
         "weights_as_states": weights_as_states,
-        #'alias_names': [b.name for b in component.aliases],
-        #'list':list, #This is a hack so we can build lists from inside jinja
-        #'sorted':sorted, #This is a hack so we can build lists from inside jinja
         'get_on_event_channel':get_on_event_channel,
-        'regimeNameToRegimeDict': regimeNameToRegimeDict,
         
     }
     return context
