@@ -47,26 +47,26 @@ class ModelToSingleComponentReducer(object):
 
 
         from nineml.abstraction_layer.visitors import ClonerVisitor, ModelPrefixerVisitor
-        newModel = ModelPrefixerVisitor().VisitModelClass(model)
+        self.model = ModelPrefixerVisitor().VisitModelClass(model)
         
-        assert False
+        #assert False
 
-        modelcomponents = ModelVisitorDF_ComponentCollector(self.model).components
-        self.modelcomponents=[]
-        for mc in modelcomponents:
-            prefix = mc.getTreePosition(jointoken="_") + "_"
-            prefix_excludes = ['t']
-
-            cv = ClonerVisitor(prefix=prefix,prefix_excludes=prefix_excludes)
-            mc = cv.VisitComponent(mc)
-            self.modelcomponents.append(mc)
+#        modelcomponents = ModelVisitorDF_ComponentCollector(self.model).components
+#        self.modelcomponents=[]
+#        for mc in modelcomponents:
+#            prefix = mc.getTreePosition(jointoken="_") + "_"
+#            prefix_excludes = ['t']
+#
+#            cv = ClonerVisitor(prefix=prefix,prefix_excludes=prefix_excludes)
+#            mc = cv.VisitComponent(mc)
+#            self.modelcomponents.append(mc)
 
         
         
-        self.modelsubmodels = ModelVisitorDF_ModelCollector(self.model, include_root=True).models
-
-        #self.modelcomponents = ModelVisitorDF_ComponentCollector(self.model).components
         #self.modelsubmodels = ModelVisitorDF_ModelCollector(self.model, include_root=True).models
+
+        self.modelcomponents = ModelVisitorDF_ComponentCollector(self.model).components
+        self.modelsubmodels = ModelVisitorDF_ModelCollector(self.model, include_root=True).models
         
         print
         print " ******* FLATTENING COMPONENT: ******"

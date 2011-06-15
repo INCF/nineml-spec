@@ -17,7 +17,7 @@ class ClonerVisitor(object):
 
 
     def VisitComponent(self, component):
-        return al.ComponentClass( name = component.name,
+        return al.models.ComponentNode( name = component.name,
                                parameters  = [ p.AcceptVisitor(self) for p in component.parameters  ],
                                analog_ports= [ p.AcceptVisitor(self) for p in component.analog_ports],
                                event_ports = [ p.AcceptVisitor(self) for p in component.event_ports ],
@@ -92,7 +92,7 @@ class ClonerVisitor(object):
 
 class ModelPrefixerVisitor( object ):
     
-    def VisitModelClass( modelclass, **kwargs):
+    def VisitModelClass(self, modelclass, **kwargs):
         
         newsubnodes = {}
         for ns,node in modelclass.subnodes.iteritems():
@@ -104,10 +104,10 @@ class ModelPrefixerVisitor( object ):
             newModel.connect_ports(src=src,sink=sink)
         return newModel
              
+    
 
-
-    def VisitComponentClass( self, componentclass):
-        prefix = component.getTreePosition(jointoken="_") + "_"
+    def VisitComponentNode( self, componentclass):
+        prefix = componentclass.getTreePosition(jointoken="_") + "_"
         prefix_excludes = ['t']
         return ClonerVisitor(prefix=prefix, prefix_excludes=prefix_excludes).VisitComponent(componentclass)
 

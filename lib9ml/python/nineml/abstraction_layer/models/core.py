@@ -72,9 +72,11 @@ class TreeNode(object):
 
     
 class Model(TreeNode):
-    def __init__(self, name, subnodes={}, model=None):
+    def __init__(self, name=None, subnodes={}, model=None):
         super(Model,self).__init__()
         
+        self.name = name
+        assert not self.name
         self.subnodes = {}
         self.portconnections = []
 
@@ -105,7 +107,7 @@ class Model(TreeNode):
 
     # Visitation 
     def AcceptVisitor(self,visitor):
-        return visitor.AcceptModelNode(self)
+        return visitor.VisitModelNode(self)
 
 
 
@@ -124,7 +126,7 @@ class ComponentNode(ComponentClass,TreeNode, ):
         return [self]
 
     def AcceptVisitor(self,visitor):
-        return visitor.AcceptComponentNode(self)
+        return visitor.VisitComponentNode(self)
 
 
 
@@ -243,7 +245,10 @@ class NamespaceAddress(object):
             self.loctuple = loc.split('.')
         elif isinstance(loc, tuple):
             self.loctuple = loc
+        elif isinstance(loc, NamespaceAddress):
+            self.loctuple = loc.loctuple
         else:
+            print loc, type(loc)
             assert False
 
     
