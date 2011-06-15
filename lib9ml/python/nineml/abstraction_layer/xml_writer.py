@@ -54,9 +54,12 @@ class XMLWriter(object):
     def VisitParameter(self, parameter):
         return E(parameter.element_name, name=parameter.name, dimension='??')
 
-    def VisitPort(self, port, **kwargs):
+    def VisitAnalogPort(self, port, **kwargs):
         if port.reduce_op:
             kwargs['reduce_op']=port.reduce_op
+        return E(port.element_name, name=port.name, mode=port.mode, **kwargs)
+
+    def VisitEventPort(self, port, **kwargs):
         return E(port.element_name, name=port.name, mode=port.mode, **kwargs)
 
     def VisitAssignment(self, assignment, **kwargs):

@@ -37,14 +37,32 @@ class ModelToSingleComponentReducer(object):
             self.reducedcomponent = model
             return
 
+        
+
         print type( model), model
         assert isinstance( model, Model )
 
         self.model = model 
         self.componentname=componentname
 
-        self.modelcomponents = ModelVisitorDF_ComponentCollector(self.model).components
+
+        from nineml.abstraction_layer.visitors import ClonerVisitor 
+        modelcomponents = ModelVisitorDF_ComponentCollector(self.model).components
+        self.modelcomponents=[]
+        for mc in modelcomponents:
+            prefix = mc.getTreePosition(jointoken="_") + "_"
+            prefix_excludes = ['t']
+
+            cv = ClonerVisitor(prefix=prefix,prefix_excludes=prefix_excludes)
+            mc = cv.VisitComponent(mc)
+            self.modelcomponents.append(mc)
+
+        
+        
         self.modelsubmodels = ModelVisitorDF_ModelCollector(self.model, include_root=True).models
+
+        #self.modelcomponents = ModelVisitorDF_ComponentCollector(self.model).components
+        #self.modelsubmodels = ModelVisitorDF_ModelCollector(self.model, include_root=True).models
         
         print
         print " ******* FLATTENING COMPONENT: ******"

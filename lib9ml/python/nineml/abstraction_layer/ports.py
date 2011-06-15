@@ -109,8 +109,8 @@ class Port(object):
                  mode=self.mode, **kwargs)
 
 
-    def AcceptVisitor(self,visitor,**kwargs):
-        return visitor.VisitPort(self,**kwargs)
+    #def AcceptVisitor(self,visitor,**kwargs):
+    #    return visitor.VisitPort(self,**kwargs)
 
     #@property
     #def name(self):
@@ -133,6 +133,10 @@ class AnalogPort(Port):
     element_name = "AnalogPort"
     """ Port which may be in a Regime """
     
+
+    def AcceptVisitor(self, visitor, **kwargs):
+        return visitor.VisitAnalogPort(self,**kwargs)
+
     
     def clone(self, prefix="", expr_prefix=None, prefix_excludes=[]):
         if expr_prefix is None:
@@ -162,6 +166,11 @@ class AnalogPort(Port):
 
 
 class EventPort(Port):
+
+
+    def AcceptVisitor(self, visitor, **kwargs):
+        return visitor.VisitEventPort(self,**kwargs)
+
     element_name = "EventPort"
     """ Port which may be in an Event """
 
