@@ -9,6 +9,7 @@ from expressions import *
 from ports import * 
 from cond_parse import * 
 from expr_parse import * 
+from namespaceaddress import * 
 from ..xmlns import * 
 
 from nineml import __version__

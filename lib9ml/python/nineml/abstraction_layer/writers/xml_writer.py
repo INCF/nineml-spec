@@ -76,7 +76,7 @@ class XMLWriter(ComponentVisitor):
                  )
 
     def VisitOnCondition(self, on_condition):
-        nodes = chain( on_condition.state_assignments, on_condition.event_outputs, [on_condition.condition] )
+        nodes = chain( on_condition.state_assignments, on_condition.event_outputs, [on_condition.trigger] )
         newNodes = [ n.AcceptVisitor(self) for n in nodes ] 
         kwargs = {}
         if on_condition._target_regime:

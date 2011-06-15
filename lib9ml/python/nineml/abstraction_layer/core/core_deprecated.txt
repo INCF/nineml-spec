@@ -1263,5 +1263,332 @@ Regime Old COnstructor:
 
 
 
+    @property
+    def ports(self):    
+        assert False
+        """ yield all ports for component"""
+        for p in self.analog_ports:
+            yield p 
+        for p in self.event_ports:
+            yield p
+
+    @property
+    def reduce_ports(self):    
+        assert False
+        """ yield all reduce ports for component"""
+        for p in self.analog_ports:
+            if p.mode=='reduce':
+                yield p 
+    
+
+    def check_ports(self):
+        assert False
+        for p in self.analog_ports:
+            if not isinstance(p,AnalogPort):
+                raise ValueError, "Component ports attribute can contain only AnalogPort objects."+\
+                      "EventPorts go in Transition conditions(recv) and Transition nodes (send)"
+            # may only write to user_parameters
+            if p.mode=="recv" and p.symbol in self.non_parameter_symbols:
+                raise ValueError, "'recv' AnalogPorts may not target existing alias symbols,"+\
+                      "ODE lhs vars, or lhs of Assignments ops."
+
+            alias_names = [b.lhs for b in self.aliases]
+            #print alias_names
+            if p.mode=="send" and p.expr==None and (p.symbol not in self.variables and not p.symbol in alias_names) :
+                raise ValueError, "'send' AnalogPort with symbol='%s' source undefined in component." % (p.symbol,)
+        
+
+    def filter_ports(self,cls=None,mode=None,symb=None):
+        assert False
+        """ yields all ports filtered by class, mode, symb
+
+        mode,symb can be strings, or collections of strings
+        on which "in" is defined.
+        
+        """
+        if isinstance(mode,str):
+            mode = (mode,)
+        if isinstance(symb,str):
+            symb = (symb,)
+
+        for p in self.ports:
+            if cls and not isinstance(p,cls): continue
+            if mode and p.mode not in mode: continue
+            if symb and p.symbol not in symb: continue
+            yield p
+
+    
+    def resolve_references(self):
+        assert False
+        """ Uses self.regimes_map and self.transitions_map to resolve references in self.regimes and self.transitions"""
+
+        # resolve transition from_=None to=None to parent regime
+        for r in self.regimes:
+            for t in r.transitions:
+                if t.from_==None:
+                    t.from_=r
+                if t.to==None:
+                    t.to=r
+
+        # resolve regime references in transitions:
+        for t in self.transitions:
+            for attr in ('to','from_'):
+                ref = t.__getattribute__(attr)
+                # transition defines no to,from
+                if ref==None: continue
+                if not isinstance(ref,Regime):
+                    assert isinstance(ref,Reference) and issubclass(ref.cls,Regime), "Expected Regime reference or Regime"
+                    t.__setattr__(attr,self.regime_map[ref.name])
+
+        # resolve transition references in regimes
+
+        for r in self.regimes:
+            for t in r.transitions:
+                if isinstance(t, Transition ): continue
+                assert isinstance(t,Reference) and r.cls==Transition, "Expected Transition reference or Transition" 
+                r.transitions.remove(t)
+                r.transitions.add(self.transition_map[t.name])
+
+        # add transitions to regimes:
+        for t in self.transitions:
+            t.from_.add_transition(t)
+            
+
+
+
+    @property
+    def odes(self):
+        assert False
+        for r in self.regimes:
+            for ode in r.odes:
+                yield ode
+
+    @property
+    def equations(self):
+        assert False
+
+        for r in self.regimes:
+            for t in r.transitions:
+                for eq in t.equations:
+                    yield eq
+            for eq in r.equations:
+                yield eq
+        # 'send' AnalogPorts can have an expression
+        for p in self.filter_ports(cls=AnalogPort,mode='send'):
+            if p.expr: yield p.expr
+
+
+    #@property
+    #def aliases(self):
+    #    return self.aliases_map.itervalues()
+
+
+    def check_alias_expressions(self):
+        assert False
+        """ Bound symbols (which are static when running the model)
+        can depend only on 'user parameters' (which are static when running the model)
+
+        This parses the alias rhs expressions to verify this is so.
+        """
+
+        params = self.user_parameters
+        
+        for alias in self.aliases:
+            # It is up to the user to call backsub at the appropriate time,
+            # or implement other facilities for resolving user defined functions
+            # aliases ...
+            # There for the following check is removed:
+            #for f in alias.missing_functions:
+            #    raise ValueError, "Alias '%s' calls undefined function '%s' " % str(alias.as_expr(),f)
+            
+            non_param_names = self.non_parameter_symbols.intersection(alias.names)
+            # may reference other aliases
+            non_param_names = non_param_names.difference(self.aliases_map.iterkeys())
+            if non_param_names:
+                raise ValueError, "Alias symbols referencing variables is illegal: %s" % str(non_param_names)
+
+    def check_non_parameter_symbols(self):
+        assert False
+        """ Check that non-parameters symbols are not conflicting
+        with math_namespace symbols """
+        if self.non_parameter_symbols.intersection(math_namespace.symbols)!=set():
+            raise ValueError, "Non-parameters symbols (variables and bound symbols) may "+\
+                  "not redefine math symbols (such as 'e','pi')"
+            
+                
+
+    @property
+    @cache
+    def user_parameters(self):
+        assert False
+        """ User parameters for the component. """
+        # TODO: cache once determined
+        # compare to the parameters lists declared by the user 
+
+
+        symbols = set([])
+        for e in self.equations:
+            symbols.update( e.names )
+            
+            
+        # now same for conditions
+        for c in self.conditions:
+            symbols.update(c.names)
+
+        # now same for aliases
+        for b in self.aliases:
+            symbols.update(b.names)
+
+        symbols = symbols.difference(self.non_parameter_symbols)
+        symbols = symbols.difference(math_namespace.symbols)
+        # remove symbols of AnalogPorts with mode='recv'
+        symbols = symbols.difference([p.symbol for p in self.filter_ports(cls=AnalogPort,mode=('recv'))])
+        return symbols.difference(math_namespace.reserved_symbols)
+
+                 
+    @property
+    @cache
+    def non_parameter_symbols(self):
+        assert False
+        """ All aliases, assignment and inplace left-hand-sides, plus X for ODE dX/dt = ...""" 
+        # TODO: cache once determined
+        symbols = set([])
+        symbols.update(self.variables)
+        symbols.update(self.bound_symbols)
+        return symbols
+
+    @property
+    @cache
+    def variables(self):
+        assert False
+        symbols = set([])
+        symbols.update(self.integrated_variables)
+        symbols.update(self.assigned_variables)
+        symbols.update(self.independent_variables)
+        return symbols
+
+#    @property
+#    @cache
+#    def state_variables(self):
+#        symbols = set([])
+#        symbols.update(self.integrated_variables)
+#        symbols.update(self.assigned_variables)
+#        return symbols
+#
+
+    @property
+    @cache
+    def bound_symbols(self):
+        assert False
+        # TODO: cache once determined
+        """ Return symbols which are subject to aliases (static assignments)"""
+        # construct set of keys (bound symbols)
+        statics = set(self.aliases_map)
+
+        # check user is not writing to bound variables
+        if statics.intersection(self.integrated_variables)!=set():
+            raise ValueError, "Error: user bound symbols which appear on lhs of ODEs"
+        if statics.intersection(self.assigned_variables)!=set():
+            raise ValueError, "Error: user bound symbols which appear on lhs of Assignments OPs"
+        
+        return statics
+
+    @property
+    @cache
+    def assigned_variables(self):
+        assert False
+        """ All assignment and inplace lhs' (which may also be ODE integrated variables),
+        but not aliases (which are not variables, but static) """
+
+        # TODO: cache once determined
+        variables = set([])
+        for equation in self.equations:
+            if isinstance(equation, (Assignment)):
+                variables.add(equation.to)
+        return variables
+
+    @property
+    @cache
+    def independent_variables(self):
+        assert False
+        """ All X for ODE dY/dX """
+        # TODO: cache once determined
+        variables = set([])
+        for r in self.regimes:
+            for eq in r.odes:
+                variables.add(eq.indep_variable)
+        return variables
+
+    
+    @property
+    @cache
+    def integrated_variables(self):
+        assert False
+        """ All X for ODE dX/dt """
+        # TODO: cache once determined
+        variables = set([])
+        for equation in self.equations:
+            if isinstance(equation, ODE):
+                variables.add(equation.dependent_variable)
+        return variables
+
+    def add_prefix(self, prefix, exclude=[]):
+        assert False
+        """Add a prefix to all symbols except those explicitly excluded"""
+        #Temporary solution for namespacing, until we get namespaces figured out.
+        for eq in self.equations:
+            if eq.to not in exclude:
+                eq.to = prefix + eq.to
+            eq.rhs = eq.prefix(prefix, exclude=exclude)
+            eq.parse() # update names, funcs
+        for port in self.ports:
+            if port.symbol not in exclude and port.symbol != 't':
+                self.ports_map.pop(port.symbol)
+                port.symbol = prefix + port.symbol
+                self.ports_map[port.symbol] = port
+
+        # invalidate the instance method cache, triggering all the @cache decorated methods to be re-calculated
+        self.__cache__={}
+
+        # TODO: still this is not working. See test_component_symbols.py -> test_add_prefix
+        # Presumably, for this to work inplace, we need to "re-run" certain parts of the
+        # constructor ... maybe this is improved with Namespaces ...
+
+        # See also: test_expressions.py -> test_prefixing
+    
+
+  
+    @classmethod
+    def from_xml(cls, element):
+        """
+        Parse an XML ElementTree structure and return a Component instance.
+        
+        `element` - should be an ElementTree Element instance.
+        
+        See:
+            http://docs.python.org/library/xml.etree.elementtree.html
+            http://codespeak.net/lxml/
+        """
+        assert False
+        from nineml.abstraction_layer.readers import XMLReader
+        return XMLReader.read_component(elem)
+
+        assert element.tag == NINEML+cls.element_name
+        parameters = [p.get("name") for p in element.findall(NINEML+"parameter")]
+        aliases = [Alias.from_xml(b) for b in element.findall(NINEML+Alias.element_name)] 
+        regimes = [Regime.from_xml(e) for e in element.findall(NINEML+Regime.element_name)]
+
+        analog_ports = []
+        for port_cls in (AnalogPort,):
+            for e in element.findall(NINEML+port_cls.element_name):
+                analog_ports.append(port_cls.from_xml(e))
+
+        transitions = [Transition.from_xml(t) for t in element.findall(NINEML+Transition.element_name)]
+
+
+        new_comp = cls(element.get("name"), parameters, regimes=regimes, transitions=transitions, aliases=aliases, ports=analog_ports)
+
+        return new_comp
+
 
 

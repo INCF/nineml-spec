@@ -11,7 +11,7 @@ def get_iaf():
                                 regimes = [
                                     al.Regime(
                                         time_derivatives = ["dV/dt = ( gl*( vrest - V ) + ISyn)/(cm)"],
-                                        transitions = [al.DoOn("V > vthresh",
+                                        transitions = [al.On("V > vthresh",
                                                                  do=["tspike = t",
                                                                      "V = vreset",
                                                                      al.OutputEvent('spikeoutput')],
@@ -22,7 +22,7 @@ def get_iaf():
 
                                     al.Regime(
                                         time_derivatives = ["dV/dt = 0"],
-                                        transitions = [ al.DoOn("t >= tspike + taurefrac",
+                                        transitions = [ al.On("t >= tspike + taurefrac",
                                                                   to="subthresholdregime") ],
                                         name = "refractoryregime"
                                         )
@@ -53,7 +53,7 @@ def get_coba():
                                          name = "cobadefaultregime",
                                          time_derivatives = ["dg/dt = -g/tau",],
                                          transitions = [
-                                             al.DoOn(al.InputEvent('spikeinput'), do=["g=g+q"]),
+                                             al.On(al.InputEvent('spikeinput'), do=["g=g+q"]),
                                              ],
                                          )
                                         ],
@@ -72,7 +72,7 @@ def nmda():
     inter_event_regime = al.Regime(
         name="intereventregime",
         time_derivatives = ["dA/dt = -A/taur", "dB/dt = -B/taud" ],
-        transitions=[al.DoOn(al.InputEvent('spikeinput'),
+        transitions=[al.On(al.InputEvent('spikeinput'),
                               do=["A = A + weight*factor",
                                   "B = B + weight*factor"])] 
         )

@@ -127,7 +127,8 @@ NET_RECEIVE(w, channel) {
     {%- endfor %}
   } else if (flag == INIT) {
     {%- for transition in component.on_conditions %} {#if threshold_crossing(transition) %} #}
-    WATCH ({{transition.condition.as_expr()|replace('=','')}}) {{ regimeNameToRegimeDict[transition.to].flag }}
+    WATCH ({{transition.trigger.as_expr()|replace('=','')}}) {{ regimeNameToRegimeDict[transition.to].flag }}
+    {#WATCH ({{transition.condition.as_expr()|replace('=','')}}) {{ regimeNameToRegimeDict[transition.to].flag }}#}
     {#WATCH ({{transition.condition.as_expr()|replace('=','')}}) {{ transition.to.flag }}#}
     {%- endfor %}
 
