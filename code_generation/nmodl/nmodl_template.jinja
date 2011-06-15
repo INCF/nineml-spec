@@ -1,19 +1,10 @@
 TITLE Spiking node generated from the 9ML file {{input_filename}} using 9ml2nmodl.py version {{version}}
 
-{%- set alias_variables = component.alias_symbols %}
-
-{# {%- set range_variables = component.parameters.union(assigned_variables).union(unconnected_receive_ports) %} #}
-{# {%- set neuron_variables = sorted( list(range_variables) + list(binding_names) ) %} #}
 
 NEURON {
   POINT_PROCESS {{ component.name|replace('-', '_') }}
-  {#RANGE {{ neuron_variables|join(', ') }}, regime #}
+  RANGE regime
   
-
-  {% for nv in alias_variables %} 
-  RANGE {{nv}} 
-  {% endfor %}
-
   {%- for var in component.state_variables %} 
   RANGE {{ var.name }}
   {%- endfor %}
@@ -26,15 +17,20 @@ NEURON {
   RANGE {{ var.name }}
   {%- endfor %}
 
-  RANGE regime
+  {%- for alias in component.aliases  %}
+  RANGE {{ alias.name }}
+  {%- endfor %}
+
 }
 
 CONSTANT {
   SPIKE = 0
   INIT = 1
+
   {%- for regime in component.regimes %}
   {{ regime.label }} = {{ regime.flag }}
   {%- endfor %}
+
   {%- for channel in channels %}
   {{ channel }} = {{ loop.index0 }}
   {%- endfor %}
@@ -48,7 +44,6 @@ INITIAL {
   {{ var.name }} = 0
   {%- endfor %}
 
-
   regime = {{ initial_regime }}
   net_send(0, INIT)
 }
@@ -57,16 +52,9 @@ PARAMETER {
   {%- for p in component.parameters %}
   {{ p.name }} = 1
   {%- endfor %}
-  {%- for p in unconnected_receive_ports %}
-  {{ p }} = 0
-  {%- endfor %}
-  
-  {{ reduce_port_terminations|join('\n ') }}
 }
 
 STATE { 
-	{{ component.integrated_variables|join(' ') }}
-	
     {%- for var in component.state_variables %} 
     {{ var.name }}
     {%- endfor %}
@@ -80,10 +68,9 @@ STATE {
 
 ASSIGNED {
   regime
-  {{ assigned_variables|join('\n ') }}
 
-  {%- for binding in component.bindings  %}
-  {{ binding.name }}
+  {%- for alias in component.aliases  %}
+  {{ alias.name }}
   {%- endfor %}
     
 }
@@ -91,10 +78,9 @@ ASSIGNED {
 BREAKPOINT {
   SOLVE states METHOD derivimplicit
 
-
-  {% for alias in component.aliases %} 
+  {%- for alias in component.aliases %}
   {{ alias.lhs  }} = {{ alias.rhs }}
-  {% endfor %}
+  {%- endfor %}
 
 }
 

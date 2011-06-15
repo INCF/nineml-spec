@@ -18,7 +18,7 @@
     <Dynamics>
 
         <Alias name="I">
-              <MathInline> g * (V-vrev) </MathInline>
+              <MathInline> g * (vrev-V) </MathInline>
         </Alias>
         <StateVariable name="g" dimension=""/>
 

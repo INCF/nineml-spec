@@ -129,6 +129,7 @@ class InPlaceTransform(InplaceActionVisitorDF):
     def ActionAlias(self, alias, **kwargs):
         alias.name_transform_inplace( {self.originalname:self.targetname} )
     def ActionODE(self,ode,**kwargs):
+        print ode
         ode.name_transform_inplace( {self.originalname:self.targetname} )
     def ActionCondition(self, condition):
         condition.name_transform_inplace( {self.originalname:self.targetname} )

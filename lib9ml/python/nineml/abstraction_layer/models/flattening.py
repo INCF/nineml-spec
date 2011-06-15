@@ -187,8 +187,12 @@ class ModelToSingleComponentReducer(object):
             print 'Global-Remap [%s -> %s]'%(originalname,targetname)
             from nineml.abstraction_layer.visitors import InPlaceTransform
             transform = InPlaceTransform( originalname=originalname, targetname=targetname)
-            for regime in newRegimeLookupMap.values():
-                regime.AcceptVisitor(transform)
+#            for regime in newRegimeLookupMap.values():
+#                regime.AcceptVisitor(transform)
+
+            self.reducedcomponent.AcceptVisitor(transform)
+
+
 
         
         # Handle port mappings:
@@ -225,20 +229,20 @@ class ModelToSingleComponentReducer(object):
 
 
 
-        from nineml.utility import flattenFirstLevel
-        from nineml.abstraction_layer import ComponentClass
-
-        dynamics = al.Dynamics( regimes = newRegimeLookupMap.values(),
-                                aliases = flattenFirstLevel( [ m.aliases for m in self.modelcomponents ] ),
-                                state_variables = flattenFirstLevel( [ m.state_variables for m in self.modelcomponents ]  ),
-                                )  
-
-        self.reducedcomponent = al.models.ComponentNode( self.componentname, 
-                                                         dynamics=dynamics, 
-                                                         analog_ports=new_ports.values() , 
-                                                         event_ports= flattenFirstLevel( [comp.event_ports for comp in self.modelcomponents] ), 
-                                                         parameters=flattenFirstLevel( [ m.parameters for m in self.modelcomponents ] ) )
-
+#        from nineml.utility import flattenFirstLevel
+#        from nineml.abstraction_layer import ComponentClass
+#
+#        dynamics = al.Dynamics( regimes = newRegimeLookupMap.values(),
+#                                aliases = flattenFirstLevel( [ m.aliases for m in self.modelcomponents ] ),
+#                                state_variables = flattenFirstLevel( [ m.state_variables for m in self.modelcomponents ]  ),
+#                                )  
+#
+#        self.reducedcomponent = al.models.ComponentNode( self.componentname, 
+#                                                         dynamics=dynamics, 
+#                                                         analog_ports=new_ports.values() , 
+#                                                         event_ports= flattenFirstLevel( [comp.event_ports for comp in self.modelcomponents] ), 
+#                                                         parameters=flattenFirstLevel( [ m.parameters for m in self.modelcomponents ] ) )
+#
         
         
 

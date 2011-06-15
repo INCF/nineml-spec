@@ -1575,8 +1575,6 @@ class Dynamics(object):
     def state_variables(self):
         return self._state_variables
 
-    #@property
-    #def
 
 
 class ComponentClass(object):
@@ -1591,10 +1589,6 @@ class ComponentClass(object):
         self._analog_ports = analog_ports
         self._event_ports = event_ports
         self._dynamics = dynamics
-
-        print "ComponentClass Created:"
-        print self.__dict__
-        print "======================="
 
     @property
     def dynamics(self):
@@ -1648,6 +1642,9 @@ class ComponentClass(object):
     def state_variables(self):
         return self._dynamics.state_variables
 
+
+
+    def __init__OLD(self):
         """
         Regime graph should not be edited after contructing a component
 
@@ -1839,15 +1836,6 @@ class ComponentClass(object):
                 yield p 
     
 
-    #@property
-    #def event_ports(self):
-    #    """ return all event ports in regime transitions"""
-    #    for t in self.transitions:
-    #        #print 'event_ports:transition', t
-    #        for ep in set(t.event_ports):
-    #                #print 'event_ports:eventport', ep
-    #                yield ep
-
     def check_ports(self):
         for p in self.analog_ports:
             if not isinstance(p,AnalogPort):
@@ -1912,30 +1900,29 @@ class ComponentClass(object):
     def backsub_equations(self):
         """ this function finds all undefined functions in equations, and uses
         the alias_map to resolve them """
-        print 'Backsub Equations'
         from nineml.abstraction_layer.visitors import InPlaceTransform
 
         for alias in self.aliases:
-            print 'Substituting Alias: %s -> %s'%(alias.lhs,alias.rhs)
+            #print 'Substituting Alias: %s -> %s'%(alias.lhs,alias.rhs)
             trans = InPlaceTransform( originalname = alias.lhs, targetname = "(%s)"%alias.rhs )
+            # Since we do not want to backsub in lhs of alias, we can't call self.AcceptVisitor() directly
             for r in self.regimes:
                 r.AcceptVisitor(trans)
-        return
 
-        for e in self.state_assignments:
-            for f in e.missing_functions:
-                if f in self.aliases_map:
-                    e.substitute_alias(self.aliases_map[f])
-                else:
-                    raise ValueError, "Equation '%s' calls unresolvable functions." % e.as_expr()
-            #e.parse()
-            for n in e.names:
-                if n in self.aliases_map:
-                    e.substitute_alias(self.aliases_map[n])
-            #e.parse()
+        #for e in self.state_assignments:
+        #    for f in e.missing_functions:
+        #        if f in self.aliases_map:
+        #            e.substitute_alias(self.aliases_map[f])
+        #        else:
+        #            raise ValueError, "Equation '%s' calls unresolvable functions." % e.as_expr()
+        #    #e.parse()
+        #    for n in e.names:
+        #        if n in self.aliases_map:
+        #            e.substitute_alias(self.aliases_map[n])
+        #    #e.parse()
 
         # There should be no missing functions now.
-        assert [f for e in self.equations for f in e.missing_functions] == []
+        #assert [f for e in self.equations for f in e.missing_functions] == []
 
 #    def backsub_ports(self):
 #        """ this function finds all send ports that are not connected to state_variables, and substitutes
