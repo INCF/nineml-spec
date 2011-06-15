@@ -30,6 +30,7 @@ class XMLWriterOld(object):
         kwargs = {}
         #nodes = [node.to_xml() for node in regime.nodes]
         nodes = [node.AcceptVisitor(self) for node in regime.nodes]
+        print nodes
         return E(regime.element_name,
                  name=regime.name,
                  *nodes,
@@ -90,5 +91,6 @@ class XMLWriterOld(object):
         assert False
 
     def VisitOnCondition(self, condition):
-        return E( "CONDITION-TEMP") 
+        return etree.XML("<cond/>")
+        return E( "tmp", "con" ) 
         assert False
