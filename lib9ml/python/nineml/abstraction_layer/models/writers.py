@@ -45,8 +45,8 @@ def dump_reduced(component, filename):
     Regime: $regime
     ----------------
     
-    #for eqn in $regime.equations:
-       Eqn: $eqn
+    #for eqn in $regime.time_derivatives:
+       TimeDeriv: $eqn
     #end for
 
         OnEvents:
