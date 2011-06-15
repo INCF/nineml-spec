@@ -70,13 +70,15 @@ class NestInputEventPort(object):
         # Code to check if a spike arrived at this port
         # should check if the list ring buffer at this lag
         # is empty or not
-        self.CODE = '!B_.spike_inputs_[%s-INF_SPIKE_RECEPTOR-1].get_list(lag).empty()' % eventport.name
+        #self.CODE = '!B_.spike_inputs_[%s-INF_SPIKE_RECEPTOR-1].get_list(lag).empty()' % eventport.name MH
+        self.CODE = '!B_.spike_inputs_[%s-INF_SPIKE_RECEPTOR-1].get_list(lag).empty()' % eventport
         
         self.PENDING = self.CODE
         # TODO:
         # For now we are dropping the weight for this event until
         # we can fix 9ML so that we can do something sensible with it.
-        self.PENDING_FINALIZE = 'B_.spike_inputs_[%s-INF_SPIKE_RECEPTOR-1].get_list(lag).pop_back();' % eventport.name
+        #self.PENDING_FINALIZE = 'B_.spike_inputs_[%s-INF_SPIKE_RECEPTOR-1].get_list(lag).pop_back();' % eventport.name MH
+        self.PENDING_FINALIZE = 'B_.spike_inputs_[%s-INF_SPIKE_RECEPTOR-1].get_list(lag).pop_back();' % eventport
 
 
 class NestOutputEventPort(object):
@@ -103,7 +105,7 @@ class NestRegime(object):
         self.parent_component = parent_component
         self.regime = regime
         self._compute_symbol()
-        self.odes = [NestODE(ode, self) for ode in regime.odes]
+        self.odes = [NestODE(ode, self) for ode in regime.time_derivatives]
 
     def _compute_symbol(self):
         """ Assign the C symbol to be used in enum for this regime in nest C code """
@@ -115,20 +117,29 @@ class NestTransition(object):
         self.parent_component = parent_component
         self.transition = transition
         self.index = index
-        self.to = parent_component.regime_map[transition.to.name]
-        self.nodes = [NestAssignment(a, self) for a in transition.equations]
-        event_ports = list(transition.event_ports)
+        self.to = parent_component.regime_map[transition.to]
+        #self.nodes = [NestAssignment(a, self) for a in transition.equations] MH
+        self.nodes = [NestAssignment(a, self) for a in transition.state_assignments]
+        #event_ports = list(transition.event_ports) MH
+        event_ports = list(transition.event_outputs)
         # we only allow a SpikeOutputPort here so assume it to be so
         if event_ports:
             self.nodes.append(NestOutputEventPort(event_ports[0],self))
             
-        if isinstance(transition.condition, nineml.Condition):
-            self.condition = NestCondition(transition.condition, self)
-        elif isinstance(transition.condition, nineml.EventPort):
-            self.condition = NestInputEventPort(transition.condition, self)
+        #MH:
+        #if isinstance(transition.condition, nineml.Condition):
+        #    self.condition = NestCondition(transition.trigger, self)
+        #elif isinstance(transition.condition, nineml.EventPort):
+        #    self.condition = NestInputEventPort(transition.condition, self)
+        #else:
+        #    raise ValueError, "Condition was neither a nineml.Condition, nor a nineml.EventPort"
+
+        if isinstance(transition, nineml.OnCondition):
+            self.condition = NestCondition(transition.trigger, self)
+        elif isinstance(transition, nineml.OnEvent):
+            self.condition = NestInputEventPort(transition.src_port, self)
         else:
             raise ValueError, "Condition was neither a nineml.Condition, nor a nineml.EventPort"
-
 
 class NestSynapse(object):
     def __init__(self, symbol, notes = ""):
@@ -155,26 +166,29 @@ class NestModel(object):
         # vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
 
         # transitions can define at most 1 EventPort node which should be a SpikeOutputPort
-        for t in component.transitions:
-            event_ports = list(t.event_port_nodes)
-            if event_ports:
-                if len( event_ports) != 1:
-                    raise ValueError, "Only one nineml.SpikeOutputEvent allowed as a transition node EventPort for neuron models."
-                
-                #if event_ports != [nineml.SpikeOutputEvent]:
-                #    print event_ports
-                #    raise ValueError, "Only one nineml.SpikeOutputEvent allowed as a transition node EventPort for neuron models."
 
-        # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        # Commmented out by MH:
+        if False:
+            for t in component.transitions:
+                event_ports = list(t.event_port_nodes)
+                if event_ports:
+                    if len( event_ports) != 1:
+                        raise ValueError, "Only one nineml.SpikeOutputEvent allowed as a transition node EventPort for neuron models."
+                    
+                    #if event_ports != [nineml.SpikeOutputEvent]:
+                    #    print event_ports
+                    #    raise ValueError, "Only one nineml.SpikeOutputEvent allowed as a transition node EventPort for neuron models."
+
+            # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
         # back sub binds
         self.binds = []
 
         # make NestParameters
-        self.parameters = [NestParameter(symbol, default_value_dict[symbol], self) for symbol in component.parameters]
+        self.parameters = [NestParameter(param.name, default_value_dict[param.name], self) for param in component.parameters]
 
         # make NestStateVars
-        self.state_vars = [NestStateVar(symbol, initial_value_dict[symbol], self) for symbol in component.state_variables]
+        self.state_vars = [NestStateVar(sv.name, initial_value_dict[sv.name], self) for sv in component.state_variables]
 
         # make synapse types
         self.synapses = [NestSynapse(symbol) for symbol in synapse_ports] 
@@ -197,11 +211,11 @@ class NestModel(object):
         # build transition map
         self.transition_map = {}
         for t in self.transitions:
-            self.transition_map[t.transition.name] = t
+            self.transition_map[t.transition] = t
 
         # setup transitions for the regimes
         for r in self.regimes:
-            r.transitions = [self.transition_map[t.name] for t in r.regime.transitions]
+            r.transitions = [self.transition_map[t] for t in r.regime.transitions]
 
         # set model to debug mode
         self.debug=True

@@ -8,7 +8,7 @@
 
 import os
 # TODO: improve nest dl-module build and path support
-os.environ['LD_LIBRARY_PATH']=os.environ['LD_LIBRARY_PATH']+':%s/../code_generation/nest2/nest_model/build/.libs' % os.getcwd()
+os.environ['LD_LIBRARY_PATH']=os.environ.get('LD_LIBRARY_PATH','')+':%s/../code_generation/nest2/nest_model/build/.libs' % os.getcwd()
 print os.environ['LD_LIBRARY_PATH']
 
 import nest
@@ -136,6 +136,9 @@ t = data["times"]
 g_in = data["g_in"]
 g_in_9ml = data_9ml["cobaInhib_g"]
 
+g_ex = data["g_ex"]
+g_ex_9ml = data_9ml["cobaExcit_g"]
+
 v = data["V_m"]
 v_9ml = data_9ml["iaf_V"]
 
@@ -146,13 +149,13 @@ regime = data_9ml["Regime9ML"]
 
 from pylab import *
 
-subplot(211)
+subplot(311)
 plot(t,regime,'r-')
 ylabel('regime')
 axis([0, 500,0.0,3.0])
 
 
-subplot(212)
+subplot(312)
 plot(t,v,'g-',lw=4, label='iaf_cond_exp')
 plot(t,v_9ml,'r-',lw=1.5,label='iaf_cond_exp_9ml')
 xlabel("time [ms]")
@@ -160,4 +163,8 @@ ylabel("voltage [mV]")
 axis([0, 500,-72, -55])
 legend()
 
+subplot(313)
+plot(t,g_in_9ml,'r-',lw=1.5,label='iaf_cond_exp_9ml-gIn')
+plot(t,g_ex_9ml,'g-',lw=1.5,label='iaf_cond_exp_9ml-gEx')
+xlabel("time [ms]")
 show()

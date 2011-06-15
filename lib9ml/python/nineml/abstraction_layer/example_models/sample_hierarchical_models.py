@@ -43,7 +43,6 @@ def get_iaf():
     return iaf
 
 def get_coba():
-    print 'getCoba()::Start'
     coba = al.ComponentNodeCombined( 
                              name = "CobaSyn",
                              dynamics = 
@@ -63,9 +62,8 @@ def get_coba():
                              
                              analog_ports = [ al.RecvPort("V"), al.SendPort("I"), ],
                              event_ports = [al.RecvEventPort('spikeinput') ],
-                             parameters = [ al.Parameter(p) for p in ['tau','gl','q','vrest','vrev']  ]
+                             parameters = [ al.Parameter(p) for p in ['tau','q','vrev']  ]
                              )
-    print 'getCoba()::End'
     return coba
 
 
@@ -78,9 +76,6 @@ def nmda():
                               do=["A = A + weight*factor",
                                   "B = B + weight*factor"])] 
         )
-
-    analog_ports = [al.RecvPort("V"), al.SendPort("I"), ]
-    event_ports =  [al.RecvEventPort('spikeinput')      ]
 
     dynamics = al.Dynamics(
                     aliases = [
@@ -96,10 +91,11 @@ def nmda():
 
     nmda = al.ComponentNodeCombined(name="NMDAPSR",
                      dynamics = dynamics,
-                     analog_ports = analog_ports,
-                     event_ports = event_ports,
-                     parameters = [ al.Parameter(p) for p in ['taur','taud','gmax','mgconc','gamma','beta','E','weight']  ]
+                     analog_ports = [al.RecvPort("V"), al.SendPort("I"), ],
+                     event_ports =  [al.RecvEventPort('spikeinput') ],
+                     parameters =   [ al.Parameter(p) for p in ['taur','taud','gmax','mgconc','gamma','beta','E','weight']  ]
                      )
+
     return nmda
 
 

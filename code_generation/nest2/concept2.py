@@ -42,8 +42,10 @@ import nineml.abstraction_layer as nineml
 import os
 #import nineml.models
 from nineml.abstraction_layer.example_models import get_hierachical_iaf_2coba
-from nineml.abstraction_layer.models import reduce_to_single_component, ModelToSingleComponentReducer
-from nineml.abstraction_layer.models import dump_reduced
+#from nineml.abstraction_layer.models import reduce_to_single_component, ModelToSingleComponentReducer
+from nineml.abstraction_layer.flattening import flatten, ComponentFlattener
+from nineml.abstraction_layer.writers import dump_reduced
+from nineml.abstraction_layer.componentmodifiers import ModelModifier
 
 
 
@@ -51,7 +53,11 @@ nest_classname = "iaf_cond_exp_9ml"
 
 
 
-iaf_cond_exp_9ML_reduced = reduce_to_single_component( get_hierachical_iaf_2coba(), componentname=nest_classname )
+iaf_cond_exp_9ML_reduced = flatten( get_hierachical_iaf_2coba(), componentname=nest_classname )
+iaf_cond_exp_9ML_reduced.backsub_aliases()
+iaf_cond_exp_9ML_reduced.backsub_equations()
+ModelModifier.CloseAllReducePorts(component=iaf_cond_exp_9ML_reduced)
+
 dump_reduced(iaf_cond_exp_9ML_reduced,'reduced.txt')
 
 
@@ -69,7 +75,7 @@ iaf_cond_exp_9ML_reduced.short_description = "Standard integrate and fire with e
 synapse_ports = ['cobaExcit_spikeinput', 'cobaInhib_spikeinput']
 AP_port = 'spike_output'
 V_port = 'V_m'
-initial_regime = "Regime7"
+initial_regime = "Regime9"
 
 initial_values = {
     'iaf_V': -70.0,
@@ -93,10 +99,12 @@ parameters = {
     'cobaExcit.q': 2.0,
     'cobaInhib.q': 2.0,
     'iaf.ISyn':0.0,
+
+    'cobaExcit.gl': 0.0,
 }
 
 
-default_values = ModelToSingleComponentReducer.flatten_namespace_dict( parameters )
+default_values = ComponentFlattener.flatten_namespace_dict( parameters )
 
 
 
