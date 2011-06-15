@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<NineML xmlns="http://nineml.org/9ML/0.1"
+    xmlns:comodl="CoModL"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://nineml.org/9ML/0.1 NineML_v0.2.xsd">
+
+<Include file="comp_iaf.9ml"/>
+<Include file="comp_coba.9ml"/>
+
+
+<ComponentClass xmlns="CoModL" extends="iaf" implements="std_neuron">
+
+
+    <Child namespace="cobaExcit" node="coba" />
+    <Child namespace="cobaInhib" node="coba" />
+    <Child
+
+
+
+    <ConnectPorts source="V" sink="cobaExcit.V"/>
+    <ConnectPorts source="V" sink="cobaInhib.V"/>
+    <ConnectPorts source="cobaExcit.I" sink="iSyn"/>
+    <ConnectPorts source="cobaInhib.I" sink="iSyn"/>
+
+</ComponentClass>
+
+<ComponentClass name="iaf" implements="std_neuron">
+<!-- Possible additions to interface? -->
+<Dynamics>
+...
+</Dynamics>
+</ComponentClass>
+
+
+
+<ComponentClass name="std_neuron">
+<AnalogPort name='V' mode='send'/>
+
+</ComponentClass>
+
+
+</NineML>
