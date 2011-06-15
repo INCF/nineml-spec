@@ -47,17 +47,7 @@ class ModelToSingleComponentReducer(object):
         # TODO: Proper prefixing:
         prefix = component.getTreePosition(jointoken="_") + "_"
         excludes = ['t']
-
-        #nodeClasses = [nineml.Equation, nineml.Alias]
-        #nodes={}
-        #for nc in nodeClasses:
-        #    nodes[nc] = FilterType( regime.nodes )
-        
-        newnodes= [ expr.clone(prefix=prefix,prefix_excludes=excludes,prefix_name=True) for expr in regime.nodes ]
-        #print "Remapped Transition"
-        #for n in newnodes:
-        #    print n
-
+        newnodes= [ expr.clone(prefix=prefix,prefix_excludes=excludes,prefix_name=True) for expr in regime.time_derivatives ]
         return newnodes
 
 
@@ -65,51 +55,90 @@ class ModelToSingleComponentReducer(object):
     def create_compound_regime( self, regimetuple, index ):
         component_regimes_zip = zip(self.modelcomponents, regimetuple)
         
-        # Make a name for the state:
-        namebuilder = lambda (comp,regime) : "%s:%s" % (comp.getPathString(), regime.name) 
-        regime_name = "State%d"%index + ",".join([ namebuilder(rc) for rc in component_regimes_zip]) 
         regime_name = None
         
         # Copy accross all the nodes from each regime. We need to 
         # prefix all nodes with the names to prevent collision.
-        regime_equations = util.flattenFirstLevel( [ self.copy_and_prefix_odes_from_regime(*rc) for rc in component_regimes_zip ] )
+        time_derivatives = util.flattenFirstLevel( [ self.copy_and_prefix_odes_from_regime(*rc) for rc in component_regimes_zip ] )
         
-        
-        return nineml.Regime(*regime_equations, name = regime_name )
+        # Don't worry about transitions yet, 
+        return nineml.Regime(name=None, time_derivatives=time_derivatives, on_events=[], on_conditions=[] )
 
-    def create_transition(self, oldtransition, oldcomponent, fromRegime, toRegime):
-        transitionName = "%s#%s#%s"%( fromRegime.name, toRegime.name, oldtransition.name )    
+#    def create_transition(self, oldtransition, oldcomponent, fromRegime, toRegime):
+#        transitionName = None
+#        oldtransitionnamespace = oldcomponent.getTreePosition("_") + "_"
+#
+#
+#            
+#        # Remap all the nodes:
+#        node_remapper = { 
+#                     nineml.Assignment: lambda n: n.clone( prefix = oldtransitionnamespace, prefix_excludes=['t'] ),
+#                     #nineml.EventPort:  lambda e: e.clone( prefix = oldtransitionnamespace, prefix_excludes=['t'] ),
+#                     nineml.OutputEvent:  lambda e: e.clone( prefix = oldtransitionnamespace, prefix_excludes=['t'] ),
+#                     nineml.InputEvent:  lambda e: e.clone( prefix = oldtransitionnamespace, prefix_excludes=['t'] ),
+#                    }
+#        
+#        mappednodes = [ node_remapper[ type(n) ] (n) for n in oldtransition.nodes ] 
+#        
+#
+#
+#        # Remap the condition:
+#        condition_remapper = { 
+#                nineml.Condition:  lambda c: c.clone( prefix=oldtransitionnamespace, prefix_excludes=['t'] ) , 
+#                nineml.EventPort : lambda p: p.clone( prefix=oldtransitionnamespace, prefix_excludes=['t'] ) 
+#        }
+#        newcondition = condition_remapper[ type(oldtransition.condition) ](oldtransition.condition)
+#
+#
+#
+#        t = nineml.Transition(  *mappednodes, 
+#                                from_=fromRegime,
+#                                to=toRegime.name,
+#                                condition= newcondition,
+#                                name= transitionName )
+#        return t
+#
+
+
+    def create_on_condition(self, oldtransition, oldcomponent, fromRegime, toRegime):
         transitionName = None
         oldtransitionnamespace = oldcomponent.getTreePosition("_") + "_"
 
 
-            
-        # Remap all the nodes:
-        node_remapper = { 
-                     nineml.Assignment: lambda n: n.clone( prefix = oldtransitionnamespace, prefix_excludes=['t'] ),
-                     nineml.EventPort:  lambda e: e.clone( prefix = oldtransitionnamespace, prefix_excludes=['t'] ),
-                    }
-        
-        mappednodes = [ node_remapper[ type(n) ] (n) for n in oldtransition.nodes ] 
-        
+        newAssignments = [ a.clone(prefix=oldtransitionnamespace, prefix_excludes=['t']) for a in oldtransition.state_assignments]  
+        newEventOutputs = [ e.clone(prefix=oldtransitionnamespace, prefix_excludes=['t']) for e in oldtransition.event_outputs]  
+
+       # # Remap all the nodes:
+       # node_remapper = { 
+       #              nineml.Assignment: lambda n: n.clone( prefix = oldtransitionnamespace, prefix_excludes=['t'] ),
+       #              #nineml.EventPort:  lambda e: e.clone( prefix = oldtransitionnamespace, prefix_excludes=['t'] ),
+       #              nineml.OutputEvent:  lambda e: e.clone( prefix = oldtransitionnamespace, prefix_excludes=['t'] ),
+       #              nineml.InputEvent:  lambda e: e.clone( prefix = oldtransitionnamespace, prefix_excludes=['t'] ),
+       #             }
+       # 
+       # mappednodes = [ node_remapper[ type(n) ] (n) for n in oldtransition.nodes ] 
+       # 
 
 
-        # Remap the condition:
-        condition_remapper = { 
-                nineml.Condition:  lambda c: c.clone( prefix=oldtransitionnamespace, prefix_excludes=['t'] ) , 
-                nineml.EventPort : lambda p: p.clone( prefix=oldtransitionnamespace, prefix_excludes=['t'] ) 
-        }
-        newcondition = condition_remapper[ type(oldtransition.condition) ](oldtransition.condition)
+       # # Remap the condition:
+       # condition_remapper = { 
+       #         nineml.Condition:  lambda c: c.clone( prefix=oldtransitionnamespace, prefix_excludes=['t'] ) , 
+       #         nineml.EventPort : lambda p: p.clone( prefix=oldtransitionnamespace, prefix_excludes=['t'] ) 
+       # }
+       # newcondition = condition_remapper[ type(oldtransition.condition) ](oldtransition.condition)
 
 
 
-        t = nineml.Transition( *mappednodes, 
-                        from_=fromRegime,
-                        to=toRegime.name,
-                        condition= newcondition,
-                        name= transitionName )
+        t = nineml.OnCondition(  trigger = oldtransition.trigger.clone(prefix=oldtransitionnamespace, prefix_excludes=['t'] ),
+                                  state_assignments = newAssignments,
+                                  event_outputs = newEventOutputs )
+#                                  *mappednodes, 
+#                                  from_=fromRegime,
+#                                  to=toRegime.name,
+#                                  condition= newcondition,
+#                                  name= transitionName
+#                             )
         return t
-
     
     def build_new_regime_space(self):
 
@@ -134,7 +163,8 @@ class ModelToSingleComponentReducer(object):
             #print "RegimeTuple:",regimetuple
             for regimeIndex, regime in enumerate( regimetuple ):
                 #print 'RegimeIndex:',regimeIndex, "NTransitions:", len(regime.transitions)
-                for oldtransition in regime.transitions:
+
+                for oldtransition in regime.on_events:
                     # We calculate the tuple of the Regime this transitions should jump to:
                     #print oldtransition
                     srcRegime = list( regimetuple )
@@ -148,9 +178,26 @@ class ModelToSingleComponentReducer(object):
                     transName = newRegimeTo.name
 
                     oldcomponent = self.modelcomponents[regimeIndex]
+                    print oldtransition
                     t = self.create_transition(oldtransition=oldtransition,oldcomponent=oldcomponent, fromRegime=regimeNew, toRegime=newRegimeTo)
-                    regimeNew.add_transition( t = t )
+                    regimeNew.add_on_event( on_event=t )
         
+                for oldtransition in regime.on_conditions:
+                    # We calculate the tuple of the Regime this transitions should jump to:
+                    #print oldtransition
+                    srcRegime = list( regimetuple )
+                    dstRegime = srcRegime[:]
+
+                    # Points to another node:
+                    dstRegimeName = oldtransition.to.get_ref() if oldtransition.to else regime
+                    dstRegimeOld = self.modelcomponents[regimeIndex].query.regime(name=dstRegimeName.name) 
+                    dstRegime[regimeIndex] = dstRegimeOld
+                    newRegimeTo = newRegimeLookupMap[ tuple(dstRegime) ] 
+                    transName = newRegimeTo.name
+
+                    oldcomponent = self.modelcomponents[regimeIndex]
+                    t = self.create_on_condition(oldtransition=oldtransition,oldcomponent=oldcomponent, fromRegime=regimeNew, toRegime=newRegimeTo)
+                    regimeNew.add_on_condition( on_condition = t )
         self.newRegimeLookupMap = newRegimeLookupMap
 
     

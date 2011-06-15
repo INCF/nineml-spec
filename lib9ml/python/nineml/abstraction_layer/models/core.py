@@ -114,12 +114,13 @@ class Model(TreeNode):
 
 
 
-from nineml.abstraction_layer import Component
+from nineml.abstraction_layer import ComponentClass
 
-class ComponentNode(Component,TreeNode, ):
-    def __init__(self, name, parameters = [], regimes = [],  analog_ports = [], aliases = [], model=None):
+class ComponentNode(ComponentClass,TreeNode, ):
+    #def __init__(self, name, parameters = [], regimes = [],  analog_ports = [], aliases = [], model=None):
+    def __init__(self, name, parameters = [],  analog_ports = [], event_ports=[], dynamics=None, model=None):
         TreeNode.__init__(self, )
-        Component.__init__(self, name=name, parameters = parameters, regimes=regimes, ports=analog_ports,aliases=aliases)
+        ComponentClass.__init__(self, name=name, parameters = parameters, analog_ports=analog_ports, event_ports = event_ports, dynamics = dynamics)
 
         self.query = ComponentQueryer(self)
 
@@ -133,25 +134,7 @@ class ComponentNode(Component,TreeNode, ):
 
 
 
-
-def ExpectSingle(lst):
-    if len(lst) != 1:
-        print "Filter Expect Single: ",lst
-        assert False
-
-    assert len(lst) == 1
-    return lst[0]
-
-
-def FilterExpectSingle(lst, func):
-    #lst = [ l for l in lst if l and func(l) ]
-    return ExpectSingle( Filter(lst, func) )
-
-def Filter(lst,func):
-    return  [ l for l in lst if l and func(l) ]
-
-def FilterType(lst, acceptedtype):
-    return Filter( lst, lambda x: isinstance(x,acceptedtype))
+from nineml.utility import ExpectSingle, FilterExpectSingle, Filter, FilterType
 
 
 

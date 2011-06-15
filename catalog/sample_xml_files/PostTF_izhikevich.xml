@@ -4,7 +4,7 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://nineml.org/9ML/0.1 NineML_v0.2.xsd">
 
-  <ComponentClass name="izhikevichCell" xmlns="CoModL">
+  <ComponentClass name="izhikevichCellNew" xmlns="CoModL">
 
     <Parameter name="a" dimension='none'/>
     <Parameter name="c" dimension='none'/>
@@ -13,7 +13,7 @@
     <Parameter name="theta" dimension='voltage'/>
 
     <!-- AnalogPort or Exposure?? -->
-    <AnalogPort name="iSyn" mode='reduce' dimension='current'/>
+    <AnalogPort name="iSyn" mode='reduce' reduce_op='+' dimension='current'/>
     <AnalogPort name="U" mode="send" dimension='none'/>
     <AnalogPort name="V" mode="send" dimension='voltage'/>
     <EventPort name="spikeOutput" mode="send"/>
@@ -25,6 +25,10 @@
         <StateVariable name="V" dimension="voltage"/>
         <StateVariable name="U" dimension="none"/> 
           
+        <Alias name='rv'>
+            <MathInline>V*U</MathInline>
+        </Alias>
+
         <Regime name="subthresholdRegime">
             
               

@@ -179,8 +179,32 @@ class EventPort(Port):
      
     
 
+
+class OutputEvent(object):
+    def __init__(self, port):
+        self.port = port
+
+    def clone(self, prefix="", prefix_excludes=[]):
+        portname = prefix + self.port if not self.port in prefix_excludes else self.port
+        return OutputEvent(portname)
+
+class InputEvent(object):
+    def __init__(self,port):
+        self.port
+    
+    def clone(self, prefix="", prefix_excludes=[]):
+        portname = prefix + self.port if not self.port in prefix_excludes else self.port
+        return OutputEvent(portname)
+    
+SpikeEventPort = EventPort('spike_output')
+SpikeInputEvent = EventPort('spike_input', mode="recv")
+
+
+
 SpikeOutputEvent = EventPort('spike_output')
 SpikeInputEvent = EventPort('spike_input', mode="recv")
+
+
 PreEvent = EventPort('spike_pre', mode="recv")
 PostEvent = EventPort('spike_post', mode="recv")
 PreEventRelay = EventPort('spike_pre_relay', mode="send")

@@ -62,7 +62,7 @@ def dump_reduced(component, filename):
     """
 
 
-    return
+    return 
     data = { 'component':component }
     f = open(filename,"w")
     s = Template(tmpl, data).respond()
