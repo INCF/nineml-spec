@@ -126,6 +126,7 @@ def get_weight_variable(channel, weight_variables):
 
 
 def unconnected_analog_receive_ports(component, weight_variables):
+    assert False, "deprecated"
     receive_ports = [p.symbol for p in
                      component.filter_ports(cls=al.AnalogPort,
                                             mode=('recv', 'reduce')

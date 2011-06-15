@@ -167,8 +167,8 @@ class Regime(object):
     """
     A regime is something that contains ODEs, has temporal extent, defines a set of Transitions
     which occur based on conditions, and can be join the Regimes to other Regimes.
-
     """
+
     element_name = "Regime"
     n = 0
     
@@ -1601,8 +1601,6 @@ class ComponentClass(object):
     @property
     def parameters(self):
         return iter(self._parameters)
-
-
 
     # <- Forwarding functions -->
     @property
