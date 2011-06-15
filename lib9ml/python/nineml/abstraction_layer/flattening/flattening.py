@@ -293,7 +293,7 @@ class ModelToSingleComponentReducer(object):
         newRegimeLookupMap = self.newRegimeLookupMap
 
         from nineml.utility import flattenFirstLevel
-        from nineml.abstraction_layer.core_component import NamespaceAddress, ComponentNodeCombined
+        from nineml.abstraction_layer.core import NamespaceAddress, ComponentNodeCombined
 
         new_ports = flattenFirstLevel( [comp.analog_ports for comp in self.modelcomponents]) 
         new_ports = dict( [ (p.name, p) for p in new_ports ] ) 
