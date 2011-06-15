@@ -1,5 +1,4 @@
 
-import nineml.abstraction_layer as al
 
 from itertools import chain
 
@@ -180,6 +179,9 @@ class InPlaceTransform(InplaceActionVisitorDF):
 
 
 
+#import nineml.abstraction_layer as al
+#import .. as al
+import nineml.abstraction_layer 
 
 
 

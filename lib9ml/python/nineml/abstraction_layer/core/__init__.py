@@ -5,15 +5,16 @@ Copyright Andrew P. Davison, Eilif B. Muller, 2010, Michael Hull, 2011  # if you
 """
 
 from core import *
-from visitors import ComponentVisitor
-#from expressions import * 
-#from ports import * 
-#from cond_parse import * 
-#from expr_parse import * 
-#from xmlns import * 
+from expressions import * 
+from ports import * 
+from cond_parse import * 
+from expr_parse import * 
+from ..xmlns import * 
 
 from nineml import __version__
-#from core_component import *
+from core_component import *
+
+import math_namespace 
 #from writers import XMLWriter
 #from readers import XMLReader
 

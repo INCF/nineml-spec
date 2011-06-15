@@ -2,17 +2,15 @@
 from itertools import chain
 
 from nineml.abstraction_layer.xmlns import *
+from nineml.abstraction_layer import ComponentVisitor
 
 
 
 
-class ComponentVisitor(object):
-    def VisitComponent(self, component):
-        raise NotImplementedError()
 
 
 
-class XMLWriter(object):
+class XMLWriter(ComponentVisitor):
 
     @classmethod 
     def write( cls, component, file, flatten=True):
@@ -22,8 +20,11 @@ class XMLWriter(object):
         doc = E.nineml(xml, xmlns=nineml_namespace)
         etree.ElementTree(doc).write(file, encoding="UTF-8", pretty_print=True, xml_declaration=True)
 
-
     def VisitComponent(self,component):
+        assert False
+
+    def VisitComponentNodeCombined(self,component):
+        assert False
         elements =  [p.AcceptVisitor(self) for p in component.analog_ports] +\
                     [p.AcceptVisitor(self) for p in component.event_ports] +\
                     [p.AcceptVisitor(self) for p in component.parameters] +\
@@ -40,8 +41,6 @@ class XMLWriter(object):
         nodes = [node.AcceptVisitor(self) for node in regime.time_derivatives] +\
                 [node.AcceptVisitor(self) for node in regime.on_events] +\
                 [node.AcceptVisitor(self) for node in regime.on_conditions] 
-        #nodes =[]
-        print "RegimeName", regime.name
         return E(regime.element_name, name=regime.name, *nodes )
 
     def VisitStateVariable(self, state_variable):
