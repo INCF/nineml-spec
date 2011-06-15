@@ -30,15 +30,28 @@ class ModelToSingleComponentReducer(object):
     
     
     def __init__(self,model, componentname):
+        # Are we trying to flatten something that it already flattened
+        from nineml.abstraction_layer import ComponentClass
+        from nineml.abstraction_layer.models import ComponentNode, Model
+        if isinstance( model, (ComponentClass,ComponentNode) ):
+            self.reducedcomponent = model
+            return
+
+        print type( model), model
+        assert isinstance( model, Model )
+
         self.model = model 
         self.componentname=componentname
 
         self.modelcomponents = ModelVisitorDF_ComponentCollector(self.model).components
         self.modelsubmodels = ModelVisitorDF_ModelCollector(self.model, include_root=True).models
-
+        
+        print
+        print " ******* FLATTENING COMPONENT: ******"
         self.build_new_regime_space()
         self.remap_ports()
-
+        print " ** FINISHED FLATTENING COMPONENT: **"
+        print
 
 
 
@@ -54,13 +67,14 @@ class ModelToSingleComponentReducer(object):
 
 
     def create_compound_regime( self, regimetuple, index ):
+        from nineml.utility import invertDictionary,flattenFirstLevel
         component_regimes_zip = zip(self.modelcomponents, regimetuple)
         
         regime_name = None
         
         # Copy accross all the nodes from each regime. We need to 
         # prefix all nodes with the names to prevent collision.
-        time_derivatives = util.flattenFirstLevel( [ self.copy_and_prefix_odes_from_regime(*rc) for rc in component_regimes_zip ] )
+        time_derivatives = flattenFirstLevel( [ self.copy_and_prefix_odes_from_regime(*rc) for rc in component_regimes_zip ] )
         
         # Don't worry about transitions yet, 
         r =  al.Regime(name=None, time_derivatives=time_derivatives, on_events=[], on_conditions=[] )
@@ -199,11 +213,12 @@ class ModelToSingleComponentReducer(object):
 
 
     def remap_ports(self):
+        from nineml.utility import safe_dictionary_merge
         newRegimeLookupMap = self.newRegimeLookupMap
 
         # Create a maps { Namespaces -> Ports}
         old_port_dicts = [ comp.query.get_fully_addressed_analogports_new() for comp in self.modelcomponents ]
-        old_ports = util.safe_dictionary_merge( old_port_dicts )
+        old_ports = safe_dictionary_merge( old_port_dicts )
 
         # Create the new analog ports with prefixed names:
         new_ports = {}
@@ -213,16 +228,19 @@ class ModelToSingleComponentReducer(object):
 
         # [Forwarding function]
         def globalRemapPort(originalname,targetname):
-            return ModelToSingleComponentReducer.global_remap_port_ext(originalname=originalname, targetname=targetname, new_ports=new_ports, newRegimeLookupMap=newRegimeLookupMap)
+            return ModelToSingleComponentReducer.global_remap_port_ext(originalname=originalname, 
+                                                                       targetname=targetname, 
+                                                                       new_ports=new_ports, 
+                                                                       newRegimeLookupMap=newRegimeLookupMap)
         
         def get_send_port_subsitution(srcPort):
             if srcPort.expr:
                 return "(%s)"%srcPort.expr.rhs
             return srcPort.name 
 
-
-        #for ns,port in new_ports.iteritems():
-        #    print ns, port
+        print '  * Ports:'
+        for ns,port in new_ports.iteritems():
+            print '    - ', ns, port
 
         # Handle port mappings:
         # portconnections = [ (NS -> NS),(NS -> NS ), (NS -> NS) ]
@@ -260,8 +278,19 @@ class ModelToSingleComponentReducer(object):
 
         #for ns,p in new_ports.iteritems():
         #    print p, p.symbol
-        dynamics = al.Dynamics( regimes = newRegimeLookupMap.values())  
-        self.reducedcomponent = al.models.ComponentNode( self.componentname, dynamics=dynamics, analog_ports=new_ports.values() )
+        from nineml.utility import flattenFirstLevel
+        state_vars = [ m.get_fully_qualified_statevars_objects() for m in self.modelcomponents ] 
+        state_vars = flattenFirstLevel(state_vars)
+
+        params = [ m.get_fully_qualified_param_objects() for m in self.modelcomponents ] 
+        params = flattenFirstLevel(params)
+
+        dynamics = al.Dynamics( regimes = newRegimeLookupMap.values(),
+                                aliases = [],
+                                state_variables = state_vars,
+                                )  
+        from nineml.abstraction_layer import ComponentClass
+        self.reducedcomponent = al.models.ComponentNode( self.componentname, dynamics=dynamics, analog_ports=new_ports.values() , parameters=params)
 
         
         

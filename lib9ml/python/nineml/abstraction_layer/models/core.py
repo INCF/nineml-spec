@@ -25,8 +25,9 @@ class TreeNode(object):
     # Naming Functions:
     # != TO GO -!
     def getContainedNamespaceName(self):
+        from nineml.utility import invertDictionary
         if not self.getParentModel(): return ""
-        return util.invertDictionary(self.getParentModel().subnodes)[self]
+        return invertDictionary(self.getParentModel().subnodes)[self]
 
     def getTreePosition(self, jointoken=None):
         """ Returns a list of the parents"""
@@ -99,12 +100,7 @@ class Model(TreeNode):
         return conns
         
 
-        model_addr = self.getTreePosition()
-        def make_fqname(target):
-            return tuple ( model_addr + target.split(".") )
 
-        conns = [ (make_fqname(src),make_fqname(sink)) for (src,sink) in self.portconnections ]
-        return conns
 
 
     # Visitation 
@@ -119,8 +115,9 @@ class ComponentNode(ComponentClass,TreeNode, ):
     def __init__(self, name, parameters = [],  analog_ports = [], event_ports=[], dynamics=None, model=None):
         TreeNode.__init__(self, )
         ComponentClass.__init__(self, name=name, parameters = parameters, analog_ports=analog_ports, event_ports = event_ports, dynamics = dynamics)
-
         self.query = ComponentQueryer(self)
+
+        
 
 #Interface
     def getAllComponents(self,):
@@ -131,6 +128,25 @@ class ComponentNode(ComponentClass,TreeNode, ):
 
 
 
+    # HORRIBLE HORRIBLE. TO FIX
+    def get_fully_qualified_statevars_objects(self):
+        self.namespace = self.get_node_addr()
+        def make_fqname(target):
+            return NamespaceAddress( tuple( list(self.namespace.loctuple)+ [target] ) )
+        import nineml.abstraction_layer as al
+        conns = [ al.StateVariable( "_".join( make_fqname(sv.name).loctuple ) ) for sv in self.dynamics.state_variables ]
+        print conns
+        return conns
+
+    # HORRIBLE HORRIBLE. TO FIX
+    def get_fully_qualified_param_objects(self):
+        self.namespace = self.get_node_addr()
+        def make_fqname(target):
+            return NamespaceAddress( tuple( list(self.namespace.loctuple)+ [target] ) )
+        import nineml.abstraction_layer as al
+        conns = [ al.Parameter( "_".join( make_fqname(sv.name).loctuple ) ) for sv in self.parameters ]
+        print conns
+        return conns
 
 from nineml.utility import ExpectSingle, FilterExpectSingle, Filter, FilterType
 
@@ -161,14 +177,17 @@ class ComponentQueryer(object):
         comp_addr = self.component.get_node_addr()
         return dict( [ (comp_addr.get_subns_addr(port.name), port) for port in self.component.analog_ports] )
 
-    # TO GO:
-    def get_fully_addressed_ports_new(self):
-        comp_addr = self.component.get_node_addr()
-        return dict( [ (comp_addr.get_subns_addr(port.name), port) for port in self.component.ports ] )
-    def get_fully_addressed_ports(self):
-        comp_addr = self.component.getTreePosition()
-        return dict( [ (tuple(comp_addr + [port.name]),port) for port in self.component.ports ] )
-    ###########
+    ## TO GO:
+    #def get_fully_addressed_ports_new(self):
+    #    assert False
+    #    comp_addr = self.component.get_node_addr()
+    #    return dict( [ (comp_addr.get_subns_addr(port.name), port) for port in self.component.ports ] )
+
+    #def get_fully_addressed_ports(self):
+    #    assert False
+    #    comp_addr = self.component.getTreePosition()
+    #    return dict( [ (tuple(comp_addr + [port.name]),port) for port in self.component.ports ] )
+    ############
 
 
 
@@ -255,5 +274,7 @@ class NamespaceAddress(object):
 
     @classmethod
     def concat(cls,*args):
-        loctuple = tuple( util.flattenFirstLevel( [ list(a.loctuple) for a in args ] ) )
+        print 'Concatenating:', args
+        from nineml.utility import flattenFirstLevel
+        loctuple = tuple( flattenFirstLevel( [ list(a.loctuple) for a in args  ] ) )
         return NamespaceAddress(loc=loctuple)

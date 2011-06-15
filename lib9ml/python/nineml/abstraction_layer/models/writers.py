@@ -18,19 +18,25 @@ def dump_reduced(component, filename):
     #end for
 
 
-    PARAMETERS
-    ===============
-    #for up in $component.user_parameters:
+    PARAMETERS:
+    ===========
+    #for up in $component.parameters:
       Parameter: $up
     #end for
 
 
-    BINDINGS:
-    ==================
+    Aliases:
+    ========
     #for b in $component.aliases:
         Alias: $b
     #end for
 
+
+    State Variables:
+    =================
+    #for s in $component.state_variables:
+        State Variable: $s
+    #end for
 
     REGIMES:
     ========
@@ -43,26 +49,33 @@ def dump_reduced(component, filename):
        Eqn: $eqn
     #end for
 
-        Transitions
+        OnEvents:
         ~~~~~~~~~~~~~~
-        #for $transi in $regime.transitions:
-           Transition: $transi.name
-
-             Condition: $transi.condition
-
-           #for node in $transi.nodes:
+        #for $on_event in $regime.on_events:
+           Event: $on_event.src_port
+           #for node in $on_event.nodes:
              Node: $node
            #end for
-
         #end for
+
+        OnConditions:
+        ~~~~~~~~~~~~~~
+        #for $on_condition in $regime.on_conditions:
+           Event: $on_condition.trigger
+           #for node in $on_condition.nodes:
+             Node: $node
+           #end for
+        #end for
+
 
 
     #end for
 
+
+
     """
 
 
-    return 
     data = { 'component':component }
     f = open(filename,"w")
     s = Template(tmpl, data).respond()

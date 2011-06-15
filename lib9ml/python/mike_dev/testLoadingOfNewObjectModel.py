@@ -41,7 +41,7 @@ model = al.XMLReader.read_model(  Join( tenml_dir, 'iaf_2coba.10ml' ) )
 
 from nineml.abstraction_layer.models import reduce_to_single_component
 flatcomponent = reduce_to_single_component(model, componentname='iaf_2coba')
-model = al.XMLWriter.write(flatcomponent, '/tmp/nineml_out_iaf_2coba.9ml' ) 
+al.XMLWriter.write(flatcomponent, '/tmp/nineml_out_iaf_2coba.9ml' ) 
 
 
 

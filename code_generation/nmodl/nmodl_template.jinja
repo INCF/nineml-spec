@@ -1,14 +1,23 @@
 TITLE Spiking node generated from the 9ML file {{input_filename}} using 9ml2nmodl.py version {{version}}
 
-{%- set assigned_variables = component.assigned_variables.difference(component.integrated_variables) %}
-{%- set range_variables = component.user_parameters.union(assigned_variables).union(unconnected_receive_ports) %}
-{%- set neuron_variables = sorted( list(range_variables) + list(binding_names) ) %}
+{%- set alias_variables = component.alias_symbols %}
+
+{# {%- set range_variables = component.parameters.union(assigned_variables).union(unconnected_receive_ports) %} #}
+{# {%- set neuron_variables = sorted( list(range_variables) + list(binding_names) ) %} #}
 
 NEURON {
   POINT_PROCESS {{ component.name|replace('-', '_') }}
   {#RANGE {{ neuron_variables|join(', ') }}, regime #}
-  {% for nv in neuron_variables %} RANGE {{nv}} 
+  
+
+  {% for nv in alias_variables %} 
+  RANGE {{nv}} 
   {% endfor %}
+
+  {%- for var in component.state_variables %} 
+  RANGE {{ var.name }}
+  {%- endfor %}
+
   RANGE regime
 }
 
@@ -28,7 +37,7 @@ CONSTANT {
 INITIAL {
 
   {%- for var in component.state_variables %}
-  {{ var }} = 0
+  {{ var.name }} = 0
   {%- endfor %}
 
 
@@ -37,8 +46,8 @@ INITIAL {
 }
 
 PARAMETER {
-  {%- for p in component.user_parameters %}
-  {{ p }} = 1
+  {%- for p in component.parameters %}
+  {{ p.name }} = 1
   {%- endfor %}
   {%- for p in unconnected_receive_ports %}
   {{ p }} = 0
@@ -50,6 +59,10 @@ PARAMETER {
 STATE { 
 	{{ component.integrated_variables|join(' ') }}
 	
+    {%- for var in component.state_variables %} 
+    {{ var.name }}
+    {%- endfor %}
+
 	{%- if weights_as_states %}
 	{{ weight_variables.values()|join(' ') }} 
 	{%- endif %}
@@ -79,8 +92,8 @@ BREAKPOINT {
 }
 
 DERIVATIVE states {
-  {%- for var in component.integrated_variables %}
-    {{ var }}' = deriv_{{ var }}({{ deriv_func_args(component, var)|join(', ') }})
+  {%- for var in component.state_variables %}
+    {{ var.name }}' = deriv_{{ var.name }}({{ deriv_func_args(component, var.name)|join(', ') }})
   {%- endfor %}
 }
 
@@ -104,13 +117,13 @@ NET_RECEIVE(w, channel) {
     printf("Received spike with weight %f on channel %f at %f\n", w, channel, t)
     {%- for regime in component.regimes %}
     if (regime == {{ regime.label }}) {
-      {%- for transition in regime.transitions if on_input_event(transition) %}
-      if (channel == {{ transition.condition.channel_ }}) {
-      		printf("  Resolved to channel {{transition.condition.channel_ }} \n" )
+      {%- for on_event in regime.on_events %}
+      if (channel == {{ on_event.channel_ }}) {
+      		printf("  Resolved to channel {{on_event.channel_ }} \n" )
         {% if weight_variables %}
-        {{ get_weight_variable(transition.condition.channel_, weight_variables) }} = w
+        {{ get_weight_variable(on_event.channel_, weight_variables) }} = w
         {% endif %}
-        {%- for node in transition.nodes %}
+        {%- for node in on_event.nodes %}
         {{ as_expr(node) }}
         {%- endfor %}
       }
@@ -118,10 +131,11 @@ NET_RECEIVE(w, channel) {
     }
     {%- endfor %}
   } else if (flag == INIT) {
-    {%- for transition in component.transitions if threshold_crossing(transition) %}
+    {%- for transition in component.on_conditions if threshold_crossing(transition) %}
     WATCH ({{transition.condition.as_expr()|replace('=','')}}) {{ transition.to.flag }}
     {%- endfor %}
-  {%- for transition in component.transitions if not on_input_event(transition) %}
+
+  {%- for transition in component.on_conditions %}
   } else if (flag == {{ transition.to.label }}) {
     regime = flag
     {%- for node in transition.nodes %}

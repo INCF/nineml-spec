@@ -37,14 +37,33 @@ def as_expr(node):
 
 def deriv_func_args(component, variable):
     """ """
+    #args = set([variable])
+    #for ode in (eq for eq in component.odes if eq.to == variable):
+    #    for name in (name for name in ode.names if name in component.integrated_variables):
+    #        args.add(name)
+    #return args
+    print "finding args of state:", variable
     args = set([variable])
+    for r in component.regimes:
+        #for eq in r.time_derivatives:
+        #    print eq, eq.dependent_variable
+        for ode in (eq for eq in r.time_derivatives if eq.dependent_variable == variable):
+            print ode
+            for name in (name for name in ode.names if name in [ sv.name for sv in component.state_variables ] ):
+                print 'VAR:',name
+                args.add(name)
+    return args
+    #assert False 
+
+        
     for ode in (eq for eq in component.odes if eq.to == variable):
         for name in (name for name in ode.names if name in component.integrated_variables):
             args.add(name)
     return args
 
 def threshold_crossing(transition):
-    condition = transition.condition.as_expr()
+    
+    condition = transition.trigger.as_expr()
     return ">" in condition or "<" in condition
 
 def ode_for(regime, variable):
@@ -60,13 +79,20 @@ def on_input_event(transition):
     return isinstance(transition.condition, al.EventPort) and transition.condition.mode in ('recv', 'reduce')
 
 def build_channels(component):
+    #channels = set()
+    #for transition in component.transitions:
+    #    if on_input_event(transition):
+    #        channel = transition.condition.name.upper()
+    #        if channel not in channels:
+    #            channels.add(channel)
+    #        transition.condition.channel_ = channel
     channels = set()
-    for transition in component.transitions:
-        if on_input_event(transition):
-            channel = transition.condition.name.upper()
-            if channel not in channels:
-                channels.add(channel)
-            transition.condition.channel_ = channel
+    for event_port in component.event_ports:
+        channel = event_port.src_port.upper()
+        if channel not in channels:
+             channels.add(channel)
+        event_port.channel_ = channel
+   
     
     
     if True:
@@ -99,12 +125,16 @@ def guess_weight_variable(component):
 def get_weight_variable(channel, weight_variables):
     # ugly hack
     #import pdb; pdb.set_trace()
+    print 'get_weight_variables'
+    print channel, '-', type(channel)
+    print weight_variables
    
     for k in weight_variables.keys():
         if k.upper() in channel:
             return weight_variables[k]
     if len(weight_variables) == 1:
         return weight_variables.values()[0]
+    assert False
 
 
 def unconnected_analog_receive_ports(component, weight_variables):

@@ -95,6 +95,10 @@ class OnEvent(object):
         return self._target_regime
 
     @property
+    def src_port(self):
+        return self._src_port
+
+    @property
     def state_assignments(self):
         return self._state_assignments
     
@@ -1571,6 +1575,9 @@ class Dynamics(object):
     def state_variables(self):
         return self._state_variables
 
+    #@property
+    #def
+
 
 class ComponentClass(object):
     element_name = "ComponentClass"
@@ -1584,7 +1591,10 @@ class ComponentClass(object):
         self._analog_ports = analog_ports
         self._event_ports = event_ports
         self._dynamics = dynamics
-        return
+
+        print "ComponentClass Created:"
+        print self.__dict__
+        print "======================="
 
     @property
     def dynamics(self):
@@ -1598,6 +1608,9 @@ class ComponentClass(object):
     def parameters(self):
         return iter(self._parameters)
 
+
+
+    # <- Forwarding functions -->
     @property
     def ports_map(self):
         return dict( [ (p.name,p) for p in chain(self._analog_ports, self._event_ports) ] )
@@ -1607,8 +1620,17 @@ class ComponentClass(object):
         return self._dynamics.aliases_map
 
     @property
+    def aliases(self):
+        return self._dynamics.aliases
+
+    @property
+    def alias_symbols(self):
+        return [ a.lhs for a in self.aliases ]
+
+    @property
     def regimes(self):
         return self._dynamics.regimes
+
 
     @property
     def analog_ports(self):
@@ -1996,9 +2018,9 @@ class ComponentClass(object):
         for t in self.transitions:
             yield t.condition
 
-    @property
-    def aliases(self):
-        return self.aliases_map.itervalues()
+    #@property
+    #def aliases(self):
+    #    return self.aliases_map.itervalues()
 
 
     def check_alias_expressions(self):
