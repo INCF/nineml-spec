@@ -14,19 +14,25 @@ LocationMgr.StdAppendToPath()
 
 
  
-from nineml.abstraction_layer.xml_reader import new_parse
+#from nineml.abstraction_layer.xml_reader import new_parse
 
 
 sample_xml_dir = Join( LocationMgr.getCatalogDir(), "sample_xml_files")
-component = new_parse(  Join( sample_xml_dir, 'PostTF_izhikevich.xml' ) )
+#component = new_parse(  Join( sample_xml_dir, 'PostTF_izhikevich.xml' ) )
 
 
 
 
 from nineml.abstraction_layer import XMLWriter
+from nineml.abstraction_layer import XMLReader
+
+component = XMLReader.read(  Join( sample_xml_dir, 'PostTF_izhikevich.xml' ) )
 XMLWriter.write(component, '/tmp/nineml_toxml1.xml' )
+
 import sys
 sys.exit(0)
+
+
 
 celltype_cls = pyNNml.nineml_celltype_from_model(
                         name = "iaf_2coba",

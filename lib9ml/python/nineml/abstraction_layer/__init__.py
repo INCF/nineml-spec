@@ -23,6 +23,7 @@ from nineml.abstraction_layer.xmlns import *
 
 
 from nineml.abstraction_layer.xml_writer import XMLWriter
+from nineml.abstraction_layer.xml_reader import XMLReader
 
 
 from itertools import chain
