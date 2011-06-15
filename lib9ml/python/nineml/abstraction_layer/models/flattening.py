@@ -101,43 +101,17 @@ class ModelToSingleComponentReducer(object):
 
 
     def create_on_condition(self, oldtransition, oldcomponent, fromRegime, toRegime):
-        transitionName = None
+        #transitionName = None
         oldtransitionnamespace = oldcomponent.getTreePosition("_") + "_"
-
 
         newAssignments = [ a.clone(prefix=oldtransitionnamespace, prefix_excludes=['t']) for a in oldtransition.state_assignments]  
         newEventOutputs = [ e.clone(prefix=oldtransitionnamespace, prefix_excludes=['t']) for e in oldtransition.event_outputs]  
-
-       # # Remap all the nodes:
-       # node_remapper = { 
-       #              nineml.Assignment: lambda n: n.clone( prefix = oldtransitionnamespace, prefix_excludes=['t'] ),
-       #              #nineml.EventPort:  lambda e: e.clone( prefix = oldtransitionnamespace, prefix_excludes=['t'] ),
-       #              nineml.OutputEvent:  lambda e: e.clone( prefix = oldtransitionnamespace, prefix_excludes=['t'] ),
-       #              nineml.InputEvent:  lambda e: e.clone( prefix = oldtransitionnamespace, prefix_excludes=['t'] ),
-       #             }
-       # 
-       # mappednodes = [ node_remapper[ type(n) ] (n) for n in oldtransition.nodes ] 
-       # 
-
-
-       # # Remap the condition:
-       # condition_remapper = { 
-       #         nineml.Condition:  lambda c: c.clone( prefix=oldtransitionnamespace, prefix_excludes=['t'] ) , 
-       #         nineml.EventPort : lambda p: p.clone( prefix=oldtransitionnamespace, prefix_excludes=['t'] ) 
-       # }
-       # newcondition = condition_remapper[ type(oldtransition.condition) ](oldtransition.condition)
 
 
 
         t = nineml.OnCondition(  trigger = oldtransition.trigger.clone(prefix=oldtransitionnamespace, prefix_excludes=['t'] ),
                                   state_assignments = newAssignments,
                                   event_outputs = newEventOutputs )
-#                                  *mappednodes, 
-#                                  from_=fromRegime,
-#                                  to=toRegime.name,
-#                                  condition= newcondition,
-#                                  name= transitionName
-#                             )
         return t
     
     def build_new_regime_space(self):
@@ -309,8 +283,9 @@ class ModelToSingleComponentReducer(object):
 
         #for ns,p in new_ports.iteritems():
         #    print p, p.symbol
-        
-        self.reducedcomponent = nineml.Component( self.componentname, regimes = newRegimeLookupMap.values(), ports=new_ports.values() )
+        dynamics = nineml.Dynamics( regimes = newRegimeLookupMap.values())  
+        self.reducedcomponent = nineml.models.ComponentNode( self.componentname, dynamics=dynamics, analog_ports=new_ports.values() )
+
         
         
 

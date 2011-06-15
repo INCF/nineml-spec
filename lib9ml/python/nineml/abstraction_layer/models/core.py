@@ -161,7 +161,7 @@ class ComponentQueryer(object):
     
     def get_fully_addressed_analogports_new(self):
         comp_addr = self.component.get_node_addr()
-        return dict( [ (comp_addr.get_subns_addr(port.name), port) for port in self.component.ports if isinstance(port, nineml.AnalogPort) ] )
+        return dict( [ (comp_addr.get_subns_addr(port.name), port) for port in self.component.analog_ports] )
 
     # TO GO:
     def get_fully_addressed_ports_new(self):

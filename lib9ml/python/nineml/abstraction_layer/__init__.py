@@ -78,6 +78,10 @@ class OnEvent(object):
     pass
 
 class OnCondition(object):
+
+    def AcceptVisitor(self, visitor):
+        return visitor.VisitOnCondition(self)
+
     def __init__(self, trigger, state_assignments=[], event_outputs=[]):
         if isinstance( trigger, Condition):
             self._trigger = trigger.clone()
@@ -1487,9 +1491,26 @@ class StateVariable(object):
 
 class Dynamics(object):
     def __init__(self, regimes = [], aliases = [], state_variables = []):
-        self.regimes = regimes
-        self.aliases = aliases
-        self.state_variables = state_variables
+        self._regimes = regimes
+        self._aliases = aliases
+        self._state_variables = state_variables
+
+    @property
+    def regimes(self):
+        return iter( self._regimes )
+
+    @property
+    def transitions(self):
+        return chain( *[r.transitions for r in self._regimes] )
+
+    
+    @property
+    def aliases_map(self):
+        return dict( [ (a.lhs,a) for a in self._aliases ] )
+
+    @property
+    def state_variables(self):
+        return self._state_variables
 
 
 class ComponentClass(object):
@@ -1506,16 +1527,37 @@ class ComponentClass(object):
         self._dynamics = dynamics
         return
 
+    @property
+    def name(self):
+        return self._name
+
+    @property
+    def parameters(self):
+        return iter(self._parameters)
 
     @property
     def ports_map(self):
         return dict( [ (p.name,p) for p in chain(self._analog_ports, self._event_ports) ] )
     
     @property
+    def aliases_map(self):
+        return self._dynamics.aliases_map
+
+    @property
     def regimes(self):
         return self._dynamics.regimes
 
+    @property
+    def analog_ports(self):
+        return self._analog_ports
 
+    @property
+    def transitions(self):
+        return self._dynamics.transitions
+
+    @property
+    def state_variables(self):
+        return self._dynamics.state_variables
 
         """
         Regime graph should not be edited after contructing a component
@@ -1681,11 +1723,11 @@ class ComponentClass(object):
         #self.backsub _equations()
 
 
-    def __getattr__(self, name):
-        if name in self.__getattribute__('ports_map'):
-            return self.ports_map[name]
-        else:
-            return self.__getattribute__(name)
+    #def __getattr__(self, name):
+    #    if name in self.__getattribute__('ports_map'):
+    #        return self.ports_map[name]
+    #    else:
+    #        return self.__getattribute__(name)
 
     def get_regimes_to(self,regime):
         """ Gets as a list all regimes that transition to regime"""
@@ -1775,10 +1817,11 @@ class ComponentClass(object):
             bd_tree[b.name] = build_and_resolve_bdtree(b)
 
     def backsub_equations(self):
+        return
         """ this function finds all undefined functions in equations, and uses
         the alias_map to resolve them """
 
-        for e in self.equations:
+        for e in self.state_assignments:
             for f in e.missing_functions:
                 if f in self.aliases_map:
                     e.substitute_alias(self.aliases_map[f])
@@ -1970,14 +2013,14 @@ class ComponentClass(object):
         symbols.update(self.independent_variables)
         return symbols
 
-    @property
-    @cache
-    def state_variables(self):
-        symbols = set([])
-        symbols.update(self.integrated_variables)
-        symbols.update(self.assigned_variables)
-        return symbols
-
+#    @property
+#    @cache
+#    def state_variables(self):
+#        symbols = set([])
+#        symbols.update(self.integrated_variables)
+#        symbols.update(self.assigned_variables)
+#        return symbols
+#
 
     @property
     @cache

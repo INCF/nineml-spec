@@ -14,6 +14,8 @@ from nineml.abstraction_layer.xmlns import *
 from nineml.abstraction_layer.ports import EventPort
 
 class XMLWriterOld(object):
+
+
     def VisitComponent(self,component):
         elements = [E.parameter(name=p) for p in component.parameters] + \
                    [p.AcceptVisitor(self) for p in component.analog_ports] +\
@@ -80,7 +82,13 @@ class XMLWriterOld(object):
                  E("math-inline", ode.rhs),
                  name=ode.name,
                  dependent_variable=ode.dependent_variable,
-                 independent_variable = ode.indep_variable)
+                  independent_variable = ode.indep_variable)
 
 
 
+    def VisitOnEvent(self, on_event, **kwargs):
+        assert False
+
+    def VisitOnCondition(self, condition):
+        return E( "CONDITION-TEMP") 
+        assert False
