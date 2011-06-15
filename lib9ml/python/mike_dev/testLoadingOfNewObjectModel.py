@@ -9,6 +9,10 @@ import nineml.abstraction_layer as nineml
 from collections import defaultdict
 
 
+LocationMgr.StdAppendToPath()
+
+
+
 import logging
 
 logger = logging.getLogger('nineml.xmlreader')
@@ -229,6 +233,12 @@ component = new_parse(  Join( sample_xml_dir, 'PostTF_izhikevich.xml' ) )
 
 #from nineml.abstraction_layer.models import dump_reduced, flags
 import pyNN.neuron.nineml as pyNNml
+
+
+
+component.write("/tmp/nineml_toxml1.xml")
+import sys
+sys.exit(0)
 
 celltype_cls = pyNNml.nineml_celltype_from_model(
                         name = "iaf_2coba",

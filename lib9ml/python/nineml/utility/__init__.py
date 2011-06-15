@@ -2,6 +2,7 @@
 from os.path import dirname, join, normpath
 
 from os.path import join as Join
+import sys
 
 
 
@@ -53,4 +54,8 @@ class LocationMgr(object):
         return join_norm( cls.getRootDir(), "catalog/" )
 
 
-
+    @classmethod
+    def StdAppendToPath(cls):
+        root = cls.getRootDir()
+        sys.path.append(join(root, "lib9ml/python/examples/AL"))
+        sys.path.append(join(root, "code_generation/nmodl"))     

@@ -22,7 +22,7 @@ class Port(object):
 
         """
 
-        
+        self.dimension="??" 
 
         self.expr = None
         self.symbol = internal_symbol
@@ -130,7 +130,7 @@ class Port(object):
 
 
 class AnalogPort(Port):
-    element_name = "analog-port"
+    element_name = "AnalogPort"
     """ Port which may be in a Regime """
     
     
@@ -162,7 +162,7 @@ class AnalogPort(Port):
 
 
 class EventPort(Port):
-    element_name = "event-port"
+    element_name = "EventPort"
     """ Port which may be in an Event """
 
     def is_bool(self):

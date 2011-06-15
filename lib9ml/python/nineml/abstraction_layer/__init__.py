@@ -22,7 +22,7 @@ from nineml.abstraction_layer.expr_parse import expr_parse
 from nineml.abstraction_layer.xmlns import *
 
 
-from nineml.abstraction_layer.visitors import XMLWriterOld
+from nineml.abstraction_layer.visitors import XMLWriterNew
 
 
 from itertools import chain
@@ -1476,11 +1476,16 @@ class Transition(object):
 
 
 class Parameter(object):
+    element_name = 'Parameter'
+
     def __init__(self, name, ):
         self.name = name
 
     def __str__(self):
         return "<Parameter: %s>"%(self.name)
+
+    def AcceptVisitor(self, visitor, **kwargs):
+        return visitor.VisitParameter(self, **kwargs)
 
 class StateVariable(object):
     def __init__(self, name, ):
@@ -1490,10 +1495,14 @@ class StateVariable(object):
         return "<StateVariable: %s>"%(self.name)
 
 class Dynamics(object):
+    element_name = 'Dynamics'
     def __init__(self, regimes = [], aliases = [], state_variables = []):
         self._regimes = regimes
         self._aliases = aliases
         self._state_variables = state_variables
+
+    def AcceptVisitor(self,visitor,**kwargs):
+        return visitor.VisitDynamics(self, **kwargs)
 
     @property
     def regimes(self):
@@ -1514,7 +1523,7 @@ class Dynamics(object):
 
 
 class ComponentClass(object):
-    element_name = "component"
+    element_name = "ComponentClass"
 
     def AcceptVisitor(self,visitor):
         return visitor.VisitComponent(self)
@@ -1526,6 +1535,10 @@ class ComponentClass(object):
         self._event_ports = event_ports
         self._dynamics = dynamics
         return
+
+    @property
+    def dynamics(self):
+        return self._dynamics
 
     @property
     def name(self):
@@ -1550,6 +1563,10 @@ class ComponentClass(object):
     @property
     def analog_ports(self):
         return self._analog_ports
+
+    @property
+    def event_ports(self):
+        return self._event_ports
 
     @property
     def transitions(self):
@@ -1750,14 +1767,14 @@ class ComponentClass(object):
                 yield p 
     
 
-    @property
-    def event_ports(self):
-        """ return all event ports in regime transitions"""
-        for t in self.transitions:
-            #print 'event_ports:transition', t
-            for ep in set(t.event_ports):
-                    #print 'event_ports:eventport', ep
-                    yield ep
+    #@property
+    #def event_ports(self):
+    #    """ return all event ports in regime transitions"""
+    #    for t in self.transitions:
+    #        #print 'event_ports:transition', t
+    #        for ep in set(t.event_ports):
+    #                #print 'event_ports:eventport', ep
+    #                yield ep
 
     def check_ports(self):
         for p in self.analog_ports:
@@ -2098,7 +2115,7 @@ class ComponentClass(object):
         # See also: test_expressions.py -> test_prefixing
     
     def to_xml(self):
-        return XMLWriterOld().VisitComponent(self)
+        return XMLWriterNew().VisitComponent(self)
 
   
     @classmethod
@@ -2349,5 +2366,5 @@ def parse(filename):
     root = doc.getroot()
     assert root.nsmap[None] == nineml_namespace
     component = root.find(NINEML+"component")
-    return Component.from_xml(component)
+    return ComponentClass.from_xml(component)
 
