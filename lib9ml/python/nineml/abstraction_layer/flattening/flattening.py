@@ -9,11 +9,10 @@ import itertools
 #import nineml.abstraction_layer as nineml
 import nineml.abstraction_layer as al
 # Relative Imports:
-import util
 
-from visitors import ModelVisitorDF_ComponentCollector, ModelVisitorDF_ModelCollector
+from nineml.abstraction_layer.model_visitors import ModelVisitorDF_ComponentCollector, ModelVisitorDF_ModelCollector
 
-from nineml.abstraction_layer.visitors import ClonerVisitor, ModelPrefixerVisitor
+from nineml.abstraction_layer.visitors import ClonerVisitor, ClonerVisitorPrefixNamespace
 
 class ModelToSingleComponentReducer(object):
     
@@ -32,27 +31,17 @@ class ModelToSingleComponentReducer(object):
     
     
     def __init__(self,model, componentname):
-        # Are we trying to flatten something that it already flattened
-        from nineml.abstraction_layer import ComponentClass
-        from nineml.abstraction_layer.models import ComponentNode, Model, ComponentNodeCombined
-        if isinstance( model, (ComponentClass,ComponentNode) ) and not isinstance( model, ComponentNodeCombined):
+        from nineml.abstraction_layer import ComponentNodeCombined
+        assert isinstance( model, ComponentNodeCombined)
+        if model.isflat():
             self.reducedcomponent = model
             return
 
-        # Check we have a model:
-        assert isinstance( model, (Model,ComponentNodeCombined) )
 
         self.componentname=componentname
 
+
         # Flatten all the namespaces:
-        from nineml.abstraction_layer.visitors import ClonerVisitor, ModelPrefixerVisitor
-#        self.model = ModelPrefixerVisitor().VisitModelClass(model)
-#        self.model = ClonerlPrefixerVisitor().VisitModelClass(model)
-
-        print model
-        print model.dynamics
-
-        from nineml.abstraction_layer.visitors.cloner import ClonerVisitorPrefixNamespace
         self.model = ClonerVisitorPrefixNamespace().Visit(model)
 
         self.modelcomponents = ModelVisitorDF_ComponentCollector(self.model).components
@@ -80,7 +69,6 @@ class ModelToSingleComponentReducer(object):
 
 
     def create_on_condition(self, oldtransition, oldcomponent, fromRegime, toRegime):
-        from nineml.abstraction_layer.visitors import ClonerVisitor
         return oldtransition.AcceptVisitor( ClonerVisitor(prefix='',prefix_excludes=[]) )
 
     def create_on_event(self, oldtransition, oldcomponent, fromRegime, toRegime):
@@ -121,18 +109,15 @@ class ModelToSingleComponentReducer(object):
         # Create our new 'Regime-Space'. This is the cross product off all
         # the 'Regime-Spaces' from each component.
 
-        print 'MODELCOMPONENTS', self.modelcomponents
         
         #print "Building new Regime Space"
         #print "  Taking cross-product of existing regime-spaces"
         newRegimeLookupMap = {}
         regimes = [ comp.regimes for comp in self.componentswithregimes]
-        print "Regimes:", regimes
         for i,regimetuple in enumerate( itertools.product(*regimes) ):
             newRegime = self.create_compound_regime( regimetuple, i ) 
             newRegimeLookupMap[regimetuple] = newRegime
 
-        print "RegimeMap:", newRegimeLookupMap
         
 
         # Check for event-emission cycles:
@@ -140,11 +125,6 @@ class ModelToSingleComponentReducer(object):
         recv_event_input_ports = flattenFirstLevel( [comp.query.event_recv_ports() for comp in self.modelcomponents] )
         event_port_map = flattenFirstLevel( [comp.get_fully_qualified_port_connections() for comp in self.modelsubmodels] )
         event_port_map = [ (p1.getstr(), p2.getstr() ) for (p1,p2) in event_port_map ] 
-        print event_port_map
-        
-        print recv_event_input_ports
-        import sys
-        #sys.exit(0)
 
 
         def getNewRegimeTupleFromTransition( currentRegimeTuple, regimeIndex, oldtransition ):
@@ -313,7 +293,7 @@ class ModelToSingleComponentReducer(object):
         newRegimeLookupMap = self.newRegimeLookupMap
 
         from nineml.utility import flattenFirstLevel
-        from nineml.abstraction_layer.models import NamespaceAddress
+        from nineml.abstraction_layer.core_component import NamespaceAddress, ComponentNodeCombined
 
         new_ports = flattenFirstLevel( [comp.analog_ports for comp in self.modelcomponents]) 
         new_ports = dict( [ (p.name, p) for p in new_ports ] ) 
@@ -333,7 +313,7 @@ class ModelToSingleComponentReducer(object):
                                 state_variables = flattenFirstLevel( [ m.state_variables for m in self.modelcomponents ]  ),
                                 )  
 
-        self.reducedcomponent = al.models.ComponentNodeCombined( name=self.componentname, 
+        self.reducedcomponent = al.ComponentNodeCombined( name=self.componentname, 
                                                          dynamics=dynamics, 
                                                          analog_ports=new_ports.values() , 
                                                          event_ports= flattenFirstLevel( [comp.event_ports for comp in self.modelcomponents] ), 

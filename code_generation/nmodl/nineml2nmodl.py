@@ -138,11 +138,11 @@ def build_context(component, weight_variables, input_filename="[Unknown-Filename
         weights_as_states = True
    
 
-    from nineml.abstraction_layer.models import dump_reduced
-    dump_reduced( component, '/tmp/reducedcomponent.txt')
+    #from nineml.abstraction_layer.models import dump_reduced
+    #dump_reduced( component, '/tmp/reducedcomponent.txt')
     component.backsub_aliases()
     component.backsub_equations()
-    dump_reduced( component, '/tmp/reducedcomponent.txt')
+    #dump_reduced( component, '/tmp/reducedcomponent.txt')
         
     
     context = {

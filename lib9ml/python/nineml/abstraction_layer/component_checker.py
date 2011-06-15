@@ -13,7 +13,7 @@ from itertools import chain
 class ComponentTypeChecker(InplaceActionVisitorDF):
 
     def ActionComponent(self, component):
-        assert isinstance( component, al.models.ComponentNode )
+        assert isinstance( component, al.ComponentNode )
 
     def ActionDynamics(self, dynamics):
         assert isinstance( dynamics, al.Dynamics )
@@ -71,7 +71,7 @@ class ComponentPortChecker(InplaceActionVisitorDF):
         self.send_analog_ports = []
 
     def ActionComponent(self, component):
-        assert isinstance( component, al.models.ComponentNode )
+        assert isinstance( component, al.ComponentNode )
         
         # Check for name duplication:
         portNames = [ p.name for p in chain( component.event_ports, component.analog_ports )] 
@@ -83,7 +83,7 @@ class ComponentPortChecker(InplaceActionVisitorDF):
         self.send_analog_port_names = [ p.name for p in component.analog_ports if p.mode=='send']
 
     def ActionComponentNodeCombined(self, component):
-        assert isinstance( component, al.models.ComponentNodeCombined )
+        assert isinstance( component, al.ComponentNodeCombined )
         
         # Check for name duplication:
         portNames = [ p.name for p in chain( component.event_ports, component.analog_ports )] 

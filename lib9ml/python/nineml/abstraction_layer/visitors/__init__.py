@@ -1,2 +1,2 @@
 
-from cloner import ClonerVisitor, ModelPrefixerVisitor, InPlaceTransform, InplaceActionVisitorDF
+from cloner import ClonerVisitor, ModelPrefixerVisitor, InPlaceTransform, InplaceActionVisitorDF, ClonerVisitorPrefixNamespace

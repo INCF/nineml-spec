@@ -203,7 +203,7 @@ class ClonerVisitor(object):
 
     def VisitComponentNodeCombined(self, component, **kwargs ):
 
-        ccn =  al.models.ComponentNodeCombined( name = component.name,
+        ccn =  al.ComponentNodeCombined( name = component.name,
                                parameters  = [ p.AcceptVisitor(self,**kwargs) for p in component.parameters  ],
                                analog_ports= [ p.AcceptVisitor(self,**kwargs) for p in component.analog_ports],
                                event_ports = [ p.AcceptVisitor(self,**kwargs) for p in component.event_ports ],
@@ -218,14 +218,14 @@ class ClonerVisitor(object):
         return ccn
 
     def VisitComponentNode(self, component,**kwargs):
-        return al.models.ComponentNode( name = component.name,
+        return al.ComponentNode( name = component.name,
                                parameters  = [ p.AcceptVisitor(self,**kwargs) for p in component.parameters  ],
                                analog_ports= [ p.AcceptVisitor(self,**kwargs) for p in component.analog_ports],
                                event_ports = [ p.AcceptVisitor(self,**kwargs) for p in component.event_ports ],
                                dynamics    = component.dynamics.AcceptVisitor(self,**kwargs)  )
 
     def VisitComponent(self, component,**kwargs):
-        return al.models.ComponentNode( name = component.name,
+        return al.ComponentNode( name = component.name,
                                parameters  = [ p.AcceptVisitor(self,**kwargs) for p in component.parameters  ],
                                analog_ports= [ p.AcceptVisitor(self,**kwargs) for p in component.analog_ports],
                                event_ports = [ p.AcceptVisitor(self,**kwargs) for p in component.event_ports ],
@@ -328,7 +328,7 @@ class ClonerVisitorPrefixNamespace(ClonerVisitor):
         prefix_excludes = ['t']
         kwargs = {'prefix':prefix, 'prefix_excludes':prefix_excludes }
 
-        ccn =  al.models.ComponentNodeCombined( name = component.name,
+        ccn =  al.ComponentNodeCombined( name = component.name,
                                parameters  = [ p.AcceptVisitor(self,**kwargs) for p in component.parameters  ],
                                analog_ports= [ p.AcceptVisitor(self,**kwargs) for p in component.analog_ports],
                                event_ports = [ p.AcceptVisitor(self,**kwargs) for p in component.event_ports ],

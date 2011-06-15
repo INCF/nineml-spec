@@ -2,11 +2,10 @@
 
 import random, os
 import nineml.abstraction_layer as al
-import nineml.abstraction_layer.models as models
 
 
 def get_iaf():
-    iaf = models.ComponentNodeCombined( 
+    iaf = al.ComponentNodeCombined( 
                             name = "iaf",
                             dynamics = al.Dynamics( 
                                 regimes = [
@@ -45,7 +44,7 @@ def get_iaf():
 
 def get_coba():
     print 'getCoba()::Start'
-    coba = models.ComponentNodeCombined( 
+    coba = al.ComponentNodeCombined( 
                              name = "CobaSyn",
                              dynamics = 
                                 al.Dynamics(
@@ -91,7 +90,7 @@ def nmda():
              al.RecvEventPort('spikeinput')
             ]
 
-    nmda = models.ComponentNode("NMDAPSR",
+    nmda = al.ComponentNode("NMDAPSR",
                      regimes=[inter_event_regime],
                      analog_ports = ports
                      )
@@ -108,7 +107,7 @@ def get_hierachical_iaf_2coba():
 
     
     # Create a model, composed of an iaf neuron, and 
-    iaf_2coba_model = models.ComponentNodeCombined( name="iaf_2coba", subnodes = {"iaf" : get_iaf(), "cobaExcit" : get_coba(), "cobaInhib" : get_coba()} )
+    iaf_2coba_model = al.ComponentNodeCombined( name="iaf_2coba", subnodes = {"iaf" : get_iaf(), "cobaExcit" : get_coba(), "cobaInhib" : get_coba()} )
     
     # Connections have to be setup as strings, because we are deep-copying objects.
     iaf_2coba_model.connect_ports( "iaf.V", "cobaExcit.V" )
@@ -119,10 +118,11 @@ def get_hierachical_iaf_2coba():
     return iaf_2coba_model
 
 def get_hierachical_iaf_3coba():
+    assert False
 
     
     # Create a model, composed of an iaf neuron, and 
-    iaf_3coba_model = models.Model( name="iaf_2coba", subnodes = {"iaf" : iaf, "AMPA" : coba, "GABAa" : coba, "GABAb": coba} )
+    iaf_3coba_model = al.Model( name="iaf_2coba", subnodes = {"iaf" : iaf, "AMPA" : coba, "GABAa" : coba, "GABAb": coba} )
     
     # Connections have to be setup as strings, because we are deep-copying objects.
     iaf_3coba_model.connect_ports( "iaf.V", "AMPA.V" )

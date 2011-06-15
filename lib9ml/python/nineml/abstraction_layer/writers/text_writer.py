@@ -76,49 +76,11 @@ def dump_reduced(component, filename):
     """
 
 
+    assert component.isflat()
+
     data = { 'component':component }
     f = open(filename,"w")
     s = Template(tmpl, data).respond()
     f.write(s)
     f.close()
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-def writeCSolverSimple( component, filename):
-    assert isinstance(component, nineml.Component)
-
-
-    templ1 = """
-    
-    int current_regime;
-
-    // State Variables:
-    #for statevar in $component.odes:
-    float $statevar.dependent_variable = 0;
-    #end for
-
-
-
-
-
-    """
-
-
-    for i in range(5): 
-        print 
-
-    cppTxt = Template( templ1, {'component':component } ).respond()
-
-    print cppTxt

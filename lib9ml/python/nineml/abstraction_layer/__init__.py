@@ -12,7 +12,7 @@ from expr_parse import *
 from xmlns import * 
 
 from nineml import __version__
-
-from xml_writer import XMLWriter
-from xml_reader import XMLReader
+from core_component import *
+#from writers import XMLWriter
+#from readers import XMLReader
 

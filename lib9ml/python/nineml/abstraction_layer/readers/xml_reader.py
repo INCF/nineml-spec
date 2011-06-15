@@ -10,7 +10,9 @@ import os
 
 
 
-import core as al_core
+#import core as al_core
+import nineml.abstraction_layer as al
+import al.core as al_core
 from xmlns import etree,E,MATHML,nineml_namespace,NINEML
 
 

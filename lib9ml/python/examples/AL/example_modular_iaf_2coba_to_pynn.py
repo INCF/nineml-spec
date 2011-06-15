@@ -16,7 +16,7 @@ sys.path.append(join(root, "code_generation/nmodl"))
            
 
 from nineml.abstraction_layer.example_models import  get_hierachical_iaf_2coba, get_coba
-from nineml.abstraction_layer.models import ModelToSingleComponentReducer
+from nineml.abstraction_layer.flattening import ModelToSingleComponentReducer
 
 import pyNN.neuron as sim
 import pyNN.neuron.nineml as pyNNml
@@ -30,8 +30,9 @@ sim.setup(timestep=0.1, min_delay=0.1)
 
 
 
-from nineml.abstraction_layer.models.modelmodifier import ModelModifier
-from nineml.abstraction_layer.models import reduce_to_single_component, dump_reduced
+from nineml.abstraction_layer.componentmodifiers import ModelModifier
+from nineml.abstraction_layer.flattening import reduce_to_single_component
+from nineml.abstraction_layer.writers import dump_reduced
 from nineml.abstraction_layer.component_checker import ComponentTypeChecker, ComponentPortChecker
 
 
