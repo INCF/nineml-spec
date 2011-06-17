@@ -1,6 +1,6 @@
 
 
-#from nineml.utility import ExpectSingle, FilterExpectSingle, Filter, FilterType
+#from nineml.utility import expect_single, filter_expect_single, filter, filter_by_type
 import nineml.utility
 
 class ComponentQueryer(object):
@@ -10,7 +10,7 @@ class ComponentQueryer(object):
     # Find basic properties by name
     def regime(self, name=None,):
         assert isinstance(name,basestring)
-        return nineml.utility.FilterExpectSingle( self.component.regimes, lambda r:r.name==name ) 
+        return nineml.utility.filter_expect_single( self.component.regimes, lambda r:r.name==name ) 
         
 
     # Query Ports:

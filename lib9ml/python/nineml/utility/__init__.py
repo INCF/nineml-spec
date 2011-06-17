@@ -4,10 +4,11 @@ from os.path import dirname, join, normpath
 from os.path import join as Join
 import sys
 
+import itertools
 
 
 
-def ExpectSingle(lst):
+def expect_single(lst):
     if len(lst) != 1:
         print "Filter Expect Single: ",lst
         assert False
@@ -16,23 +17,23 @@ def ExpectSingle(lst):
     return lst[0]
 
 
-def FilterExpectSingle(lst, func= lambda x: x is None):
+def filter_expect_single(lst, func= lambda x: x is None):
 
-    return ExpectSingle( Filter(lst, func) )
+    return expect_single( filter(lst, func) )
 
-def Filter(lst,func):
+def filter(lst,func):
     return  [ l for l in lst if l and func(l) ]
 
-def FilterType(lst, acceptedtype):
-    return Filter( lst, lambda x: isinstance(x,acceptedtype))
+def filter_by_type(lst, acceptedtype):
+    return filter( lst, lambda x: isinstance(x,acceptedtype))
 
 
-def FilterDiscreteTypes(lst, acceptedtypes):
+def filter_discrete_types(lst, acceptedtypes):
     # Starting with a list, splits into a dictionary which maps class types to
     # a list of objects of that type.
     res = {}
     for a in acceptedtypes:
-        res[a] = Filter( lst, lambda x: isinstance(x,a))
+        res[a] = filter( lst, lambda x: isinstance(x,a))
 
     nCounted = sum([ len(l) for l in res.values()])
     if nCounted != len(lst):
@@ -44,7 +45,7 @@ def FilterDiscreteTypes(lst, acceptedtypes):
 
 
 
-def AssertNoDuplicates(lst):
+def assert_no_duplicates(lst):
     assert len(lst) == len( set(lst) )
 
 
@@ -79,16 +80,15 @@ class LocationMgr(object):
 
 
 
-import itertools
 
 
-def invertDictionary(d):
+def invert_dictionary(d):
     # Check for duplicated values:
     assert len( set(d.values()) ) == len( d.values() )
     return dict( zip(d.values(), d.keys()) )
 
 
-def flattenFirstLevel( nestedList ):
+def flatten_first_level( nestedList ):
     return list( itertools.chain(*nestedList) )
 
 def safe_dictionary_merge( dictionaries ):

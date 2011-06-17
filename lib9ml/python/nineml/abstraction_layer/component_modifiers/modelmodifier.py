@@ -1,6 +1,6 @@
 
 from nineml.abstraction_layer.visitors import InPlaceTransform
-from nineml.utility import FilterExpectSingle
+from nineml.utility import filter_expect_single
 from nineml.abstraction_layer.util import check_flat_component
 
 class ModelModifier(object):
@@ -12,7 +12,7 @@ class ModelModifier(object):
         component.AcceptVisitor( InPlaceTransform( port_name, value ) )
 
         # Remove it from the list of ports:
-        port = FilterExpectSingle( component.analog_ports, lambda ap: ap.name==port_name)
+        port = filter_expect_single( component.analog_ports, lambda ap: ap.name==port_name)
         component._analog_ports.remove( port  )
 
 

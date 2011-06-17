@@ -1,5 +1,5 @@
 
-from nineml.utility import invertDictionary,flattenFirstLevel, ExpectSingle
+from nineml.utility import invert_dictionary,flatten_first_level, expect_single
 
 # System Imports:
 import copy
@@ -59,7 +59,7 @@ class ComponentFlattener(object):
         # Copy accross all the odes from each regime. 
         # [Don't worry about transitions yet, we deal with them later]
         return al.Regime( name=None, 
-                        time_derivatives = flattenFirstLevel( [ r.time_derivatives for r in regimetuple ] ),
+                        time_derivatives = flatten_first_level( [ r.time_derivatives for r in regimetuple ] ),
                         on_events=[], 
                         on_conditions=[] )
 
@@ -119,8 +119,8 @@ class ComponentFlattener(object):
 
         # Check for event-emission cycles:
         # TODO
-        recv_event_input_ports = flattenFirstLevel( [comp.query.event_recv_ports() for comp in self.all_components] )
-        event_port_map = flattenFirstLevel( [comp.get_fully_qualified_port_connections() for comp in self.all_components] )
+        recv_event_input_ports = flatten_first_level( [comp.query.event_recv_ports() for comp in self.all_components] )
+        event_port_map = flatten_first_level( [comp.get_fully_qualified_port_connections() for comp in self.all_components] )
         event_port_map = [ (p1.getstr(), p2.getstr() ) for (p1,p2) in event_port_map ] 
 
 
@@ -165,7 +165,7 @@ class ComponentFlattener(object):
 
                     state_assignments = oldtransition.state_assignments
                     output_events = oldtransition.event_outputs
-                    unhandled_events.extend( flattenFirstLevel( [distribute_event( ev) for ev in output_events ]) ) 
+                    unhandled_events.extend( flatten_first_level( [distribute_event( ev) for ev in output_events ]) ) 
 
                     newRegimeTuple = getNewRegimeTupleFromTransition( currentRegimeTuple = regimetuple, regimeIndex=regimeIndex, oldtransition=oldtransition)
                     
@@ -178,7 +178,7 @@ class ComponentFlattener(object):
                         
                         state_assignments.extend( new_state_assignments )
                         output_events.extend( new_event_outputs )
-                        unhandled_events.extend( flattenFirstLevel( distribute_event( new_event_outputs ) ) )
+                        unhandled_events.extend( flatten_first_level( distribute_event( new_event_outputs ) ) )
                         handled_events.append(ev)
 
                     
@@ -197,7 +197,7 @@ class ComponentFlattener(object):
 
                     state_assignments = oldtransition.state_assignments
                     output_events = oldtransition.event_outputs
-                    unhandled_events.extend( flattenFirstLevel( [distribute_event( ev) for ev in output_events ]) ) 
+                    unhandled_events.extend( flatten_first_level( [distribute_event( ev) for ev in output_events ]) ) 
 
                     newRegimeTuple = getNewRegimeTupleFromTransition( currentRegimeTuple = regimetuple, regimeIndex=regimeIndex, oldtransition=oldtransition)
                     
@@ -210,7 +210,7 @@ class ComponentFlattener(object):
                         
                         state_assignments.extend( new_state_assignments )
                         output_events.extend( new_event_outputs )
-                        unhandled_events.extend( flattenFirstLevel( distribute_event( new_event_outputs ) ) )
+                        unhandled_events.extend( flatten_first_level( distribute_event( new_event_outputs ) ) )
                         handled_events.append(ev)
 
                     targetRegime = newRegimeLookupMap[ newRegimeTuple ]
@@ -234,10 +234,10 @@ class ComponentFlattener(object):
         from nineml.utility import safe_dictionary_merge
         newRegimeLookupMap = self.newRegimeLookupMap
 
-        from nineml.utility import flattenFirstLevel
+        from nineml.utility import flatten_first_level
         from nineml.abstraction_layer.component import NamespaceAddress, ComponentClass
 
-        new_ports = flattenFirstLevel( [comp.analog_ports for comp in self.all_components]) 
+        new_ports = flatten_first_level( [comp.analog_ports for comp in self.all_components]) 
         new_ports = dict( [ (p.name, p) for p in new_ports ] ) 
         
         print "PORTS:"
@@ -246,20 +246,20 @@ class ComponentFlattener(object):
         print "PORTS END"
 
 
-        from nineml.utility import flattenFirstLevel
+        from nineml.utility import flatten_first_level
         #from nineml.abstraction_layer import ComponentClass
 
         print 'Regimes:', newRegimeLookupMap.values()
         dynamics = al.Dynamics( regimes = newRegimeLookupMap.values(),
-                                aliases = flattenFirstLevel( [ m.aliases for m in self.all_components ] ),
-                                state_variables = flattenFirstLevel( [ m.state_variables for m in self.all_components ]  ),
+                                aliases = flatten_first_level( [ m.aliases for m in self.all_components ] ),
+                                state_variables = flatten_first_level( [ m.state_variables for m in self.all_components ]  ),
                                 )  
 
         self.reducedcomponent = al.ComponentClass( name=self.componentname, 
                                                          dynamics=dynamics, 
                                                          analog_ports=new_ports.values() , 
-                                                         event_ports= flattenFirstLevel( [comp.event_ports for comp in self.all_components] ), 
-                                                         parameters=flattenFirstLevel( [ m.parameters for m in self.all_components ] ) )
+                                                         event_ports= flatten_first_level( [comp.event_ports for comp in self.all_components] ), 
+                                                         parameters=flatten_first_level( [ m.parameters for m in self.all_components ] ) )
 
 
 
@@ -292,7 +292,7 @@ class ComponentFlattener(object):
                 globalRemapPort( dstPort.name, srcPort.name )
                 
                 del new_ports[ dstAddr.getstr() ]
-                self.reducedcomponent._analog_ports.remove( ExpectSingle([p for p in self.reducedcomponent.analog_ports if p.name == dstAddr.getstr()]) )
+                self.reducedcomponent._analog_ports.remove( expect_single([p for p in self.reducedcomponent.analog_ports if p.name == dstAddr.getstr()]) )
 
                 portconnections.remove( (srcAddr,dstAddr) )
 

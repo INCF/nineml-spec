@@ -76,7 +76,7 @@ class ComponentPortChecker(InplaceActionVisitorDF):
 #        
 #        # Check for name duplication:
 #        portNames = [ p.name for p in chain( component.event_ports, component.analog_ports )] 
-#        AssertNoDuplicates(portNames)
+#        assert_no_duplicates(portNames)
 #
 #        self.recv_event_port_names = [ p.name for p in component.event_ports if p.mode=='recv']
 #        self.send_event_port_names = [ p.name for p in component.event_ports if p.mode=='send']
@@ -88,7 +88,7 @@ class ComponentPortChecker(InplaceActionVisitorDF):
         
         # Check for name duplication:
         portNames = [ p.name for p in chain( component.event_ports, component.analog_ports )] 
-        AssertNoDuplicates(portNames)
+        assert_no_duplicates(portNames)
 
         self.recv_event_port_names = [ p.name for p in component.event_ports if p.mode=='recv']
         self.send_event_port_names = [ p.name for p in component.event_ports if p.mode=='send']

@@ -187,7 +187,7 @@ class ComponentClassMixin_NamespaceStructure(object):
     # != TO GO -!
     def getContainedNamespaceName(self):
         if not self.getParentModel(): return ""
-        return nineml.utility.invertDictionary(self.getParentModel().subnodes)[self]
+        return nineml.utility.invert_dictionary(self.getParentModel().subnodes)[self]
 
     def get_node_addr(self):
         if not self.getParentModel():
@@ -247,7 +247,7 @@ class ComponentClass( ComponentClassMixin_FlatStructure, ComponentClassMixin_Nam
     def ResolveTransitionRegimeNames(self):
         # Check that the names of the regimes are unique:
         names = [ r.name for r in self.regimes ]
-        nineml.utility.AssertNoDuplicates(names)
+        nineml.utility.assert_no_duplicates(names)
 
         #Create a map of regime names to regimes:
         regimeMap = dict( [ (r.name,r) for r in self.regimes] )

@@ -40,6 +40,7 @@ help:
 
 clean:
 	-rm -rf source/src_rst/nineml.abstraction_layer.*.rst
+	-rm -rf source/src_rst/nineml.utility.*.rst
 	-rm -rf $(BUILDDIR)/*
 
 html:

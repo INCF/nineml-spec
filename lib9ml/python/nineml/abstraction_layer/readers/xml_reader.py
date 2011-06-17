@@ -1,5 +1,5 @@
 
-from nineml.utility import LocationMgr, Join, ExpectSingle, FilterExpectSingle
+from nineml.utility import LocationMgr, Join, expect_single, filter_expect_single
 
 
 from collections import defaultdict
@@ -46,7 +46,7 @@ class XMLLoader1(object):
 
     def load_Subnode(self, subnode):
         namespace = subnode.get('namespace')
-        component = FilterExpectSingle( self.components, lambda c: c.name==subnode.get('node') )
+        component = filter_expect_single( self.components, lambda c: c.name==subnode.get('node') )
         return namespace,component
     
 
@@ -64,7 +64,7 @@ class XMLLoader1(object):
                                        parameters = subnodes["Parameter" ] ,
                                        analog_ports = subnodes["AnalogPort"] ,
                                        event_ports = subnodes["EventPort"],
-                                       dynamics = ExpectSingle( subnodes["Dynamics"] )
+                                       dynamics = expect_single( subnodes["Dynamics"] )
                                        )
 
         # Load namespaces:
@@ -132,7 +132,7 @@ class XMLLoader1(object):
         subnodes = self.loadBlocks( element, blocks=('Trigger','StateAssignment','EventOut' )  )
         target_regime = element.get('target_regime',None)
 
-        return al.OnCondition(  trigger = ExpectSingle( subnodes["Trigger"] ),
+        return al.OnCondition(  trigger = expect_single( subnodes["Trigger"] ),
                                      state_assignments = subnodes[ "StateAssignment"],
                                      event_outputs = subnodes[ "EventOut" ],
                                      target_regime_name = target_regime)
@@ -176,7 +176,7 @@ class XMLLoader1(object):
         assert len( element.findall(NS+"MathML") ) == 0
         assert len( element.findall(NS+"MathInline") ) == 1
         
-        return ExpectSingle( element.findall(NS+'MathInline') ).text
+        return expect_single( element.findall(NS+'MathInline') ).text
 
 
 
@@ -295,9 +295,9 @@ class XMLReader(object):
         root = cls._loadNestedXML(filename)
         loader1 = XMLLoader1( root, xmlNodeFilenameMap = xmlNodeFilenameMap  )
         if component_name == None:
-            return FilterExpectSingle( loader1.components, lambda c: loader1.component_srcs[c] == filename)
+            return filter_expect_single( loader1.components, lambda c: loader1.component_srcs[c] == filename)
         else:
-            return FilterExpectSingle( loader1.components, lambda c:c.name==component_name )
+            return filter_expect_single( loader1.components, lambda c:c.name==component_name )
 
     @classmethod
     def read_components(cls,filename):

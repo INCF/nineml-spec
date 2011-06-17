@@ -45,7 +45,7 @@ class NamespaceAddress(object):
     @classmethod
     def concat(cls,*args):
         #print 'Concatenating:', args
-        loctuple = tuple( nineml.utility.flattenFirstLevel( [ list(a.loctuple) for a in args  ] ) )
+        loctuple = tuple( nineml.utility.flatten_first_level( [ list(a.loctuple) for a in args  ] ) )
         res = NamespaceAddress(loc=loctuple)
         #print 'yields:', res
         return res

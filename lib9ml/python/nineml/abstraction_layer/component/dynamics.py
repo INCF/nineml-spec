@@ -171,7 +171,7 @@ class Regime(object):
         # both OnEvents and OnConditions. So lets filter this by type and add them 
         # appropriately:
         transitions = transitions or []
-        fDict = nineml.utility.FilterDiscreteTypes( transitions, (OnEvent,OnCondition) ) 
+        fDict = nineml.utility.filter_discrete_types( transitions, (OnEvent,OnCondition) ) 
 
 
         # Time Derivatives may be specified as strings:
@@ -179,7 +179,7 @@ class Regime(object):
             r = re.compile(r"""\s* d(?P<var>[a-zA-Z][a-zA-Z0-9_]*)/dt \s* = \s* (?P<rhs> .*) """, re.VERBOSE) 
             m = r.match(s)
             return ODE( dependent_variable = m.groupdict()['var'], indep_variable='t', rhs=m.groupdict()['rhs'] )
-        tdTypeDict = nineml.utility.FilterDiscreteTypes( time_derivatives, (basestring, ODE ) )
+        tdTypeDict = nineml.utility.filter_discrete_types( time_derivatives, (basestring, ODE ) )
         tds = tdTypeDict[ODE] + [ strToTimeDeriv(o) for o in tdTypeDict[basestring] ] 
 
 
@@ -284,7 +284,7 @@ def On( trigger, do=None, to=None ):
 def doToAsssignmentsAndEvents(doList):
     if not doList: return [],[]
     # 'doList' is a list of strings, OutputEvents, and StateAssignments.
-    doTypes = nineml.utility.FilterDiscreteTypes(doList, (OutputEvent,basestring, Assignment) )
+    doTypes = nineml.utility.filter_discrete_types(doList, (OutputEvent,basestring, Assignment) )
     
     #Convert strings to StateAssignments:
     for s in doTypes[basestring]:
@@ -328,7 +328,7 @@ class Dynamics(object):
         def strToAlias(s):
             lhs,rhs = s.split(':=')
             return Alias( lhs = lhs.strip(), rhs = rhs.strip() )
-        aliasTD = nineml.utility.FilterDiscreteTypes( aliases, (basestring, Alias ) )
+        aliasTD = nineml.utility.filter_discrete_types( aliases, (basestring, Alias ) )
         aliases = aliasTD[Alias] + [ strToAlias(o) for o in aliasTD[basestring] ] 
 
         self._regimes = regimes

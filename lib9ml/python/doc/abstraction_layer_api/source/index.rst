@@ -49,6 +49,8 @@ Details
 
 .. toctree::
    :maxdepth: 2
+   
+   src_rst/utility_function
 
    src_rst/component
    src_rst/readers

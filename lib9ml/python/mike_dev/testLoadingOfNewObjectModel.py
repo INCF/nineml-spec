@@ -1,7 +1,7 @@
 
 
 
-from nineml.utility import LocationMgr, Join, ExpectSingle, FilterExpectSingle
+from nineml.utility import LocationMgr, Join, expect_single, filter_expect_single
 from nineml.abstraction_layer.xmlns import *
 
 import nineml.abstraction_layer as al

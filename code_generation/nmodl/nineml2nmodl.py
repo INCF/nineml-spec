@@ -13,7 +13,7 @@ import nineml.abstraction_layer as al
 
 import itertools
 
-from nineml.utility import FilterExpectSingle, ExpectSingle
+from nineml.utility import filter_expect_single, expect_single
 
 
 template_file = os.path.join(os.path.dirname(__file__), "nmodl_template.jinja")
@@ -58,10 +58,10 @@ def ode_for(regime, variable):
     odes = [eq for eq in regime.time_derivatives if eq.to == variable.name]
     if len(odes) == 0:
         odes.append(al.ODE(variable, "t", "0.0"))
-    return ExpectSingle( odes )
+    return expect_single( odes )
 
 def get_on_event_channel(on_event, component):
-    port = FilterExpectSingle( component.event_ports, lambda ep:ep.name==on_event.src_port)
+    port = filter_expect_single( component.event_ports, lambda ep:ep.name==on_event.src_port)
     return port.channel_
 
 
