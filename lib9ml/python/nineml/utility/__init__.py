@@ -7,14 +7,47 @@ import sys
 import itertools
 
 
+from nineml.exceptions import internal_error, raise_exception, NineMLRuntimeError
 
-def expect_single(lst):
-    if len(lst) != 1:
-        print "Filter Expect Single: ",lst
-        assert False
 
-    assert len(lst) == 1
-    return lst[0]
+
+
+
+def expect_single(lst, error_func = None):
+    """Function to test whether an iterable contains just a single element
+    and if so return that element. Otherwise raises an Exception.
+        
+    Keyword arguments:
+
+    :param lst: An iterable
+    :param error_func: An exception object or a callable. ``error_func`` will be raised or called in case there is not exactly one element in ``lst``
+    :rtype: the element in the list, ``lst[0]``, provided ``len(lst)==1``
+    
+    
+    """
+    lst = list(lst)
+
+    # Good case:
+    if len(lst) == 1:
+        return lst[0]
+
+    # Bad case: our list doesn't contain one
+    if error_func:
+        if isinstance(error_func, Exception):
+            raise error_func
+        else:
+            error_func()
+            internal_error('error_func failed to raise Exception')
+    else:
+        errmsg  = 'expect_single() recieved an iterable of length: %d\n' %len(lst)
+        errmsg += '  - List Contents:' + str(lst) + '\n'
+        raise NineMLRuntimeError(errmsg)
+
+
+
+
+expect_single( ['d','sd'], error_func =  NineMLRuntimeError() ) #'lambda : raise_exception( 'AGGGGH' ) )
+
 
 
 def filter_expect_single(lst, func= lambda x: x is None):
