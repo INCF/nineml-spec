@@ -144,18 +144,17 @@ class ClonerVisitor(ComponentVisitor):
     def VisitAssignment(self, assignment, **kwargs):
         prefix = kwargs.get( 'prefix','')
         prefix_excludes = kwargs.get('prefix_excludes',[] )
-        to = assignment.to if assignment.to in prefix_excludes else prefix + assignment.to
+        lhs = assignment.lhs if assignment.lhs in prefix_excludes else prefix + assignment.lhs
         return nineml.abstraction_layer.Assignment( 
-                    to = to,
-                    expr = nineml.abstraction_layer.Expression.prefix(assignment, prefix=prefix,exclude=prefix_excludes,expr=assignment.rhs),
-                    name = assignment.name
+                    lhs = lhs,
+                    rhs = nineml.abstraction_layer.Expression.prefix(assignment, prefix=prefix,exclude=prefix_excludes,expr=assignment.rhs),
                     )
 
 
     def VisitAlias(self, alias, **kwargs):
         prefix = kwargs.get( 'prefix','')
         prefix_excludes = kwargs.get('prefix_excludes',[] )
-        name = prefix + alias.name
+        #name = prefix + alias.name
 
         def doPrefix(atom):
             if a in prefix_excludes: return False
@@ -186,7 +185,11 @@ class ClonerVisitor(ComponentVisitor):
     def VisitCondition(self, condition,**kwargs):
         prefix = kwargs.get( 'prefix','')
         prefix_excludes = kwargs.get('prefix_excludes',[] )
-        return condition.clone( prefix=prefix, prefix_excludes=prefix_excludes )
+
+        return nineml.abstraction_layer.Condition( 
+                    rhs = nineml.abstraction_layer.Expression.prefix(condition,prefix=prefix,exclude=prefix_excludes,expr=condition.rhs),
+                    )
+        #return condition.clone( prefix=prefix, prefix_excludes=prefix_excludes )
 
 
     def VisitOnCondition(self, on_condition,**kwargs):

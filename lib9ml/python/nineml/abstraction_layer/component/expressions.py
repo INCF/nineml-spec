@@ -69,36 +69,25 @@ class Expression(object):
 
     def get_rhs(self):
         return self._rhs
-    def get_names(self):
-        return self._names
-    def get_funcs(self):
-        return self._funcs
-    def get_atoms(self):
-        return itertools.chain(self.names, self.funcs)
 
     rhs = property(get_rhs,set_rhs)
-    names = property(get_names) 
-    funcs = property(get_funcs)
-    atoms = property(get_atoms)
+
+
+    @property
+    def names(self):
+        return self._names
+    
+    @property
+    def funcs (self):
+        return self._funcs
+
+    @property
+    def atoms (self):
+        return itertools.chain(self.names, self.funcs)
 
 
 
 
-
-
-    # Interface:
-    def clone(self, prefix="", prefix_excludes=None, clone_name=True, prefix_name=False):
-        prefix_excludes = [] if not prefix_excludes else prefix_excludes
-        
-        name = self.name if clone_name else None
-        if name and prefix_name: name = prefix + name
-        
-        return self._clone(prefix=prefix,prefix_excludes=prefix_excludes,name=name)
-        
-        
-    def _clone(self, prefix, prefix_excludes, name ):
-        print "ERROR: _clone is not implemented in the subclass:", self.__class__.__name__
-        raise NotImplementedError()
     
     def prefix(self, prefix="", exclude=[], expr=None):
         """ Applies a prefix to all names & funcs if not in math_namespace
@@ -237,10 +226,10 @@ class ExpressionWithLHS(Equation):
     def get_lhs():
         raise NotImplementedError() 
 
-    def __eq__(self, other):
-        if not isinstance(other, self.__class__):
-            return False
-        return self.lhs == other.lhs and self.rhs == other.rhs
+    #def __eq__(self, other):
+    #    if not isinstance(other, self.__class__):
+    #        return False
+    #    return self.lhs == other.lhs and self.rhs == other.rhs
 
 
 
@@ -263,18 +252,6 @@ class ExpressionWithSimpleLHS(ExpressionWithLHS):
     def lhs_name_transform_inplace( self, name_map ):
         self.lhs = name_map.get(self.lhs,self.lhs) 
    
-
-    # Syntactic Sugar - to remove:
-    # -----------------------------
-    @property
-    def to(self):
-        return self.lhs
-    @property
-    def name(self):
-        return self.lhs
-    
-
-
 
 
 
@@ -362,7 +339,7 @@ class Assignment(ExpressionWithSimpleLHS, RegimeElement):
 
     """
 
-    def __init__(self, to, expr, name=None):
+    def __init__(self, lhs, rhs ):
         """Assignment Constructor
         
         :param lhs: A `string`, which must be a state-variable of the component.
@@ -370,14 +347,14 @@ class Assignment(ExpressionWithSimpleLHS, RegimeElement):
             this assignment.
         
         """
-        ExpressionWithSimpleLHS.__init__(self, lhs=to, rhs=expr)
+        ExpressionWithSimpleLHS.__init__(self, lhs=lhs, rhs=rhs)
 
     def AcceptVisitor(self, visitor, **kwargs):
         return visitor.VisitAssignment(self, **kwargs)
    
 
     def __repr__(self):
-        return "Assignment('%s', '%s')" % (self.to, self.rhs)
+        return "Assignment('%s', '%s')" % (self.lhs, self.rhs)
 
     def as_expr(self):
         return "%s = %s" % (self.lhs, self.rhs)
@@ -442,7 +419,7 @@ class TimeDerivative(ODE):
                 equation.
                 
                 
-            For example, if our time deri
+            For example, if our time derivative was:
 
             .. math::
 

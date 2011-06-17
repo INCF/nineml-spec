@@ -5,18 +5,8 @@ class Condition(expressions.Expression):
     def AcceptVisitor(self, visitor, **kwargs):
         return visitor.VisitCondition(self, **kwargs)
 
-    def __init__(self, rhs,name=None):
-        assert not name
-        
-        self.name = name
+    def __init__(self, rhs,):
         self.rhs = rhs 
-
-    def _clone(self, prefix, prefix_excludes, name ):
-    
-        return Condition( 
-                    rhs = expressions.Expression.prefix(self,prefix=prefix,exclude=prefix_excludes,expr=self.rhs),
-                    name=name
-                    )
 
 
     def _parse_rhs(self,rhs):
@@ -61,31 +51,6 @@ class Condition(expressions.Expression):
         return "Condition('%s')" % (self.rhs)
 
 
-    def encode(self, encoding):
-        return repr(self).encode(encoding)
-
-    def __eq__(self, other):
-        from operator import and_
-
-        if not isinstance(other, self.__class__):
-            return False
-
-        return self.rhs == other.rhs
-
-
-
-
-
-##     def to_xml(self):
-##         return E(self.element_name,
-##                  E("conditional-inline", self.rhs),
-##                  name=self.name)
-                 
-##     @classmethod
-##     def from_xml(cls, element):
-##         assert element.tag == NINEML+cls.element_name
-##         math = element.find(NINEML+"conditional-inline").text
-##         return cls(math, name=element.get("name"))
 
 
 

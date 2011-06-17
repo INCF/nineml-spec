@@ -18,7 +18,7 @@ NEURON {
   {%- endfor %}
 
   {%- for alias in component.aliases  %}
-  RANGE {{ alias.name }}
+  RANGE {{ alias.lhs }}
   {%- endfor %}
 
 }
@@ -70,7 +70,7 @@ ASSIGNED {
   regime
 
   {%- for alias in component.aliases  %}
-  {{ alias.name }}
+  {{ alias.lhs }}
   {%- endfor %}
     
 }

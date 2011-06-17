@@ -204,8 +204,11 @@ class OnCondition(Transition):
             See ``Transition.__init__`` for the definitions of the remaining
             parameters.
         """
-        if isinstance( trigger, Condition):    self._trigger = trigger.clone()
-        elif isinstance( trigger, basestring): self._trigger = Condition( rhs = trigger )
+        from nineml.abstraction_layer.visitors import ClonerVisitor
+        if isinstance( trigger, Condition): 
+            self._trigger = ClonerVisitor().Visit( trigger )
+        elif isinstance( trigger, basestring): 
+            self._trigger = Condition( rhs = trigger )
         else:  assert False
 
         Transition.__init__(self,state_assignments=state_assignments, event_outputs=event_outputs, target_regime_name=target_regime_name)
@@ -426,13 +429,9 @@ def doToAsssignmentsAndEvents(doList):
     doTypes = nineml.utility.filter_discrete_types(doList, (OutputEvent,basestring, Assignment) )
     
     #Convert strings to StateAssignments:
-    for s in doTypes[basestring]:
-        lhs,rhs = s.split('=')
-        sa = Assignment( to=lhs, expr=rhs )
-        doTypes[Assignment].append(sa)
-    del doTypes[basestring]
+    sa_from_strs = [ StrToExpr.state_assignment(s) for s in doTypes[basestring]]
 
-    return doTypes[Assignment], doTypes[OutputEvent]
+    return doTypes[Assignment]+sa_from_strs, doTypes[OutputEvent]
 
 
 def DoOnEvent(input_event, do=None, to=None):
