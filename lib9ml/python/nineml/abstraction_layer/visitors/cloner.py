@@ -187,10 +187,6 @@ class ClonerVisitor(ComponentVisitor):
 
 class ClonerVisitorPrefixNamespace(ClonerVisitor):
 
-    #def Visit(self, obj):
-    #    clone = obj.AcceptVisitor(self)
-    #    return clone
-
 
     def VisitComponentClass(self, component, **kwargs ):
         prefix = component.get_node_addr().get_str_prefix()
