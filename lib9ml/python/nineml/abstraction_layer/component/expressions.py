@@ -389,40 +389,21 @@ class Assignment(ExpressionWithSimpleLHS, RegimeElement):
             
         
 
+class ODE(Equation, RegimeElement):
 
-
-class TimeDerivative(Equation, RegimeElement):
-    """ 
-    Represents a first-order, ordinary differential equation.
-
-    """
-    
-    def __init__(self, dependent_variable, indep_variable, rhs): 
-        if indep_variable != 't':
-            raise NineMLRuntimeException('Only time derivatives supported')
+    def __init__(self, dependent_variable, independent_variable, rhs): 
 
         self._dependent_variable = dependent_variable
-        self._independent_variable = indep_variable
+        self._independent_variable = independent_variable
         self.rhs = rhs
 
         if self._dependent_variable in math_namespace.symbols:
             raise ValueError, "TimeDerivative '%s' redefines math symbols (such as 'e','pi')" % self.as_expr()
 
-        
-    def __repr__(self):
-        return "TimeDerivative(d%s/d%s = %s)" % (self._dependent_variable,
-                                      self._independent_variable,
-                                      self.rhs)
-
     def as_expr(self):
         return "d%s/d%s = %s" % (self._dependent_variable,
                                  self._independent_variable,
                                  self.rhs)
-
-    
-    def AcceptVisitor(self, visitor, **kwargs):
-        return visitor.VisitODE(self,**kwargs)
-
     @property
     def lhs(self):
         return "d%s/d%s" % (self._dependent_variable, self._independent_variable)
@@ -434,6 +415,31 @@ class TimeDerivative(Equation, RegimeElement):
     @property
     def independent_variable(self):
         return self._independent_variable
+
+
+
+class TimeDerivative(ODE):
+
+    """ 
+    Represents a first-order, ordinary differential equation.
+
+    """
+    
+    def __init__(self, dependent_variable, indep_variable, rhs): 
+        if indep_variable != 't':
+            raise NineMLRuntimeException('Only time derivatives supported')
+
+        ODE.__init__( self, dependent_variable = dependent_variable, independent_variable = 't', rhs = rhs )
+
+        
+    def __repr__(self):
+        return "TimeDerivative(d%s/d%s = %s)" % (self._dependent_variable,
+                                      self._independent_variable,
+                                      self.rhs)
+
+    def AcceptVisitor(self, visitor, **kwargs):
+        return visitor.VisitTimeDerivative(self,**kwargs)
+
     
 
 

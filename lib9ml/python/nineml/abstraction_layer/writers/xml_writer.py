@@ -77,7 +77,7 @@ class XMLWriter(ComponentVisitor):
                  E("MathInline", alias.rhs),
                  name=alias.lhs)
 
-    def VisitODE(self,ode,**kwargs):
+    def VisitTimeDerivative(self,ode,**kwargs):
         return E('TimeDeriative',
                  E("MathInline", ode.rhs),
                  variable=ode.dependent_variable,

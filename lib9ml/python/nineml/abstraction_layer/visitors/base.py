@@ -66,7 +66,7 @@ class InplaceActionVisitorDF(ComponentVisitor):
     def VisitAlias(self, alias, **kwargs):
         self.ActionAlias(alias)
 
-    def VisitODE(self,ode,**kwargs):
+    def VisitTimeDerivative(self,ode,**kwargs):
         self.ActionODE(ode)
 
     def VisitCondition(self, condition):

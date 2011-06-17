@@ -168,14 +168,10 @@ class ClonerVisitor(ComponentVisitor):
         return new_alias
 
 
-    def VisitODE(self,ode,**kwargs):
+    def VisitTimeDerivative(self,ode,**kwargs):
         prefix = kwargs.get( 'prefix','')
         prefix_excludes = kwargs.get('prefix_excludes',[] )
 
-        #if ode.name:
-        #    name = prefix +  ode.name
-        #else:
-        #    name = None
 
         dep = ode.dependent_variable if ode.dependent_variable in prefix_excludes else prefix + ode.dependent_variable
         indep = ode.independent_variable if ode.independent_variable in prefix_excludes else prefix + ode.independent_variable
@@ -184,10 +180,8 @@ class ClonerVisitor(ComponentVisitor):
                     dependent_variable = dep,
                     indep_variable =     indep,
                     rhs = nineml.abstraction_layer.Expression.prefix(ode,prefix=prefix,exclude=prefix_excludes,expr=ode.rhs),
-                    #name = name
                     )
 
-        #return ode.clone( prefix=prefix, prefix_excludes=prefix_excludes )
 
     def VisitCondition(self, condition,**kwargs):
         prefix = kwargs.get( 'prefix','')
