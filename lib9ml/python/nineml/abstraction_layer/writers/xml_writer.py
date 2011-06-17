@@ -31,7 +31,7 @@ class XMLWriter(ComponentVisitor):
         etree.ElementTree(doc).write(file, encoding="UTF-8", pretty_print=True, xml_declaration=True)
 
 
-    def VisitComponentNodeCombined(self,component):
+    def VisitComponentClass(self,component):
         elements =  [p.AcceptVisitor(self) for p in component.analog_ports] +\
                     [p.AcceptVisitor(self) for p in component.event_ports] +\
                     [p.AcceptVisitor(self) for p in component.parameters] +\

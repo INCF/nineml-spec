@@ -6,16 +6,16 @@ from itertools import chain
 class ComponentVisitor(object):
     def Visit( self,obj,**kwargs):
         return obj.AcceptVisitor(self,**kwargs)
+    
 
 
 
-class InplaceActionVisitorDF(object):
 
-    def Visit(self,obj):
-        obj.AcceptVisitor(self)
+class InplaceActionVisitorDF(ComponentVisitor):
 
-    def VisitComponentNodeCombined(self, componentNodeCombined):
-        self.ActionComponentNodeCombined(componentNodeCombined)
+
+    def VisitComponentClass(self, componentNodeCombined):
+        self.ActionComponentClass(componentNodeCombined)
 
         comp = componentNodeCombined
         nodes = chain(comp.parameters, comp.analog_ports, comp.event_ports, )
@@ -28,11 +28,7 @@ class InplaceActionVisitorDF(object):
         for subnode in componentNodeCombined.subnodes.values():
             subnode.AcceptVisitor(self)
 
-    def VisitComponentNode(self, component):
-        self.ActionComponent(component)
-        nodes = chain(component.parameters, component.analog_ports, component.event_ports, [component.dynamics])
-        for p in nodes:
-            p.AcceptVisitor(self)
+    
 
     def VisitDynamics(self, dynamics):
         self.ActionDynamics(dynamics)
@@ -90,9 +86,7 @@ class InplaceActionVisitorDF(object):
 
 
     # To be overridden:
-    def ActionComponentNodeCombined(self, component_node_combined):
-        pass
-    def ActionComponent(self, component):
+    def ActionComponentClass(self, component_node_combined):
         pass
     def ActionDynamics(self, dynamics):
         pass

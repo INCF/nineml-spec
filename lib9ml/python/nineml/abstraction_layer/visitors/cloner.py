@@ -16,7 +16,7 @@ class InPlaceTransform(InplaceActionVisitorDF):
         self.targetname = targetname
 
 
-    def ActionComponentNodeCombined(self, component_node_combined):
+    def ActionComponentClass(self, component_node_combined):
         pass
 
     #def ActionComponent(self, component):
@@ -67,9 +67,9 @@ class InPlaceTransform(InplaceActionVisitorDF):
 #import .. as al
 import nineml.abstraction_layer 
 
+from base import ComponentVisitor
 
-
-class ClonerVisitor(object):
+class ClonerVisitor(ComponentVisitor):
 
     def Visit(self, obj,**kwargs):
         return obj.AcceptVisitor(self,**kwargs)
@@ -84,7 +84,8 @@ class ClonerVisitor(object):
             return prefix + variable
 
 
-    def VisitComponentNodeCombined(self, component, **kwargs ):
+    def VisitComponentClass(self, component, **kwargs ):
+        assert False
 
         ccn =  nineml.abstraction_layer.ComponentClass( name = component.name,
                                parameters  = [ p.AcceptVisitor(self,**kwargs) for p in component.parameters  ],
@@ -100,19 +101,7 @@ class ClonerVisitor(object):
 
         return ccn
 
-    def VisitComponentNode(self, component,**kwargs):
-        return nineml.abstraction_layer.ComponentNode( name = component.name,
-                               parameters  = [ p.AcceptVisitor(self,**kwargs) for p in component.parameters  ],
-                               analog_ports= [ p.AcceptVisitor(self,**kwargs) for p in component.analog_ports],
-                               event_ports = [ p.AcceptVisitor(self,**kwargs) for p in component.event_ports ],
-                               dynamics    = component.dynamics.AcceptVisitor(self,**kwargs)  )
 
-    def VisitComponent(self, component,**kwargs):
-        return nineml.abstraction_layer.ComponentNode( name = component.name,
-                               parameters  = [ p.AcceptVisitor(self,**kwargs) for p in component.parameters  ],
-                               analog_ports= [ p.AcceptVisitor(self,**kwargs) for p in component.analog_ports],
-                               event_ports = [ p.AcceptVisitor(self,**kwargs) for p in component.event_ports ],
-                               dynamics    = component.dynamics.AcceptVisitor(self,**kwargs)  )
                                
 
     def VisitDynamics(self, dynamics, **kwargs):
@@ -198,12 +187,12 @@ class ClonerVisitor(object):
 
 class ClonerVisitorPrefixNamespace(ClonerVisitor):
 
-    def Visit(self, obj):
-        clone = obj.AcceptVisitor(self)
-        return clone
+    #def Visit(self, obj):
+    #    clone = obj.AcceptVisitor(self)
+    #    return clone
 
 
-    def VisitComponentNodeCombined(self, component, **kwargs ):
+    def VisitComponentClass(self, component, **kwargs ):
         prefix = component.get_node_addr().get_str_prefix()
         if prefix == '_': prefix = ''
         prefix_excludes = ['t']

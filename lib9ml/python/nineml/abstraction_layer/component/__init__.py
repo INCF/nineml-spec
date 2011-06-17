@@ -4,7 +4,9 @@ Python module for reading 9ML abstraction layer files in XML format.
 Copyright Andrew P. Davison, Eilif B. Muller, 2010, Michael Hull, 2011  # if you edit this file, add your name here
 """
 
-from core import *
+from dynamics import * 
+from interface import *
+
 from expressions import * 
 from ports import * 
 from cond_parse import * 
@@ -21,3 +23,11 @@ from exceptions import *
 
 from componentqueryer import ComponentQueryer
 
+
+
+
+
+# Wrapper for writing XML:
+def parse(filename):
+    from nineml.abstraction_layer.readers import XMLReader
+    return XMLReader.read_component(filename)

@@ -71,6 +71,7 @@ class ComponentPortChecker(InplaceActionVisitorDF):
         self.send_analog_ports = []
 
     def ActionComponent(self, component):
+        assert False
         assert isinstance( component, al.ComponentNode )
         
         # Check for name duplication:
@@ -82,7 +83,7 @@ class ComponentPortChecker(InplaceActionVisitorDF):
         self.recv_analog_port_names = [ p.name for p in component.analog_ports if p.mode=='recv']
         self.send_analog_port_names = [ p.name for p in component.analog_ports if p.mode=='send']
 
-    def ActionComponentNodeCombined(self, component):
+    def ActionComponentClass(self, component):
         assert isinstance( component, al.ComponentClass )
         
         # Check for name duplication:

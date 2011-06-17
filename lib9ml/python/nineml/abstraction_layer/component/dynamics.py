@@ -1,8 +1,3 @@
-"""
-Python module for reading 9ML abstraction layer files in XML format.
-
-Copyright Andrew P. Davison, Eilif B. Muller, 2010, Mike Hull 2011 # if you edit this file, add your name here
-"""
 
 
 from operator import and_
@@ -15,9 +10,6 @@ import nineml.utility
 
 
 from itertools import chain
-
-
-
 
 
 
@@ -324,42 +316,6 @@ def DoOnCondition( condition, do=None, to=None ):
 
 
 
-
-
-
-
-
-    
-
-
-
-
-
-
-
-
-class Parameter(object):
-    element_name = 'Parameter'
-
-    def __init__(self, name, ):
-        self.name = name
-
-    def __str__(self):
-        return "<Parameter: %s>"%(self.name)
-
-    def AcceptVisitor(self, visitor, **kwargs):
-        return visitor.VisitParameter(self, **kwargs)
-
-class StateVariable(object):
-    element_name = 'StateVariable'
-    def AcceptVisitor(self, visitor, **kwargs):
-        return visitor.VisitStateVariable(self, **kwargs)
-    def __init__(self, name, ):
-        self.name = name
-
-    def __str__(self):
-        return "<StateVariable: %s>"%(self.name)
-
 class Dynamics(object):
     element_name = 'Dynamics'
     def __init__(self, regimes = None, aliases = None, state_variables = None):
@@ -402,11 +358,14 @@ class Dynamics(object):
     def state_variables(self):
         return iter( self._state_variables )
     
+    
+    
+class StateVariable(object):
+    element_name = 'StateVariable'
+    def AcceptVisitor(self, visitor, **kwargs):
+        return visitor.VisitStateVariable(self, **kwargs)
+    def __init__(self, name, ):
+        self.name = name
 
-
-
-# Wrapper for writing XML:
-def parse(filename):
-    from nineml.abstraction_layer.readers import XMLReader
-    return XMLReader.read_component(filename)
-
+    def __str__(self):
+        return "<StateVariable: %s>"%(self.name)

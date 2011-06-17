@@ -1,37 +1,16 @@
 
 from operator import and_
-#from nineml import __version__
-#import re
-#import copy
-#import itertools
 
-#from nineml.cache_decorator import im_cache_decorator as cache
-#import math_namespace
-#from nineml import helpers
-from expressions import *
-from conditions import *
-from ports import *
-#from cond_parse import cond_parse
-#from expr_parse import expr_parse
-from ..xmlns import *
-
-#from nineml.utility import *
-
-#from nineml.utility import ExpectSingle, FilterExpectSingle, Filter, FilterType
 
 from namespaceaddress import NamespaceAddress
+import componentqueryer
+import nineml.utility
+import dynamics as dyn
 
-# System Imports:
+
 import copy
 import itertools
 
-
-import core
-import componentqueryer
-
-import nineml.utility
-
-#from nineml.utility import invertDictionary
 
 class ComponentClassMixin_FlatStructure(object):
 
@@ -108,6 +87,7 @@ class ComponentClassMixin_FlatStructure(object):
         return [ a.lhs for a in self.aliases ]
 
 
+
     @property
     def conditions(self):
         """ Returns all conditions """
@@ -174,23 +154,13 @@ class ComponentClassMixin_FlatStructure(object):
                              sorted(self.aliases, key=sort_key) == sorted(other.aliases, key=sort_key)))
 
 
-    def write(self, file):
+    def write(self, file, flatten=True):
         """
         Export this model to a file in 9ML XML format.
         file is filename or file object.
         """
         from nineml.abstraction_layer.writers import XMLWriter
-        xml = XMLWriter().Visit(self)
-
-        doc = E.nineml(xml, xmlns=nineml_namespace)
-        etree.ElementTree(doc).write(file, encoding="UTF-8",
-                                     pretty_print=True, xml_declaration=True)
-
-
-
-
-
-
+        return XMLWriter.write(component=self, file=file, flatten=flatten)
 
 
 
@@ -198,8 +168,10 @@ class ComponentClassMixin_FlatStructure(object):
 
 
 class ComponentClassMixin_NamespaceStructure(object):
-    def __init__(self, subnodes = None):  
+    def __init__(self, subnodes = None, portconnections=None):  
         subnodes = subnodes or {}
+        portconnections = portconnections or []
+
 
         self._parentmodel = None
         self.subnodes = {}
@@ -207,7 +179,9 @@ class ComponentClassMixin_NamespaceStructure(object):
 
         for namespace,subnode in subnodes.iteritems():
             self.insert_subnode(subnode=subnode, namespace=namespace)
-
+        
+        for src,sink in portconnections:
+            self.connect_ports(src,sink)
 
     # Naming Functions:
     # != TO GO -!
@@ -260,7 +234,7 @@ class ComponentClass( ComponentClassMixin_FlatStructure, ComponentClassMixin_Nam
 
         # We should always create a dynamics object, even is it is empty:
         if dynamics == None:
-            dynamics = core.Dynamics()
+            dynamics = dyn.Dynamics()
 
         ComponentClassMixin_FlatStructure.__init__(self, name=name, parameters = parameters, analog_ports=analog_ports, event_ports = event_ports, dynamics = dynamics)
         ComponentClassMixin_NamespaceStructure.__init__(self,subnodes=subnodes)
@@ -295,7 +269,7 @@ class ComponentClass( ComponentClassMixin_FlatStructure, ComponentClassMixin_Nam
         return conns
 
     def AcceptVisitor(self, visitor,**kwargs):
-        return visitor.VisitComponentNodeCombined(self)
+        return visitor.VisitComponentClass(self)
 
 
 
