@@ -109,7 +109,7 @@ class ComponentClassMixinFlatStructure(object):
         # Back-substitute aliases, by resolving them
         # them then substituting recursively:
         def build_and_resolve_alias(alias):
-            for missing_alias_name in alias.missing_functions:
+            for missing_alias_name in alias.rhs_missing_functions:
                 if missing_alias_name in self.aliases_map:
                     missing_alias = self.aliases_map[missing_alias_name]
                     build_and_resolve_alias( missing_alias )

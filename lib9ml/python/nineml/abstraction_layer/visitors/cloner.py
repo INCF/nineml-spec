@@ -7,6 +7,7 @@ from itertools import chain
 
 
 from nineml.abstraction_layer.component import math_namespace
+from nineml.abstraction_layer.component.expressions import MathUtil
 
 
 
@@ -45,7 +46,7 @@ class InPlaceTransform(InplaceActionVisitorDF):
     def ActionODE(self,ode,**kwargs):
         ode.name_transform_inplace( {self.originalname:self.targetname} )
     def ActionCondition(self, condition):
-        condition.name_transform_inplace( {self.originalname:self.targetname} )
+        condition.rhs_name_transform_inplace( {self.originalname:self.targetname} )
 
 
 
@@ -128,7 +129,6 @@ class ClonerVisitor(ComponentVisitor):
 
     def VisitAnalogPort(self, port, **kwargs):
         p =nineml.abstraction_layer.AnalogPort( internal_symbol= self.prefixVariable(port.name,**kwargs) , mode=port.mode, op=port.reduce_op )
-        print p
         return p
 
     def VisitEventPort(self, port, **kwargs):
@@ -145,16 +145,17 @@ class ClonerVisitor(ComponentVisitor):
         prefix = kwargs.get( 'prefix','')
         prefix_excludes = kwargs.get('prefix_excludes',[] )
         lhs = assignment.lhs if assignment.lhs in prefix_excludes else prefix + assignment.lhs
+        rhs = MathUtil.get_prefixed_rhs_string( expr_obj=assignment, prefix=prefix, exclude=prefix_excludes )
+
         return nineml.abstraction_layer.Assignment( 
                     lhs = lhs,
-                    rhs = nineml.abstraction_layer.Expression.prefix(assignment, prefix=prefix,exclude=prefix_excludes,expr=assignment.rhs),
+                    rhs = rhs
                     )
 
 
     def VisitAlias(self, alias, **kwargs):
         prefix = kwargs.get( 'prefix','')
         prefix_excludes = kwargs.get('prefix_excludes',[] )
-        #name = prefix + alias.name
 
         def doPrefix(atom):
             if a in prefix_excludes: return False
@@ -173,23 +174,19 @@ class ClonerVisitor(ComponentVisitor):
 
 
         dep = ode.dependent_variable if ode.dependent_variable in prefix_excludes else prefix + ode.dependent_variable
-        #indep = ode.independent_variable if ode.independent_variable in prefix_excludes else prefix + ode.independent_variable
-         
+        rhs = MathUtil.get_prefixed_rhs_string( expr_obj=ode, prefix=prefix, exclude=prefix_excludes )
+
         return nineml.abstraction_layer.TimeDerivative( 
                     dependent_variable = dep,
-                    #indep_variable =     indep,
-                    rhs = nineml.abstraction_layer.Expression.prefix(ode,prefix=prefix,exclude=prefix_excludes,expr=ode.rhs),
-                    )
+                    rhs =rhs)
 
 
     def VisitCondition(self, condition,**kwargs):
         prefix = kwargs.get( 'prefix','')
         prefix_excludes = kwargs.get('prefix_excludes',[] )
+        rhs = MathUtil.get_prefixed_rhs_string( expr_obj=condition, prefix=prefix, exclude=prefix_excludes )
 
-        return nineml.abstraction_layer.Condition( 
-                    rhs = nineml.abstraction_layer.Expression.prefix(condition,prefix=prefix,exclude=prefix_excludes,expr=condition.rhs),
-                    )
-        #return condition.clone( prefix=prefix, prefix_excludes=prefix_excludes )
+        return nineml.abstraction_layer.Condition( rhs =rhs)
 
 
     def VisitOnCondition(self, on_condition,**kwargs):

@@ -41,7 +41,7 @@ def deriv_func_args(component, variable):
     args = set([variable])
     for r in component.regimes:
         for ode in (eq for eq in r.time_derivatives if eq.dependent_variable == variable):
-            for name in (name for name in ode.names if name in [ sv.name for sv in component.state_variables ] ):
+            for name in (name for name in ode.rhs_names if name in [ sv.name for sv in component.state_variables ] ):
                 args.add(name)
     return args
 

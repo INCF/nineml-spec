@@ -46,6 +46,41 @@ from expr_parse import expr_parse
 
 
 
+class MathUtil(object):
+
+    @classmethod
+    def str_expr_replacement( cls,frm,to,expr_string, func_ok=False):
+        """ replaces all occurences of name 'frm' with 'to' in expr_string ('frm' may not occur as a function name on the rhs) ...
+        'to' can be an arbitrary string so this function can also be used for argument substitution.
+
+        Returns the resulting string. """
+
+        import re
+
+        # do replace using regex
+        # this matches names, using lookahead and lookbehind to be sure we don't
+        # match for example 'xp' in name 'exp' ...
+        if func_ok:
+            # func_ok indicates we may replace a function name
+            p_func = re.compile(r"(?<![a-zA-Z_0-9])(%s)(?![a-zA-Z_0-9])" % frm)
+        else:
+            # this will not replace a function name even if its name matches from
+            # due to the lookahead disallowing '('
+            p_func = re.compile(r"(?<![a-zA-Z_0-9])(%s)(?![(a-zA-Z_0-9])" % frm)
+        return p_func.sub(to, expr_string)
+
+
+    @classmethod 
+    def get_prefixed_rhs_string(cls, expr_obj, prefix="", exclude=[], ):
+        expr = expr_obj.rhs
+        for name in expr_obj.rhs_names:
+            if name in exclude: continue
+            expr = MathUtil.str_expr_replacement(name,prefix+name,expr)
+        for func in expr_obj.rhs_funcs:
+            if func not in math_namespace.namespace:
+                expr = MathUtil.str_expr_replacement(func,prefix+func,expr, func_ok=True)
+        return expr
+
 
 
 class Expression(object):
@@ -72,9 +107,9 @@ class Expression(object):
     # cached names and funcs:
     def _set_rhs(self, rhs):
         self._rhs = rhs
-        self._names, self._funcs = self._parse_rhs(rhs)
-        for n in self._names: assert not n in self._funcs
-        for n in self._funcs: assert not n in self._names
+        self._rhs_names, self._rhs_funcs = self._parse_rhs(rhs)
+        for n in self._rhs_names: assert not n in self._rhs_funcs
+        for n in self._rhs_funcs: assert not n in self._rhs_names
 
     def _get_rhs(self):
         return self._rhs
@@ -82,103 +117,26 @@ class Expression(object):
 
 
     @property
-    def names(self):
-        return self._names
+    def rhs_names(self):
+        return self._rhs_names
     
     @property
-    def funcs (self):
-        return self._funcs
+    def rhs_funcs (self):
+        return self._rhs_funcs
 
     @property
-    def atoms (self):
-        return itertools.chain(self.names, self.funcs)
+    def rhs_atoms (self):
+        return itertools.chain(self.rhs_names, self.rhs_funcs)
 
-
-
-
-    
-    def prefix(self, prefix="", exclude=[], expr=None):
-        """ Applies a prefix to all names & funcs if not in math_namespace
-        returns new expr ... does not modify inplace
-
-        Exclude is a list of names (not functions) to be excluded from prefixing
-
-        If expr is None, the prefixing is computed for self.rhs and returned.
-        self.rhs is not modified.
-        
-        """
-
-        # names that are in math_symbol space do not show up in self.names
-        if expr==None:
-            assert False
-            expr = self.rhs
-        for name in self.names:
-            if name in exclude: continue
-            expr = Expression.name_replace(name,prefix+name,expr)
-        for func in self.funcs:
-            if func not in math_namespace.namespace:
-                expr = Expression.name_replace(func,prefix+func,expr, func_ok=True)
-        return expr
-
-
-    def python_func(self,namespace={}):
+    def rhs_as_python_func(self,namespace={}):
         """ Returns a python callable which evaluates the expression in namespace and returns the result """
-        return eval("lambda %s: %s" % (','.join(self.names),self.rhs), math_namespace.namespace,namespace)
-
-
-
-    # This should be over-ridden by subclasses:
-    def name_transform_inplace(self, name_map):
-        # Remap the rhs
-        self.rhs_name_transform_inplace( name_map ) 
-
-    # We do not provide a name_transform_clone(), because
-    # this can be made more explicit by
-    # expr.clone().name_transform_inplace()
-
+        return eval("lambda %s: %s" % (','.join(self.rhs_names),self.rhs), math_namespace.namespace,namespace)
 
 
     def rhs_name_transform_inplace(self, name_map):
-        self.rhs = self.rhs_name_transform( name_map=name_map )     
-    
-    def rhs_name_transform(self, name_map):
-        """
-        Returns a string represenation of the rhs with
-        expr symbol names replaced as follows:
-
-        from_name->to_name
-
-        Where nam_map should be dictionary like of the form:
-        name_map[from]=to
-        
-        """
-
-        rhs = self.rhs
         for name in name_map:
-            rhs = Expression.name_replace(name,name_map[name],rhs)
-        return rhs
+            self.rhs = MathUtil.str_expr_replacement(name,name_map[name],self.rhs)
 
-
-    @classmethod
-    def name_replace(cls,frm,to,rhs, func_ok=False):
-        """ replaces all occurences of name 'frm' with 'to' in rhs (not self.rhs) ('frm' may not occur as a function name on the rhs) ...
-        'to' can be an arbitrary string so this function can also be used for argument substitution.
-
-        Does not write inplace to self.rhs, but returns the resulting string. """
-
-        import re
-
-        # do replace using regex
-        # this matches names, using lookahead and lookbehind to be sure we don't
-        # match for example 'xp' in name 'exp' ...
-        if func_ok:
-            # func_ok indicates we may replace a function name
-            p_func = re.compile(r"(?<![a-zA-Z_0-9])(%s)(?![a-zA-Z_0-9])" % frm)
-        else:
-            # this will not replace a function name even if its name matches from
-            # due to the lookahead disallowing '('
-            p_func = re.compile(r"(?<![a-zA-Z_0-9])(%s)(?![(a-zA-Z_0-9])" % frm)
-        return p_func.sub(to, rhs)
         
 
     def substitute_alias(self,b):
@@ -186,22 +144,19 @@ class Expression(object):
         p_func = re.compile(r"(^|([ */+-,(]+))%s\(" % b.name)
         if p_func.search(self.rhs):
             raise ValueError, "substituting non-function alias '%s', found use in '%s' as function." % (b.name, self.rhs)
-        self.rhs = Expression.name_replace(b.name,"(%s)" % b.rhs,self.rhs)
+        self.rhs = MathUtil.str_expr_replacement(b.name,"(%s)" % b.rhs,self.rhs)
         
+
     @property
-    def missing_functions(self):
+    def rhs_missing_functions(self):
         """ yield names of functions in the rhs which are not in the math namespace"""
-        for f in self.funcs:
+        for f in self.rhs_funcs:
             if f not in math_namespace.namespace:
                 yield f
 
-    def has_missing_functions(self):
+    def rhs_has_missing_functions(self):
         """ returns True if at least 1 function on the rhs is not in the math namespace"""
-        for f in self.funcs:
-            if f not in math_namespace.namespace:
-                return True
-        return False
-
+        return len(list(self.rhs_missing_functions)) != 0
 
 
 
@@ -226,19 +181,20 @@ class ExpressionWithLHS(Equation):
         self.lhs_name_transform_inplace( name_map )
         self.rhs_name_transform_inplace( name_map ) 
 
-    
     @property
     def atoms(self):
-        return itertools.chain(self.names, self.funcs, self.get_lhs_atoms() )
+        return itertools.chain(self.rhs_atoms, self.lhs_atoms() )
     
     def lhs_name_transform_inplace(self, name_map):
         raise NotImplementedError()
-    def get_lhs_atoms(self):
+    def lhs_atoms(self):
         raise NotImplementedError()
-    def get_lhs():
-        raise NotImplementedError() 
 
 
+    def name_transform_inplace(self, name_map):
+        # Remap the rhs
+        self.lhs_name_transform_inplace( name_map ) 
+        self.rhs_name_transform_inplace( name_map ) 
 
 
 
@@ -255,7 +211,7 @@ class ExpressionWithSimpleLHS(ExpressionWithLHS):
         assert single_symbol.match( lhs ) 
         self.lhs = lhs
 
-    def get_lhs_atoms(self):
+    def lhs_atoms(self):
         return [self.lhs]
 
     def lhs_name_transform_inplace( self, name_map ):
@@ -375,7 +331,7 @@ class Assignment(ExpressionWithSimpleLHS, RegimeElement):
             
         
 
-class ODE(Equation, RegimeElement):
+class ODE(ExpressionWithLHS, RegimeElement):
     """ An ordinary, first order differential equation.
         
         .. note::
@@ -387,9 +343,11 @@ class ODE(Equation, RegimeElement):
 
     def __init__(self, dependent_variable, independent_variable, rhs): 
 
+        ExpressionWithLHS.__init__(self,rhs)
+
         self._dependent_variable = dependent_variable
         self._independent_variable = independent_variable
-        self.rhs = rhs
+        #self.rhs = rhs
 
         if self._dependent_variable in math_namespace.symbols:
             raise ValueError, "TimeDerivative '%s' redefines math symbols (such as 'e','pi')" % self.as_expr()
@@ -410,6 +368,10 @@ class ODE(Equation, RegimeElement):
     def independent_variable(self):
         return self._independent_variable
 
+
+    def lhs_name_transform_inplace( self, name_map ):
+        self._dependent_variable = name_map.get(self._dependent_variable,self._dependent_variable) 
+        self._independent_variable = name_map.get(self._independent_variable,self._independent_variable) 
 
 
 class TimeDerivative(ODE):

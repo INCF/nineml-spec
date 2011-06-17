@@ -26,7 +26,7 @@ class Condition(expressions.Expression):
                 assert val==True
                 return True
 
-    def python_func(self, namespace={}):
+    def rhs_as_python_func(self, namespace={}):
         """ Returns a python callable which evaluates the expression in namespace and returns the result """
 
         # overriding Expression.python_func
