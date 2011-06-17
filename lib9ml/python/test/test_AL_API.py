@@ -374,7 +374,7 @@ class ComponentTestCase(unittest.TestCase):
         self.assertRaises(ValueError, nineml.Transition, "A+=10", condition="true")
         self.assertRaises(ValueError, nineml.Transition, "A+=10", condition="false")
 
-        # No ODEs in Transitions
+        # No TimeDerivatives in Transitions
         self.assertRaises(ValueError, nineml.Transition, "dA/dt = -A", condition="A>10")
 
         e = nineml.Transition("A+=10", condition="A>10", to="test")

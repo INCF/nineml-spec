@@ -6,7 +6,7 @@ import unittest
 import re
 
 # (expr, (lhs,op,rhs))
-ODEs = [("dA_x/dt = -A/tau_r",("dA_x/dt","=","-A/tau_r")),
+TimeDerivatives = [("dA_x/dt = -A/tau_r",("dA_x/dt","=","-A/tau_r")),
         ("  dB/dt=-B/tau_d",("dB/dt","=","-B/tau_d"))]
 
 Assignments = [("gB = 1/(1 + mg_conc*eta*exp(-1*gamma*V))",("gB","=","1/(1 + mg_conc*eta*exp(-1*gamma*V))")),
@@ -21,7 +21,7 @@ Inplace = [("Isyn+=g*(E_rev-V)",("Isyn","+=","g*(E_rev-V)")),
            (" dA/=dt", ("dA","/=","dt"))]
 
 
-all_good = Inplace+Assignments+ODEs
+all_good = Inplace+Assignments+TimeDerivatives
 
 all_bad = ["B / = 1.45",
            " "]
@@ -61,7 +61,7 @@ class ReTestCase(unittest.TestCase):
         
     def test_odes(self):
 
-        for t in ODEs:
+        for t in TimeDerivatives:
             s = t[0].strip()
             ans = t[1]
             m = p_eqn.match(s)

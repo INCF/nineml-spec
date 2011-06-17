@@ -46,7 +46,7 @@ class ComponentTypeChecker(InplaceActionVisitorDF):
         assert isinstance( alias, al.Alias )
 
     def ActionODE(self,ode,**kwargs):
-        assert isinstance( ode, al.ODE )
+        assert isinstance( ode, al.TimeDerivative )
 
     def ActionCondition(self, condition):
         assert isinstance( condition, al.Condition )

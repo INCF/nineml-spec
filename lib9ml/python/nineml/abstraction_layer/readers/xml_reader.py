@@ -120,7 +120,7 @@ class XMLLoader1(object):
     def load_TimeDerivative(self,element):
         variable = element.get("variable")
         expr = self.load_SingleInternalMathsBlock(element)
-        return al.ODE( dependent_variable=variable, indep_variable='t', rhs=expr)
+        return al.TimeDerivative( dependent_variable=variable, indep_variable='t', rhs=expr)
         
     def load_Alias(self,element):
         name = element.get("name")

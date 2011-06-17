@@ -84,12 +84,12 @@ class CheetahTestCase(unittest.TestCase):
 
     def test_raise(self):
         """ check raising errors """
-        t = Template("#raise TypeError, 'expected ODE or Assignment class'")
+        t = Template("#raise TypeError, 'expectedTimeDerivative or Assignment class'")
 
         try:
             s = str(t)
         except TypeError as e:
-            assert e.args[0] == 'expected ODE or Assignment class'
+            assert e.args[0] == 'expectedTimeDerivative or Assignment class'
 
     def test_loop(self):
         """ check rending using loops """

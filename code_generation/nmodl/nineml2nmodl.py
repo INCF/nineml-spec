@@ -52,12 +52,12 @@ def deriv_func_args(component, variable):
 
 def ode_for(regime, variable):
     """
-    Yields the ODE for the given variable in the regime
+    Yields the TimeDerivative for the given variable in the regime
     """
     print 'Ode for %s in Regime %s '%(variable, regime)
     odes = [eq for eq in regime.time_derivatives if eq.dependent_variable == variable.name]
     if len(odes) == 0:
-        odes.append(al.ODE(variable, "t", "0.0"))
+        odes.append(al.TimeDerivative(variable, "t", "0.0"))
     return expect_single( odes )
 
 def get_on_event_channel(on_event, component):

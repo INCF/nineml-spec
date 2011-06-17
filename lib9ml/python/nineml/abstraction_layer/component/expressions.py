@@ -391,7 +391,7 @@ class Assignment(ExpressionWithSimpleLHS, RegimeElement):
 
 
 
-class ODE(Equation, RegimeElement):
+class TimeDerivative(Equation, RegimeElement):
     """ 
     Represents a first-order, ordinary differential equation.
 
@@ -406,11 +406,11 @@ class ODE(Equation, RegimeElement):
         self.rhs = rhs
 
         if self._dependent_variable in math_namespace.symbols:
-            raise ValueError, "ODE '%s' redefines math symbols (such as 'e','pi')" % self.as_expr()
+            raise ValueError, "TimeDerivative '%s' redefines math symbols (such as 'e','pi')" % self.as_expr()
 
         
     def __repr__(self):
-        return "ODE(d%s/d%s = %s)" % (self._dependent_variable,
+        return "TimeDerivative(d%s/d%s = %s)" % (self._dependent_variable,
                                       self._independent_variable,
                                       self.rhs)
 
@@ -462,7 +462,7 @@ def expr_to_obj(s, name = None):
         return StrToExpr.alias(s)
 
     # re for an expression -> groups into lhs, op, rhs
-    # re for lhs for ODE
+    # re for lhs for TimeDerivative
 
     
 
@@ -475,16 +475,16 @@ def expr_to_obj(s, name = None):
     # get lhs, op, rhs
     lhs, op, rhs = [m.group(x) for x in ['lhs','op','rhs']]
 
-    # do we have an ODE?
+    # do we have an TimeDerivative?
     p_ode_lhs = re.compile(r"(?:d)([a-zA-Z_]+[a-zA-Z_0-9]*)/(?:d)([a-zA-Z_]+[a-zA-Z_0-9]*)")
     m = p_ode_lhs.match(lhs)
     if m:
         if op!="=":
-            raise ValueError, "ODE lhs, but op not '=' in %s" % s
+            raise ValueError, "TimeDerivative lhs, but op not '=' in %s" % s
 
         dep_var = m.group(1)
         indep_var = m.group(2)
-        return ODE(dep_var,indep_var,rhs, name = name)
+        return TimeDerivative(dep_var,indep_var,rhs, name = name)
 
     ## Do we have an Inplace op?
     #if op in Inplace.op_name_map.keys():

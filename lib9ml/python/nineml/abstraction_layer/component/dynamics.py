@@ -236,7 +236,7 @@ class OnCondition(Transition):
 
 class Regime(object):
     """
-    A regime is something that contains ODEs, has temporal extent, defines a set of Transitions
+    A regime is something that contains TimeDerivatives, has temporal extent, defines a set of Transitions
     which occur based on conditions, and can be join the Regimes to other Regimes.
     """
 
@@ -281,8 +281,8 @@ class Regime(object):
         fDict = filter_discrete_types( transitions, (OnEvent,OnCondition) ) 
 
 
-        tdTypeDict = filter_discrete_types( time_derivatives, (basestring, ODE ) )
-        tds = tdTypeDict[ODE] + [ StrToExpr.time_derivative(o) for o in tdTypeDict[basestring] ] 
+        tdTypeDict = filter_discrete_types( time_derivatives, (basestring, TimeDerivative ) )
+        tds = tdTypeDict[TimeDerivative] + [ StrToExpr.time_derivative(o) for o in tdTypeDict[basestring] ] 
 
 
         self._time_derivatives = tds

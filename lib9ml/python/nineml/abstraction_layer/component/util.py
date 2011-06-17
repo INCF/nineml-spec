@@ -1,5 +1,5 @@
 
-from expressions import Alias, ODE
+from expressions import Alias, TimeDerivative
 import re
 
 class StrToExpr(object):
@@ -23,7 +23,7 @@ class StrToExpr(object):
     def time_derivative(cls, time_derivative_string):
         r = re.compile(r"""\s* d(?P<var>[a-zA-Z][a-zA-Z0-9_]*)/dt \s* = \s* (?P<rhs> .*) """, re.VERBOSE) 
         m = r.match(time_derivative_string)
-        return ODE( dependent_variable = m.groupdict()['var'], indep_variable='t', rhs=m.groupdict()['rhs'] )
+        return TimeDerivative( dependent_variable = m.groupdict()['var'], indep_variable='t', rhs=m.groupdict()['rhs'] )
 
 
     @classmethod

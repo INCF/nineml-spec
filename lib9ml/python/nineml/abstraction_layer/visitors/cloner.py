@@ -180,7 +180,7 @@ class ClonerVisitor(ComponentVisitor):
         dep = ode.dependent_variable if ode.dependent_variable in prefix_excludes else prefix + ode.dependent_variable
         indep = ode.independent_variable if ode.independent_variable in prefix_excludes else prefix + ode.independent_variable
          
-        return nineml.abstraction_layer.ODE( 
+        return nineml.abstraction_layer.TimeDerivative( 
                     dependent_variable = dep,
                     indep_variable =     indep,
                     rhs = nineml.abstraction_layer.Expression.prefix(ode,prefix=prefix,exclude=prefix_excludes,expr=ode.rhs),
