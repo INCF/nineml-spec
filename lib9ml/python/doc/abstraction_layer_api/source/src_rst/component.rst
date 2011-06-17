@@ -36,7 +36,7 @@ nineml.abstraction_layer.component [Interface]
     component.StateVariable
     component.Alias
     component.Assignment
-    component.ODE
+    component.TimeDerivative
 
 
 nineml.abstraction_layer.component [Interface]

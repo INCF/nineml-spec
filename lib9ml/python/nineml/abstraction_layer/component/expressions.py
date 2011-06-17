@@ -390,6 +390,14 @@ class Assignment(ExpressionWithSimpleLHS, RegimeElement):
         
 
 class ODE(Equation, RegimeElement):
+    """ An ordinary, first order differential equation.
+        
+        .. note::
+            
+            These should not be created directly, this class is
+            used as base class for ``TimeDerivative``
+
+    """
 
     def __init__(self, dependent_variable, independent_variable, rhs): 
 
@@ -420,22 +428,37 @@ class ODE(Equation, RegimeElement):
 
 class TimeDerivative(ODE):
 
-    """ 
-    Represents a first-order, ordinary differential equation.
+    """Represents a first-order, ordinary differential equation with respect to
+    time.
 
     """
     
-    def __init__(self, dependent_variable, indep_variable, rhs): 
-        if indep_variable != 't':
-            raise NineMLRuntimeException('Only time derivatives supported')
+    def __init__(self, dependent_variable, rhs): 
+        """Time Derivative Constructor
+        
+            :param dependent_variable: A `string` containing a single symbol,
+                which is the dependent_variable. 
+            :param rhs: A `string` containing the right-hand-side of the
+                equation.
+                
+                
+            For example, if our time deri
 
+            .. math::
+
+                \\frac{dg}{dt} = \\frac{g}{gtau}
+            
+            Then this would be constructed as::
+
+                TimeDerivative( dependent_variable='g', rhs='g/gtau' )
+
+            
+            """
         ODE.__init__( self, dependent_variable = dependent_variable, independent_variable = 't', rhs = rhs )
 
         
     def __repr__(self):
-        return "TimeDerivative(d%s/d%s = %s)" % (self._dependent_variable,
-                                      self._independent_variable,
-                                      self.rhs)
+        return "TimeDerivative( %s)" % self.as_expr() 
 
     def AcceptVisitor(self, visitor, **kwargs):
         return visitor.VisitTimeDerivative(self,**kwargs)

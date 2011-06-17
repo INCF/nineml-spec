@@ -5,7 +5,8 @@ class Condition(expressions.Expression):
     def AcceptVisitor(self, visitor, **kwargs):
         return visitor.VisitCondition(self, **kwargs)
 
-    def __init__(self, rhs, name=None):
+    def __init__(self, rhs,name=None):
+        assert not name
         
         self.name = name
         self.rhs = rhs 

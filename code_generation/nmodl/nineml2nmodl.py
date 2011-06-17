@@ -57,7 +57,7 @@ def ode_for(regime, variable):
     print 'Ode for %s in Regime %s '%(variable, regime)
     odes = [eq for eq in regime.time_derivatives if eq.dependent_variable == variable.name]
     if len(odes) == 0:
-        odes.append(al.TimeDerivative(variable, "t", "0.0"))
+        odes.append(al.TimeDerivative(dependent_variable = variable, rhs = "0.0"))
     return expect_single( odes )
 
 def get_on_event_channel(on_event, component):
