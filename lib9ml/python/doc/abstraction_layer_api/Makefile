@@ -39,6 +39,7 @@ help:
 	@echo "  doctest    to run all doctests embedded in the documentation (if enabled)"
 
 clean:
+	-rm -rf source/src_rst/nineml.abstraction_layer.*.rst
 	-rm -rf $(BUILDDIR)/*
 
 html:

@@ -33,8 +33,7 @@ import nineml.utility
 
 #from nineml.utility import invertDictionary
 
-class ComponentClass(object):
-    element_name = "ComponentClass"
+class ComponentClassMixin_FlatStructure(object):
 
     def __init__(self, name, parameters = None, analog_ports = None, event_ports = None, dynamics=None):
         """Create a ComponentClass object
@@ -198,7 +197,7 @@ class ComponentClass(object):
 
 
 
-class TreeNode(object):
+class ComponentClassMixin_NamespaceStructure(object):
     def __init__(self, subnodes = None):  
         subnodes = subnodes or {}
 
@@ -248,9 +247,10 @@ class TreeNode(object):
 
 
 
-class ComponentNodeCombined( ComponentClass, TreeNode ):
+class ComponentNodeCombined( ComponentClassMixin_FlatStructure, ComponentClassMixin_NamespaceStructure ):
     """ComponentClass represents a..."""
     
+    element_name = "ComponentClass"
     def isflat(self):
         return self.isLeaf()
 
@@ -262,8 +262,8 @@ class ComponentNodeCombined( ComponentClass, TreeNode ):
         if dynamics == None:
             dynamics = core.Dynamics()
 
-        ComponentClass.__init__(self, name=name, parameters = parameters, analog_ports=analog_ports, event_ports = event_ports, dynamics = dynamics)
-        TreeNode.__init__(self,subnodes=subnodes)
+        ComponentClassMixin_FlatStructure.__init__(self, name=name, parameters = parameters, analog_ports=analog_ports, event_ports = event_ports, dynamics = dynamics)
+        ComponentClassMixin_NamespaceStructure.__init__(self,subnodes=subnodes)
 
         #Finalise Initiation:
         self.ResolveTransitionRegimeNames()

@@ -57,7 +57,7 @@ def t4():
 
 
     from nineml.abstraction_layer.flattening import flatten
-    from nineml.abstraction_layer.componentmodifiers import ModelModifier
+    from nineml.abstraction_layer.component_modifiers import ModelModifier
 
     flatcomponent = flatten(model, componentname='iaf_2coba')
     ModelModifier.CloseAnalogPort(component=flatcomponent, port_name='iaf_iSyn', value='0' )

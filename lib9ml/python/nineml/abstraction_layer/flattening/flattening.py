@@ -246,7 +246,7 @@ class ComponentFlattener(object):
 
 
         from nineml.utility import flattenFirstLevel
-        from nineml.abstraction_layer import ComponentClass
+        #from nineml.abstraction_layer import ComponentClass
 
         print 'Regimes:', newRegimeLookupMap.values()
         dynamics = al.Dynamics( regimes = newRegimeLookupMap.values(),
