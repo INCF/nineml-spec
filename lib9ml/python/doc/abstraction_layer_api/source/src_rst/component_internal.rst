@@ -27,5 +27,5 @@ nineml.abstraction_layer.component [Internal-Component Base Classes]
 .. autosummary::
     :toctree: 
 
-    component.ComponentClass
-    component.TreeNode
+    component.ComponentClassMixin_FlatStructure
+    component.ComponentClassMixin_NamespaceStructure

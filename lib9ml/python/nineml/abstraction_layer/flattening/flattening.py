@@ -27,7 +27,7 @@ class ComponentFlattener(object):
     
     
     def __init__(self,model, componentname=None):
-        assert isinstance( model, al.ComponentNodeCombined)
+        assert isinstance( model, al.ComponentClass)
 
         # Is our component already flat??
         if model.isflat():
@@ -234,7 +234,7 @@ class ComponentFlattener(object):
         newRegimeLookupMap = self.newRegimeLookupMap
 
         from nineml.utility import flattenFirstLevel
-        from nineml.abstraction_layer.component import NamespaceAddress, ComponentNodeCombined
+        from nineml.abstraction_layer.component import NamespaceAddress, ComponentClass
 
         new_ports = flattenFirstLevel( [comp.analog_ports for comp in self.all_components]) 
         new_ports = dict( [ (p.name, p) for p in new_ports ] ) 
@@ -254,7 +254,7 @@ class ComponentFlattener(object):
                                 state_variables = flattenFirstLevel( [ m.state_variables for m in self.all_components ]  ),
                                 )  
 
-        self.reducedcomponent = al.ComponentNodeCombined( name=self.componentname, 
+        self.reducedcomponent = al.ComponentClass( name=self.componentname, 
                                                          dynamics=dynamics, 
                                                          analog_ports=new_ports.values() , 
                                                          event_ports= flattenFirstLevel( [comp.event_ports for comp in self.all_components] ), 

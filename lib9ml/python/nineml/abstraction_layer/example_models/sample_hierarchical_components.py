@@ -10,7 +10,7 @@ from nineml.abstraction_layer import * #Regime, Transition, SendPort, RecvPort, 
 #from nineml import Regime, Transition
 
 
-hh_na = al.ComponentNodeCombined(
+hh_na = al.ComponentClass(
 		name = "Hodgkin-Huxley-Na", 
         dynamics = Dynamics(
        		regimes=[ 

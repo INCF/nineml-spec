@@ -19,7 +19,7 @@ class XMLWriter(ComponentVisitor):
 
     @classmethod 
     def write( cls, component, file, flatten=True):
-        assert isinstance( component,al.ComponentNodeCombined )
+        assert isinstance( component,al.ComponentClass )
         if not component.isflat():
             if not flatten: 
                 assert False, 'Trying to save nested models not yet supported'

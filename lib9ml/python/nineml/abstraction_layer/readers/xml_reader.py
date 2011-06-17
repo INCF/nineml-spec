@@ -54,13 +54,13 @@ class XMLLoader1(object):
     def load_ComponentClass(self,element):
         
 
-        from nineml.abstraction_layer import ComponentNodeCombined
+        from nineml.abstraction_layer import ComponentClass
         name = element.get("name")
          
 
         subnodes = self.loadBlocks( element,blocks=('Parameter','AnalogPort','EventPort','Dynamics','Subnode','ConnectPorts' ) )
 
-        component = ComponentNodeCombined(  name=name,
+        component = ComponentClass(  name=name,
                                        parameters = subnodes["Parameter" ] ,
                                        analog_ports = subnodes["AnalogPort"] ,
                                        event_ports = subnodes["EventPort"],

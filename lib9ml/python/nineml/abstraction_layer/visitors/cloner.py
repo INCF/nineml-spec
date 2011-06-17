@@ -86,7 +86,7 @@ class ClonerVisitor(object):
 
     def VisitComponentNodeCombined(self, component, **kwargs ):
 
-        ccn =  nineml.abstraction_layer.ComponentNodeCombined( name = component.name,
+        ccn =  nineml.abstraction_layer.ComponentClass( name = component.name,
                                parameters  = [ p.AcceptVisitor(self,**kwargs) for p in component.parameters  ],
                                analog_ports= [ p.AcceptVisitor(self,**kwargs) for p in component.analog_ports],
                                event_ports = [ p.AcceptVisitor(self,**kwargs) for p in component.event_ports ],
@@ -209,7 +209,7 @@ class ClonerVisitorPrefixNamespace(ClonerVisitor):
         prefix_excludes = ['t']
         kwargs = {'prefix':prefix, 'prefix_excludes':prefix_excludes }
 
-        ccn =  nineml.abstraction_layer.ComponentNodeCombined( name = component.name,
+        ccn =  nineml.abstraction_layer.ComponentClass( name = component.name,
                                parameters  = [ p.AcceptVisitor(self,**kwargs) for p in component.parameters  ],
                                analog_ports= [ p.AcceptVisitor(self,**kwargs) for p in component.analog_ports],
                                event_ports = [ p.AcceptVisitor(self,**kwargs) for p in component.event_ports ],

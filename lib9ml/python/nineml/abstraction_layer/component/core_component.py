@@ -247,7 +247,7 @@ class ComponentClassMixin_NamespaceStructure(object):
 
 
 
-class ComponentNodeCombined( ComponentClassMixin_FlatStructure, ComponentClassMixin_NamespaceStructure ):
+class ComponentClass( ComponentClassMixin_FlatStructure, ComponentClassMixin_NamespaceStructure ):
     """ComponentClass represents a..."""
     
     element_name = "ComponentClass"

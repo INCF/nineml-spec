@@ -8,7 +8,7 @@ nineml.abstraction_layer.component [Components]
 .. autosummary::
     :toctree: 
 
-    component.ComponentNodeCombined
+    component.ComponentClass
     component.NamespaceAddress
     component.ComponentQueryer
 

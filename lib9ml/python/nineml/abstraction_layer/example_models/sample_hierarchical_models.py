@@ -5,7 +5,7 @@ import nineml.abstraction_layer as al
 
 
 def get_iaf():
-    iaf = al.ComponentNodeCombined( 
+    iaf = al.ComponentClass( 
                             name = "iaf",
                             dynamics = al.Dynamics( 
                                 regimes = [
@@ -43,7 +43,7 @@ def get_iaf():
     return iaf
 
 def get_coba():
-    coba = al.ComponentNodeCombined( 
+    coba = al.ComponentClass( 
                              name = "CobaSyn",
                              dynamics = 
                                 al.Dynamics(
@@ -89,7 +89,7 @@ def nmda():
                     regimes = [inter_event_regime],
                           ) 
 
-    nmda = al.ComponentNodeCombined(name="NMDAPSR",
+    nmda = al.ComponentClass(name="NMDAPSR",
                      dynamics = dynamics,
                      analog_ports = [al.RecvPort("V"), al.SendPort("I"), ],
                      event_ports =  [al.RecvEventPort('spikeinput') ],
@@ -109,7 +109,7 @@ def get_hierachical_iaf_2coba():
 
     
     # Create a model, composed of an iaf neuron, and 
-    iaf_2coba_model = al.ComponentNodeCombined( name="iaf_2coba", subnodes = {"iaf" : get_iaf(), "cobaExcit" : get_coba(), "cobaInhib" : get_coba()} )
+    iaf_2coba_model = al.ComponentClass( name="iaf_2coba", subnodes = {"iaf" : get_iaf(), "cobaExcit" : get_coba(), "cobaInhib" : get_coba()} )
     
     # Connections have to be setup as strings, because we are deep-copying objects.
     iaf_2coba_model.connect_ports( "iaf.V", "cobaExcit.V" )
@@ -122,7 +122,7 @@ def get_hierachical_iaf_2coba():
 def get_hierachical_iaf_3coba():
     
     # Create a model, composed of an iaf neuron, and 
-    iaf_3coba_model = al.ComponentNodeCombined( name="iaf_2coba", subnodes = {"iaf" : get_iaf(), "AMPA" : get_coba(), "GABAa" : get_coba(), "GABAb": get_coba()} )
+    iaf_3coba_model = al.ComponentClass( name="iaf_2coba", subnodes = {"iaf" : get_iaf(), "AMPA" : get_coba(), "GABAa" : get_coba(), "GABAb": get_coba()} )
     
     # Connections have to be setup as strings, because we are deep-copying objects.
     iaf_3coba_model.connect_ports( "iaf.V", "AMPA.V" )
@@ -142,7 +142,7 @@ def get_hierachical_iaf_nmda():
     
     
     # Create a model, composed of an iaf neuron, and 
-    iaf_nmda_model = al.ComponentNodeCombined( name="iaf_2coba", subnodes = {"iaf" : get_iaf(), "nmda" : nmda(), 'cobaExcit':get_coba()} )
+    iaf_nmda_model = al.ComponentClass( name="iaf_2coba", subnodes = {"iaf" : get_iaf(), "nmda" : nmda(), 'cobaExcit':get_coba()} )
     
     iaf_nmda_model.connect_ports( "iaf.V", "cobaExcit.V" )
     iaf_nmda_model.connect_ports( "iaf.V", "nmda.V" )
