@@ -19,7 +19,7 @@ class Condition(expressions.Expression):
     def is_bool(self):
         """ Checks if conditions is pure bool: True, False"""
         if self.names==set() and self.funcs==set():
-            val = self.python_func()()
+            val = self.rhs_as_python_func()()
             if val==False:
                 return True
             else:
@@ -44,10 +44,6 @@ class Condition(expressions.Expression):
 
         return eval("lambda %s: %s" % (','.join(self.names),expr), math_namespace.namespace, namespace)
 
-    def as_expr(self):
-        assert False
-        """ This is to behave as an expr"""
-        return self.rhs
 
     def __repr__(self):
         return "Condition('%s')" % (self.rhs)
