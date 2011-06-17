@@ -15,7 +15,7 @@ from namespaceaddress import *
 from ..xmlns import * 
 
 from nineml import __version__
-from core_component import *
+from component import *
 
 import math_namespace 
 

@@ -12,8 +12,8 @@ from itertools import chain
 # right types:
 class ComponentTypeChecker(InplaceActionVisitorDF):
 
-    def ActionComponent(self, component):
-        assert isinstance( component, al.ComponentNode )
+    #def ActionComponent(self, component):
+    #    assert isinstance( component, al.ComponentNode )
 
     def ActionDynamics(self, dynamics):
         assert isinstance( dynamics, al.Dynamics )
@@ -70,18 +70,18 @@ class ComponentPortChecker(InplaceActionVisitorDF):
         self.recv_analog_ports = []
         self.send_analog_ports = []
 
-    def ActionComponent(self, component):
-        assert False
-        assert isinstance( component, al.ComponentNode )
-        
-        # Check for name duplication:
-        portNames = [ p.name for p in chain( component.event_ports, component.analog_ports )] 
-        AssertNoDuplicates(portNames)
-
-        self.recv_event_port_names = [ p.name for p in component.event_ports if p.mode=='recv']
-        self.send_event_port_names = [ p.name for p in component.event_ports if p.mode=='send']
-        self.recv_analog_port_names = [ p.name for p in component.analog_ports if p.mode=='recv']
-        self.send_analog_port_names = [ p.name for p in component.analog_ports if p.mode=='send']
+#    def ActionComponent(self, component):
+#        assert False
+#        assert isinstance( component, al.ComponentNode )
+#        
+#        # Check for name duplication:
+#        portNames = [ p.name for p in chain( component.event_ports, component.analog_ports )] 
+#        AssertNoDuplicates(portNames)
+#
+#        self.recv_event_port_names = [ p.name for p in component.event_ports if p.mode=='recv']
+#        self.send_event_port_names = [ p.name for p in component.event_ports if p.mode=='send']
+#        self.recv_analog_port_names = [ p.name for p in component.analog_ports if p.mode=='recv']
+#        self.send_analog_port_names = [ p.name for p in component.analog_ports if p.mode=='send']
 
     def ActionComponentClass(self, component):
         assert isinstance( component, al.ComponentClass )

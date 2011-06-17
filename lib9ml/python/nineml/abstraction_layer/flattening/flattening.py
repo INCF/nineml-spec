@@ -7,7 +7,7 @@ import itertools
 
 
 import nineml.abstraction_layer as al
-from nineml.abstraction_layer.visitors.model_visitors import ModelVisitorDF_ComponentCollector, ModelVisitorDF_ModelCollector
+#from nineml.abstraction_layer.visitors.model_visitors import ModelVisitorDF_ComponentCollector, ModelVisitorDF_ModelCollector
 from nineml.abstraction_layer.visitors import ClonerVisitor, ClonerVisitorPrefixNamespace
 
 class ComponentFlattener(object):
@@ -223,6 +223,7 @@ class ComponentFlattener(object):
 
 
     
+
 
 
 
