@@ -11,7 +11,7 @@ import os
 
 
 import nineml.abstraction_layer as al
-import nineml.abstraction_layer.core as core
+#import nineml.abstraction_layer.component as core
 from ..xmlns import etree,E,MATHML,nineml_namespace,NINEML
 
 

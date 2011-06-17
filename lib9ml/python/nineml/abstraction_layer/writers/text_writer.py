@@ -84,3 +84,7 @@ def dump_reduced(component, filename):
     f.write(s)
     f.close()
 
+
+class TextWriter(object):
+    """TextWriter DocString"""
+    pass

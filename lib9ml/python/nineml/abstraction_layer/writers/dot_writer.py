@@ -13,7 +13,9 @@ def dot_escape(s):
 
     return "".join(dot_escape_table.get(c,c) for c in s)
 
-
+class DotWriter(object):
+    """Dot Writer docstring"""
+    pass
 
 # From Regime, was a class method:
 # def dot_content(self):

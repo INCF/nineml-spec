@@ -6,15 +6,10 @@ import copy
 import itertools
 
 
-#import nineml.abstraction_layer as nineml
 import nineml.abstraction_layer as al
-# Relative Imports:
-
 from nineml.abstraction_layer.visitors.model_visitors import ModelVisitorDF_ComponentCollector, ModelVisitorDF_ModelCollector
-
 from nineml.abstraction_layer.visitors import ClonerVisitor, ClonerVisitorPrefixNamespace
 
-#class ModelToSingleComponentReducer(object):
 class ComponentFlattener(object):
     
     @classmethod
@@ -31,25 +26,25 @@ class ComponentFlattener(object):
     
     
     
-    def __init__(self,model, componentname):
-        from nineml.abstraction_layer import ComponentNodeCombined
-        assert isinstance( model, ComponentNodeCombined)
+    def __init__(self,model, componentname=None):
+        assert isinstance( model, al.ComponentNodeCombined)
+
+        # Is our component already flat??
         if model.isflat():
-            self.reducedcomponent = model
+            self.reducedcomponent = ClonerVisitor.Visit( model )
             return
 
-
-        self.componentname=componentname
+        # New components name
+        self.componentname=componentname if componentname else model.name
 
 
         # Flatten all the namespaces:
         self.model = ClonerVisitorPrefixNamespace().Visit(model)
 
-        self.modelcomponents = ModelVisitorDF_ComponentCollector(self.model).components
-        self.modelsubmodels = ModelVisitorDF_ModelCollector(self.model, include_root=True).models
-
-        self.componentswithregimes = [ m for m in ModelVisitorDF_ModelCollector(self.model, include_root=True).models if list(m.regimes) ] 
-        print 'Components with Regimes:', self.componentswithregimes
+        # Make a list of all components, and those components with regimes: 
+        self.all_components = list( self.model.query.recurse_all_components )
+        self.componentswithregimes = [ m for m in self.all_components if list(m.regimes) ] 
+        
         
         self.build_new_regime_space()
         self.remap_ports()
@@ -74,7 +69,7 @@ class ComponentFlattener(object):
         return oldtransition.AcceptVisitor( ClonerVisitor(prefix='',prefix_excludes=[]) )
 
     def create_on_event(self, oldtransition, oldcomponent, fromRegime, toRegime):
-        from nineml.abstraction_layer.visitors import ClonerVisitor
+        #from nineml.abstraction_layer.visitors import ClonerVisitor
         return oldtransition.AcceptVisitor( ClonerVisitor(prefix='',prefix_excludes=[]) )
 
 
@@ -124,8 +119,8 @@ class ComponentFlattener(object):
 
         # Check for event-emission cycles:
         # TODO
-        recv_event_input_ports = flattenFirstLevel( [comp.query.event_recv_ports() for comp in self.modelcomponents] )
-        event_port_map = flattenFirstLevel( [comp.get_fully_qualified_port_connections() for comp in self.modelsubmodels] )
+        recv_event_input_ports = flattenFirstLevel( [comp.query.event_recv_ports() for comp in self.all_components] )
+        event_port_map = flattenFirstLevel( [comp.get_fully_qualified_port_connections() for comp in self.all_components] )
         event_port_map = [ (p1.getstr(), p2.getstr() ) for (p1,p2) in event_port_map ] 
 
 
@@ -226,56 +221,6 @@ class ComponentFlattener(object):
                 
 
 
-#        import sys
-#        #sys.exit(0)
-#
-#
-#        # Now we are in a position to setup the transitions:
-#        # Lets reiterate over the regime-space:
-#        
-#        for regimetuple,regimeNew in newRegimeLookupMap.iteritems():
-#            #For each regime in the regimetuple, lets see what we can reach from there:
-#            
-#            #print "RegimeTuple:",regimetuple
-#            for regimeIndex, regime in enumerate( regimetuple ):
-#                #print 'RegimeIndex:',regimeIndex, "NTransitions:", len(regime.transitions)
-#
-#                for oldtransition in regime.on_events:
-#                    # We calculate the tuple of the Regime this transitions should jump to:
-#                    #print oldtransition
-#                    srcRegime = list( regimetuple )
-#                    dstRegime = srcRegime[:]
-#
-#                    # Points to another node:
-#                    dstRegimeName = oldtransition.to.get_ref() if oldtransition.to else regime
-#                    dstRegimeOld = self.modelcomponents[regimeIndex].query.regime(name=dstRegimeName.name) 
-#                    dstRegime[regimeIndex] = dstRegimeOld
-#                    newRegimeTo = newRegimeLookupMap[ tuple(dstRegime) ] 
-#                    transName = newRegimeTo.name
-#
-#                    oldcomponent = self.modelcomponents[regimeIndex]
-#                    print oldtransition
-#                    #t = self.create_transition(oldtransition=oldtransition,oldcomponent=oldcomponent, fromRegime=regimeNew, toRegime=newRegimeTo)
-#                    t = self.create_on_event(oldtransition=oldtransition,oldcomponent=oldcomponent, fromRegime=regimeNew, toRegime=newRegimeTo)
-#                    regimeNew.add_on_event( on_event=t )
-#        
-#                for oldtransition in regime.on_conditions:
-#                    # We calculate the tuple of the Regime this transitions should jump to:
-#                    #print oldtransition
-#                    srcRegime = list( regimetuple )
-#                    dstRegime = srcRegime[:]
-#
-#                    # Points to another node:
-#                    dstRegimeName = oldtransition.to.get_ref() if oldtransition.to else regime
-#                    dstRegimeOld = self.modelcomponents[regimeIndex].query.regime(name=dstRegimeName.name) 
-#                    dstRegime[regimeIndex] = dstRegimeOld
-#                    newRegimeTo = newRegimeLookupMap[ tuple(dstRegime) ] 
-#                    transName = newRegimeTo.name
-#
-#                    oldcomponent = self.modelcomponents[regimeIndex]
-#                    t = self.create_on_condition(oldtransition=oldtransition,oldcomponent=oldcomponent, fromRegime=regimeNew, toRegime=newRegimeTo)
-#                    regimeNew.add_on_condition( on_condition = t )
-        self.newRegimeLookupMap = newRegimeLookupMap
 
     
 
@@ -289,9 +234,9 @@ class ComponentFlattener(object):
         newRegimeLookupMap = self.newRegimeLookupMap
 
         from nineml.utility import flattenFirstLevel
-        from nineml.abstraction_layer.core import NamespaceAddress, ComponentNodeCombined
+        from nineml.abstraction_layer.component import NamespaceAddress, ComponentNodeCombined
 
-        new_ports = flattenFirstLevel( [comp.analog_ports for comp in self.modelcomponents]) 
+        new_ports = flattenFirstLevel( [comp.analog_ports for comp in self.all_components]) 
         new_ports = dict( [ (p.name, p) for p in new_ports ] ) 
         
         print "PORTS:"
@@ -305,15 +250,15 @@ class ComponentFlattener(object):
 
         print 'Regimes:', newRegimeLookupMap.values()
         dynamics = al.Dynamics( regimes = newRegimeLookupMap.values(),
-                                aliases = flattenFirstLevel( [ m.aliases for m in self.modelcomponents ] ),
-                                state_variables = flattenFirstLevel( [ m.state_variables for m in self.modelcomponents ]  ),
+                                aliases = flattenFirstLevel( [ m.aliases for m in self.all_components ] ),
+                                state_variables = flattenFirstLevel( [ m.state_variables for m in self.all_components ]  ),
                                 )  
 
         self.reducedcomponent = al.ComponentNodeCombined( name=self.componentname, 
                                                          dynamics=dynamics, 
                                                          analog_ports=new_ports.values() , 
-                                                         event_ports= flattenFirstLevel( [comp.event_ports for comp in self.modelcomponents] ), 
-                                                         parameters=flattenFirstLevel( [ m.parameters for m in self.modelcomponents ] ) )
+                                                         event_ports= flattenFirstLevel( [comp.event_ports for comp in self.all_components] ), 
+                                                         parameters=flattenFirstLevel( [ m.parameters for m in self.all_components ] ) )
 
 
 
@@ -335,7 +280,7 @@ class ComponentFlattener(object):
         
         # Handle port mappings:
         # portconnections = [ (NS -> NS),(NS -> NS ), (NS -> NS) ]
-        portconnections = [model.get_fully_qualified_port_connections() for model in self.modelsubmodels] 
+        portconnections = [model.get_fully_qualified_port_connections() for model in self.all_components] 
         portconnections = list( itertools.chain(* portconnections ) )
 
         # A. Handle Recieve Ports:
@@ -370,32 +315,7 @@ class ComponentFlattener(object):
 
 
 
-        
-        
-
-
-
-
-
-
-
-
-
-            
-
-
-
-
-
-
-
-
-
-def reduce_to_single_component( model, componentname ):
-    reducer = ComponentFlattener(model,componentname)
-    return reducer.reducedcomponent
-
-def flatten( model, componentname ):
+def flatten( model, componentname=None ):
     reducer = ComponentFlattener(model,componentname)
     return reducer.reducedcomponent
 

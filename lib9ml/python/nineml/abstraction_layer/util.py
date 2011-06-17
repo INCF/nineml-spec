@@ -1,14 +1,14 @@
 
-import core
+import component
 
 def check_flat_component( func ):
     def newfunc(*args,**kwargs):
         print args
         print kwargs
         if 'component' in kwargs:
-            component = kwargs['component']
-            assert isinstance( component, core.ComponentNodeCombined)
-            assert component.isflat()
+            comp = kwargs['component']
+            assert isinstance( comp, component.ComponentNodeCombined)
+            assert comp.isflat()
         else:
             assert False
 
