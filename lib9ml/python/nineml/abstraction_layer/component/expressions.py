@@ -279,36 +279,63 @@ class ExpressionWithSimpleLHS(ExpressionWithLHS):
 
 
 class Alias(ExpressionWithSimpleLHS, RegimeElement):
+    """Aliases are a way of defining a variable local to a ``ComponentClass``, 
+    in terms of its ``Parameters``, ``StateVariables`` and input ``Analog
+    Ports``. ``Alias``es allow us to reduce the duplication of code in
+    ComponentClass definition, and allow allow more complex outputs to
+    ``AnalogPort`` than simply individual ``StateVariables``.
+   
+   When specified from a ``string``, an alias uses the notation ``:=``
+
+    ``Alias``es can be defined in terms of other ``Alias``es, so for example, if
+    we had ComponentClass representing a Hodgkin-Huxley style gating channel,
+    which has a ``Property``, `reversal_potential`, and an input ``AnalogPort``,
+    `membrane_voltage`, then we could define an ``Alias``:: 
+
+        ``driving_force := reversal_potential - membrane_voltage``
+
+    If the relevant ``StateVariables``, ``m`` and ``h``, for example were also
+    defined, and a ``Parameter``, ``g_bar``, we could also define the current flowing
+    through this channel as::
     
+        current := driving_force * g * m * m * m * h
+
+    This current could then be attached to an output ``AnalogPort`` for example.
+
+    It is important to ensure that Alias definitions are not circular, for
+    example, it is not valid to define two alias in terms of each other::
+
+        a := b + 1
+        b := 2 * a
+
+    During code generation, we typically call ``ComponentClass.backsub_all()``.
+    This method first expands each alias in terms of other aliases, such that
+    each alias depends only on parameters, statevariables and input analogport.
+    Next, it expands any alias definitions within time-derivatives,
+    state-assignments, conditionals and output analog-ports.
+
     
 
-    def __init__(self, lhs,rhs):
+    """
+
+    def __init__(self, lhs, rhs):
+        """ Constructor for an Alias 
+
+        :param lhs: A `string` specifying the left-hand-side, i.e. the alias
+            name. This should be a single `symbol`.
+        :param rhs: A `string` specifying the right-hand-side. This should be a
+            mathematical expression, expressed in terms of other aliases,
+            state-variables, parameters and input-analogports local to the
+            component.
+        
+        """
         ExpressionWithSimpleLHS.__init__(self, lhs, rhs)
 
     def __repr__(self):
         return "<Alias: %s := %s>" % (self.lhs,self.rhs)
 
-    def _clone(self, prefix, prefix_excludes, name ):
-
-        def doPrefix(atom):
-            if a in prefix_excludes: return False
-            if math_namespace.is_in_math_namespace(a): return False
-            return True
-
-        b = Alias( lhs = self.lhs, rhs = self.rhs )
-        name_map = dict( [ (a, prefix+a) for a in self.atoms if doPrefix(a) ])
-        b.name_transform_inplace( name_map = name_map )
-        return b
-
-
     def AcceptVisitor(self, visitor,**kwargs):
         return visitor.VisitAlias(self, **kwargs)
-
-
-#    @classmethod
-#    def from_xml(cls, element):
-#        return cls(element.get("name"), element.find(NINEML+"math-inline").text)
-
 
     # Deprecated - to remove:
     def as_expr(self):
@@ -322,53 +349,38 @@ class Alias(ExpressionWithSimpleLHS, RegimeElement):
 
 
 class Assignment(ExpressionWithSimpleLHS, RegimeElement):
-    element_name = "StateAssignment"
-    n = 0
+    """Assignments represent a change that happens to the value of a
+    ``StateVariable`` during a transition between regimes. 
+    
+    For example, in an integrate-and-fire neuron, we may want to reset the
+    voltage back to zero, after it has reached a certain threshold. In this
+    case, we would have an ``OnCondition`` object, that is triggered when
+    ``v>vthres``. Attached to this OnCondition transition, we would attach an
+    Assignment which sets ``v=vreset``.
+
+    The left-hand-side symbol must be a state-variable of the component.
+
+    """
+
+    def __init__(self, to, expr, name=None):
+        """Assignment Constructor
+        
+        :param lhs: A `string`, which must be a state-variable of the component.
+        :param rhs: A `string`, representing the new value of the state after
+            this assignment.
+        
+        """
+        ExpressionWithSimpleLHS.__init__(self, lhs=to, rhs=expr)
 
     def AcceptVisitor(self, visitor, **kwargs):
         return visitor.VisitAssignment(self, **kwargs)
-
-
-
-        
-    # Interface:
-    def _clone(self, prefix, prefix_excludes, name ):
-    
-        to = self.to if self.to in prefix_excludes else prefix + self.to
-        return Assignment( 
-                    to = to,
-                    expr = Expression.prefix(self,prefix=prefix,exclude=prefix_excludes,expr=self.rhs),
-                    name = name
-                    )
-    
    
-    def __init__(self, to, expr, name=None):
-        ExpressionWithSimpleLHS.__init__(self, lhs=to, rhs=expr)
-
-
-    def self_referencing(self):
-        """ Returns True if the assignment is of the form U = f(U,...), otherwise False"""
-        return self.to in self.names
 
     def __repr__(self):
         return "Assignment('%s', '%s')" % (self.to, self.rhs)
 
     def as_expr(self):
         return "%s = %s" % (self.lhs, self.rhs)
-
-    def to_xml(self):
-        return E(self.element_name,
-                 E("math-inline", self.rhs),
-                 name=self.name,
-                 to=self.to)
-                 
-    @classmethod
-    def from_xml(cls, element):
-        assert element.tag == NINEML+cls.element_name
-        math = element.find(NINEML+"math-inline").text
-        return cls(to=element.get("to"), name=element.get("name"),
-                   expr=math)
-
 
 
 

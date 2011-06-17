@@ -68,7 +68,7 @@ class XMLWriter(ComponentVisitor):
         return E(port.element_name, name=port.name, mode=port.mode, **kwargs)
 
     def VisitAssignment(self, assignment, **kwargs):
-        return E(assignment.element_name,
+        return E('StateAssignment',
                  E("MathInline", assignment.rhs),
                  variable=assignment.lhs)
 

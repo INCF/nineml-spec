@@ -6,6 +6,7 @@ from itertools import chain
 
 
 
+from nineml.abstraction_layer.component import math_namespace
 
 
 
@@ -150,10 +151,22 @@ class ClonerVisitor(ComponentVisitor):
                     name = assignment.name
                     )
 
+
     def VisitAlias(self, alias, **kwargs):
         prefix = kwargs.get( 'prefix','')
         prefix_excludes = kwargs.get('prefix_excludes',[] )
-        return alias.clone( prefix=prefix, prefix_excludes=prefix_excludes )
+        name = prefix + alias.name
+
+        def doPrefix(atom):
+            if a in prefix_excludes: return False
+            if math_namespace.is_in_math_namespace(a): return False
+            return True
+
+        new_alias = nineml.abstraction_layer.Alias( lhs = alias.lhs, rhs = alias.rhs )
+        name_map = dict( [ (a, prefix+a) for a in new_alias.atoms if doPrefix(a) ])
+        new_alias.name_transform_inplace( name_map = name_map )
+        return new_alias
+
 
     def VisitODE(self,ode,**kwargs):
         prefix = kwargs.get( 'prefix','')
