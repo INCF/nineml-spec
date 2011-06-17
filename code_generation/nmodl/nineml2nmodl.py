@@ -55,7 +55,7 @@ def ode_for(regime, variable):
     Yields the ODE for the given variable in the regime
     """
     print 'Ode for %s in Regime %s '%(variable, regime)
-    odes = [eq for eq in regime.time_derivatives if eq.to == variable.name]
+    odes = [eq for eq in regime.time_derivatives if eq.dependent_variable == variable.name]
     if len(odes) == 0:
         odes.append(al.ODE(variable, "t", "0.0"))
     return expect_single( odes )

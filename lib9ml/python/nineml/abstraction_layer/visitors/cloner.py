@@ -171,7 +171,23 @@ class ClonerVisitor(ComponentVisitor):
     def VisitODE(self,ode,**kwargs):
         prefix = kwargs.get( 'prefix','')
         prefix_excludes = kwargs.get('prefix_excludes',[] )
-        return ode.clone( prefix=prefix, prefix_excludes=prefix_excludes )
+
+        #if ode.name:
+        #    name = prefix +  ode.name
+        #else:
+        #    name = None
+
+        dep = ode.dependent_variable if ode.dependent_variable in prefix_excludes else prefix + ode.dependent_variable
+        indep = ode.independent_variable if ode.independent_variable in prefix_excludes else prefix + ode.independent_variable
+         
+        return nineml.abstraction_layer.ODE( 
+                    dependent_variable = dep,
+                    indep_variable =     indep,
+                    rhs = nineml.abstraction_layer.Expression.prefix(ode,prefix=prefix,exclude=prefix_excludes,expr=ode.rhs),
+                    #name = name
+                    )
+
+        #return ode.clone( prefix=prefix, prefix_excludes=prefix_excludes )
 
     def VisitCondition(self, condition,**kwargs):
         prefix = kwargs.get( 'prefix','')

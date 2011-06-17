@@ -394,92 +394,49 @@ class Assignment(ExpressionWithSimpleLHS, RegimeElement):
 class ODE(Equation, RegimeElement):
     """ 
     Represents a first-order, ordinary differential equation.
+
     """
-#    element_name = "TimeDerivative"
-    n = 0
     
+    def __init__(self, dependent_variable, indep_variable, rhs): 
+        if indep_variable != 't':
+            raise NineMLRuntimeException('Only time derivatives supported')
 
-    def _clone(self, prefix, prefix_excludes, name ):
-    
-        dep = self.dependent_variable if self.dependent_variable in prefix_excludes else prefix + self.dependent_variable
-        indep = self.indep_variable if self.indep_variable in prefix_excludes else prefix + self.indep_variable
-         
-        return ODE( 
-                    dependent_variable = dep,
-                    indep_variable =     indep,
-                    rhs = Expression.prefix(self,prefix=prefix,exclude=prefix_excludes,expr=self.rhs),
-                    name = name
-                    )
-
-    
-    def __init__(self, dependent_variable, indep_variable, rhs, name=None):
-        self.dependent_variable = dependent_variable
-        self.indep_variable = indep_variable
+        self._dependent_variable = dependent_variable
+        self._independent_variable = indep_variable
         self.rhs = rhs
 
-        if self.dependent_variable in math_namespace.symbols:
+        if self._dependent_variable in math_namespace.symbols:
             raise ValueError, "ODE '%s' redefines math symbols (such as 'e','pi')" % self.as_expr()
-
-        self.name = name or ("ODE%d" % ODE.n)
-        ODE.n += 1
-        #self.parse()
-
 
         
     def __repr__(self):
-        return "ODE(d%s/d%s = %s)" % (self.dependent_variable,
-                                      self.indep_variable,
+        return "ODE(d%s/d%s = %s)" % (self._dependent_variable,
+                                      self._independent_variable,
                                       self.rhs)
 
-    def __eq__(self, other):
-        from operator import and_
-
-        if not isinstance(other, self.__class__):
-            return False
-
-        return reduce(and_, (self.name == other.name,
-                             self.dependent_variable == other.dependent_variable,
-                             self.indep_variable == other.indep_variable,
-                             self.rhs == other.rhs))
-
-
-    @property
-    def lhs(self):
-        return "d%s/d%s" % (self.dependent_variable, self.indep_variable)
-
-    def _get_to(self):
-        return self.dependent_variable
-    def _set_to(self, name):
-        self.dependent_variable = name
-        
-    to = property(fget=_get_to, fset=_set_to)
-    
     def as_expr(self):
-        return "d%s/d%s = %s" % (self.dependent_variable,
-                                 self.indep_variable,
+        return "d%s/d%s = %s" % (self._dependent_variable,
+                                 self._independent_variable,
                                  self.rhs)
 
     
     def AcceptVisitor(self, visitor, **kwargs):
         return visitor.VisitODE(self,**kwargs)
 
+    @property
+    def lhs(self):
+        return "d%s/d%s" % (self._dependent_variable, self._independent_variable)
 
-    def to_xml(self):
-        return E(self.element_name,
-                 E("math-inline", self.rhs),
-                 name=self.name,
-                 dependent_variable=self.dependent_variable,
-                 independent_variable = self.indep_variable)
+    @property
+    def dependent_variable(self):
+        return self._dependent_variable
 
-    @classmethod
-    def from_xml(cls, element):
-        assert element.tag == NINEML+cls.element_name
-        rhs = element.find(NINEML+"math-inline").text
-        return cls(element.get("dependent_variable"),
-                   element.get("independent_variable"),
-                   rhs,
-                   name=element.get("name"))
+    @property
+    def independent_variable(self):
+        return self._independent_variable
     
+
+
 
 
 
