@@ -1,4 +1,4 @@
-
+from namespaceaddress import NamespaceAddress
 
 #from nineml.utility import expect_single, filter_expect_single, _filter, filter_by_type
 import nineml.utility
@@ -40,3 +40,27 @@ class ComponentQueryer(object):
                 yield sc
     #More advanced searches on just this node:
 
+    # Connections and Subnodes:
+    def get_fully_qualified_port_connections(self):
+        namespace = self.component.get_node_addr()
+        def make_fqname(target):
+            return NamespaceAddress.concat( namespace, target)
+        conns = [ (make_fqname(src),make_fqname(sink)) for (src,sink) in
+                self.component.portconnections ]
+        return conns
+
+
+
+
+
+
+    #Not currently used, but maybe useful in future:
+    @property
+    def ports_map(self):
+        assert False
+        return dict( [ (p.name,p) for p in itertools.chain(self._analog_ports, self._event_ports) ] )
+
+    @property
+    def alias_symbols(self):
+        assert False
+        return [ a.lhs for a in self.aliases ]

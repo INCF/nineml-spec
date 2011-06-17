@@ -69,9 +69,12 @@ class ComponentClassMixin_FlatStructure(object):
 
     @property
     def ports_map(self):
+        assert False
         return dict( [ (p.name,p) for p in itertools.chain(self._analog_ports, self._event_ports) ] )
+
     @property
     def alias_symbols(self):
+        assert False
         return [ a.lhs for a in self.aliases ]
 
 
@@ -91,12 +94,33 @@ class ComponentClassMixin_FlatStructure(object):
 
 
 
-    
+    def backsub_all(self): 
+        """Expand all alias definitions in local equations.
+
+        This function finds ``Aliases``, ``TimeDerivatives``, ``SendPorts``, ``Assignments``
+        and ``Conditions``  with which are defined in terms of other aliases,
+        and expands them, such that each only has Parameters,
+        StateVariables and recv/reduce AnalogPorts on the RHS.
+        
+        It is syntactic sugar for::
+            
+            self.backsub_aliases()
+            self.backsub_equations()
+
+        """
+
+        self.backsub_aliases()
+        self.backsub_equations()
 
 
     def backsub_aliases(self):
-        """ This function finds aliases with undefined functions, and uses
-        the alias_map to attempt to resolve them. """
+        """Expands all alias definitions within the local aliases.
+        
+        This function finds aliases with which are defined in terms of other
+        aliases, and expands them, such that each aliases only has Parameters,
+        StateVariables and recv/reduce AnalogPorts on the RHS.
+
+        """
 
         # build alias dependency tree
         # and perform substitution, recursively
@@ -118,8 +142,14 @@ class ComponentClassMixin_FlatStructure(object):
             bd_tree[b.name] = build_and_resolve_bdtree(b)
 
     def backsub_equations(self):
-        """ this function finds all undefined functions in equations, and uses
-        the alias_map to resolve them """
+        """Expands all equations definitions within the local aliases.
+        
+        This function finds ``TimeDerivatives``, ``SendPorts``, ``Assignments``
+        and ``Conditions``  with which are defined in terms of other aliases,
+        and expands them, such that each only has Parameters,
+        StateVariables and recv/reduce AnalogPorts on the RHS.
+        """
+
         from nineml.abstraction_layer.visitors import InPlaceTransform
 
         for alias in self.aliases:
@@ -129,24 +159,29 @@ class ComponentClassMixin_FlatStructure(object):
                 r.AcceptVisitor(trans)
 
 
-    def __eq__(self, other):
-        if not isinstance(other, self.__class__):
-            return False
+    #def __eq__(self, other):
+    #    if not isinstance(other, self.__class__):
+    #        return False
 
-        sort_key = lambda node: node.name
+    #    sort_key = lambda node: node.name
 
-        return reduce(and_, (self.name == other.name,
-                             self.parameters == other.parameters,
-                             sorted(self.transitions, key=sort_key) == sorted(other.transitions, key=sort_key),
-                             sorted(self.regimes, key=sort_key) == sorted(other.regimes, key=sort_key),
-                             sorted(self.aliases, key=sort_key) == sorted(other.aliases, key=sort_key)))
+    #    return reduce(and_, (self.name == other.name,
+    #                         self.parameters == other.parameters,
+    #                         sorted(self.transitions, key=sort_key) == sorted(other.transitions, key=sort_key),
+    #                         sorted(self.regimes, key=sort_key) == sorted(other.regimes, key=sort_key),
+    #                         sorted(self.aliases, key=sort_key) == sorted(other.aliases, key=sort_key)))
 
 
     def write(self, file, flatten=True):
+        """Export this model to an XML file.
+
+        :params file: A filename or fileobject
+        :params flatten: Boolean specifying whether the component should be
+            flattened before saving
+
+
         """
-        Export this model to a file in 9ML XML format.
-        file is filename or file object.
-        """
+
         from nineml.abstraction_layer.writers import XMLWriter
         return XMLWriter.write(component=self, file=file, flatten=flatten)
 
@@ -157,52 +192,73 @@ class ComponentClassMixin_FlatStructure(object):
 
 class ComponentClassMixin_NamespaceStructure(object):
     def __init__(self, subnodes = None, portconnections=None):  
+
+        # Prevent dangers with default arguments.
         subnodes = subnodes or {}
         portconnections = portconnections or []
 
-
+        # Initialise class variables:
         self._parentmodel = None
         self.subnodes = {}
         self.portconnections = []
 
+        # Add the parameters using class methods:
         for namespace,subnode in subnodes.iteritems():
             self.insert_subnode(subnode=subnode, namespace=namespace)
         
         for src,sink in portconnections:
             self.connect_ports(src,sink)
 
-    # Naming Functions:
-    # != TO GO -!
-    def getContainedNamespaceName(self):
-        if not self.getParentModel(): return ""
-        return nineml.utility.invert_dictionary(self.getParentModel().subnodes)[self]
-
-    def get_node_addr(self):
-        if not self.getParentModel():
-            return NamespaceAddress.create_root()
-        else:
-            return self.getParentModel().get_node_addr().get_subns_addr( self.getContainedNamespaceName() ) 
-
-
     # Parenting:
-    def setParentModel(self,parentmodel):
+    def _set_parent_model(self,parentmodel):
         assert not self._parentmodel
         self._parentmodel = parentmodel
-    def getParentModel(self): 
+    def _get_parent_model(self): 
         return self._parentmodel
+
+
+
+
+    def get_node_addr(self):
+        """Get the namespace address of this component"""
+
+        parent = self._get_parent_model() 
+        if not parent:
+            return NamespaceAddress.create_root()
+        else:
+            contained_namespace = nineml.utility.invert_dictionary(parent.subnodes)[self]
+            return parent.get_node_addr().get_subns_addr( contained_namespace ) 
+
+
         
 
     def insert_subnode(self, subnode, namespace):
+        """Insert a subnode into this component
+        
+        :param subnode: An object of type ComponentClass.
+        :param namespace: A `string` specifying the name of the component in
+            this components namespace.
+        :raises : NineMLRuntimeException if a subnode already existing at `namespace`
+        """
         assert not namespace in self.subnodes
         self.subnodes[namespace] = copy.deepcopy( subnode ) 
-        self.subnodes[namespace].setParentModel(self)
+        self.subnodes[namespace]._set_parent_model(self)
 
     def connect_ports( self, src, sink ):
+        """Connects the ports of 2 subcomponents.
+        
+        The ports can be specified as `string`_s or `NamespaceAddresses`_es.
+
+        :param src: The source port of one sub-component; this should either an
+            event port or analog port, but it *must* be a send port.
+        :param sink: The sink port of one sub-component; this should either an
+            event port or analog port, but it *must* be either a 'recv' or a
+            'reduce' port.
+        """
+
         #TODO: Check that the ports are connected to items in this model.
         self.portconnections.append( (NamespaceAddress(src),NamespaceAddress(sink) ) ) 
 
-    def isLeaf(self):
-        return len(self.subnodes) == 0
 
 
     
@@ -210,48 +266,103 @@ class ComponentClassMixin_NamespaceStructure(object):
 
 
 class ComponentClass( ComponentClassMixin_FlatStructure, ComponentClassMixin_NamespaceStructure ):
-    """A ComponentClass object represents a *component* in NineML. A component is an
-    object with 
-        * a fully connected regime-transition graph
+    """A ComponentClass object represents a *component* in NineML. 
 
-    .. todo::
-
-    :param name: the name of the container
-    :type parameters: integer or None
-    :rtype: list of strings 
-        
-        Some explanation in general about how this works.
-    """
-   
+      .. todo::
     
-    #element_name = "ComponentClass"
+         For more information, see
+
+    """
+    
 
     def __init__(self, name, parameters=None, analog_ports=None, event_ports=None, dynamics=None, subnodes=None, portconnections=None, interface=None):
         """Constructs a ComponentClass
         
         :param name: The name of the component.
-        :param parameters: A list containing either ``Parameter`` objects or strings representing the parameter names. If ``None``, then the parameters are automatically infered from the dynamics block.
-        :param analog_ports:
+        :param parameters: A list containing either ``Parameter`` objects 
+            or strings representing the parameter names. If ``None``, then the
+            parameters are automatically infered from the dynamics block.
+        :param analog_ports: A list of ``AnalogPort`` objects, which will be the
+            local analog-ports for this object.
+        :param event_ports: A list of ``EventPorts`` objects, which will be the
+            local event-ports for this object. If this is ``None``, then they
+            will be automatically inferred from the dyamics block. 
+        :param dynamics: A `Dynamics` object, defining the local dynamics of the
+            component.
+        :param subnodes: A dictionary mapping namespace-names to sub-component.
+            [Type: ``{string:ComponentClass, string:ComponentClass,
+            string:ComponentClass}`` ] describing the namespace of subcomponents 
+            for this component.
+        :param portconnections: A list of pairs, specifying the connections
+            between the ports of the subcomponents in this component. These can
+            be `(NamespaceAddress,NamespaceAddress)' or ``(string,string)``.
+        :param interface: A shorthand way of specifying the **interface** for
+            this component; Parameters, AnalogPorts and EventPorts.
+            ``interface`` takes a list of these objects, and automatically
+            resolves them by type into the correct types.
+
+        Examples:
+
+        >>> a = ComponentClass(name='MyComponent1')
+        
+        .. todo::
+            
+            Point this towards and example of constructing ComponentClasses.
+            This can't be here, because we also need to know about dynamics.
+            For examples
+
+        
+
         """
 
-        self.query = componentqueryer.ComponentQueryer(self)
+        self._query = componentqueryer.ComponentQueryer(self)
 
         # We should always create a dynamics object, even is it is empty:
         if dynamics == None:
             dynamics = dyn.Dynamics()
 
-        ComponentClassMixin_FlatStructure.__init__(self, name=name, parameters = parameters, analog_ports=analog_ports, event_ports = event_ports, dynamics = dynamics)
-        ComponentClassMixin_NamespaceStructure.__init__(self,subnodes=subnodes, portconnections=portconnections)
+        # Construct super-classes:
+        ComponentClassMixin_FlatStructure.__init__(self, 
+                                                   name=name, 
+                                                   parameters = parameters, 
+                                                   analog_ports=analog_ports, 
+                                                   event_ports = event_ports, 
+                                                   dynamics = dynamics )
+
+        ComponentClassMixin_NamespaceStructure.__init__(self,
+                                                   subnodes=subnodes, 
+                                                   portconnections=portconnections)
 
         #Finalise initiation:
         self._ResolveTransitionRegimeNames()
- 
+
+        # Add some additional error checking:
+        # TODO
+
+
+    @property
+    def query(self):
+        """ Returns the ``ComponentQuery`` object associated with this class"""
+        return self._query
+
 
     def is_flat(self):
-        """Returns a *Boolean* specifying whether this component is flat; i.e. has no subcomponent
-        """
-        return self.isLeaf()
+        """Is this component flat or does it have subcomponents?
         
+        Returns a ``Boolean`` specifying whether this component is flat; i.e.
+        has no subcomponent
+        """
+        
+        return len(self.subnodes) == 0
+        
+
+
+    def AcceptVisitor(self, visitor,**kwargs):
+        return visitor.VisitComponentClass(self)
+
+        
+
+
     def _ResolveTransitionRegimeNames(self):
         # Check that the names of the regimes are unique:
         names = [ r.name for r in self.regimes ]
@@ -265,19 +376,4 @@ class ComponentClass( ComponentClassMixin_FlatStructure, ComponentClassMixin_Nam
         for t in self.transitions:
             assert t.target_regime_name in regimeMap, "Can't resolve transition's target regime: %s"%t.target_regime_name
             t.set_target_regime( regimeMap[t.target_regime_name] )
-
-
-        
-    # Connections and Subnodes:
-    def get_fully_qualified_port_connections(self):
-        namespace = self.get_node_addr()
-        def make_fqname(target):
-            return NamespaceAddress.concat( namespace, target)
-        conns = [ (make_fqname(src),make_fqname(sink)) for (src,sink) in self.portconnections ]
-        return conns
-
-    def AcceptVisitor(self, visitor,**kwargs):
-        return visitor.VisitComponentClass(self)
-
-
 

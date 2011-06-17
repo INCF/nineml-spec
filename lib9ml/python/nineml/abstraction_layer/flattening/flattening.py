@@ -7,7 +7,6 @@ import itertools
 
 
 import nineml.abstraction_layer as al
-#from nineml.abstraction_layer.visitors.model_visitors import ModelVisitorDF_ComponentCollector, ModelVisitorDF_ModelCollector
 from nineml.abstraction_layer.visitors import ClonerVisitor, ClonerVisitorPrefixNamespace
 
 class ComponentFlattener(object):
@@ -120,7 +119,7 @@ class ComponentFlattener(object):
         # Check for event-emission cycles:
         # TODO
         recv_event_input_ports = flatten_first_level( [comp.query.event_recv_ports() for comp in self.all_components] )
-        event_port_map = flatten_first_level( [comp.get_fully_qualified_port_connections() for comp in self.all_components] )
+        event_port_map = flatten_first_level( [comp.query.get_fully_qualified_port_connections() for comp in self.all_components] )
         event_port_map = [ (p1.getstr(), p2.getstr() ) for (p1,p2) in event_port_map ] 
 
 
@@ -281,7 +280,7 @@ class ComponentFlattener(object):
         
         # Handle port mappings:
         # portconnections = [ (NS -> NS),(NS -> NS ), (NS -> NS) ]
-        portconnections = [model.get_fully_qualified_port_connections() for model in self.all_components] 
+        portconnections = [model.query.get_fully_qualified_port_connections() for model in self.all_components] 
         portconnections = list( itertools.chain(* portconnections ) )
 
         # A. Handle Recieve Ports:
