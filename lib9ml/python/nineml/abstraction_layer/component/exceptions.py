@@ -1,0 +1,3 @@
+
+class UnimplementedError(RuntimeError):
+    pass
