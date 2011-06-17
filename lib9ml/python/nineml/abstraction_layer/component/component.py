@@ -12,9 +12,10 @@ import copy
 import itertools
 
 
-class ComponentClassMixin_FlatStructure(object):
+class ComponentClassMixinFlatStructure(object):
 
-    def __init__(self, name, parameters = None, analog_ports = None, event_ports = None, dynamics=None):
+    def __init__(self, name, parameters = None, analog_ports = None, 
+                 event_ports = None, dynamics=None):
 
         self._name = name
         self._parameters = parameters or []
@@ -73,12 +74,6 @@ class ComponentClassMixin_FlatStructure(object):
     # -------------------------- #
 
 
-    @property
-    def on_conditions(self):
-        assert False
-        for r in self.regimes:
-            for c in r.on_conditions:
-                yield c
 
 
 
@@ -109,25 +104,24 @@ class ComponentClassMixin_FlatStructure(object):
         StateVariables and recv/reduce AnalogPorts on the RHS.
 
         """
+        #TODO: Check for recursion
 
-        # build alias dependency tree
-        # and perform substitution, recursively
-        def build_and_resolve_bdtree(b):
-            _bd_tree = {}
-            for f in b.missing_functions:
-                if f in self.aliases_map:
-                    _bd_tree[f] = build_and_resolve_bdtree(self.aliases_map[f])
+        # Back-substitute aliases, by resolving them
+        # them then substituting recursively:
+        def build_and_resolve_alias(alias):
+            for missing_alias_name in alias.missing_functions:
+                if missing_alias_name in self.aliases_map:
+                    missing_alias = self.aliases_map[missing_alias_name]
+                    build_and_resolve_alias( missing_alias )
                     # resolve (lower level is already resolved now) 
-                    b.substitute_alias(self.aliases_map[f])
-                    # re-calc functions
-                    b.parse()
+                    alias.substitute_alias( missing_alias )
                 else:
-                    raise ValueError, "alias '%s' calls unresolvable functions." % b.as_expr()
-            return _bd_tree  
+                    errmsg = "Unable to resolve alias %s" % alias.as_expr()
+                    raise NineMLRuntimeException(errmsg)
+
         
-        bd_tree = {}
-        for b in self.aliases_map.itervalues():
-            bd_tree[b.name] = build_and_resolve_bdtree(b)
+        for alias in self.aliases:
+            build_and_resolve_alias(alias)
 
     def backsub_equations(self):
         """Expands all equations definitions within the local aliases.
@@ -141,23 +135,12 @@ class ComponentClassMixin_FlatStructure(object):
         from nineml.abstraction_layer.visitors import InPlaceTransform
 
         for alias in self.aliases:
-            trans = InPlaceTransform( originalname = alias.lhs, targetname = "(%s)"%alias.rhs )
-            # Since we do not want to backsub in lhs of this alias, we can't call self.AcceptVisitor() directly
+            trans = InPlaceTransform( originalname = alias.lhs, 
+                                      targetname = "(%s)"%alias.rhs )
+            # Since we do not want to backsub in lhs of this alias, we can't
+            # call self.AcceptVisitor() directly
             for r in self.regimes:
                 r.AcceptVisitor(trans)
-
-
-    #def __eq__(self, other):
-    #    if not isinstance(other, self.__class__):
-    #        return False
-
-    #    sort_key = lambda node: node.name
-
-    #    return reduce(and_, (self.name == other.name,
-    #                         self.parameters == other.parameters,
-    #                         sorted(self.transitions, key=sort_key) == sorted(other.transitions, key=sort_key),
-    #                         sorted(self.regimes, key=sort_key) == sorted(other.regimes, key=sort_key),
-    #                         sorted(self.aliases, key=sort_key) == sorted(other.aliases, key=sort_key)))
 
 
     def write(self, file, flatten=True):
@@ -166,7 +149,6 @@ class ComponentClassMixin_FlatStructure(object):
         :params file: A filename or fileobject
         :params flatten: Boolean specifying whether the component should be
             flattened before saving
-
 
         """
 
@@ -178,7 +160,7 @@ class ComponentClassMixin_FlatStructure(object):
 
 
 
-class ComponentClassMixin_NamespaceStructure(object):
+class ComponentClassMixinNamespaceStructure(object):
     def __init__(self, subnodes = None, portconnections=None):  
 
         # Prevent dangers with default arguments.
@@ -209,12 +191,13 @@ class ComponentClassMixin_NamespaceStructure(object):
 
     def get_node_addr(self):
         """Get the namespace address of this component"""
+        from nineml.utility import invert_dictionary
 
         parent = self._get_parent_model() 
         if not parent:
             return NamespaceAddress.create_root()
         else:
-            contained_namespace = nineml.utility.invert_dictionary(parent.subnodes)[self]
+            contained_namespace = invert_dictionary(parent.subnodes)[self]
             return parent.get_node_addr().get_subns_addr( contained_namespace ) 
 
 
@@ -254,7 +237,8 @@ class ComponentClassMixin_NamespaceStructure(object):
         """
 
         #TODO: Check that the ports are connected to items in this model.
-        self.portconnections.append( (NamespaceAddress(src),NamespaceAddress(sink) ) ) 
+        connection = (NamespaceAddress(src),NamespaceAddress(sink) )
+        self.portconnections.append( connection ) 
 
 
 
@@ -262,7 +246,8 @@ class ComponentClassMixin_NamespaceStructure(object):
 
 
 
-class ComponentClass( ComponentClassMixin_FlatStructure, ComponentClassMixin_NamespaceStructure ):
+class ComponentClass( ComponentClassMixinFlatStructure, 
+                      ComponentClassMixinNamespaceStructure ):
     """A ComponentClass object represents a *component* in NineML. 
 
       .. todo::
@@ -272,7 +257,9 @@ class ComponentClass( ComponentClassMixin_FlatStructure, ComponentClassMixin_Nam
     """
     
 
-    def __init__(self, name, parameters=None, analog_ports=None, event_ports=None, dynamics=None, subnodes=None, portconnections=None, interface=None):
+    def __init__(self, name, parameters=None, analog_ports=None, 
+                    event_ports=None, dynamics=None, subnodes=None, 
+                    portconnections=None, interface=None):
         """Constructs a ComponentClass
         
         :param name: The name of the component.
@@ -284,7 +271,7 @@ class ComponentClass( ComponentClassMixin_FlatStructure, ComponentClassMixin_Nam
         :param event_ports: A list of ``EventPorts`` objects, which will be the
             local event-ports for this object. If this is ``None``, then they
             will be automatically inferred from the dyamics block. 
-        :param dynamics: A `Dynamics` object, defining the local dynamics of the
+        :param dynamics: A ``Dynamics`` object, defining the local dynamics of the
             component.
         :param subnodes: A dictionary mapping namespace-names to sub-component.
             [Type: ``{string:ComponentClass, string:ComponentClass,
@@ -319,16 +306,16 @@ class ComponentClass( ComponentClassMixin_FlatStructure, ComponentClassMixin_Nam
             dynamics = dyn.Dynamics()
 
         # Construct super-classes:
-        ComponentClassMixin_FlatStructure.__init__(self, 
+        ComponentClassMixinFlatStructure.__init__(self, 
                                                    name=name, 
                                                    parameters = parameters, 
                                                    analog_ports=analog_ports, 
                                                    event_ports = event_ports, 
                                                    dynamics = dynamics )
 
-        ComponentClassMixin_NamespaceStructure.__init__(self,
-                                                   subnodes=subnodes, 
-                                                   portconnections=portconnections)
+        ComponentClassMixinNamespaceStructure.__init__(self,
+                                                subnodes=subnodes, 
+                                                portconnections=portconnections)
 
         #Finalise initiation:
         self._ResolveTransitionRegimeNames()
@@ -371,6 +358,8 @@ class ComponentClass( ComponentClassMixin_FlatStructure, ComponentClassMixin_Nam
         # We only worry about 'target' regimes, since source regimes are taken 
         # care of for us by the Regime objects they are attached to.
         for t in self.transitions:
-            assert t.target_regime_name in regimeMap, "Can't resolve transition's target regime: %s"%t.target_regime_name
+            if not t.target_regime_name in regimeMap:
+                errmsg = "Can't find target regime: %s"%t.target_regime_name
+                raise NineMLRuntimeException(errmsg)
             t.set_target_regime( regimeMap[t.target_regime_name] )
 
