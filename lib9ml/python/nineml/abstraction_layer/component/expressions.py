@@ -281,6 +281,7 @@ class Alias(ExpressionWithSimpleLHS, RegimeElement):
 
     # Deprecated - to remove:
     def as_expr(self):
+        assert False
         return "%s := %s" % (self.lhs, self.rhs)
 
 
@@ -322,6 +323,7 @@ class Assignment(ExpressionWithSimpleLHS, RegimeElement):
         return "Assignment('%s', '%s')" % (self.lhs, self.rhs)
 
     def as_expr(self):
+        assert False
         return "%s = %s" % (self.lhs, self.rhs)
 
 
@@ -350,9 +352,10 @@ class ODE(ExpressionWithLHS, RegimeElement):
         #self.rhs = rhs
 
         if self._dependent_variable in math_namespace.symbols:
-            raise ValueError, "TimeDerivative '%s' redefines math symbols (such as 'e','pi')" % self.as_expr()
+            raise ValueError, "TimeDerivative '%s' redefines math symbols (such as 'e','pi')" % str(self)
 
     def as_expr(self):
+        assert False
         return "d%s/d%s = %s" % (self._dependent_variable,
                                  self._independent_variable,
                                  self.rhs)
@@ -406,7 +409,7 @@ class TimeDerivative(ODE):
 
         
     def __repr__(self):
-        return "TimeDerivative( %s)" % self.as_expr() 
+        return "TimeDerivative( d%s/dt = %s )" % (self.dependent_variable, self.rhs)
 
     def AcceptVisitor(self, visitor, **kwargs):
         return visitor.VisitTimeDerivative(self,**kwargs)

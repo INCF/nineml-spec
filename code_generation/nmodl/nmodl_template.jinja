@@ -118,11 +118,13 @@ NET_RECEIVE(w, channel) {
         {% if weight_variables %}
         {{ get_weight_variable(channel, weight_variables) }} = w
         {% endif %}
-        {%- for node in on_event.state_assignments %}
-        {{ as_expr(node) }}
+        {%- for sa in on_event.state_assignments %}
+        {{ sa.lhs }} = {{ sa.rhs }}
         {%- endfor %}
         {%- for node in on_event.event_outputs %}
+
         {{ as_expr(node) }}
+        
         {%- endfor %}
       }
       {%- endfor %}
@@ -132,7 +134,7 @@ NET_RECEIVE(w, channel) {
 
     {%- for regime in component.regimes %}
     {%- for transition in regime.on_conditions %} 
-    WATCH ({{transition.trigger.as_expr()|replace('=','')}}) {{ transition.target_regime.flag }}
+    WATCH ({{transition.trigger.rhs|replace('=','')}}) {{ transition.target_regime.flag }}
     {%- endfor %}
     {%- endfor %}
 
@@ -145,8 +147,8 @@ NET_RECEIVE(w, channel) {
     net_event(t)
     {%- endfor %}
 
-    {%- for node in transition.state_assignments %}
-    {{ as_expr(node) }}
+    {%- for sa in transition.state_assignments %}
+    {{ sa.lhs }} = {{ sa.rhs }}
     {%- endfor %}
 
   {%- endfor %}

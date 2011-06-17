@@ -45,6 +45,7 @@ class Condition(expressions.Expression):
         return eval("lambda %s: %s" % (','.join(self.names),expr), math_namespace.namespace, namespace)
 
     def as_expr(self):
+        assert False
         """ This is to behave as an expr"""
         return self.rhs
 

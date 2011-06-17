@@ -45,16 +45,11 @@ def deriv_func_args(component, variable):
                 args.add(name)
     return args
 
-#def threshold_crossing(transition):
-#    assert False, 'Deprecated' 
-#    condition = transition.trigger.as_expr()
-#    return ">" in condition or "<" in condition
 
 def ode_for(regime, variable):
     """
     Yields the TimeDerivative for the given variable in the regime
     """
-    print 'Ode for %s in Regime %s '%(variable, regime)
     odes = [eq for eq in regime.time_derivatives if eq.dependent_variable == variable.name]
     if len(odes) == 0:
         odes.append(al.TimeDerivative(dependent_variable = variable, rhs = "0.0"))

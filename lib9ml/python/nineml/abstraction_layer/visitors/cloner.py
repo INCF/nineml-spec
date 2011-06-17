@@ -232,31 +232,5 @@ class ClonerVisitorPrefixNamespace(ClonerVisitor):
 
 
 
-#class ModelPrefixerVisitor( object ):
-#    pass
-    
-#    def VisitModelClass(self, modelclass, **kwargs):
-#        print "Visit Model Class"
-#        
-#        newsubnodes = {}
-#        for ns,node in modelclass.subnodes.iteritems():
-#            newsubnodes[ns] = node.AcceptVisitor(self)
-#        from nineml.abstraction_layer import models
-#        newModel = models.Model(name=modelclass.name, subnodes=newsubnodes)
-#
-#        for src,sink in modelclass.portconnections:
-#            newModel.connect_ports(src=src,sink=sink)
-#        
-#        return newModel
-#             
-#    
-#
-#    def VisitComponentNode( self, componentclass):
-#        prefix = componentclass.getTreePosition(jointoken="_") + "_"
-#        prefix_excludes = ['t']
-#        return ClonerVisitor(prefix=prefix, prefix_excludes=prefix_excludes).VisitComponent(componentclass)
-#
-#
-
 
 
