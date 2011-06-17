@@ -64,3 +64,11 @@ class ComponentQueryer(object):
     def alias_symbols(self):
         assert False
         return [ a.lhs for a in self.aliases ]
+
+
+    @property
+    def on_conditions(self):
+        assert False
+        for r in self.regimes:
+            for c in r.on_conditions:
+                yield c

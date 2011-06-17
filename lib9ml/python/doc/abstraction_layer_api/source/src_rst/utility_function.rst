@@ -9,7 +9,6 @@ nineml.utility [Utility Functions]
     :toctree: 
     
     utility.expect_single
-    utility.filter
     utility.filter_expect_single
     utility.filter_by_type
     utility.filter_discrete_types

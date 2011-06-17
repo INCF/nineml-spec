@@ -291,3 +291,4 @@ todo_include_todos = True
 
 
 doctest_test_doctest_blocks = 'default'
+autodoc_member_order = 'groupwise'

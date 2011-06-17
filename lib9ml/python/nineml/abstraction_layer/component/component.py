@@ -48,46 +48,34 @@ class ComponentClassMixin_FlatStructure(object):
     #  Forwarding functions to the dynamics #
     @property
     def aliases_map(self):
+        """Forwarding function to self.dynamics.alias_map"""
         return self._dynamics.aliases_map
 
     @property
     def aliases(self):
+        """Forwarding function to self.dynamics.aliases"""
         return self._dynamics.aliases
 
     @property
     def regimes(self):
+        """Forwarding function to self.dynamics.regimes"""
         return self._dynamics.regimes
 
     @property
     def transitions(self):
+        """Forwarding function to self.dynamics.transitions"""
         return self._dynamics.transitions
 
     @property
     def state_variables(self):
+        """Forwarding function to self.dynamics.state_variables"""
         return self._dynamics.state_variables
     # -------------------------- #
 
-    @property
-    def ports_map(self):
-        assert False
-        return dict( [ (p.name,p) for p in itertools.chain(self._analog_ports, self._event_ports) ] )
-
-    @property
-    def alias_symbols(self):
-        assert False
-        return [ a.lhs for a in self.aliases ]
-
-
-
-    @property
-    def conditions(self):
-        """ Returns all conditions """
-        # TODO transitions
-        for t in self.transitions:
-            yield t.condition
 
     @property
     def on_conditions(self):
+        assert False
         for r in self.regimes:
             for c in r.on_conditions:
                 yield c
@@ -235,11 +223,17 @@ class ComponentClassMixin_NamespaceStructure(object):
     def insert_subnode(self, subnode, namespace):
         """Insert a subnode into this component
         
-        :param subnode: An object of type ComponentClass.
+
+        :param subnode: An object of type ``ComponentClass``.
         :param namespace: A `string` specifying the name of the component in
             this components namespace.
-        :raises : NineMLRuntimeException if a subnode already existing at `namespace`
+
+        :raises: ``NineMLRuntimeException`` if there is already a subcomponent at
+            the same namespace location
+
+
         """
+
         assert not namespace in self.subnodes
         self.subnodes[namespace] = copy.deepcopy( subnode ) 
         self.subnodes[namespace]._set_parent_model(self)
@@ -247,13 +241,16 @@ class ComponentClassMixin_NamespaceStructure(object):
     def connect_ports( self, src, sink ):
         """Connects the ports of 2 subcomponents.
         
-        The ports can be specified as `string`_s or `NamespaceAddresses`_es.
+        The ports can be specified as ``string`` s or ``NamespaceAddresses`` es.
+
 
         :param src: The source port of one sub-component; this should either an
             event port or analog port, but it *must* be a send port.
+
         :param sink: The sink port of one sub-component; this should either an
             event port or analog port, but it *must* be either a 'recv' or a
             'reduce' port.
+
         """
 
         #TODO: Check that the ports are connected to items in this model.

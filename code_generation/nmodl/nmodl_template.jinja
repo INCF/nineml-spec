@@ -129,8 +129,11 @@ NET_RECEIVE(w, channel) {
     }
     {%- endfor %}
   } else if (flag == INIT) {
-    {%- for transition in component.on_conditions %} 
+
+    {%- for regime in component.regimes %}
+    {%- for transition in regime.on_conditions %} 
     WATCH ({{transition.trigger.as_expr()|replace('=','')}}) {{ transition.target_regime.flag }}
+    {%- endfor %}
     {%- endfor %}
 
   {%- for regime in component.regimes %}
