@@ -1,4 +1,3 @@
 
 from base import ComponentVisitor
-from cloner import ClonerVisitor, ModelPrefixerVisitor, InPlaceTransform, InplaceActionVisitorDF, ClonerVisitorPrefixNamespace
-#from transitionregimenameresolver import Build_TransitionRegimeNameResolver
+from cloner import ClonerVisitor, InPlaceTransform, InplaceActionVisitorDF, ClonerVisitorPrefixNamespace

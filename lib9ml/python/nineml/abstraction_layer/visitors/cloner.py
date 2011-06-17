@@ -172,13 +172,9 @@ class ClonerVisitor(ComponentVisitor):
         prefix = kwargs.get( 'prefix','')
         prefix_excludes = kwargs.get('prefix_excludes',[] )
 
-
         dep = ode.dependent_variable if ode.dependent_variable in prefix_excludes else prefix + ode.dependent_variable
         rhs = MathUtil.get_prefixed_rhs_string( expr_obj=ode, prefix=prefix, exclude=prefix_excludes )
-
-        return nineml.abstraction_layer.TimeDerivative( 
-                    dependent_variable = dep,
-                    rhs =rhs)
+        return nineml.abstraction_layer.TimeDerivative( dependent_variable = dep, rhs =rhs)
 
 
     def VisitCondition(self, condition,**kwargs):
@@ -222,13 +218,9 @@ class ClonerVisitorPrefixNamespace(ClonerVisitor):
                                analog_ports= [ p.AcceptVisitor(self,**kwargs) for p in component.analog_ports],
                                event_ports = [ p.AcceptVisitor(self,**kwargs) for p in component.event_ports ],
                                dynamics    = component.dynamics.AcceptVisitor(self,**kwargs) if component.dynamics else None,
-                               subnodes = dict( [ (k, v.AcceptVisitor(self,**kwargs)) for (k,v) in component.subnodes.iteritems() ] )
+                               subnodes = dict( [ (k, v.AcceptVisitor(self,**kwargs)) for (k,v) in component.subnodes.iteritems() ] ),
+                               portconnections = component.portconnections,
                                )
-
-        # Copy Port COnnections:
-        assert 'portconnections' in ccn.__dict__
-        for src,sink in component.portconnections:
-            ccn.connect_ports(src=src,sink=sink)
 
         return ccn
 
@@ -240,8 +232,8 @@ class ClonerVisitorPrefixNamespace(ClonerVisitor):
 
 
 
-class ModelPrefixerVisitor( object ):
-    pass
+#class ModelPrefixerVisitor( object ):
+#    pass
     
 #    def VisitModelClass(self, modelclass, **kwargs):
 #        print "Visit Model Class"
