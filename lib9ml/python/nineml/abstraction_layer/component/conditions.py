@@ -1,12 +1,13 @@
 import expressions
+from expressions import Expression
 
 class Condition(expressions.Expression):
 
     def AcceptVisitor(self, visitor, **kwargs):
         return visitor.VisitCondition(self, **kwargs)
 
-    def __init__(self, rhs,):
-        self.rhs = rhs 
+    def __init__(self, rhs):
+        Expression.__init__(self,rhs)
 
 
     def _parse_rhs(self,rhs):

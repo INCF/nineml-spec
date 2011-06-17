@@ -54,6 +54,12 @@ class Expression(object):
     the basic interface for parsing, yielding of python functions,
     C equivalents, alias and name substitution """
 
+    def __init__(self, rhs):
+        self._rhs = None
+        self._names = None
+        self._funcs = None
+
+        self._set_rhs(rhs)
 
     # Subclasses can over-ride this, if need be.
     def _parse_rhs(self,rhs):
@@ -61,16 +67,18 @@ class Expression(object):
         # generalised to handle conditionals
         return expr_parse(rhs)
 
-    def set_rhs(self, rhs):
+    
+    # If we assign to rhs, then we need to update the 
+    # cached names and funcs:
+    def _set_rhs(self, rhs):
         self._rhs = rhs
         self._names, self._funcs = self._parse_rhs(rhs)
         for n in self._names: assert not n in self._funcs
         for n in self._funcs: assert not n in self._names
 
-    def get_rhs(self):
+    def _get_rhs(self):
         return self._rhs
-
-    rhs = property(get_rhs,set_rhs)
+    rhs = property(_get_rhs,_set_rhs)
 
 
     @property
@@ -201,7 +209,8 @@ class Expression(object):
 
 # TO GO:
 class Equation(Expression):
-    pass
+    def __init__(self, rhs):
+        Expression.__init__(self,rhs)
 
 
 
@@ -209,15 +218,18 @@ class ExpressionWithLHS(Equation):
     # Sub-classes should over ride this, to allow 
     # proper-prefixing:
         
+    def __init__(self, rhs):
+        Equation.__init__(self,rhs)
+
     def name_transform_inplace(self, name_map):
         # Transform the lhs & rhs:
         self.lhs_name_transform_inplace( name_map )
         self.rhs_name_transform_inplace( name_map ) 
 
-
-    def get_atoms(self):
+    
+    @property
+    def atoms(self):
         return itertools.chain(self.names, self.funcs, self.get_lhs_atoms() )
-    atoms = property(get_atoms)
     
     def lhs_name_transform_inplace(self, name_map):
         raise NotImplementedError()
@@ -226,10 +238,6 @@ class ExpressionWithLHS(Equation):
     def get_lhs():
         raise NotImplementedError() 
 
-    #def __eq__(self, other):
-    #    if not isinstance(other, self.__class__):
-    #        return False
-    #    return self.lhs == other.lhs and self.rhs == other.rhs
 
 
 
@@ -240,11 +248,12 @@ class ExpressionWithLHS(Equation):
 class ExpressionWithSimpleLHS(ExpressionWithLHS):
 
     def __init__(self, lhs, rhs):
+        ExpressionWithLHS.__init__(self,rhs)
+
         lhs=lhs.strip()
         single_symbol = re.compile("^[a-zA-Z_]+[a-zA-Z_0-9]*$")
         assert single_symbol.match( lhs ) 
         self.lhs = lhs
-        self.rhs = rhs
 
     def get_lhs_atoms(self):
         return [self.lhs]
