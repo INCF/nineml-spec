@@ -20,10 +20,23 @@ from itertools import chain
 
 
 class Parameter(object):
-    element_name = 'Parameter'
+    """A class representing a state-variable in a ``ComponentClass``.
+    
+    This was originally a string, but if we intend to support units in the
+    future, wrapping in into its own object may make the transition easier
+    """
 
     def __init__(self, name, ):
-        self.name = name
+        """Parameter Constructor
+
+        :param name:  The name of the parameter.
+        """
+
+        self._name = name
+
+    @property
+    def name(self):
+        return self._name
 
     def __str__(self):
         return "<Parameter: %s>"%(self.name)

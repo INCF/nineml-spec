@@ -176,7 +176,7 @@ class ClonerVisitor(ComponentVisitor):
 
     def VisitOnEvent(self, on_event, **kwargs):
         return nineml.abstraction_layer.OnEvent(
-                src_port = self.prefixVariable(on_event.src_port,**kwargs),
+                src_port_name = self.prefixVariable(on_event.src_port_name,**kwargs),
                 event_outputs = [ e.AcceptVisitor(self,**kwargs) for e in on_event.event_outputs ],
                 state_assignments = [ s.AcceptVisitor(self,**kwargs) for s in on_event.state_assignments],
                 target_regime_name = on_event.target_regime_name

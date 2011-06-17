@@ -61,7 +61,7 @@ def ode_for(regime, variable):
     return expect_single( odes )
 
 def get_on_event_channel(on_event, component):
-    port = filter_expect_single( component.event_ports, lambda ep:ep.name==on_event.src_port)
+    port = filter_expect_single( component.event_ports, lambda ep:ep.name==on_event.src_port_name)
     return port.channel_
 
 

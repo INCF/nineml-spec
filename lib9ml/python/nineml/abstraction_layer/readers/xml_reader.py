@@ -141,12 +141,11 @@ class XMLLoader1(object):
     def load_OnEvent(self,element):
         subnodes = self.loadBlocks( element, blocks=('StateAssignment','EventOut' )  )
         target_regime = element.get('target_regime',None)
-        src_port = element.get('port')
-        return al.OnEvent(  src_port = src_port,
+        src_port_name = element.get('port')
+        return al.OnEvent(  src_port_name = src_port_name,
                                  state_assignments = subnodes[ "StateAssignment"],
                                  event_outputs = subnodes[ "EventOut" ],
                                  target_regime_name = target_regime)
-        assert False, 'Not implemented yet'
 
     def load_Trigger(self,element):
         return self.load_SingleInternalMathsBlock ( element ) 

@@ -280,7 +280,6 @@ class ExpressionWithSimpleLHS(ExpressionWithLHS):
 
 class Alias(ExpressionWithSimpleLHS, RegimeElement):
     
-    element_name = "Alias"
     
 
     def __init__(self, lhs,rhs):
@@ -301,19 +300,14 @@ class Alias(ExpressionWithSimpleLHS, RegimeElement):
         b.name_transform_inplace( name_map = name_map )
         return b
 
-    # XML Serialisation:
-    def to_xml(self):
-        return E(self.element_name,
-                 E("math-inline", self.rhs),
-                 name=self.lhs)
 
     def AcceptVisitor(self, visitor,**kwargs):
         return visitor.VisitAlias(self, **kwargs)
 
 
-    @classmethod
-    def from_xml(cls, element):
-        return cls(element.get("name"), element.find(NINEML+"math-inline").text)
+#    @classmethod
+#    def from_xml(cls, element):
+#        return cls(element.get("name"), element.find(NINEML+"math-inline").text)
 
 
     # Deprecated - to remove:
@@ -389,7 +383,7 @@ class ODE(Equation, RegimeElement):
     """ 
     Represents a first-order, ordinary differential equation.
     """
-    element_name = "TimeDerivative"
+#    element_name = "TimeDerivative"
     n = 0
     
 
@@ -495,31 +489,25 @@ def expr_to_obj(s, name = None):
     s = s.strip()
 
     # Do we have a alias?
-    if ":=" in s:
-        lhs, rhs = [x.strip() for x in s.split(":=")]
-        return Alias(lhs, rhs)
-
-    #if Alias.match(s):
-    #    lhs, rhs = [x.strip() for x in s.split(":=")]
-    #    return Alias(lhs, rhs)
+    if StrToExpr.is_alias(s):
+        return StrToExpr.alias(s)
 
     # re for an expression -> groups into lhs, op, rhs
-    p_eqn = re.compile(r"(?P<lhs>[a-zA-Z_]+[a-zA-Z_0-9]*(/?[a-zA-Z_]+[a-zA-Z_0-9]*)?)\s*(?P<op>[+\-*/:]?=)\s*(?P<rhs>.*)")
     # re for lhs for ODE
-    p_ode_lhs = re.compile(r"(?:d)([a-zA-Z_]+[a-zA-Z_0-9]*)/(?:d)([a-zA-Z_]+[a-zA-Z_0-9]*)")
 
     
 
 
+    p_eqn = re.compile(r"(?P<lhs>[a-zA-Z_]+[a-zA-Z_0-9]*(/?[a-zA-Z_]+[a-zA-Z_0-9]*)?)\s*(?P<op>[+\-*/:]?=)\s*(?P<rhs>.*)")
     m = p_eqn.match(s)
     if not m:
-       
         raise ValueError, "Not a valid nineml expression: %s" % s
 
     # get lhs, op, rhs
     lhs, op, rhs = [m.group(x) for x in ['lhs','op','rhs']]
 
     # do we have an ODE?
+    p_ode_lhs = re.compile(r"(?:d)([a-zA-Z_]+[a-zA-Z_0-9]*)/(?:d)([a-zA-Z_]+[a-zA-Z_0-9]*)")
     m = p_ode_lhs.match(lhs)
     if m:
         if op!="=":

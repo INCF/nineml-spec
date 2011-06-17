@@ -81,7 +81,7 @@ class ComponentFlattener(object):
         newRegimeTuple = list( regimeTuple )
 
         for index,regime in enumerate(regimeTuple):
-            on_events = [ oe for oe in regime.on_events if oe.src_port == eventName ] 
+            on_events = [ oe for oe in regime.on_events if oe.src_port_name == eventName ] 
             assert len(on_events) in [0,1]
             if not on_events: continue
 
@@ -213,7 +213,7 @@ class ComponentFlattener(object):
                         handled_events.append(ev)
 
                     targetRegime = newRegimeLookupMap[ newRegimeTuple ]
-                    newOnCondition = al.OnEvent(oldtransition.src_port, state_assignments=state_assignments, event_outputs = output_events, target_regime_name = targetRegime.name)
+                    newOnCondition = al.OnEvent(oldtransition.src_port_name, state_assignments=state_assignments, event_outputs = output_events, target_regime_name = targetRegime.name)
                     regimeNew.add_on_event( newOnCondition)
                     
         self.newRegimeLookupMap = newRegimeLookupMap

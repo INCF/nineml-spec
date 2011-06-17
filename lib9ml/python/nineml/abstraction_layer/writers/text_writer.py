@@ -52,7 +52,7 @@ def dump_reduced(component, filename):
         OnEvents:
         ~~~~~~~~~~~~~~
         #for $on_event in $regime.on_events:
-           Event: $on_event.src_port [To -> $on_event.to ]
+           Event: $on_event.src_port_name [To -> $on_event.to ]
            #for node in $on_event.nodes:
              Node: $node
            #end for

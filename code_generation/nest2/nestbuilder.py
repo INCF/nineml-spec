@@ -137,7 +137,7 @@ class NestTransition(object):
         if isinstance(transition, nineml.OnCondition):
             self.condition = NestCondition(transition.trigger, self)
         elif isinstance(transition, nineml.OnEvent):
-            self.condition = NestInputEventPort(transition.src_port, self)
+            self.condition = NestInputEventPort(transition.src_port_name, self)
         else:
             raise ValueError, "Condition was neither a nineml.Condition, nor a nineml.EventPort"
 

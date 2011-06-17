@@ -42,22 +42,22 @@ class XMLWriter(ComponentVisitor):
         elements = [r.AcceptVisitor(self) for r in dynamics.regimes] + \
                    [b.AcceptVisitor(self) for b in dynamics.aliases] + \
                    [b.AcceptVisitor(self) for b in dynamics.state_variables] 
-        return E(dynamics.element_name, *elements)
+        return E('Dynamics', *elements)
         
     def VisitRegime(self,regime):
         nodes = [node.AcceptVisitor(self) for node in regime.time_derivatives] +\
                 [node.AcceptVisitor(self) for node in regime.on_events] +\
                 [node.AcceptVisitor(self) for node in regime.on_conditions] 
-        return E(regime.element_name, name=regime.name, *nodes )
+        return E('Regime', name=regime.name, *nodes )
 
     def VisitStateVariable(self, state_variable):
-        return E(state_variable.element_name, name=state_variable.name,dimension='??')
+        return E('StateVariable', name=state_variable.name,dimension='??')
 
     def VisitOutputEvent(self, output_event, **kwargs):
         return E('EventOut', port = output_event.port ) 
 
     def VisitParameter(self, parameter):
-        return E(parameter.element_name, name=parameter.name, dimension='??')
+        return E('Parameter', name=parameter.name, dimension='??')
 
     def VisitAnalogPort(self, port, **kwargs):
         if port.reduce_op:
@@ -73,12 +73,12 @@ class XMLWriter(ComponentVisitor):
                  variable=assignment.lhs)
 
     def VisitAlias(self, alias, **kwargs):
-        return E(alias.element_name,
+        return E('Alias',
                  E("MathInline", alias.rhs),
                  name=alias.lhs)
 
     def VisitODE(self,ode,**kwargs):
-        return E(ode.element_name,
+        return E('TimeDeriative',
                  E("MathInline", ode.rhs),
                  variable=ode.dependent_variable,
                  )
@@ -89,7 +89,7 @@ class XMLWriter(ComponentVisitor):
         kwargs = {}
         if on_condition.target_regime:
             kwargs['target_regime'] = on_condition._target_regime.name
-        return E(on_condition.element_name,*newNodes,**kwargs) 
+        return E('OnCondition',*newNodes,**kwargs) 
 
     def VisitCondition(self, condition):
         return E('Trigger', 
@@ -100,7 +100,7 @@ class XMLWriter(ComponentVisitor):
     def VisitOnEvent(self, on_event, **kwargs):
         elements =  [p.AcceptVisitor(self) for p in on_event.state_assignments] +\
                     [p.AcceptVisitor(self) for p in on_event.event_outputs] 
-        kwargs ={'src_port':on_event._src_port}
+        kwargs ={'src_port':on_event.src_port_name}
         if on_event.target_regime:
             kwargs['target_regime'] = on_event.target_regime.name
         return E('OnEvent', *elements,  **kwargs )
