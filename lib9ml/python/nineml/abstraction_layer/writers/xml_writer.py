@@ -20,7 +20,7 @@ class XMLWriter(ComponentVisitor):
     @classmethod 
     def write( cls, component, file, flatten=True):
         assert isinstance( component,al.ComponentClass )
-        if not component.isflat():
+        if not component.is_flat():
             if not flatten: 
                 assert False, 'Trying to save nested models not yet supported'
             else:
@@ -36,7 +36,7 @@ class XMLWriter(ComponentVisitor):
                     [p.AcceptVisitor(self) for p in component.event_ports] +\
                     [p.AcceptVisitor(self) for p in component.parameters] +\
                     [component.dynamics.AcceptVisitor(self) ]
-        return E(component.element_name, *elements, name=component.name)
+        return E('ComponentClass', *elements, name=component.name)
 
     def VisitDynamics(self, dynamics):
         elements = [r.AcceptVisitor(self) for r in dynamics.regimes] + \

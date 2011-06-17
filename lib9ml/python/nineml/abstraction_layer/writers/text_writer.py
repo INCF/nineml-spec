@@ -76,7 +76,7 @@ def dump_reduced(component, filename):
     """
 
 
-    assert component.isflat()
+    assert component.is_flat()
 
     data = { 'component':component }
     f = open(filename,"w")

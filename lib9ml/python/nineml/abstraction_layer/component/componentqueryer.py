@@ -1,6 +1,6 @@
 
 
-#from nineml.utility import expect_single, filter_expect_single, filter, filter_by_type
+#from nineml.utility import expect_single, filter_expect_single, _filter, filter_by_type
 import nineml.utility
 
 class ComponentQueryer(object):

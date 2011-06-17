@@ -15,18 +15,6 @@ import itertools
 class ComponentClassMixin_FlatStructure(object):
 
     def __init__(self, name, parameters = None, analog_ports = None, event_ports = None, dynamics=None):
-        """Create a ComponentClass object
-        
-        Keyword arguments:
-
-        :param name: the name of the container
-        :type parameters: integer or None
-        :rtype: list of strings 
-        
-        name -- the name of the container
-        parameters -- [..]
-        
-        """
 
         self._name = name
         self._parameters = parameters or []
@@ -222,13 +210,29 @@ class ComponentClassMixin_NamespaceStructure(object):
 
 
 class ComponentClass( ComponentClassMixin_FlatStructure, ComponentClassMixin_NamespaceStructure ):
-    """ComponentClass represents a..."""
-    
-    element_name = "ComponentClass"
-    def isflat(self):
-        return self.isLeaf()
+    """A ComponentClass object represents a *component* in NineML. A component is an
+    object with 
+        * a fully connected regime-transition graph
 
-    def __init__(self, name, parameters=None, analog_ports=None, event_ports=None, dynamics=None, subnodes=None):
+    .. todo::
+
+    :param name: the name of the container
+    :type parameters: integer or None
+    :rtype: list of strings 
+        
+        Some explanation in general about how this works.
+    """
+   
+    
+    #element_name = "ComponentClass"
+
+    def __init__(self, name, parameters=None, analog_ports=None, event_ports=None, dynamics=None, subnodes=None, portconnections=None, interface=None):
+        """Constructs a ComponentClass
+        
+        :param name: The name of the component.
+        :param parameters: A list containing either ``Parameter`` objects or strings representing the parameter names. If ``None``, then the parameters are automatically infered from the dynamics block.
+        :param analog_ports:
+        """
 
         self.query = componentqueryer.ComponentQueryer(self)
 
@@ -237,14 +241,18 @@ class ComponentClass( ComponentClassMixin_FlatStructure, ComponentClassMixin_Nam
             dynamics = dyn.Dynamics()
 
         ComponentClassMixin_FlatStructure.__init__(self, name=name, parameters = parameters, analog_ports=analog_ports, event_ports = event_ports, dynamics = dynamics)
-        ComponentClassMixin_NamespaceStructure.__init__(self,subnodes=subnodes)
+        ComponentClassMixin_NamespaceStructure.__init__(self,subnodes=subnodes, portconnections=portconnections)
 
-        #Finalise Initiation:
-        self.ResolveTransitionRegimeNames()
+        #Finalise initiation:
+        self._ResolveTransitionRegimeNames()
  
 
+    def is_flat(self):
+        """Returns a *Boolean* specifying whether this component is flat; i.e. has no subcomponent
+        """
+        return self.isLeaf()
         
-    def ResolveTransitionRegimeNames(self):
+    def _ResolveTransitionRegimeNames(self):
         # Check that the names of the regimes are unique:
         names = [ r.name for r in self.regimes ]
         nineml.utility.assert_no_duplicates(names)

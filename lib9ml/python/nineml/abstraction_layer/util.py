@@ -8,7 +8,7 @@ def check_flat_component( func ):
         if 'component' in kwargs:
             comp = kwargs['component']
             assert isinstance( comp, component.ComponentClass)
-            assert comp.isflat()
+            assert comp.is_flat()
         else:
             assert False
 

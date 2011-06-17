@@ -1,5 +1,5 @@
 
-nineml.utility [Transitions & Regimes]
+nineml.utility [Utility Functions]
 =======================================
 
 .. currentmodule:: nineml
@@ -11,7 +11,7 @@ nineml.utility [Transitions & Regimes]
     utility.expect_single
     utility.filter
     utility.filter_expect_single
-    utility.filter_type
+    utility.filter_by_type
     utility.filter_discrete_types
     utility.assert_no_duplicates
     utility.invert_dictionary

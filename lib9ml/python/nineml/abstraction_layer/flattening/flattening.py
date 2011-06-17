@@ -30,7 +30,7 @@ class ComponentFlattener(object):
         assert isinstance( model, al.ComponentClass)
 
         # Is our component already flat??
-        if model.isflat():
+        if model.is_flat():
             self.reducedcomponent = ClonerVisitor.Visit( model )
             return
 

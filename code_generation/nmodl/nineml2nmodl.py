@@ -107,7 +107,7 @@ def build_context(component, weight_variables, input_filename="[Unknown-Filename
     if not weight_variables:
         weight_variables = {'': guess_weight_variable(component)}
         
-    assert component.isflat()
+    assert component.is_flat()
     weights_as_states = False
     if hierarchical_mode:
         weights_as_states = True
