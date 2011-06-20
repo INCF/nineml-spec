@@ -24,7 +24,9 @@ __all__ = ['XMLReader']
 class XMLLoader(object):
     """This class is used by XMLReader internally.
     
-    This class loads a NineML XML tree.
+    This class loads a NineML XML tree, and stores
+    the components in ``components``. It also records which file each XML node
+    was loaded in from, and stores this in ``component_srcs``.
 
     """
 
@@ -227,18 +229,6 @@ class XMLLoader(object):
         }
 
 
-
-
-
-
-
-
-
-
-
-
-
-#xml_node_filename_map = {}
 
 
 
