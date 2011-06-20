@@ -5,7 +5,7 @@ from itertools import chain
 
 class ComponentVisitor(object):
     def Visit( self,obj,**kwargs):
-        return obj.AcceptVisitor(self,**kwargs)
+        return obj.accept_visitor(self,**kwargs)
     
 
 
@@ -20,13 +20,13 @@ class InplaceActionVisitorDF(ComponentVisitor):
         comp = componentNodeCombined
         nodes = chain(comp.parameters, comp.analog_ports, comp.event_ports, )
         for p in nodes:
-            p.AcceptVisitor(self)
+            p.accept_visitor(self)
 
         if comp.dynamics:
-            comp.dynamics.AcceptVisitor(self)
+            comp.dynamics.accept_visitor(self)
 
         for subnode in componentNodeCombined.subnodes.values():
-            subnode.AcceptVisitor(self)
+            subnode.accept_visitor(self)
 
     
 
@@ -34,13 +34,13 @@ class InplaceActionVisitorDF(ComponentVisitor):
         self.ActionDynamics(dynamics)
         nodes = chain(dynamics.regimes, dynamics.aliases, dynamics.state_variables)
         for p in nodes:
-            p.AcceptVisitor(self)
+            p.accept_visitor(self)
         
     def VisitRegime(self,regime):
         self.ActionRegime(regime)
         nodes = chain(regime.time_derivatives, regime.on_events, regime.on_conditions)
         for p in nodes:
-            p.AcceptVisitor(self)
+            p.accept_visitor(self)
 
     def VisitStateVariable(self, state_variable):
         self.ActionStateVariable( state_variable) 
@@ -76,13 +76,13 @@ class InplaceActionVisitorDF(ComponentVisitor):
         self.ActionOnCondition(on_condition)
         nodes = chain([on_condition.trigger], on_condition.event_outputs, on_condition.state_assignments)
         for p in nodes:
-            p.AcceptVisitor(self)
+            p.accept_visitor(self)
 
     def VisitOnEvent(self, on_event, **kwargs):
         self.ActionOnEvent(on_event)
         nodes = chain( on_event.event_outputs, on_event.state_assignments)
         for p in nodes:
-            p.AcceptVisitor(self)
+            p.accept_visitor(self)
 
 
     # To be overridden:

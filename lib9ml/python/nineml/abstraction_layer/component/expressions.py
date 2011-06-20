@@ -276,7 +276,8 @@ class Alias(ExpressionWithSimpleLHS, RegimeElement):
     def __repr__(self):
         return "<Alias: %s := %s>" % (self.lhs,self.rhs)
 
-    def AcceptVisitor(self, visitor,**kwargs):
+    def accept_visitor(self, visitor,**kwargs):
+        """ |VISITATION| """
         return visitor.VisitAlias(self, **kwargs)
 
 
@@ -311,7 +312,8 @@ class Assignment(ExpressionWithSimpleLHS, RegimeElement):
         """
         ExpressionWithSimpleLHS.__init__(self, lhs=lhs, rhs=rhs)
 
-    def AcceptVisitor(self, visitor, **kwargs):
+    def accept_visitor(self, visitor, **kwargs):
+        """ |VISITATION| """
         return visitor.VisitAssignment(self, **kwargs)
    
 
@@ -403,7 +405,8 @@ class TimeDerivative(ODE):
     def __repr__(self):
         return "TimeDerivative( d%s/dt = %s )" % (self.dependent_variable, self.rhs)
 
-    def AcceptVisitor(self, visitor, **kwargs):
+    def accept_visitor(self, visitor, **kwargs):
+        """ |VISITATION| """
         return visitor.VisitTimeDerivative(self,**kwargs)
 
     

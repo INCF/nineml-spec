@@ -74,7 +74,7 @@ from base import ComponentVisitor
 class ClonerVisitor(ComponentVisitor):
 
     def Visit(self, obj,**kwargs):
-        return obj.AcceptVisitor(self,**kwargs)
+        return obj.accept_visitor(self,**kwargs)
 
 
     def prefixVariable(self, variable, **kwargs):
@@ -90,11 +90,11 @@ class ClonerVisitor(ComponentVisitor):
         assert False
 
         ccn =  nineml.abstraction_layer.ComponentClass( name = component.name,
-                               parameters  = [ p.AcceptVisitor(self,**kwargs) for p in component.parameters  ],
-                               analog_ports= [ p.AcceptVisitor(self,**kwargs) for p in component.analog_ports],
-                               event_ports = [ p.AcceptVisitor(self,**kwargs) for p in component.event_ports ],
-                               dynamics    = component.dynamics.AcceptVisitor(self,**kwargs) if component.dynamics else None,
-                               subnodes = dict( [ (k, v.AcceptVisitor(self,**kwargs)) for (k,v) in component.subnodes.iteritems() ] )
+                               parameters  = [ p.accept_visitor(self,**kwargs) for p in component.parameters  ],
+                               analog_ports= [ p.accept_visitor(self,**kwargs) for p in component.analog_ports],
+                               event_ports = [ p.accept_visitor(self,**kwargs) for p in component.event_ports ],
+                               dynamics    = component.dynamics.accept_visitor(self,**kwargs) if component.dynamics else None,
+                               subnodes = dict( [ (k, v.accept_visitor(self,**kwargs)) for (k,v) in component.subnodes.iteritems() ] )
                                )
 
         # Copy Port COnnections:
@@ -107,15 +107,15 @@ class ClonerVisitor(ComponentVisitor):
                                
 
     def VisitDynamics(self, dynamics, **kwargs):
-        return nineml.abstraction_layer.Dynamics( regimes =       [ r.AcceptVisitor(self,**kwargs) for r in dynamics.regimes ],
-                         aliases =          [ a.AcceptVisitor(self,**kwargs) for a in dynamics.aliases ],
-                         state_variables =  [ s.AcceptVisitor(self,**kwargs) for s in dynamics.state_variables ] )
+        return nineml.abstraction_layer.Dynamics( regimes =       [ r.accept_visitor(self,**kwargs) for r in dynamics.regimes ],
+                         aliases =          [ a.accept_visitor(self,**kwargs) for a in dynamics.aliases ],
+                         state_variables =  [ s.accept_visitor(self,**kwargs) for s in dynamics.state_variables ] )
         
     def VisitRegime(self,regime,**kwargs):
         return nineml.abstraction_layer.Regime(  name = regime.name,
-                        time_derivatives =  [t.AcceptVisitor(self,**kwargs) for t in regime.time_derivatives],
-                        on_events =         [t.AcceptVisitor(self,**kwargs) for t in regime.on_events],
-                        on_conditions =     [t.AcceptVisitor(self,**kwargs) for t in regime.on_conditions],
+                        time_derivatives =  [t.accept_visitor(self,**kwargs) for t in regime.time_derivatives],
+                        on_events =         [t.accept_visitor(self,**kwargs) for t in regime.on_events],
+                        on_conditions =     [t.accept_visitor(self,**kwargs) for t in regime.on_conditions],
                         )
 
         
@@ -190,17 +190,17 @@ class ClonerVisitor(ComponentVisitor):
 
     def VisitOnCondition(self, on_condition,**kwargs):
         return nineml.abstraction_layer.OnCondition(
-                trigger = on_condition.trigger.AcceptVisitor(self,**kwargs),
-                event_outputs = [ e.AcceptVisitor(self,**kwargs) for e in on_condition.event_outputs ],
-                state_assignments = [ s.AcceptVisitor(self,**kwargs) for s in on_condition.state_assignments],
+                trigger = on_condition.trigger.accept_visitor(self,**kwargs),
+                event_outputs = [ e.accept_visitor(self,**kwargs) for e in on_condition.event_outputs ],
+                state_assignments = [ s.accept_visitor(self,**kwargs) for s in on_condition.state_assignments],
                 target_regime_name = on_condition.target_regime_name 
                 )
 
     def VisitOnEvent(self, on_event, **kwargs):
         return nineml.abstraction_layer.OnEvent(
                 src_port_name = self.prefixVariable(on_event.src_port_name,**kwargs),
-                event_outputs = [ e.AcceptVisitor(self,**kwargs) for e in on_event.event_outputs ],
-                state_assignments = [ s.AcceptVisitor(self,**kwargs) for s in on_event.state_assignments],
+                event_outputs = [ e.accept_visitor(self,**kwargs) for e in on_event.event_outputs ],
+                state_assignments = [ s.accept_visitor(self,**kwargs) for s in on_event.state_assignments],
                 target_regime_name = on_event.target_regime_name
                 )
 
@@ -217,11 +217,11 @@ class ClonerVisitorPrefixNamespace(ClonerVisitor):
         kwargs = {'prefix':prefix, 'prefix_excludes':prefix_excludes }
 
         ccn =  nineml.abstraction_layer.ComponentClass( name = component.name,
-                               parameters  = [ p.AcceptVisitor(self,**kwargs) for p in component.parameters  ],
-                               analog_ports= [ p.AcceptVisitor(self,**kwargs) for p in component.analog_ports],
-                               event_ports = [ p.AcceptVisitor(self,**kwargs) for p in component.event_ports ],
-                               dynamics    = component.dynamics.AcceptVisitor(self,**kwargs) if component.dynamics else None,
-                               subnodes = dict( [ (k, v.AcceptVisitor(self,**kwargs)) for (k,v) in component.subnodes.iteritems() ] ),
+                               parameters  = [ p.accept_visitor(self,**kwargs) for p in component.parameters  ],
+                               analog_ports= [ p.accept_visitor(self,**kwargs) for p in component.analog_ports],
+                               event_ports = [ p.accept_visitor(self,**kwargs) for p in component.event_ports ],
+                               dynamics    = component.dynamics.accept_visitor(self,**kwargs) if component.dynamics else None,
+                               subnodes = dict( [ (k, v.accept_visitor(self,**kwargs)) for (k,v) in component.subnodes.iteritems() ] ),
                                portconnections = component.portconnections,
                                )
 

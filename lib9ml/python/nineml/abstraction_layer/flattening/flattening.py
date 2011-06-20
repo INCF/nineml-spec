@@ -65,11 +65,11 @@ class ComponentFlattener(object):
 
 
     def create_on_condition(self, oldtransition, oldcomponent, fromRegime, toRegime):
-        return oldtransition.AcceptVisitor( ClonerVisitor(prefix='',prefix_excludes=[]) )
+        return oldtransition.accept_visitor( ClonerVisitor(prefix='',prefix_excludes=[]) )
 
     def create_on_event(self, oldtransition, oldcomponent, fromRegime, toRegime):
         #from nineml.abstraction_layer.visitors import ClonerVisitor
-        return oldtransition.AcceptVisitor( ClonerVisitor(prefix='',prefix_excludes=[]) )
+        return oldtransition.accept_visitor( ClonerVisitor(prefix='',prefix_excludes=[]) )
 
 
 
@@ -86,8 +86,8 @@ class ComponentFlattener(object):
             if not on_events: continue
 
             on_event = on_events[0]
-            state_assignments.extend( [sa.AcceptVisitor( ClonerVisitor() ) for sa in on_event.state_assignments ]) 
-            event_outputs.extend( [eo.AcceptVisitor( ClonerVisitor() ) for eo in one_event.event_outputs ]) 
+            state_assignments.extend( [sa.accept_visitor( ClonerVisitor() ) for sa in on_event.state_assignments ]) 
+            event_outputs.extend( [eo.accept_visitor( ClonerVisitor() ) for eo in one_event.event_outputs ]) 
             
             #Update dstRegime
             dstRegimeName = oldtransition.to.get_ref() if oldtransition.to else regime
@@ -156,7 +156,7 @@ class ComponentFlattener(object):
                 
                 for oldtransition in regime.on_conditions:
                     # Clone the node:
-                    oldtransition = oldtransition.AcceptVisitor( ClonerVisitor(), prefix='', prefix_excludes=[] )
+                    oldtransition = oldtransition.accept_visitor( ClonerVisitor(), prefix='', prefix_excludes=[] )
 
 
                     handled_events = []
@@ -188,7 +188,7 @@ class ComponentFlattener(object):
 
                 for oldtransition in regime.on_events:
                     # Clone the Node:
-                    oldtransition = oldtransition.AcceptVisitor( ClonerVisitor(), prefix='', prefix_excludes=[] )
+                    oldtransition = oldtransition.accept_visitor( ClonerVisitor(), prefix='', prefix_excludes=[] )
 
 
                     handled_events = []
@@ -273,7 +273,7 @@ class ComponentFlattener(object):
             from nineml.abstraction_layer.visitors import InPlaceTransform
             transform = InPlaceTransform( originalname=originalname, targetname=targetname)
 
-            self.reducedcomponent.AcceptVisitor(transform)
+            self.reducedcomponent.accept_visitor(transform)
 
 
 

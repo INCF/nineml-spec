@@ -155,10 +155,13 @@ class Transition(object):
 
     @property
     def state_assignments(self):
+        """An ordered list of StateAssignments that happen when this
+        transitions occurs"""
         return self._state_assignments
     
     @property
     def event_outputs(self):
+        """Events that happen when this transitions occurs"""
         return self._event_outputs
 
 
@@ -169,7 +172,8 @@ class Transition(object):
 
 class OnEvent(Transition):
 
-    def AcceptVisitor(self, visitor,**kwargs):
+    def accept_visitor(self, visitor,**kwargs):
+        """ |VISITATION| """
         return visitor.VisitOnEvent(self,**kwargs)
 
     def __init__(self, src_port_name, state_assignments=None, event_outputs=None, target_regime_name=None):
@@ -192,7 +196,8 @@ class OnEvent(Transition):
 class OnCondition(Transition):
     element_name = "OnCondition"
 
-    def AcceptVisitor(self, visitor,**kwargs):
+    def accept_visitor(self, visitor,**kwargs):
+        """ |VISITATION| """
         return visitor.VisitOnCondition(self,**kwargs)
 
     def __init__(self, trigger, state_assignments=None, event_outputs=None, target_regime_name=None):
@@ -256,7 +261,8 @@ class Regime(object):
 
     # Visitation:
     # -------------
-    def AcceptVisitor(self, visitor,**kwargs):
+    def accept_visitor(self, visitor,**kwargs):
+        """ |VISITATION| """
         return visitor.VisitRegime(self,**kwargs)
 
 
@@ -491,7 +497,8 @@ class Dynamics(object):
         self._aliases = aliases
         self._state_variables = state_variables
 
-    def AcceptVisitor(self,visitor,**kwargs):
+    def accept_visitor(self,visitor,**kwargs):
+        """ |VISITATION| """
         return visitor.VisitDynamics(self, **kwargs)
 
     @property
@@ -524,7 +531,8 @@ class StateVariable(object):
     future, wrapping in into its own object may make the transition easier
     """
 
-    def AcceptVisitor(self, visitor, **kwargs):
+    def accept_visitor(self, visitor, **kwargs):
+        """ |VISITATION| """
         return visitor.VisitStateVariable(self, **kwargs)
     def __init__(self, name, ):
         """StateVariable Constructor

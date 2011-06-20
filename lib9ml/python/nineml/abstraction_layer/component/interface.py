@@ -41,5 +41,6 @@ class Parameter(object):
     def __str__(self):
         return "<Parameter: %s>"%(self.name)
 
-    def AcceptVisitor(self, visitor, **kwargs):
+    def accept_visitor(self, visitor, **kwargs):
+        """ |VISITATION| """
         return visitor.VisitParameter(self, **kwargs)

@@ -109,7 +109,7 @@ class AnalogPort(Port):
     the current provided by a ion-channel. 
 
     """
-    def AcceptVisitor(self, visitor, **kwargs):
+    def accept_visitor(self, visitor, **kwargs):
         """ |VISITATION| """
         return visitor.VisitAnalogPort(self, **kwargs)
 
@@ -123,7 +123,7 @@ class EventPort(Port):
     notify them to provide current to a post-synaptic neuron. 
 
     """
-    def AcceptVisitor(self, visitor, **kwargs):
+    def accept_visitor(self, visitor, **kwargs):
         """ |VISITATION| """
         return visitor.VisitEventPort(self, **kwargs)
 

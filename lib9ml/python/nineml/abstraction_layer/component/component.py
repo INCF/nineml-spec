@@ -138,9 +138,9 @@ class ComponentClassMixinFlatStructure(object):
             trans = InPlaceTransform( originalname = alias.lhs, 
                                       targetname = "(%s)"%alias.rhs )
             # Since we do not want to backsub in lhs of this alias, we can't
-            # call self.AcceptVisitor() directly
+            # call self.accept_visitor() directly
             for r in self.regimes:
-                r.AcceptVisitor(trans)
+                r.accept_visitor(trans)
 
 
     def write(self, file, flatten=True):
@@ -341,7 +341,8 @@ class ComponentClass( ComponentClassMixinFlatStructure,
         
 
 
-    def AcceptVisitor(self, visitor,**kwargs):
+    def accept_visitor(self, visitor,**kwargs):
+        """ |VISITATION| """
         return visitor.VisitComponentClass(self)
 
         

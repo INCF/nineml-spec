@@ -3,7 +3,8 @@ from expressions import Expression
 
 class Condition(expressions.Expression):
 
-    def AcceptVisitor(self, visitor, **kwargs):
+    def accept_visitor(self, visitor, **kwargs):
+        """ |VISITATION| """
         return visitor.VisitCondition(self, **kwargs)
 
     def __init__(self, rhs):

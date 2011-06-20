@@ -9,7 +9,7 @@ class ModelModifier(object):
     @check_flat_component
     def CloseAnalogPort( cls, component, port_name, value="0"):
         # Subsitute the value in:
-        component.AcceptVisitor( InPlaceTransform( port_name, value ) )
+        component.accept_visitor( InPlaceTransform( port_name, value ) )
 
         # Remove it from the list of ports:
         port = filter_expect_single( component.analog_ports, lambda ap: ap.name==port_name)
