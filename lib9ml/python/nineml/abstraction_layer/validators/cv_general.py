@@ -4,6 +4,7 @@ from collections import defaultdict
 from nineml.exceptions.exceptions import NineMLRuntimeError
 from nineml.abstraction_layer.component.namespaceaddress import NamespaceAddress
 from nineml.abstraction_layer import math_namespace
+from nineml.utility import assert_no_duplicates
 
 # Check that the sub-components stored are all of the
 # right types:
@@ -263,4 +264,57 @@ class ComponentValidatorRegimeGraph(ComponentValidatorPerNamespace):
         
     
 
+
+class ComponentValidatorNoDuplicatedObjects(ComponentValidatorPerNamespace):
+    def __init__(self,component):
+        ComponentValidatorPerNamespace.__init__(self, explicitly_require_action_overrides=True)
+
+        self.all_objects = list()
+    
+        self.visit(component)
+    
+        assert_no_duplicates(self.all_objects)
+        
+    
+    def ActionComponentClass(self, component,  **kwargs):
+        self.all_objects.append()
+        
+    def ActionDynamics(self, dynamics, **kwargs):
+        self.all_objects.append(dynamics)
+        
+    def ActionRegime(self,regime,  **kwargs):
+        self.all_objects.append(regime)
+        
+    def ActionStateVariable(self, state_variable, **kwargs):
+        self.all_objects.append(state_variable)
+        
+    def ActionParameter(self, parameter, **kwargs):
+        self.all_objects.append(parameter)
+        
+    def ActionAnalogPort(self, port, **kwargs):
+        self.all_objects.append(port)
+        
+    def ActionEventPort(self, port, **kwargs):
+        self.all_objects.append(port)
+        
+    def ActionOutputEvent(self, output_event, **kwargs):
+        self.all_objects.append(output_event)
+        
+    def ActionAssignment(self, assignment, **kwargs):
+        self.all_objects.append(assignment)
+        
+    def ActionAlias(self, alias, **kwargs):
+        self.all_objects.append(alias)
+        
+    def ActionODE(self,ode, **kwargs):
+        self.all_objects.append(ode)
+        
+    def ActionCondition(self, condition, **kwargs):
+        self.all_objects.append(condition)
+        
+    def ActionOnCondition(self, on_condition, **kwargs):
+        self.all_objects.append(on_condition)
+        
+    def ActionOnEvent(self, on_event, **kwargs):
+        self.all_objects.append(on_event)
 
