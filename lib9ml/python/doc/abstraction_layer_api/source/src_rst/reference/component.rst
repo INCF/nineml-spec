@@ -35,7 +35,7 @@ nineml.abstraction_layer.component [Component Dynamics]
 
     component.StateVariable
     component.Alias
-    component.Assignment
+    component.StateAssignment
     component.TimeDerivative
 
 
