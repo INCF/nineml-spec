@@ -37,7 +37,7 @@ class ComponentValidatorTypes(InplaceActionVisitorDF):
         assert isinstance( input_event, al.InputEvent )
 
     def ActionAssignment(self, assignment, **kwargs):
-        assert isinstance( assignment, al.Assignment )
+        assert isinstance( assignment, al.StateAssignment )
 
     def ActionAlias(self, alias, **kwargs):
         assert isinstance( alias, al.Alias )
