@@ -50,14 +50,14 @@ Details
 .. toctree::
    :maxdepth: 2
    
-   src_rst/utility_function
+   src_rst/reference/utility_function
 
-   src_rst/component
-   src_rst/readers
-   src_rst/writers
-   src_rst/visitors
-   src_rst/component_modifiers
-   src_rst/validators
+   src_rst/reference/component
+   src_rst/reference/readers
+   src_rst/reference/writers
+   src_rst/reference/visitors
+   src_rst/reference/component_modifiers
+   src_rst/reference/validators
 
 
 
@@ -67,7 +67,7 @@ Module Reference: [Internal]
 .. toctree::
    :maxdepth: 2
 
-   src_rst/component_internal
+   src_rst/reference/component_internal
 
 
 
