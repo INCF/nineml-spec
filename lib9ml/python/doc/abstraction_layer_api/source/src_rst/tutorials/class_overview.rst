@@ -160,6 +160,10 @@ Note that here we used the *name* of the regime in the ``to`` argument to the
 ``On`` transition constructor, rather than a ``Regime`` object. These references
 are resolved automatically when the component is built.
 
+If the differential equations for a ``StateVariable`` are not defined within a
+regime, then it is assumed that the state-variable does not change in that
+Regime, i.e. d/dt = 0.
+
 
 
 
@@ -169,19 +173,88 @@ Further Classes
 Aliases
 ~~~~~~~~
 
+Aliases are motivated by 2 cases; firstly that we would like to be able to
+``send`` something other than pure ``StateVariables``,  and that often we end
+up re-using calculations. For example, if we want to define a conductance-based
+synapse in NineML, then we would like to specify the current in the
+post-synaptic neuron.
+
+.. literalinclude:: /tutorial_example_code/example3_cobasynapse.py
+
+.. note::
+
+    When specifying Aliases, we use the syntax ``:=`` instead of ``=``
+
+In this case, we define an ``Alias``, *I*, which can used in a ``send`` port.
+Aliases can also be used on the right-hand-side of other aliases, ``Condition``
+s, ``StateAssignment`` s and ``TimeDerivative`` s.
+
+
 
 Reduce Ports
 ~~~~~~~~~~~~
+
+We have discussed ``send`` and ``recv`` ports, but there is another
+*port-mode*, which is ``reduce``. A ``reduce`` port is also a port that takes
+in data; but it can take information from multiple ``send`` ports. A typical
+example might be the injected current into a neuron. Current can come into a
+neuron from current injection, synapses or membrane channels. A ``recv`` port
+is not sufficient in this case, because a ``recv`` port can only take
+information from one other ``send`` port. Instead, we use a ``reduce`` port,
+which takes an additional parameter ``reduce_op``. This specifies how the
+incoming data should be defined. For example, to calculate the total current
+flowing into a cell, we would ``add`` all the current sources together, so we
+would create the port as::
+
+    p = AnalogPort(name="I", mode='reduce', reduce_op='+')
+
+See the docs for `AnalogPort` for more information.
+
+See XX [HH example] for examples of Reduce-Ports in action.
+
+
 
 
 Specifying Mathematical Strings
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+When specifying mathematics, we use a notation similar to C/C++. That is::
+
+    (3B + 1)V^2
+
+is not valid, it should be written as::
+
+    V * V * (3*B + 1) 
+
+
+
+Depending on what is being specified, we specify the mathematics slightly differently:
+
+ * **Aliases** should be of the form::
+    
+     alias := some * equation
+
+ * **TimeDerivatives** for a state-variable, *S*, should be of the form::
+    
+     dS/dt = some * equation
+
+ * **StateAssignments** must be written out in full; there is no in-place operators::
+
+     g += q     # Invalid
+     g = g + q  # Valid
+
+
+
+
 
 Shorthands for Construction
----------------------------
-* Port mode -> aliases curry classes
-* Inference of parameters
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. todo::
+
+    * Port mode -> aliases curry classes
+    * Inference of parameters
+
 
 Pseudo Code for Simulation:
----------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~

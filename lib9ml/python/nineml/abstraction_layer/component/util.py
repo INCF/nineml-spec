@@ -1,6 +1,8 @@
 
 from expressions import Alias, TimeDerivative, StateAssignment
 import re
+from nineml.exceptions import NineMLRuntimeError
+
 
 class StrToExpr(object):
 
@@ -13,7 +15,7 @@ class StrToExpr(object):
     def alias(cls, alias_string):
         if not cls.is_alias(alias_string):
             errmsg = "Invalid Alias: %s"%alias_string
-            raise NineMLRuntimeException(errmsg)
+            raise NineMLRuntimeError(errmsg)
 
         lhs,rhs = alias_string.split(':=')
         return Alias( lhs = lhs.strip(), rhs = rhs.strip() )

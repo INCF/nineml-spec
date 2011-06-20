@@ -139,8 +139,9 @@ class ComponentClassMixinFlatStructure(object):
 
         from nineml.abstraction_layer.visitors import ExpandAliasDefinition
 
-        # TODO. This is no longer true; we can directly call on the component,
-        # since we now have a new class ExpandAliasDefinition, instead of the old....
+        # TODO. This is no longer true; we can directly call on the component, #
+        # since we now have a new class ExpandAliasDefinition, instead of the
+        # old....
         
         for alias in self.aliases:
             trans = ExpandAliasDefinition( originalname = alias.lhs, 
@@ -181,14 +182,14 @@ class ComponentClassMixinNamespaceStructure(object):
         self.portconnections = []
 
         # Add the parameters using class methods:
-        for namespace,subnode in subnodes.iteritems():
+        for namespace, subnode in subnodes.iteritems():
             self.insert_subnode(subnode=subnode, namespace=namespace)
         
-        for src,sink in portconnections:
-            self.connect_ports(src,sink)
+        for src, sink in portconnections:
+            self.connect_ports(src, sink)
 
     # Parenting:
-    def _set_parent_model(self,parentmodel):
+    def _set_parent_model(self, parentmodel):
         assert not self._parentmodel
         self._parentmodel = parentmodel
     def _get_parent_model(self): 
@@ -251,7 +252,7 @@ class ComponentClassMixinNamespaceStructure(object):
         """
 
         #TODO: Check that the ports are connected to items in this model.
-        connection = (NamespaceAddress(src),NamespaceAddress(sink) )
+        connection = (NamespaceAddress(src), NamespaceAddress(sink) )
         self.portconnections.append( connection ) 
 
         self._validate_self()
@@ -264,13 +265,13 @@ class InterfaceInferer(InplaceActionVisitorDF):
     """ Used to infer output EventPorts, statevariables & parameters."""
 
     def __init__(self, dynamics, analog_ports):
-        InplaceActionVisitorDF.__init__(self,explicitly_require_action_overrides = True) 
+        InplaceActionVisitorDF.__init__(self, explicitly_require_action_overrides = True) 
 
         # State Variables:
         self.state_variable_names = set()
         for regime in dynamics.regimes:
             for time_derivatives in regime.time_derivatives:
-                self.state_variable_names.add( time_derivatives.dependent_variable )
+                self.state_variable_names.add(time_derivatives.dependent_variable)
             for transition in regime.transitions:
                 for state_assignment in transition.state_assignments:
                     self.state_variable_names.add( state_assignment.lhs)
@@ -278,7 +279,7 @@ class InterfaceInferer(InplaceActionVisitorDF):
 
         # Which symbols can we account for: 
         alias_symbols = set( dynamics.aliases_map.keys() )
-        incoming_analog_ports = [ ap.name for ap in analog_ports if ap.is_incoming() ]
+        incoming_analog_ports = [ap.name for ap in analog_ports if ap.is_incoming()]
 
         self.accounted_for_symbols = set( itertools.chain(
             self.state_variable_names, alias_symbols, incoming_analog_ports) )
@@ -295,8 +296,8 @@ class InterfaceInferer(InplaceActionVisitorDF):
 
 
     def action_dynamics(self, dynamics, **kwargs): pass
-    def action_regime(self,regime, **kwargs): pass
-    def action_statevariable(self,state_variable, **kwargs): pass
+    def action_regime(self, regime, **kwargs): pass
+    def action_statevariable(self, state_variable, **kwargs): pass
 
     def notify_atom(self, atom):
         if not atom in self.accounted_for_symbols:
@@ -307,7 +308,7 @@ class InterfaceInferer(InplaceActionVisitorDF):
         self.output_event_port_names.add( output_event.port_name)
 
     def action_onevent(self, on_event, **kwargs):
-        self.input_events_port_names.add( on_event.src_port_name )
+        self.input_event_port_names.add( on_event.src_port_name )
 
 
     # Atoms (possible parameters):
@@ -319,7 +320,7 @@ class InterfaceInferer(InplaceActionVisitorDF):
         for atom in alias.rhs_atoms:
             self.notify_atom(atom)
 
-    def action_timederivative(self,time_derivative,**kwargs):
+    def action_timederivative(self, time_derivative, **kwargs):
         for atom in time_derivative.rhs_atoms:
             self.notify_atom(atom)
 
@@ -371,7 +372,7 @@ class ComponentClass( ComponentClassMixinFlatStructure,
             for this component.
         :param portconnections: A list of pairs, specifying the connections
             between the ports of the subcomponents in this component. These can
-            be `(NamespaceAddress,NamespaceAddress)' or ``(string,string)``.
+            be `(NamespaceAddress, NamespaceAddress)' or ``(string, string)``.
         :param interface: A shorthand way of specifying the **interface** for
             this component; Parameters, AnalogPorts and EventPorts.
             ``interface`` takes a list of these objects, and automatically
@@ -400,7 +401,7 @@ class ComponentClass( ComponentClassMixinFlatStructure,
         # Turn any strings in the parameter list into Parameters:
         from nineml.utility import filter_discrete_types
         param_td = filter_discrete_types( parameters, (basestring, Parameter) )
-        parameters = param_td[Parameter] + [ Parameter(s) for s in param_td[basestring] ]
+        parameters = param_td[Parameter] + [Parameter(s) for s in param_td[basestring]]
 
         self._query = componentqueryer.ComponentQueryer(self)
 
@@ -408,7 +409,7 @@ class ComponentClass( ComponentClassMixinFlatStructure,
         
         # EventPort, StateVariable and Parameter Inference:
         inferred_structure = InterfaceInferer(dynamics, analog_ports=analog_ports)
-        inf_check = lambda l1,l2: check_list_contain_same_items( l1, l2,  desc1='Declared', desc2='Inferred') 
+        inf_check = lambda l1, l2: check_list_contain_same_items( l1, l2,  desc1='Declared', desc2='Inferred') 
         
         # Check any supplied parameters match:
         if parameters:
@@ -483,7 +484,7 @@ class ComponentClass( ComponentClassMixinFlatStructure,
         
 
 
-    def accept_visitor(self, visitor,**kwargs):
+    def accept_visitor(self, visitor, **kwargs):
         """ |VISITATION| """
         return visitor.visit_componentclass(self)
 
@@ -496,7 +497,7 @@ class ComponentClass( ComponentClassMixinFlatStructure,
         nineml.utility.assert_no_duplicates(names)
 
         #Create a map of regime names to regimes:
-        regimeMap = dict( [ (r.name,r) for r in self.regimes] )
+        regimeMap = dict( [ (r.name, r) for r in self.regimes] )
 
         # We only worry about 'target' regimes, since source regimes are taken 
         # care of for us by the Regime objects they are attached to.
