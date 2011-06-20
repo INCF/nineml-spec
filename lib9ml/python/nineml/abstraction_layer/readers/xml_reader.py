@@ -156,7 +156,7 @@ class XMLLoader(object):
     def load_stateassignment(self,element):
         lhs = element.get('variable')
         rhs = self.load_single_internal_maths_block(element)
-        return al.Assignment(lhs=lhs, rhs=rhs)
+        return al.StateAssignment(lhs=lhs, rhs=rhs)
 
     def load_eventout(self,element):
         port_name = element.get('port')

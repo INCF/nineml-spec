@@ -1,5 +1,5 @@
 
-from expressions import Alias, TimeDerivative, Assignment
+from expressions import Alias, TimeDerivative, StateAssignment
 import re
 
 class StrToExpr(object):
@@ -29,4 +29,4 @@ class StrToExpr(object):
     @classmethod
     def state_assignment(cls, state_assignment_string):
         lhs,rhs = state_assignment_string.split('=')
-        return Assignment( lhs=lhs, rhs=rhs )
+        return StateAssignment( lhs=lhs, rhs=rhs )

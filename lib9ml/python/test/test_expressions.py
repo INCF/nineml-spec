@@ -25,7 +25,7 @@ class ExpressionsTestCase(unittest.TestCase):
         pfx_ode = ode.prefix("PRE_")
         assert pfx_ode == "dPRE_V/dt = (PRE_ina + PRE_ik + PRE_il + PRE_Isyn)/PRE_C"
 
-        a = Assignment("U","gk(n)*(V - ek)")
+        a = StateAssignment("U","gk(n)*(V - ek)")
         pfx_a = a.prefix("PRE_")
         assert pfx_a == "PRE_U = PRE_gk(PRE_n)*(PRE_V - PRE_ek)"
 

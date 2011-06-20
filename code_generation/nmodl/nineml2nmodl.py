@@ -24,7 +24,7 @@ FIRST_REGIME_FLAG = 1001
 
 
 def as_expr(node):
-    if isinstance(node, al.Assignment):
+    if isinstance(node, al.StateAssignment):
         return node.as_expr()
     elif isinstance(node, al.EventPort):
         assert False

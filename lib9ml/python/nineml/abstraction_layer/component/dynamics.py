@@ -24,7 +24,7 @@ class Transition(object):
 
         :param state_assignments: A list of the state-assignements performed
             when this transition occurs. Objects in this list are either
-            `string` (e.g A = A+13) or `Assignment` objects.
+            `string` (e.g A = A+13) or `StateAssignment` objects.
         :param event_outputs: A list of ``OutputEvent`` objects emitted when
             this transition occurs.
         :param target_regime_name: The name of the regime to go into after this
@@ -47,9 +47,9 @@ class Transition(object):
         # Load state-assignment objects as strings or StateAssignment objects
         from nineml.utility import filter_discrete_types
         state_assignments = state_assignments or []
-        saTypeDict = filter_discrete_types( state_assignments, (basestring, Assignment ) )
+        saTypeDict = filter_discrete_types( state_assignments, (basestring, StateAssignment ) )
         sa_from_strings = [ StrToExpr.state_assignment(o) for o in saTypeDict[basestring] ] 
-        self._state_assignments = saTypeDict[Assignment] + sa_from_strings
+        self._state_assignments = saTypeDict[StateAssignment] + sa_from_strings
         
 
         self._event_outputs = event_outputs or [] 
@@ -433,12 +433,12 @@ def On( trigger, do=None, to=None ):
 def doToAsssignmentsAndEvents(doList):
     if not doList: return [],[]
     # 'doList' is a list of strings, OutputEvents, and StateAssignments.
-    doTypes = nineml.utility.filter_discrete_types(doList, (OutputEvent,basestring, Assignment) )
+    doTypes = nineml.utility.filter_discrete_types(doList, (OutputEvent,basestring, StateAssignment) )
     
     #Convert strings to StateAssignments:
     sa_from_strs = [ StrToExpr.state_assignment(s) for s in doTypes[basestring]]
 
-    return doTypes[Assignment]+sa_from_strs, doTypes[OutputEvent]
+    return doTypes[StateAssignment]+sa_from_strs, doTypes[OutputEvent]
 
 
 def DoOnEvent(input_event, do=None, to=None):

@@ -15,34 +15,9 @@ class RegimeElement(object):
 
 
 
-
-
 from expr_parse import expr_parse
 
 
-
-#class MathStringUtils(object):
-#    @classmethod
-#    def prefix(cls, prefix="", exclude=[], expr=None):
-#        assert expr
-#        """ Applies a prefix to all names & funcs if not in math_namespace
-#        returns new expr ... does not modify inplace
-#
-#        Exclude is a list of names (not functions) to be excluded from prefixing
-#
-#        If expr is None, the prefixing is computed for self.rhs and returned.
-#        self.rhs is not modified.
-#        
-#        """
-#
-#        # names that are in math_symbol space do not show up in self.names
-#        for name in self.names:
-#            if name in exclude: continue
-#            expr = Expression.name_replace(name,prefix+name,expr)
-#        for func in self.funcs:
-#            if func not in math_namespace.namespace:
-#                expr = Expression.name_replace(func,prefix+func,expr, func_ok=True)
-#        return expr
 
 
 
@@ -288,7 +263,7 @@ class Alias(ExpressionWithSimpleLHS, RegimeElement):
 
 
 
-class Assignment(ExpressionWithSimpleLHS, RegimeElement):
+class StateAssignment(ExpressionWithSimpleLHS, RegimeElement):
     """Assignments represent a change that happens to the value of a
     ``StateVariable`` during a transition between regimes. 
     
@@ -296,14 +271,14 @@ class Assignment(ExpressionWithSimpleLHS, RegimeElement):
     voltage back to zero, after it has reached a certain threshold. In this
     case, we would have an ``OnCondition`` object, that is triggered when
     ``v>vthres``. Attached to this OnCondition transition, we would attach an
-    Assignment which sets ``v=vreset``.
+    StateAssignment which sets ``v=vreset``.
 
     The left-hand-side symbol must be a state-variable of the component.
 
     """
 
     def __init__(self, lhs, rhs ):
-        """Assignment Constructor
+        """StateAssignment Constructor
         
         :param lhs: A `string`, which must be a state-variable of the component.
         :param rhs: A `string`, representing the new value of the state after
@@ -318,7 +293,7 @@ class Assignment(ExpressionWithSimpleLHS, RegimeElement):
    
 
     def __repr__(self):
-        return "Assignment('%s', '%s')" % (self.lhs, self.rhs)
+        return "StateAssignment('%s', '%s')" % (self.lhs, self.rhs)
 
 
 
@@ -467,7 +442,7 @@ def expr_to_obj(s, name = None):
 
     # Do we have an assignment?
     if op=="=":
-        return Assignment(lhs,rhs, name = name)
+        return StateAssignment(lhs,rhs, name = name)
         
     # If we get here, what do we have?
     raise ValueError, "Cannot map expr '%s' to a nineml Expression" % s

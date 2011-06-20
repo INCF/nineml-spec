@@ -78,7 +78,7 @@ class E2OTestCase(unittest.TestCase):
 
             lhs, rhs = t[1]
 
-            assert isinstance(o,nineml.Assignment)
+            assert isinstance(o,nineml.StateAssignment)
 
             assert o.expr == rhs
             assert o.to == lhs

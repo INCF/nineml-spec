@@ -140,7 +140,7 @@ class ClonerVisitor(ComponentVisitor):
         lhs = assignment.lhs if assignment.lhs in prefix_excludes else prefix + assignment.lhs
         rhs = MathUtil.get_prefixed_rhs_string( expr_obj=assignment, prefix=prefix, exclude=prefix_excludes )
 
-        return nineml.abstraction_layer.Assignment( lhs = lhs, rhs = rhs )
+        return nineml.abstraction_layer.StateAssignment( lhs = lhs, rhs = rhs )
 
 
     def VisitAlias(self, alias, **kwargs):

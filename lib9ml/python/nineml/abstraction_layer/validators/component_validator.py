@@ -16,8 +16,8 @@ class ComponentValidator(object):
     @classmethod
     def validate_component(cls, component):
 
-        from nineml.abstraction_layer.writers import TextWriter
-        TextWriter.write(component, filename='/tmp/nineml.huntingduplication.txt')
+        #from nineml.abstraction_layer.writers import TextWriter
+        #TextWriter.write(component, filename='/tmp/nineml.huntingduplication.txt')
         
         ComponentValidatorTypes(component)
         ComponentValidatorNoDuplicatedObjects(component)
