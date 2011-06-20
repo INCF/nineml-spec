@@ -1,9 +1,10 @@
+"""This file defines mathematical classes and derived classes"""
 
 import re
+import itertools
 
 from ..xmlns import *
 import math_namespace
-import itertools,re
 
 
 from nineml.exceptions import NineMLRuntimeError
@@ -23,15 +24,16 @@ from expr_parse import expr_parse
 
 
 class MathUtil(object):
+    """Useful static methods for manipulating expressions that are string"""
 
     @classmethod
-    def str_expr_replacement( cls,frm,to,expr_string, func_ok=False):
-        """ replaces all occurences of name 'frm' with 'to' in expr_string ('frm' may not occur as a function name on the rhs) ...
+    def str_expr_replacement( cls, frm, to, expr_string, func_ok=False):
+        """ replaces all occurences of name 'frm' with 'to' in expr_string
+        ('frm' may not occur as a function name on the rhs) ...
         'to' can be an arbitrary string so this function can also be used for argument substitution.
 
         Returns the resulting string. """
 
-        import re
 
         # do replace using regex
         # this matches names, using lookahead and lookbehind to be sure we don't
@@ -40,21 +42,26 @@ class MathUtil(object):
             # func_ok indicates we may replace a function name
             p_func = re.compile(r"(?<![a-zA-Z_0-9])(%s)(?![a-zA-Z_0-9])" % frm)
         else:
-            # this will not replace a function name even if its name matches from
-            # due to the lookahead disallowing '('
+            # this will not replace a function name even if its name matches
+            # from due to the lookahead disallowing '('
             p_func = re.compile(r"(?<![a-zA-Z_0-9])(%s)(?![(a-zA-Z_0-9])" % frm)
         return p_func.sub(to, expr_string)
 
 
     @classmethod 
-    def get_prefixed_rhs_string(cls, expr_obj, prefix="", exclude=[], ):
+    def get_prefixed_rhs_string(cls, expr_obj, prefix="", exclude=None ):
+        
         expr = expr_obj.rhs
         for name in expr_obj.rhs_names:
-            if name in exclude: continue
-            expr = MathUtil.str_expr_replacement(name,prefix+name,expr)
+            if exclude and name in exclude:
+                continue
+            expr = MathUtil.str_expr_replacement(name, prefix+name, expr)
         for func in expr_obj.rhs_funcs:
             if func not in math_namespace.namespace:
-                expr = MathUtil.str_expr_replacement(func,prefix+func,expr, func_ok=True)
+                expr = MathUtil.str_expr_replacement(func, 
+                                                     prefix+func, 
+                                                     expr, 
+                                                     func_ok=True)
         return expr
 
 
@@ -67,13 +74,13 @@ class Expression(object):
 
     def __init__(self, rhs):
         self._rhs = None
-        self._names = None
-        self._funcs = None
+        self._rhs_names = None
+        self._rhs_funcs = None
 
         self._set_rhs(rhs)
 
     # Subclasses can over-ride this, if need be.
-    def _parse_rhs(self,rhs):
+    def _parse_rhs(self, rhs):
         # A temporary measure, this is until the parser is 
         # generalised to handle conditionals
         return expr_parse(rhs)
@@ -84,12 +91,14 @@ class Expression(object):
     def _set_rhs(self, rhs):
         self._rhs = rhs
         self._rhs_names, self._rhs_funcs = self._parse_rhs(rhs)
-        for n in self._rhs_names: assert not n in self._rhs_funcs
-        for n in self._rhs_funcs: assert not n in self._rhs_names
+        for name in self._rhs_names: 
+            assert not name in self._rhs_funcs
+        for func in self._rhs_funcs: 
+            assert not func in self._rhs_names
 
     def _get_rhs(self):
         return self._rhs
-    rhs = property(_get_rhs,_set_rhs)
+    rhs = property(_get_rhs, _set_rhs)
 
 
     @property
@@ -104,34 +113,42 @@ class Expression(object):
     def rhs_atoms (self):
         return itertools.chain(self.rhs_names, self.rhs_funcs)
 
-    def rhs_as_python_func(self,namespace={}):
-        """ Returns a python callable which evaluates the expression in namespace and returns the result """
-        return eval("lambda %s: %s" % (','.join(self.rhs_names),self.rhs), math_namespace.namespace,namespace)
+    def rhs_as_python_func(self, namespace=None):
+        namespace = namespace or {}
+        """ Returns a python callable which evaluates the expression in
+        namespace and returns the result """
+
+        return eval("lambda %s: %s" % (','.join(self.rhs_names), self.rhs), \
+                math_namespace.namespace, namespace)
 
 
     def rhs_name_transform_inplace(self, name_map):
+        """Replace atoms on the RHS with values in the name_map"""
+
         for name in name_map:
-            self.rhs = MathUtil.str_expr_replacement(name,name_map[name],self.rhs)
+            replacment = name_map[name]
+            self.rhs = MathUtil.str_expr_replacement(name, replacment, self.rhs)
 
         
 
-    def substitute_alias(self,b):
-        # check b.name is not used as a function
-        p_func = re.compile(r"(^|([ */+-,(]+))%s\(" % b.name)
-        if p_func.search(self.rhs):
-            raise ValueError, "substituting non-function alias '%s', found use in '%s' as function." % (b.name, self.rhs)
-        self.rhs = MathUtil.str_expr_replacement(b.name,"(%s)" % b.rhs,self.rhs)
+    def substitute_alias(self, alias):
+        """Substitute an alias into the rhs"""
+        sub = "(%s)" % alias.rhs,
+
+        self.rhs = MathUtil.str_expr_replacement(alias.name, sub, self.rhs)
         
 
     @property
     def rhs_missing_functions(self):
-        """ yield names of functions in the rhs which are not in the math namespace"""
-        for f in self.rhs_funcs:
-            if f not in math_namespace.namespace:
-                yield f
+        """ yield names of functions in the rhs which are not in the math
+        namespace"""
+        for func in self.rhs_funcs:
+            if func not in math_namespace.namespace:
+                yield func
 
     def rhs_has_missing_functions(self):
-        """ returns True if at least 1 function on the rhs is not in the math namespace"""
+        """ returns True if at least 1 function on the rhs is not in the math
+        namespace"""
         return len(list(self.rhs_missing_functions)) != 0
 
 
@@ -141,7 +158,7 @@ class Expression(object):
 # TO GO:
 class Equation(Expression):
     def __init__(self, rhs):
-        Expression.__init__(self,rhs)
+        Expression.__init__(self, rhs)
 
 
 
@@ -150,9 +167,10 @@ class ExpressionWithLHS(Equation):
     # proper-prefixing:
         
     def __init__(self, rhs):
-        Equation.__init__(self,rhs)
+        Equation.__init__(self, rhs)
 
     def name_transform_inplace(self, name_map):
+        
         # Transform the lhs & rhs:
         self.lhs_name_transform_inplace( name_map )
         self.rhs_name_transform_inplace( name_map ) 
@@ -163,14 +181,11 @@ class ExpressionWithLHS(Equation):
     
     def lhs_name_transform_inplace(self, name_map):
         raise NotImplementedError()
+
     def lhs_atoms(self):
         raise NotImplementedError()
 
 
-    def name_transform_inplace(self, name_map):
-        # Remap the rhs
-        self.lhs_name_transform_inplace( name_map ) 
-        self.rhs_name_transform_inplace( name_map ) 
 
 
 
@@ -180,19 +195,24 @@ class ExpressionWithLHS(Equation):
 class ExpressionWithSimpleLHS(ExpressionWithLHS):
 
     def __init__(self, lhs, rhs):
-        ExpressionWithLHS.__init__(self,rhs)
+        ExpressionWithLHS.__init__(self, rhs)
 
-        lhs=lhs.strip()
+        lhs = lhs.strip()
         single_symbol = re.compile("^[a-zA-Z_]+[a-zA-Z_0-9]*$")
+        
         if not single_symbol.match( lhs ):
-            raise NineMLRuntimeError('Expecting a single symbol on the LHS; got: %s'%(lhs) )
+            err = 'Expecting a single symbol on the LHS; got: %s' % lhs
+            raise NineMLRuntimeError(err)
+
+
+
         self.lhs = lhs
 
     def lhs_atoms(self):
         return [self.lhs]
 
     def lhs_name_transform_inplace( self, name_map ):
-        self.lhs = name_map.get(self.lhs,self.lhs) 
+        self.lhs = name_map.get(self.lhs, self.lhs) 
    
 
 
@@ -251,9 +271,9 @@ class Alias(ExpressionWithSimpleLHS, RegimeElement):
         ExpressionWithSimpleLHS.__init__(self, lhs, rhs)
 
     def __repr__(self):
-        return "<Alias: %s := %s>" % (self.lhs,self.rhs)
+        return "<Alias: %s := %s>" % (self.lhs, self.rhs)
 
-    def accept_visitor(self, visitor,**kwargs):
+    def accept_visitor(self, visitor, **kwargs):
         """ |VISITATION| """
         return visitor.visit_alias(self, **kwargs)
 
@@ -317,14 +337,15 @@ class ODE(ExpressionWithLHS, RegimeElement):
 
     def __init__(self, dependent_variable, independent_variable, rhs): 
 
-        ExpressionWithLHS.__init__(self,rhs)
+        ExpressionWithLHS.__init__(self, rhs)
 
         self._dependent_variable = dependent_variable
         self._independent_variable = independent_variable
-        #self.rhs = rhs
 
         if self._dependent_variable in math_namespace.symbols:
-            raise ValueError, "TimeDerivative '%s' redefines math symbols (such as 'e','pi')" % str(self)
+            err =  "TimeDerivative '%s' redefines math symbols \
+                    (such as 'e', 'pi')" % str(self)
+            raise ValueError, err
 
     def __repr__(self):
         return "ODE(d%s/d%s = %s)" % (self._dependent_variable,
@@ -332,20 +353,28 @@ class ODE(ExpressionWithLHS, RegimeElement):
                                  self.rhs)
     @property
     def lhs(self):
-        return "d%s/d%s" % (self._dependent_variable, self._independent_variable)
+        """Return a string of the lhs of the form: 'dS/dt' """
+        return "d%s/d%s" % (self.dependent_variable, self.independent_variable)
 
     @property
     def dependent_variable(self):
+        """Return the dependent variable"""
         return self._dependent_variable
 
     @property
     def independent_variable(self):
+        """Return the independent variable"""
         return self._independent_variable
 
 
     def lhs_name_transform_inplace( self, name_map ):
-        self._dependent_variable = name_map.get(self._dependent_variable,self._dependent_variable) 
-        self._independent_variable = name_map.get(self._independent_variable,self._independent_variable) 
+        """Replace atoms on the LHS with mapping in name_map """
+        
+        dep = self._dependent_variable
+        self._dependent_variable = name_map.get(dep, dep) 
+
+        indep = self._independent_variable
+        self._independent_variable = name_map.get(indep, indep) 
 
 
 class TimeDerivative(ODE):
@@ -376,15 +405,19 @@ class TimeDerivative(ODE):
 
             
             """
-        ODE.__init__( self, dependent_variable = dependent_variable, independent_variable = 't', rhs = rhs )
+        ODE.__init__( self, 
+                      dependent_variable = dependent_variable, 
+                      independent_variable = 't', 
+                      rhs = rhs )
 
         
     def __repr__(self):
-        return "TimeDerivative( d%s/dt = %s )" % (self.dependent_variable, self.rhs)
+        return "TimeDerivative( d%s/dt = %s )" % \
+                (self.dependent_variable, self.rhs)
 
     def accept_visitor(self, visitor, **kwargs):
         """ |VISITATION| """
-        return visitor.visit_timederivative(self,**kwargs)
+        return visitor.visit_timederivative(self, **kwargs)
 
     
 
@@ -398,12 +431,12 @@ class TimeDerivative(ODE):
 
 def expr_to_obj(s, name = None):
     """ Construct nineml objects from expressions """ 
+    from util import StrToExpr
 
-    import re
+    #import re
 
     # Is our job already done?
-    #if isinstance(s,(RegimeElement,Inplace)):
-    if isinstance(s,(RegimeElement)):
+    if isinstance(s, (RegimeElement)):
         return s
 
     # strip surrounding whitespace
@@ -413,21 +446,21 @@ def expr_to_obj(s, name = None):
     if StrToExpr.is_alias(s):
         return StrToExpr.alias(s)
 
-    # re for an expression -> groups into lhs, op, rhs
-    # re for lhs for TimeDerivative
 
     
 
 
+    # re for an expression -> groups into lhs, op, rhs
     p_eqn = re.compile(r"(?P<lhs>[a-zA-Z_]+[a-zA-Z_0-9]*(/?[a-zA-Z_]+[a-zA-Z_0-9]*)?)\s*(?P<op>[+\-*/:]?=)\s*(?P<rhs>.*)")
     m = p_eqn.match(s)
     if not m:
         raise ValueError, "Not a valid nineml expression: %s" % s
 
     # get lhs, op, rhs
-    lhs, op, rhs = [m.group(x) for x in ['lhs','op','rhs']]
+    lhs, op, rhs = [m.group(x) for x in ['lhs', 'op', 'rhs']]
 
     # do we have an TimeDerivative?
+    # re for lhs for TimeDerivative
     p_ode_lhs = re.compile(r"(?:d)([a-zA-Z_]+[a-zA-Z_0-9]*)/(?:d)([a-zA-Z_]+[a-zA-Z_0-9]*)")
     m = p_ode_lhs.match(lhs)
     if m:
@@ -436,7 +469,7 @@ def expr_to_obj(s, name = None):
 
         dep_var = m.group(1)
         indep_var = m.group(2)
-        return TimeDerivative(dep_var,indep_var,rhs, name = name)
+        return TimeDerivative(dep_var, indep_var, rhs, name = name)
 
     ## Do we have an Inplace op?
     #if op in Inplace.op_name_map.keys():
@@ -444,7 +477,7 @@ def expr_to_obj(s, name = None):
 
     # Do we have an assignment?
     if op=="=":
-        return StateAssignment(lhs,rhs, name = name)
+        return StateAssignment(lhs, rhs, name = name)
         
     # If we get here, what do we have?
     raise ValueError, "Cannot map expr '%s' to a nineml Expression" % s

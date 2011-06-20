@@ -1,23 +1,24 @@
-
-
-from operator import and_
-from expressions import *
-from conditions import *
-from ports import *
-from events import *
-from ..xmlns import *
-
-import nineml.utility
-
+"""This file contains the main classes for defining dynamics"""
 
 from itertools import chain
 
+from expressions import StateAssignment, TimeDerivative, Alias 
+from conditions import  Condition
+from events import InputEvent, OutputEvent
 from util import StrToExpr
+
+import nineml.utility
+from nineml.exceptions import NineMLRuntimeError
+
+
+
 
 class Transition(object):
 
-    def __init__(self,state_assignments=None, event_outputs=None, target_regime_name=None):
-        """Abstract class representing a transition from one ``Regime`` to another
+    def __init__(self, state_assignments=None, event_outputs=None, 
+                 target_regime_name=None):
+        """Abstract class representing a transition from one ``Regime`` to
+        another.
 
         ``Transition`` objects are not created directly, but via the subclasses
         ``OnEvent`` and ``OnCondition``.
@@ -47,9 +48,11 @@ class Transition(object):
         # Load state-assignment objects as strings or StateAssignment objects
         from nineml.utility import filter_discrete_types
         state_assignments = state_assignments or []
-        saTypeDict = filter_discrete_types( state_assignments, (basestring, StateAssignment ) )
-        sa_from_strings = [ StrToExpr.state_assignment(o) for o in saTypeDict[basestring] ] 
-        self._state_assignments = saTypeDict[StateAssignment] + sa_from_strings
+
+        sa_types = (basestring, StateAssignment )
+        sa_type_dict = filter_discrete_types( state_assignments, sa_types )
+        sa_from_str = [StrToExpr.state_assignment(o) for o in sa_type_dict[basestring]] 
+        self._state_assignments = sa_type_dict[StateAssignment] + sa_from_str
         
 
         self._event_outputs = event_outputs or [] 
@@ -113,8 +116,6 @@ class Transition(object):
     def target_regime_name(self):
         """DO NOT USE: Internal function. Use `target_regime.name` instead.
         """
-        #if self._target_regime:
-        #    raise NineMLRuntimeException('This should not be called by users. Use target_regime.name instead')
         if self._target_regime_name:
             assert isinstance( self._target_regime_name, basestring) 
         return self._target_regime_name
@@ -124,7 +125,8 @@ class Transition(object):
         """DO NOT USE: Internal function. Use `source_regime.name` instead.
         """
         if self._source_regime:
-            raise NineMLRuntimeException('This should not be called by users. Use source_regime.name instead')
+            err = "Should not be called by users.Use source_regime.name instead"
+            raise NineMLRuntimeError(err)
         assert self._source_regime_name
         return self._source_regime_name
 
@@ -172,11 +174,12 @@ class Transition(object):
 
 class OnEvent(Transition):
 
-    def accept_visitor(self, visitor,**kwargs):
+    def accept_visitor(self, visitor, **kwargs):
         """ |VISITATION| """
-        return visitor.visit_onevent(self,**kwargs)
+        return visitor.visit_onevent(self, **kwargs)
 
-    def __init__(self, src_port_name, state_assignments=None, event_outputs=None, target_regime_name=None):
+    def __init__(self, src_port_name, state_assignments=None, 
+                 event_outputs=None, target_regime_name=None):
         """Constructor for ``OnEvent``
             
             :param src_port_name: The name of the port that triggers this transition
@@ -184,7 +187,9 @@ class OnEvent(Transition):
             See ``Transition.__init__`` for the definitions of the remaining
             parameters.
         """
-        Transition.__init__(self,state_assignments=state_assignments, event_outputs=event_outputs, target_regime_name=target_regime_name)
+        Transition.__init__(self, state_assignments=state_assignments, 
+                            event_outputs=event_outputs, 
+                            target_regime_name=target_regime_name)
         self._src_port_name = src_port_name
 
     @property
@@ -196,11 +201,12 @@ class OnEvent(Transition):
 class OnCondition(Transition):
     element_name = "OnCondition"
 
-    def accept_visitor(self, visitor,**kwargs):
+    def accept_visitor(self, visitor, **kwargs):
         """ |VISITATION| """
-        return visitor.visit_oncondition(self,**kwargs)
+        return visitor.visit_oncondition(self, **kwargs)
 
-    def __init__(self, trigger, state_assignments=None, event_outputs=None, target_regime_name=None):
+    def __init__(self, trigger, state_assignments=None, 
+                 event_outputs=None, target_regime_name=None):
         """Constructor for ``OnEvent``
             
             :param trigger: Either a ``Condition`` object or a ``string`` object
@@ -215,13 +221,16 @@ class OnCondition(Transition):
             self._trigger = ClonerVisitor().visit( trigger )
         elif isinstance( trigger, basestring): 
             self._trigger = Condition( rhs = trigger )
-        else:  assert False
+        else:  
+            assert False
 
-        Transition.__init__(self,state_assignments=state_assignments, event_outputs=event_outputs, target_regime_name=target_regime_name)
+        Transition.__init__(self, state_assignments=state_assignments, 
+                            event_outputs=event_outputs, 
+                            target_regime_name=target_regime_name)
 
 
     def __str__(self):
-        return 'OnCondition( %s )'%self.trigger
+        return 'OnCondition( %s )' % self.trigger
     
     @property
     def trigger(self):
@@ -252,7 +261,7 @@ class Regime(object):
     _n = 0
    
     @classmethod
-    def get_next_name(self):
+    def get_next_name(cls):
         """Return the next distinct autogenerated name
         """
         Regime._n = Regime._n + 1
@@ -261,12 +270,14 @@ class Regime(object):
 
     # Visitation:
     # -------------
-    def accept_visitor(self, visitor,**kwargs):
+    def accept_visitor(self, visitor, **kwargs):
         """ |VISITATION| """
-        return visitor.visit_regime(self,**kwargs)
+        return visitor.visit_regime(self, **kwargs)
 
 
-    def __init__(self, name, time_derivatives=None, on_events=None, on_conditions=None, transitions=None):
+    def __init__(self, name, time_derivatives=None, 
+                 on_events=None, on_conditions=None, 
+                 transitions=None):
         """Regime constructor
             
             :param name: The name of the constructor. If none, then a name will
@@ -287,13 +298,16 @@ class Regime(object):
         self._name = name if name else Regime.get_next_name()
 
         # We support passing in 'transitions', which is a list of both OnEvents 
-        # and OnConditions. So, lets filter this by type and add them appropriately:
+        # and OnConditions. So, lets filter this by type and add them
+        # appropriately:
         transitions = transitions or []
-        fDict = filter_discrete_types( transitions, (OnEvent,OnCondition) ) 
+        f_dict = filter_discrete_types( transitions, (OnEvent, OnCondition)) 
 
+        td_types = (basestring, TimeDerivative )
+        td_type_dict = filter_discrete_types( time_derivatives, td_types  )
+        td_from_str = [StrToExpr.time_derivative(o) for o in td_type_dict[basestring]]  
+        tds = td_type_dict[TimeDerivative] + td_from_str
 
-        tdTypeDict = filter_discrete_types( time_derivatives, (basestring, TimeDerivative ) )
-        tds = tdTypeDict[TimeDerivative] + [ StrToExpr.time_derivative(o) for o in tdTypeDict[basestring] ] 
 
 
         self._time_derivatives = tds
@@ -301,14 +315,14 @@ class Regime(object):
         self._on_conditions = [] 
 
         # Add all the OnEvents and OnConditions:
-        for s in (on_events or [] ) + fDict[OnEvent] :
-            self.add_on_event(s)
-        for s in (on_conditions or [] ) + fDict[OnCondition]:
-            self.add_on_condition(s)
+        for event in (on_events or [] ) + f_dict[OnEvent] :
+            self.add_on_event(event)
+        for condition in (on_conditions or [] ) + f_dict[OnCondition]:
+            self.add_on_condition(condition)
 
 
 
-    def _resolve_references_on_transition(self,transition):
+    def _resolve_references_on_transition(self, transition):
         if not transition.target_regime_name:
             transition.set_target_regime(self)
         
@@ -383,7 +397,8 @@ class Regime(object):
 
     @property 
     def on_conditions(self):
-        """Returns all the transitions out of this regime trigger by conditions"""
+        """Returns all the transitions out of this regime trigger by
+        conditions"""
         return iter(self._on_conditions)
 
     @property
@@ -415,15 +430,17 @@ class Regime(object):
 
 # Forwarding Function:
 def On( trigger, do=None, to=None ):
-    if isinstance(do, basestring ): do = [do]
-    elif isinstance(do, InputEvent): do = [do]
-    elif do == None: do = []
-    else: pass
+    if isinstance(do, (InputEvent, basestring)): 
+        do = [do]
+    elif do == None: 
+        do = []
+    else: 
+        pass
 
     if isinstance( trigger, InputEvent):
-        return DoOnEvent(input_event=trigger, do=do,to=to)
+        return DoOnEvent(input_event=trigger, do=do, to=to)
     elif isinstance( trigger, (OnCondition, basestring)):
-        return DoOnCondition(condition=trigger, do=do,to=to)
+        return DoOnCondition(condition=trigger, do=do, to=to)
     else:
         assert False
 
@@ -431,21 +448,22 @@ def On( trigger, do=None, to=None ):
 
 
 
-def doToAsssignmentsAndEvents(doList):
-    if not doList: return [],[]
+def do_to_assignments_and_events(doList):
+    if not doList: return [], []
     # 'doList' is a list of strings, OutputEvents, and StateAssignments.
-    doTypes = nineml.utility.filter_discrete_types(doList, (OutputEvent,basestring, StateAssignment) )
+    do_type_list =  (OutputEvent, basestring, StateAssignment) 
+    do_types = nineml.utility.filter_discrete_types(doList, do_type_list)
     
     #Convert strings to StateAssignments:
-    sa_from_strs = [ StrToExpr.state_assignment(s) for s in doTypes[basestring]]
+    sa_from_strs = [StrToExpr.state_assignment(s) for s in do_types[basestring]]
 
-    return doTypes[StateAssignment]+sa_from_strs, doTypes[OutputEvent]
+    return do_types[StateAssignment]+sa_from_strs, do_types[OutputEvent]
 
 
 def DoOnEvent(input_event, do=None, to=None):
     assert isinstance( input_event, InputEvent) 
     
-    assignments,output_events = doToAsssignmentsAndEvents( do ) 
+    assignments, output_events = do_to_assignments_and_events( do ) 
     return OnEvent( src_port_name=input_event.port_name,
                     state_assignments = assignments,
                     event_outputs=output_events,
@@ -454,7 +472,7 @@ def DoOnEvent(input_event, do=None, to=None):
 
 
 def DoOnCondition( condition, do=None, to=None ):
-    assignments,output_events = doToAsssignmentsAndEvents( do ) 
+    assignments, output_events = do_to_assignments_and_events( do ) 
     return OnCondition( trigger=condition,
                         state_assignments = assignments,
                         event_outputs=output_events,
@@ -484,21 +502,22 @@ class Dynamics(object):
 
         # Load the aliases as objects or strings:
         from nineml.utility import filter_discrete_types
-        aliasTD = filter_discrete_types( aliases, (basestring, Alias ) )
-        aliases_from_strings =  [ StrToExpr.alias(o) for o in aliasTD[basestring] ] 
-        aliases = aliasTD[Alias] + aliases_from_strings
+        alias_td = filter_discrete_types( aliases, (basestring, Alias ) )
+        aliases_from_strs = [StrToExpr.alias(o) for o in alias_td[basestring]] 
+        aliases = alias_td[Alias] + aliases_from_strs
 
         # Load the state variables as objects or strings:
-        svTD = filter_discrete_types( state_variables, (basestring, StateVariable ) )
-        sv_from_strings =  [ StateVariable(o) for o in svTD[basestring] ] 
-        state_variables = svTD[StateVariable] + sv_from_strings
+        sv_types =  (basestring, StateVariable) 
+        sv_td = filter_discrete_types( state_variables, sv_types)
+        sv_from_strings =  [ StateVariable(o) for o in sv_td[basestring] ] 
+        state_variables = sv_td[StateVariable] + sv_from_strings
 
 
         self._regimes = regimes
         self._aliases = aliases
         self._state_variables = state_variables
 
-    def accept_visitor(self,visitor,**kwargs):
+    def accept_visitor(self, visitor, **kwargs):
         """ |VISITATION| """
         return visitor.visit_dynamics(self, **kwargs)
 
@@ -516,7 +535,7 @@ class Dynamics(object):
 
     @property
     def aliases_map(self):
-        return dict( [ (a.lhs,a) for a in self._aliases ] )
+        return dict( [ (a.lhs, a) for a in self._aliases ] )
 
     @property
     def state_variables(self):
@@ -547,4 +566,4 @@ class StateVariable(object):
         return self._name
 
     def __str__(self):
-        return "<StateVariable: %s>"%(self.name)
+        return "<StateVariable: %s>" % self.name

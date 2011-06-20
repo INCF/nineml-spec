@@ -1,15 +1,15 @@
+"""Contains the classes for defining the interface for a componentclass"""
 
+#from operator import and_
+#from expressions import *
+#from conditions import *
+#from ports import *
+#from ..xmlns import *
 
-from operator import and_
-from expressions import *
-from conditions import *
-from ports import *
-from ..xmlns import *
-
-import nineml.utility
-
-
-from itertools import chain
+#import nineml.utility
+#
+#
+#from itertools import chain
 
 
 
@@ -36,10 +36,11 @@ class Parameter(object):
 
     @property
     def name(self):
+        """Returns the name of the parameter"""
         return self._name
 
     def __str__(self):
-        return "<Parameter: %s>"%(self.name)
+        return "<Parameter: %s>" % self.name
 
     def accept_visitor(self, visitor, **kwargs):
         """ |VISITATION| """

@@ -112,7 +112,8 @@ class CalcCond(Parser):
 
     
     def t_error(self, t):
-        raise NineMLMathParseError, "Illegal character '%s' in '%s'" % (t.value[0],t)
+        raise NineMLMathParseError, \
+            "Illegal character '%s' in '%s'" % (t.value[0],t)
 
     precedence = (
         ('left','NAME'),
@@ -195,9 +196,11 @@ class CalcCond(Parser):
 
     def p_error(self, p):
         if p:
-            raise NineMLMathParseError, "Syntax error at '%s'" % p.value
+            raise NineMLMathParseError, \
+                    "Syntax error at '%s'" % p.value
         else:
-            raise NineMLMathParseError, "Syntax error at EOF, probably unmatched parenthesis."
+            raise NineMLMathParseError, \
+                    "Syntax error at EOF, probably unmatched parenthesis."
 
 
 def cond_parse(conditional):

@@ -78,7 +78,8 @@ class NamespaceAddress(object):
         NameSpaceAddress: '/level1/level2/level3/subcomponent/'
 
         """
-        return NamespaceAddress( loc = tuple( list(self.loctuple) + [component_name] ) )
+        #comp_ns = NamespaceAddress(component_name)
+        return NamespaceAddress.concat(self.loctuple, component_name )
 
     def get_parent_addr(self):
         """Return the address of an namespace higher

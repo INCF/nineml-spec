@@ -93,6 +93,10 @@ class Port(object):
     def is_incoming(self):
         """Returns True if the port's mode is 'recv' or 'reduce' """
         return self.mode in ('recv', 'reduce')
+
+    def is_outgoing(self):
+        """Returns True if the port's mode is 'send' """
+        return not self.is_incoming()
                    
     @property
     def symbol(self):

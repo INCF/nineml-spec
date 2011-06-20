@@ -1,3 +1,4 @@
+"""This file contains the definitions for the Events"""
 
 class OutputEvent(object):
     """OutputEvent
@@ -41,7 +42,7 @@ class InputEvent(object):
         """ |VISITATION| """
         return visitor.visit_inputevent(self, **kwargs)
 
-    def __init__(self,port_name):
+    def __init__(self, port_name):
         """InputEvent Constructor
 
         :param port: The name of the input EventPort that should 

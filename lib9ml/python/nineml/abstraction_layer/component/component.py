@@ -1,5 +1,5 @@
 
-from operator import and_
+#from operator import and_
 
 
 from nineml.exceptions import NineMLRuntimeError
@@ -9,13 +9,14 @@ import nineml.utility
 import dynamics as dyn
 
 
-import copy
+#import copy
 import itertools
 from nineml.abstraction_layer.visitors.cloner import ClonerVisitor
 from interface import Parameter
 from dynamics import StateVariable
-from ports import Port, EventPort
+from ports import EventPort
 import math_namespace 
+from nineml.utility import check_list_contain_same_items
 
 
 class ComponentClassMixinFlatStructure(object):
@@ -110,7 +111,6 @@ class ComponentClassMixinFlatStructure(object):
         StateVariables and recv/reduce AnalogPorts on the RHS.
 
         """
-        #TODO: Check for recursion
 
         # Back-substitute aliases, by resolving them
         # them then substituting recursively:
@@ -139,18 +139,10 @@ class ComponentClassMixinFlatStructure(object):
         """
 
         from nineml.abstraction_layer.visitors import ExpandAliasDefinition
-
-        # TODO. This is no longer true; we can directly call on the component, #
-        # since we now have a new class ExpandAliasDefinition, instead of the
-        # old....
-        
         for alias in self.aliases:
-            trans = ExpandAliasDefinition( originalname = alias.lhs, 
-                                          targetname = "(%s)"%alias.rhs )
-            # Since we do not want to backsub in lhs of this alias, we can't
-            # call self.accept_visitor() directly
-            for r in self.regimes:
-                r.accept_visitor(trans)
+            alias_expander = ExpandAliasDefinition(originalname=alias.lhs, 
+                                                   targetname="(%s)"%alias.rhs )
+            alias_expander.visit(self)
 
 
     def write(self, file, flatten=True):
@@ -197,6 +189,10 @@ class ComponentClassMixinNamespaceStructure(object):
         return self._parentmodel
 
 
+
+    def _validate_self(self):
+        """ Over-ridden in mix'ed class"""
+        raise NotImplementedError()
 
 
     def get_node_addr(self):
@@ -252,7 +248,6 @@ class ComponentClassMixinNamespaceStructure(object):
 
         """
 
-        #TODO: Check that the ports are connected to items in this model.
         connection = (NamespaceAddress(src), NamespaceAddress(sink) )
         self.portconnections.append( connection ) 
 
@@ -266,13 +261,13 @@ class InterfaceInferer(ActionVisitor):
     """ Used to infer output EventPorts, statevariables & parameters."""
 
     def __init__(self, dynamics, analog_ports):
-        ActionVisitor.__init__(self, explicitly_require_action_overrides = True) 
+        ActionVisitor.__init__(self, explicitly_require_action_overrides=True) 
 
         # State Variables:
         self.state_variable_names = set()
         for regime in dynamics.regimes:
-            for time_derivatives in regime.time_derivatives:
-                self.state_variable_names.add(time_derivatives.dependent_variable)
+            for time_deriv in regime.time_derivatives:
+                self.state_variable_names.add(time_deriv.dependent_variable)
             for transition in regime.transitions:
                 for state_assignment in transition.state_assignments:
                     self.state_variable_names.add( state_assignment.lhs)
@@ -280,10 +275,12 @@ class InterfaceInferer(ActionVisitor):
 
         # Which symbols can we account for: 
         alias_symbols = set( dynamics.aliases_map.keys() )
-        incoming_analog_ports = [ap.name for ap in analog_ports if ap.is_incoming()]
+        analog_ports_in = [ap.name for ap in analog_ports if ap.is_incoming()]
 
         self.accounted_for_symbols = set( itertools.chain(
-            self.state_variable_names, alias_symbols, incoming_analog_ports,
+            self.state_variable_names, 
+            alias_symbols, 
+            analog_ports_in,
             math_namespace.namespace.keys() ) )
 
         #Parameters:
@@ -297,9 +294,12 @@ class InterfaceInferer(ActionVisitor):
         self.visit(dynamics)
 
 
-    def action_dynamics(self, dynamics, **kwargs): pass
-    def action_regime(self, regime, **kwargs): pass
-    def action_statevariable(self, state_variable, **kwargs): pass
+    def action_dynamics(self, dynamics, **kwargs): 
+        pass
+    def action_regime(self, regime, **kwargs): 
+        pass
+    def action_statevariable(self, state_variable, **kwargs): 
+        pass
 
     def notify_atom(self, atom):
         if not atom in self.accounted_for_symbols:
@@ -338,7 +338,6 @@ class InterfaceInferer(ActionVisitor):
 
     
 
-from nineml.utility import check_list_contain_same_items
 
 
 class ComponentClass( ComponentClassMixinFlatStructure, 
@@ -404,46 +403,51 @@ class ComponentClass( ComponentClassMixinFlatStructure,
         # Turn any strings in the parameter list into Parameters:
         from nineml.utility import filter_discrete_types
         param_td = filter_discrete_types( parameters, (basestring, Parameter) )
-        parameters = param_td[Parameter] + [Parameter(s) for s in param_td[basestring]]
+        params_from_strings = [Parameter(s) for s in param_td[basestring]]
+        parameters = param_td[Parameter] + params_from_strings
+
 
         self._query = componentqueryer.ComponentQueryer(self)
 
 
         
         # EventPort, StateVariable and Parameter Inference:
-        inferred_structure = InterfaceInferer(dynamics, analog_ports=analog_ports)
+        inferred_struct = InterfaceInferer(dynamics, analog_ports=analog_ports)
         inf_check = lambda l1, l2: check_list_contain_same_items( l1, l2,
                 desc1='Declared', desc2='Inferred', ignore=['t']) 
         
         # Check any supplied parameters match:
         if parameters:
             parameter_names = [p.name for p in parameters]
-            inf_check( parameter_names, inferred_structure.parameter_names )
+            inf_check( parameter_names, inferred_struct.parameter_names )
         else:
-            parameters = [Parameter(n) for n in inferred_structure.parameter_names]
+            parameters = [Parameter(n) for n in inferred_struct.parameter_names]
 
 
         # Check any supplied state_variables match:
         if dynamics._state_variables:
-            state_variable_names = [p.name for p in dynamics.state_variables]
-            inf_check( state_variable_names, inferred_structure.state_variable_names )
+            state_var_names = [p.name for p in dynamics.state_variables]
+            inf_check( state_var_names, inferred_struct.state_variable_names )
         else:
-            dynamics._state_variables = [StateVariable(n) for n in inferred_structure.state_variable_names ]
+            state_vars = [StateVariable(n) for n in 
+                            inferred_struct.state_variable_names ] 
+            dynamics._state_variables = state_vars
 
 
         # Check Event Ports Match:
-        in_evt_port_names =  [ ep.name for ep in event_ports if ep.is_incoming() ]
-        out_evt_port_names = [ ep.name for ep in event_ports if not ep.is_incoming() ]
+        ip_evtport_names =  [ep.name for ep in event_ports if ep.is_incoming()]
+        op_evtport_names = [ep.name for ep in event_ports if ep.is_outgoing()]
 
         if event_ports:
             #Check things Match:
-            inf_check( in_evt_port_names, inferred_structure.input_event_port_names)
-            inf_check( out_evt_port_names, inferred_structure.output_event_port_names)
+            inf_check(ip_evtport_names, inferred_struct.input_event_port_names)
+            inf_check(op_evtport_names, inferred_struct.output_event_port_names)
         else:
-            for evt_port_name in inferred_structure.input_event_port_names:
-                event_ports.append( EventPort(name=evt_port_name, mode='recv') ) 
-            for evt_port_name in inferred_structure.output_event_port_names:
-                event_ports.append( EventPort(name=evt_port_name, mode='send') ) 
+            #Event ports not supplied, so lets use the inferred ones.
+            for evt_port_name in inferred_struct.input_event_port_names:
+                event_ports.append( EventPort(name=evt_port_name, mode='recv')) 
+            for evt_port_name in inferred_struct.output_event_port_names:
+                event_ports.append( EventPort(name=evt_port_name, mode='send')) 
 
 
         # Construct super-classes:
@@ -459,14 +463,14 @@ class ComponentClass( ComponentClassMixinFlatStructure,
                                                 portconnections=portconnections)
 
         #Finalise initiation:
-        self._ResolveTransitionRegimeNames()
+        self._resolve_transition_regime_names()
 
         # Is the finished component valid?:
         self._validate_self()
         
 
     def _validate_self(self):
-        from nineml.abstraction_layer.validators.component_validator import ComponentValidator
+        from nineml.abstraction_layer.validators import ComponentValidator
         ComponentValidator.validate_component(self)
         
 
@@ -490,24 +494,24 @@ class ComponentClass( ComponentClassMixinFlatStructure,
 
     def accept_visitor(self, visitor, **kwargs):
         """ |VISITATION| """
-        return visitor.visit_componentclass(self)
+        return visitor.visit_componentclass(self, **kwargs)
 
         
 
 
-    def _ResolveTransitionRegimeNames(self):
+    def _resolve_transition_regime_names(self):
         # Check that the names of the regimes are unique:
         names = [ r.name for r in self.regimes ]
         nineml.utility.assert_no_duplicates(names)
 
         #Create a map of regime names to regimes:
-        regimeMap = dict( [ (r.name, r) for r in self.regimes] )
+        regime_map = dict( [ (r.name, r) for r in self.regimes] )
 
         # We only worry about 'target' regimes, since source regimes are taken 
         # care of for us by the Regime objects they are attached to.
-        for t in self.transitions:
-            if not t.target_regime_name in regimeMap:
-                errmsg = "Can't find target regime: %s"%t.target_regime_name
+        for trans in self.transitions:
+            if not trans.target_regime_name in regime_map:
+                errmsg = "Can't find regime: %s" % trans.target_regime_name
                 raise NineMLRuntimeError(errmsg)
-            t.set_target_regime( regimeMap[t.target_regime_name] )
+            trans.set_target_regime( regime_map[trans.target_regime_name] )
 
