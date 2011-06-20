@@ -13,7 +13,7 @@ class ComponentVisitor(object):
 
 
 
-class InplaceActionVisitorDF(ComponentVisitor):
+class ActionVisitor(ComponentVisitor):
 
     def __init__(self, explicitly_require_action_overrides=True):
         self.explicitly_require_action_overrides = explicitly_require_action_overrides

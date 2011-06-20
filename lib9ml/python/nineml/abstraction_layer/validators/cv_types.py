@@ -1,10 +1,10 @@
 
 import nineml.abstraction_layer as al
-from nineml.abstraction_layer.visitors import InplaceActionVisitorDF
+from nineml.abstraction_layer.visitors import ActionVisitor
 
 
 
-class ComponentValidatorTypes(InplaceActionVisitorDF):
+class ComponentValidatorTypes(ActionVisitor):
 
     def __init__(self, component):
         self.visit(component)

@@ -1,6 +1,6 @@
 
 
-from base import InplaceActionVisitorDF
+from base import ActionVisitor
 from itertools import chain
 
 
@@ -13,10 +13,10 @@ from nineml.abstraction_layer.component.namespaceaddress import NamespaceAddress
 
 
 
-class ExpandPortDefinition(InplaceActionVisitorDF):
+class ExpandPortDefinition(ActionVisitor):
     def __init__(self, originalname, targetname):
         
-        InplaceActionVisitorDF.__init__(self, explicitly_require_action_overrides=False)
+        ActionVisitor.__init__(self, explicitly_require_action_overrides=False)
         
         self.originalname = originalname
         self.targetname = targetname
@@ -33,10 +33,10 @@ class ExpandPortDefinition(InplaceActionVisitorDF):
 
 
 
-class ExpandAliasDefinition(InplaceActionVisitorDF):
+class ExpandAliasDefinition(ActionVisitor):
     def __init__(self, originalname, targetname):
         
-        InplaceActionVisitorDF.__init__(self, explicitly_require_action_overrides=False)
+        ActionVisitor.__init__(self, explicitly_require_action_overrides=False)
         
         self.originalname = originalname
         self.targetname = targetname

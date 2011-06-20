@@ -1,5 +1,5 @@
 import nineml.abstraction_layer as al
-from nineml.abstraction_layer.visitors import InplaceActionVisitorDF
+from nineml.abstraction_layer.visitors import ActionVisitor
 from nineml.utility import *
 from itertools import chain
 

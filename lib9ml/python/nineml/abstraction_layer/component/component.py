@@ -260,13 +260,13 @@ class ComponentClassMixinNamespaceStructure(object):
 
    
 
-from nineml.abstraction_layer.visitors import InplaceActionVisitorDF
+from nineml.abstraction_layer.visitors import ActionVisitor
 
-class InterfaceInferer(InplaceActionVisitorDF):
+class InterfaceInferer(ActionVisitor):
     """ Used to infer output EventPorts, statevariables & parameters."""
 
     def __init__(self, dynamics, analog_ports):
-        InplaceActionVisitorDF.__init__(self, explicitly_require_action_overrides = True) 
+        ActionVisitor.__init__(self, explicitly_require_action_overrides = True) 
 
         # State Variables:
         self.state_variable_names = set()
