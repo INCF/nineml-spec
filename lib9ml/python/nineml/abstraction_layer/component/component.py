@@ -15,6 +15,7 @@ from nineml.abstraction_layer.visitors.cloner import ClonerVisitor
 from interface import Parameter
 from dynamics import StateVariable
 from ports import Port, EventPort
+import math_namespace 
 
 
 class ComponentClassMixinFlatStructure(object):
@@ -282,7 +283,8 @@ class InterfaceInferer(InplaceActionVisitorDF):
         incoming_analog_ports = [ap.name for ap in analog_ports if ap.is_incoming()]
 
         self.accounted_for_symbols = set( itertools.chain(
-            self.state_variable_names, alias_symbols, incoming_analog_ports) )
+            self.state_variable_names, alias_symbols, incoming_analog_ports,
+            math_namespace.namespace.keys() ) )
 
         #Parameters:
         # Use visitation to collect all atoms that are not aliases and not
@@ -391,6 +393,7 @@ class ComponentClass( ComponentClassMixinFlatStructure,
         """
         parameters = parameters or []
         event_ports = event_ports or []
+        analog_ports = analog_ports or []
 
 
         # We should always create a dynamics object, even is it is empty:
@@ -409,7 +412,8 @@ class ComponentClass( ComponentClassMixinFlatStructure,
         
         # EventPort, StateVariable and Parameter Inference:
         inferred_structure = InterfaceInferer(dynamics, analog_ports=analog_ports)
-        inf_check = lambda l1, l2: check_list_contain_same_items( l1, l2,  desc1='Declared', desc2='Inferred') 
+        inf_check = lambda l1, l2: check_list_contain_same_items( l1, l2,
+                desc1='Declared', desc2='Inferred', ignore=['t']) 
         
         # Check any supplied parameters match:
         if parameters:
@@ -429,7 +433,7 @@ class ComponentClass( ComponentClassMixinFlatStructure,
 
         # Check Event Ports Match:
         in_evt_port_names =  [ ep.name for ep in event_ports if ep.is_incoming() ]
-        out_evt_ports_names = [ ep.name for ep in event_ports if not ep.is_incoming() ]
+        out_evt_port_names = [ ep.name for ep in event_ports if not ep.is_incoming() ]
 
         if event_ports:
             #Check things Match:

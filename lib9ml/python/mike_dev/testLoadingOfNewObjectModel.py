@@ -57,11 +57,10 @@ def t4():
 
 
     from nineml.abstraction_layer.flattening import flatten
-    from nineml.abstraction_layer.component_modifiers import ModelModifier
-    from nineml.abstraction_layer.component_modifiers import ModelModifier
+    from nineml.abstraction_layer.component_modifiers import ComponentModifier
 
     flatcomponent = flatten(model, componentname='iaf_2coba')
-    ModelModifier.CloseAnalogPort(component=flatcomponent, port_name='iaf_iSyn', value='0' )
+    ComponentModifier.CloseAnalogPort(component=flatcomponent, port_name='iaf_iSyn', value='0' )
 
     writers.XMLWriter.write(flatcomponent, '/tmp/nineml_out_iaf_2coba.9ml' ) 
 

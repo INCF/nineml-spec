@@ -37,7 +37,7 @@
             </Trigger>
 
             <StateAssignment variable="V" >
-              <MathInline>vrest</MathInline>
+              <MathInline>vreset</MathInline>
             </StateAssignment>
             
             <StateAssignment variable="tspike" >

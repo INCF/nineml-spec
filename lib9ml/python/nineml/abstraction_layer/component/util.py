@@ -3,6 +3,10 @@ from expressions import Alias, TimeDerivative, StateAssignment
 import re
 from nineml.exceptions import NineMLRuntimeError
 
+# Wrapper for writing XML:
+def parse(filename):
+    from nineml.abstraction_layer.readers import XMLReader
+    return XMLReader.read_component(filename)
 
 class StrToExpr(object):
 

@@ -303,9 +303,14 @@ class LocationMgr(object):
 
 
 
-def check_list_contain_same_items(lst1, lst2, desc1="", desc2=""):
+def check_list_contain_same_items(lst1, lst2, desc1="", desc2="", ignore=[]):
     set1 = set(lst1)
     set2 = set(lst2)
+
+    for i in ignore:
+        set1.discard(i)
+        set2.discard(i)
+
 
     # Are the lists subsets of each other.
     if set1.issubset( set2 ) and set2.issubset( set1 ):

@@ -1,4 +1,5 @@
 
-from modelmodifier import ModelModifier
+from component_modifier import ComponentModifier
 
-ComponentModifier = ModelModifier
+#__all__ = ['ComponentModifier']
+#ComponentModifier = ModelModifier
