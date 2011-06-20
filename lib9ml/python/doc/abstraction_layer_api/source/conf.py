@@ -292,3 +292,9 @@ todo_include_todos = True
 
 doctest_test_doctest_blocks = 'default'
 autodoc_member_order = 'groupwise'
+
+
+rst_prolog = """
+.. |VISITATION| replace:: link to something about visitation.
+
+"""

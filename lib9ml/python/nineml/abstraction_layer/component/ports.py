@@ -1,3 +1,5 @@
+"""This file defines the Port classes used in NineML"""
+
 
 from nineml.helpers import curry
 
@@ -27,8 +29,8 @@ class Port(object):
     them together to calculate the voltage change in the neuron.
 
     """
-    modes = ('send','recv','reduce')
-    reduce_op_map = {'add':'+', 'sub':'-', 'mul':'*', 'div':'/',
+    _modes = ('send', 'recv', 'reduce')
+    _reduce_op_map = {'add':'+', 'sub':'-', 'mul':'*', 'div':'/',
                      '+':'+', '-':'-', '*':'*', '/':'/'}
 
     def __init__(self, name, mode='send', reduce_op=None):
@@ -47,54 +49,83 @@ class Port(object):
 
         """
 
-        self.dimension="??" 
+        self.dimension = "??" 
         self._name = name
-        self.mode = mode
-        self.reduce_op = reduce_op
+        self._mode = mode
+        self._reduce_op = reduce_op
         
-        if self.mode not in self.modes:
+        if self._mode not in Port._modes:
             raise ValueError, ("%s('%s')"+\
                   "specified undefined mode: '%s'") %\
-                  (self.__class__.__name__, self.symbol, self.mode)
-        if self.mode=='reduce':
-            if self.reduce_op not in self.reduce_op_map.keys():
+                  (self.__class__.__name__, self.symbol, mode)
+        if mode == 'reduce':
+            if reduce_op not in Port._reduce_op_map.keys():
                 raise ValueError, ("%s('%s')"+\
                       "specified undefined reduce_op: '%s'") %\
-                      (self.__class__.__name__, self.symbol, str(self.reduce_op))
+                      (self.__class__.__name__, name, str(reduce_op))
 
-        if reduce_op and self.mode!="reduce":
+        if reduce_op and mode != "reduce":
             raise ValueError, "Port of mode!=reduce may not specify 'op'."
             
     
     @property
     def name(self):
+        """The name of the port, local to the current component"""
         return self._name
 
     @property
-    def symbol(self):
-        assert False
-        return self._name
+    def mode(self):
+        """The mode of the port. ['send','recv' or 'reduce'] """
+        return self._mode
     
+    @property
+    def reduce_op(self):
+        """The reduction operation of the port, if it is a 'reduce' port"""
+        return self._reduce_op
+
 
     def __repr__(self):
         classstring = self.__class__.__name__ 
-        opstr = ', op=%s'%self.reduce_op if self.reduce_op else ''
-        return "%s('%s', mode='%s' %s)" % (classstring, self.symbol, self.mode, opstr)
+        opstr = ', op=%s'% (self.reduce_op or '' )
+        return "%s('%s', mode='%s' %s)" % \
+                    (classstring, self.name, self.mode, opstr)
                    
                    
+    @property
+    def symbol(self):
+        """Deprecated, do not use"""
+        assert False
+        return self._name
 
 
 
 
 
 class AnalogPort(Port):
+    """Analog Port
+    
+    An analog port represents a continuous input or output to/from a component.
+    For example, this could be the membrane-voltage into a synapse component, or
+    the current provided by a ion-channel. 
+
+    """
     def AcceptVisitor(self, visitor, **kwargs):
-        return visitor.VisitAnalogPort(self,**kwargs)
+        """ |VISITATION| """
+        return visitor.VisitAnalogPort(self, **kwargs)
 
 
 class EventPort(Port):
+    """Event Port
+    
+    An event port represents a port that can transmit and recieve discrete events at points
+    in time. For example, an integrate-and-fire could 'send' events to notify
+    other components that it had fired; or synapses could recieve events to
+    notify them to provide current to a post-synaptic neuron. 
+
+    """
     def AcceptVisitor(self, visitor, **kwargs):
-        return visitor.VisitEventPort(self,**kwargs)
+        """ |VISITATION| """
+        return visitor.VisitEventPort(self, **kwargs)
 
 
 
@@ -105,9 +136,9 @@ class EventPort(Port):
 
 # Syntactic sugar
 
-ReducePort = curry(AnalogPort,mode="reduce")
-RecvPort = curry(AnalogPort,mode="recv")
-SendPort = curry(AnalogPort,mode="send")
+ReducePort = curry(AnalogPort, mode="reduce")
+RecvPort = curry(AnalogPort, mode="recv")
+SendPort = curry(AnalogPort, mode="send")
 
-RecvEventPort = curry(EventPort,mode="recv")
-SendEventPort = curry(EventPort,mode="send")
+RecvEventPort = curry(EventPort, mode="recv")
+SendEventPort = curry(EventPort, mode="send")
