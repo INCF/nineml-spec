@@ -2,8 +2,9 @@
 from Cheetah.Template import Template
 
 def dump_reduced(component, filename):
+    pass
     
-    tmpl = """
+tmpl = """
     MODEL: 
 
     PORTS:
@@ -51,6 +52,8 @@ def dump_reduced(component, filename):
 
         OnEvents:
         ~~~~~~~~~~~~~~
+
+#*
         #for $on_event in $regime.on_events:
            Event: $on_event.src_port_name [To -> $on_event.to ]
            #for node in $on_event.nodes:
@@ -66,7 +69,7 @@ def dump_reduced(component, filename):
              Node: $node
            #end for
         #end for
-
+*#
 
 
     #end for
@@ -76,15 +79,27 @@ def dump_reduced(component, filename):
     """
 
 
-    assert component.is_flat()
+#assert component.is_flat()
 
-    data = { 'component':component }
-    f = open(filename,"w")
-    s = Template(tmpl, data).respond()
-    f.write(s)
-    f.close()
+#data = { 'component':component }
+#f = open(filename,"w")
+#s = Template(tmpl, data).respond()
+#f.write(s)
+#f.close()
 
 
 class TextWriter(object):
     """TextWriter DocString"""
-    pass
+
+
+    @classmethod
+    def write(cls, component, filename):
+        #assert component.is_flat()
+
+
+        data = { 'component':component }
+        f = open(filename,"w")
+        s = Template(tmpl, data).respond()
+        f.write(s)
+        f.close()
+

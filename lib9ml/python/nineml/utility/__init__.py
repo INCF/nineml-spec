@@ -18,7 +18,7 @@ from nineml.exceptions import NineMLRuntimeError
 
 
 
-def _dispatch_error_func(error_func, default_error=NineMLRuntimeError()):
+def _dispatch_error_func(error_func, default_error=NineMLRuntimeError() ):
     """Internal function for dispatching errors. 
     
     This was seperated out because it happens in a lot of utility functions
@@ -27,12 +27,16 @@ def _dispatch_error_func(error_func, default_error=NineMLRuntimeError()):
     if error_func:
         if isinstance(error_func, Exception):
             raise error_func
+        elif isinstance(error_func, basestring):
+            raise NineMLRuntimeError(error_func)
         else:
             error_func()
             internal_error('error_func failed to raise Exception')
     else:
         if isinstance(default_error, Exception):
             raise default_error
+        elif isinstance(default_error, basestring):
+            raise NineMLRuntimeError(default_error)
         else:
             default_error()
             internal_error('default_error failed to raise Exception')
@@ -205,8 +209,18 @@ def assert_no_duplicates(lst, error_func=None):
     """
 
     if len(lst) != len( set(lst) ):
+        
+        # Find the duplication:
+        seen_items = set()
+        for i in lst:
+            if i in seen_items:
+                duplication = i
+                break
+            else:
+                seen_items.add(i)
+        
         _dispatch_error_func( error_func, 
-                              "Unxpected duplication found: " + str(lst) ) 
+                              "Unxpected duplication found: %s \n in %s" %( str(i) ,  str(lst)) ) 
 
 
 

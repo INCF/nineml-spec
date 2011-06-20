@@ -85,7 +85,6 @@ class ClonerVisitor(ComponentVisitor):
 
 
     def VisitComponentClass(self, component, **kwargs ):
-        assert False
         ccn =  nineml.abstraction_layer.ComponentClass( name = component.name,
                                parameters  = [ p.accept_visitor(self,**kwargs) for p in component.parameters  ],
                                analog_ports= [ p.accept_visitor(self,**kwargs) for p in component.analog_ports],
@@ -172,7 +171,6 @@ class ClonerVisitor(ComponentVisitor):
         prefix = kwargs.get( 'prefix','')
         prefix_excludes = kwargs.get('prefix_excludes',[] )
         rhs = MathUtil.get_prefixed_rhs_string( expr_obj=condition, prefix=prefix, exclude=prefix_excludes )
-
         return nineml.abstraction_layer.Condition( rhs =rhs)
 
 

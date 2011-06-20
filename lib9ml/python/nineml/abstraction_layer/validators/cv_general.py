@@ -9,10 +9,7 @@ from nineml.utility import assert_no_duplicates
 # Check that the sub-components stored are all of the
 # right types:
 class ComponentValidatorTimeDerivativesAreDeclared(ComponentValidatorPerNamespace):
-    """ Check for conflicts between Aliases, StateVariables, Parameters, and EventPorts,
-        and analog input ports
-    
-        We do not need to check for comflicts with output AnalogPorts, since, these will use names. 
+    """ 
     """
      
     def __init__(self, component):
@@ -25,7 +22,8 @@ class ComponentValidatorTimeDerivativesAreDeclared(ComponentValidatorPerNamespac
         for namespace,time_derivatives in self.time_derivatives_used.iteritems():
             for td in time_derivatives:
                 assert td in self.sv_declared[namespace], 'StateVariable not declared: %s'%td
-            
+        
+        
     def ActionStateVariable(self, state_variable, namespace, **kwargs):
         self.sv_declared[namespace].append(state_variable.name)
         
@@ -36,10 +34,7 @@ class ComponentValidatorTimeDerivativesAreDeclared(ComponentValidatorPerNamespac
 
 
 class ComponentValidatorStateAssignmentsAreOnStateVariables(ComponentValidatorPerNamespace):
-    """ Check for conflicts between Aliases, StateVariables, Parameters, and EventPorts,
-        and analog input ports
-    
-        We do not need to check for comflicts with output AnalogPorts, since, these will use names. 
+    """ Check that we only attempt to make StateAssignments to state-variables.
     """
      
     def __init__(self, component):
@@ -277,7 +272,7 @@ class ComponentValidatorNoDuplicatedObjects(ComponentValidatorPerNamespace):
         
     
     def ActionComponentClass(self, component,  **kwargs):
-        self.all_objects.append()
+        self.all_objects.append(component)
         
     def ActionDynamics(self, dynamics, **kwargs):
         self.all_objects.append(dynamics)

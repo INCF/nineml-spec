@@ -57,8 +57,13 @@ class ComponentFlattener(object):
         
         # Copy accross all the odes from each regime. 
         # [Don't worry about transitions yet, we deal with them later]
+
+        # We need to clone the time_derivatives:
+        time_derivatives = flatten_first_level( [ r.time_derivatives for r in regimetuple ] )
+        time_derivatives = [ ClonerVisitor().visit(td) for td in time_derivatives ]
+
         return al.Regime( name=None, 
-                        time_derivatives = flatten_first_level( [ r.time_derivatives for r in regimetuple ] ),
+                        time_derivatives = time_derivatives,
                         on_events=[], 
                         on_conditions=[] )
 
@@ -68,7 +73,6 @@ class ComponentFlattener(object):
         return oldtransition.accept_visitor( ClonerVisitor(prefix='',prefix_excludes=[]) )
 
     def create_on_event(self, oldtransition, oldcomponent, fromRegime, toRegime):
-        #from nineml.abstraction_layer.visitors import ClonerVisitor
         return oldtransition.accept_visitor( ClonerVisitor(prefix='',prefix_excludes=[]) )
 
 

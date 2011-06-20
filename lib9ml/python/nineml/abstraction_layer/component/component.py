@@ -11,6 +11,7 @@ import dynamics as dyn
 
 import copy
 import itertools
+from nineml.abstraction_layer.visitors.cloner import ClonerVisitor
 
 
 
@@ -219,11 +220,15 @@ class ComponentClassMixinNamespaceStructure(object):
         :raises: ``NineMLRuntimeException`` if there is already a subcomponent at
             the same namespace location
 
+        .. note::
+            
+            This method will clone the subnode.
 
         """
 
         assert not namespace in self.subnodes
-        self.subnodes[namespace] = copy.deepcopy( subnode ) 
+        #self.subnodes[namespace] = copy.deepcopy( subnode ) 
+        self.subnodes[namespace] = ClonerVisitor().visit( subnode )
         self.subnodes[namespace]._set_parent_model(self)
 
     def connect_ports( self, src, sink ):
