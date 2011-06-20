@@ -30,7 +30,7 @@ class ComponentFlattener(object):
 
         # Is our component already flat??
         if model.is_flat():
-            self.reducedcomponent = ClonerVisitor.Visit( model )
+            self.reducedcomponent = ClonerVisitor.visit( model )
             return
 
         # New components name
@@ -38,7 +38,7 @@ class ComponentFlattener(object):
 
 
         # Flatten all the namespaces:
-        self.model = ClonerVisitorPrefixNamespace().Visit(model)
+        self.model = ClonerVisitorPrefixNamespace().visit(model)
 
         # Make a list of all components, and those components with regimes: 
         self.all_components = list( self.model.query.recurse_all_components )

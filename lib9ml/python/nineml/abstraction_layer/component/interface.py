@@ -43,4 +43,4 @@ class Parameter(object):
 
     def accept_visitor(self, visitor, **kwargs):
         """ |VISITATION| """
-        return visitor.VisitParameter(self, **kwargs)
+        return visitor.visit_parameter(self, **kwargs)

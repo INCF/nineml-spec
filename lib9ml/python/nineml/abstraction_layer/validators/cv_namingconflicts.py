@@ -32,20 +32,20 @@ class ComponentValidatorLocalNameConflicts(ComponentValidatorPerNamespace):
         assert not symbol in self.symbols[namespace]
         self.symbols[namespace].append(symbol)
             
-    def ActionStateVariable(self, state_variable, namespace, **kwargs):
+    def action_statevariable(self, state_variable, namespace, **kwargs):
         self.check_comflicting_symbol(namespace=namespace, symbol=state_variable.name)
         
-    def ActionParameter(self, parameter, namespace, **kwargs):
+    def action_parameter(self, parameter, namespace, **kwargs):
         self.check_comflicting_symbol(namespace=namespace, symbol=parameter.name)
         
-    def ActionAnalogPort(self, port, namespace, **kwargs):
+    def action_analogport(self, port, namespace, **kwargs):
         if port.is_incoming():
             self.check_comflicting_symbol(namespace=namespace, symbol=port.name)
         
-    def ActionEventPort(self, port, namespace, **kwargs):
+    def action_eventport(self, port, namespace, **kwargs):
         self.check_comflicting_symbol(namespace=namespace, symbol=port.name)
                 
-    def ActionAlias(self, alias, namespace, **kwargs):
+    def action_alias(self, alias, namespace, **kwargs):
         self.check_comflicting_symbol(namespace=namespace, symbol=alias.lhs)
         
 

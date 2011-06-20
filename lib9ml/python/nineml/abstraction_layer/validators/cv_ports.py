@@ -22,7 +22,7 @@ from nineml.abstraction_layer.validators.base import ComponentValidatorPerNamesp
 #        self.visit(component)
 #
 #
-#    def ActionComponentClass(self, component):
+#    def action_componentclass(self, component):
 #        assert isinstance( component, al.ComponentClass )
 #        
 #        # Check for name duplication:
@@ -81,14 +81,14 @@ class ComponentValidatorEventPorts(ComponentValidatorPerNamespace):
                     assert False
             
         
-    def ActionEventPort(self, port, namespace, **kwargs):
+    def action_eventport(self, port, namespace, **kwargs):
         assert not port.name in self.events_ports[namespace]
         self.events_ports[namespace][port.name] = port
         
-    def ActionOutputEvent(self, output_event, namespace, **kwargs):
+    def action_outputevent(self, output_event, namespace, **kwargs):
         self.output_events[namespace].append( output_event.port_name)
                 
-    def ActionOnEvent(self, on_event, namespace, **kwargs):
+    def action_onevent(self, on_event, namespace, **kwargs):
         self.input_events[namespace].append( on_event.src_port_name)
         
         
@@ -125,14 +125,14 @@ class ComponentValidatorOutputAnalogPorts(ComponentValidatorPerNamespace):
         assert not symbol in self.available_symbols[namespace] 
         self.available_symbols[namespace].append(symbol)
     
-    def ActionAnalogPort(self, port, namespace, **kwargs):
+    def action_analogport(self, port, namespace, **kwargs):
         if not port.is_incoming():
             self.output_analogports[namespace].append(port.name)
             
-    def ActionStateVariable(self, state_variable, namespace, **kwargs):
+    def action_statevariable(self, state_variable, namespace, **kwargs):
         self.add_symbol(namespace=namespace, symbol=state_variable.name)
                         
-    def ActionAlias(self, alias, namespace, **kwargs):
+    def action_alias(self, alias, namespace, **kwargs):
         self.add_symbol(namespace=namespace, symbol=alias.lhs)
         
 

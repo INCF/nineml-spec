@@ -253,7 +253,7 @@ class Alias(ExpressionWithSimpleLHS, RegimeElement):
 
     def accept_visitor(self, visitor,**kwargs):
         """ |VISITATION| """
-        return visitor.VisitAlias(self, **kwargs)
+        return visitor.visit_alias(self, **kwargs)
 
 
 
@@ -289,7 +289,7 @@ class StateAssignment(ExpressionWithSimpleLHS, RegimeElement):
 
     def accept_visitor(self, visitor, **kwargs):
         """ |VISITATION| """
-        return visitor.VisitAssignment(self, **kwargs)
+        return visitor.visit_assignment(self, **kwargs)
    
 
     def __repr__(self):
@@ -382,7 +382,7 @@ class TimeDerivative(ODE):
 
     def accept_visitor(self, visitor, **kwargs):
         """ |VISITATION| """
-        return visitor.VisitTimeDerivative(self,**kwargs)
+        return visitor.visit_timederivative(self,**kwargs)
 
     
 

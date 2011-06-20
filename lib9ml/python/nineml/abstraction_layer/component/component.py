@@ -356,7 +356,7 @@ class ComponentClass( ComponentClassMixinFlatStructure,
 
     def accept_visitor(self, visitor,**kwargs):
         """ |VISITATION| """
-        return visitor.VisitComponentClass(self)
+        return visitor.visit_componentclass(self)
 
         
 

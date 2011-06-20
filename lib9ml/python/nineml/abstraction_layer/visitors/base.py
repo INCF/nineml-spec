@@ -4,7 +4,7 @@ from itertools import chain
 
 
 class ComponentVisitor(object):
-    def Visit( self,obj,**kwargs):
+    def visit( self,obj,**kwargs):
         return obj.accept_visitor(self,**kwargs)
     
     def visit( self,obj,**kwargs):
@@ -19,8 +19,8 @@ class InplaceActionVisitorDF(ComponentVisitor):
         self.explicitly_require_action_overrides = explicitly_require_action_overrides
 
 
-    def VisitComponentClass(self, component, **kwargs):
-        self.ActionComponentClass(component, **kwargs)
+    def visit_componentclass(self, component, **kwargs):
+        self.action_componentclass(component, **kwargs)
 
         
         nodes = chain(component.parameters, component.analog_ports, component.event_ports )
@@ -35,56 +35,56 @@ class InplaceActionVisitorDF(ComponentVisitor):
 
     
 
-    def VisitDynamics(self, dynamics, **kwargs):
-        self.ActionDynamics(dynamics, **kwargs)
+    def visit_dynamics(self, dynamics, **kwargs):
+        self.action_dynamics(dynamics, **kwargs)
         nodes = chain(dynamics.regimes, dynamics.aliases, dynamics.state_variables)
         for p in nodes:
             p.accept_visitor(self, **kwargs)
         
-    def VisitRegime(self,regime, **kwargs):
-        self.ActionRegime(regime, **kwargs)
+    def visit_regime(self,regime, **kwargs):
+        self.action_regime(regime, **kwargs)
         nodes = chain(regime.time_derivatives, regime.on_events, regime.on_conditions)
         for p in nodes:
             p.accept_visitor(self, **kwargs)
 
-    def VisitStateVariable(self, state_variable, **kwargs):
-        self.ActionStateVariable( state_variable, **kwargs) 
+    def visit_statevariable(self, state_variable, **kwargs):
+        self.action_statevariable( state_variable, **kwargs) 
 
-    def VisitParameter(self, parameter, **kwargs):
-        self.ActionParameter(parameter, **kwargs)
+    def visit_parameter(self, parameter, **kwargs):
+        self.action_parameter(parameter, **kwargs)
 
-    def VisitAnalogPort(self, port, **kwargs):
-        self.ActionAnalogPort(port, **kwargs)
+    def visit_analogport(self, port, **kwargs):
+        self.action_analogport(port, **kwargs)
 
-    def VisitEventPort(self, port, **kwargs):
-        self.ActionEventPort(port, **kwargs)
+    def visit_eventport(self, port, **kwargs):
+        self.action_eventport(port, **kwargs)
 
-    def VisitOutputEvent(self, output_event, **kwargs):
-        self.ActionOutputEvent(output_event, **kwargs)
+    def visit_outputevent(self, output_event, **kwargs):
+        self.action_outputevent(output_event, **kwargs)
 
-    def VisitInputEvent(self, input_event, **kwargs):
-        self.ActionInputEvent(input_event, **kwargs)
+    def visit_inputevent(self, input_event, **kwargs):
+        self.action_inputevent(input_event, **kwargs)
 
-    def VisitAssignment(self, assignment, **kwargs):
-        self.ActionAssignment(assignment, **kwargs)
+    def visit_assignment(self, assignment, **kwargs):
+        self.action_assignment(assignment, **kwargs)
 
-    def VisitAlias(self, alias, **kwargs):
-        self.ActionAlias(alias, **kwargs)
+    def visit_alias(self, alias, **kwargs):
+        self.action_alias(alias, **kwargs)
 
-    def VisitTimeDerivative(self,ode,**kwargs):
-        self.ActionODE(ode, **kwargs)
+    def visit_timederivative(self,ode,**kwargs):
+        self.action__timederivative(ode, **kwargs)
 
-    def VisitCondition(self, condition, **kwargs):
-        self.ActionCondition(condition, **kwargs)
+    def visit_condition(self, condition, **kwargs):
+        self.action_condition(condition, **kwargs)
 
-    def VisitOnCondition(self, on_condition, **kwargs):
-        self.ActionOnCondition(on_condition, **kwargs)
+    def visit_oncondition(self, on_condition, **kwargs):
+        self.action_oncondition(on_condition, **kwargs)
         nodes = chain([on_condition.trigger], on_condition.event_outputs, on_condition.state_assignments)
         for p in nodes:
             p.accept_visitor(self, **kwargs)
 
-    def VisitOnEvent(self, on_event, **kwargs):
-        self.ActionOnEvent(on_event, **kwargs)
+    def visit_onevent(self, on_event, **kwargs):
+        self.action_onevent(on_event, **kwargs)
         nodes = chain( on_event.event_outputs, on_event.state_assignments)
         for p in nodes:
             p.accept_visitor(self, **kwargs)
@@ -98,49 +98,49 @@ class InplaceActionVisitorDF(ComponentVisitor):
             pass
         
     # To be overridden:
-    def ActionComponentClass(self, component,  **kwargs):
+    def action_componentclass(self, component,  **kwargs):
         self.check_pass()
         
-    def ActionDynamics(self, dynamics, **kwargs):
+    def action_dynamics(self, dynamics, **kwargs):
         self.check_pass()
         
-    def ActionRegime(self,regime,  **kwargs):
+    def action_regime(self,regime,  **kwargs):
         self.check_pass()
         
-    def ActionStateVariable(self, state_variable, **kwargs):
+    def action_statevariable(self, state_variable, **kwargs):
         self.check_pass()
         
-    def ActionParameter(self, parameter, **kwargs):
+    def action_parameter(self, parameter, **kwargs):
         self.check_pass()
         
-    def ActionAnalogPort(self, port, **kwargs):
+    def action_analogport(self, port, **kwargs):
         self.check_pass()
         
-    def ActionEventPort(self, port, **kwargs):
+    def action_eventport(self, port, **kwargs):
         self.check_pass()
         
-    def ActionOutputEvent(self, output_event, **kwargs):
+    def action_outputevent(self, output_event, **kwargs):
         self.check_pass()
         
-    #def ActionInputEvent(self, input_event, **kwargs):
+    #def action_inputevent(self, input_event, **kwargs):
     #    self.check_pass()
         
-    def ActionAssignment(self, assignment, **kwargs):
+    def action_assignment(self, assignment, **kwargs):
         self.check_pass()
         
-    def ActionAlias(self, alias, **kwargs):
+    def action_alias(self, alias, **kwargs):
         self.check_pass()
         
-    def ActionODE(self,ode, **kwargs):
+    def action__timederivative(self,ode, **kwargs):
         self.check_pass()
         
-    def ActionCondition(self, condition, **kwargs):
+    def action_condition(self, condition, **kwargs):
         self.check_pass()
         
-    def ActionOnCondition(self, on_condition, **kwargs):
+    def action_oncondition(self, on_condition, **kwargs):
         self.check_pass()
         
-    def ActionOnEvent(self, on_event, **kwargs):
+    def action_onevent(self, on_event, **kwargs):
         self.check_pass()
 
 

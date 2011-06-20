@@ -5,7 +5,7 @@ class Condition(expressions.Expression):
 
     def accept_visitor(self, visitor, **kwargs):
         """ |VISITATION| """
-        return visitor.VisitCondition(self, **kwargs)
+        return visitor.visit_condition(self, **kwargs)
 
     def __init__(self, rhs):
         Expression.__init__(self,rhs)

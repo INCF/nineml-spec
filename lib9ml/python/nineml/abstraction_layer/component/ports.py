@@ -114,7 +114,7 @@ class AnalogPort(Port):
     """
     def accept_visitor(self, visitor, **kwargs):
         """ |VISITATION| """
-        return visitor.VisitAnalogPort(self, **kwargs)
+        return visitor.visit_analogport(self, **kwargs)
 
 
 class EventPort(Port):
@@ -128,7 +128,7 @@ class EventPort(Port):
     """
     def accept_visitor(self, visitor, **kwargs):
         """ |VISITATION| """
-        return visitor.VisitEventPort(self, **kwargs)
+        return visitor.visit_eventport(self, **kwargs)
 
 
 

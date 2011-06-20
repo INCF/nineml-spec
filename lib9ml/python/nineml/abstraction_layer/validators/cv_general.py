@@ -24,10 +24,10 @@ class ComponentValidatorTimeDerivativesAreDeclared(ComponentValidatorPerNamespac
                 assert td in self.sv_declared[namespace], 'StateVariable not declared: %s'%td
         
         
-    def ActionStateVariable(self, state_variable, namespace, **kwargs):
+    def action_statevariable(self, state_variable, namespace, **kwargs):
         self.sv_declared[namespace].append(state_variable.name)
         
-    def ActionODE(self, timederivative, namespace,**kwargs):
+    def action__timederivative(self, timederivative, namespace,**kwargs):
         self.time_derivatives_used[namespace].append(timederivative.dependent_variable)
 
 
@@ -48,10 +48,10 @@ class ComponentValidatorStateAssignmentsAreOnStateVariables(ComponentValidatorPe
             for td in state_assignments_lhs:
                 assert td in self.sv_declared[namespace]
             
-    def ActionStateVariable(self, state_variable, namespace, **kwargs):
+    def action_statevariable(self, state_variable, namespace, **kwargs):
         self.sv_declared[namespace].append(state_variable.name)
         
-    def ActionStateAssignment(self, state_assignment, namespace,**kwargs):
+    def action_stateassignment(self, state_assignment, namespace,**kwargs):
         assert False
         self.state_assignments_lhses[namespace].append(state_assignment.lhs)
 
@@ -70,7 +70,7 @@ class ComponentValidatorAliasesAreNotRecursive(ComponentValidatorPerNamespace):
         ComponentValidatorPerNamespace.__init__(self, explicitly_require_action_overrides=False)
         self.visit(component)
         
-    def ActionComponentClass(self, component, namespace):
+    def action_componentclass(self, component, namespace):
         
         unresolved_aliases = dict( (a.lhs, a) for a in component.aliases ) 
         
@@ -132,21 +132,21 @@ class ComponentValidatorAliasesAndStateVariablesHaveNoUnResolvedSymbols(Componen
         assert not symbol in self.available_symbols[namespace] 
         self.available_symbols[namespace].append(symbol)
     
-    def ActionAnalogPort(self, port, namespace, **kwargs):
+    def action_analogport(self, port, namespace, **kwargs):
         if port.is_incoming():
             self.available_symbols[namespace].append(port.name)
             
-    def ActionStateVariable(self, state_variable, namespace, **kwargs):
+    def action_statevariable(self, state_variable, namespace, **kwargs):
         self.add_symbol(namespace=namespace, symbol=state_variable.name)
         
-    def ActionTimeDerivative(self, time_derivative, namespace, **kwargs):
+    def action_timederivative(self, time_derivative, namespace, **kwargs):
         self.aliases[namespace].append(time_derivative)
                         
-    def ActionAlias(self, alias, namespace, **kwargs):
+    def action_alias(self, alias, namespace, **kwargs):
         self.add_symbol(namespace=namespace, symbol=alias.lhs )
         self.aliases[namespace].append(alias)
 
-    def ActionParameter(self, parameter, namespace, **kwargs):
+    def action_parameter(self, parameter, namespace, **kwargs):
         self.add_symbol(namespace=namespace, symbol=parameter.name )
 
 
@@ -195,20 +195,20 @@ class ComponentValidatorPortConnections(ComponentValidatorPerNamespace):
                 connected_recv_ports.add( self.ports[sink] )
         
         
-    def ActionAnalogPort(self, analogport, namespace):
+    def action_analogport(self, analogport, namespace):
         port_address = NamespaceAddress.concat( namespace, analogport.name) 
         print 'Found Port', port_address
         assert not port_address in self.ports
         self.ports[port_address] = analogport
         
         
-    def ActionEventPort(self, analogport, namespace):
+    def action_eventport(self, analogport, namespace):
         port_address = NamespaceAddress.concat( namespace, analogport.name )
         assert not port_address in self.ports
         self.ports[port_address] = analogport
         
         
-    def ActionComponentClass(self, component, namespace):
+    def action_componentclass(self, component, namespace):
         for src,sink in component.portconnections:
             full_src   = NamespaceAddress.concat( namespace, src )
             full_sink  = NamespaceAddress.concat( namespace, sink )
@@ -247,12 +247,12 @@ class ComponentValidatorRegimeGraph(ComponentValidatorPerNamespace):
                 raise NineMLRuntimeError('Transition graph is contains islands')
     
     
-    def ActionComponentClass(self, component, namespace):
+    def action_componentclass(self, component, namespace):
         self.regimes_in_namespace[namespace] = list( component.regimes )
         
 
 
-    def ActionRegime(self, regime, namespace):
+    def action_regime(self, regime, namespace):
         for transition in regime.transitions:
             self.connected_regimes_from_regime[regime].add( transition.target_regime )
             self.connected_regimes_from_regime[transition.target_regime].add( regime )
@@ -271,45 +271,45 @@ class ComponentValidatorNoDuplicatedObjects(ComponentValidatorPerNamespace):
         assert_no_duplicates(self.all_objects)
         
     
-    def ActionComponentClass(self, component,  **kwargs):
+    def action_componentclass(self, component,  **kwargs):
         self.all_objects.append(component)
         
-    def ActionDynamics(self, dynamics, **kwargs):
+    def action_dynamics(self, dynamics, **kwargs):
         self.all_objects.append(dynamics)
         
-    def ActionRegime(self,regime,  **kwargs):
+    def action_regime(self,regime,  **kwargs):
         self.all_objects.append(regime)
         
-    def ActionStateVariable(self, state_variable, **kwargs):
+    def action_statevariable(self, state_variable, **kwargs):
         self.all_objects.append(state_variable)
         
-    def ActionParameter(self, parameter, **kwargs):
+    def action_parameter(self, parameter, **kwargs):
         self.all_objects.append(parameter)
         
-    def ActionAnalogPort(self, port, **kwargs):
+    def action_analogport(self, port, **kwargs):
         self.all_objects.append(port)
         
-    def ActionEventPort(self, port, **kwargs):
+    def action_eventport(self, port, **kwargs):
         self.all_objects.append(port)
         
-    def ActionOutputEvent(self, output_event, **kwargs):
+    def action_outputevent(self, output_event, **kwargs):
         self.all_objects.append(output_event)
         
-    def ActionAssignment(self, assignment, **kwargs):
+    def action_assignment(self, assignment, **kwargs):
         self.all_objects.append(assignment)
         
-    def ActionAlias(self, alias, **kwargs):
+    def action_alias(self, alias, **kwargs):
         self.all_objects.append(alias)
         
-    def ActionODE(self,ode, **kwargs):
+    def action__timederivative(self,ode, **kwargs):
         self.all_objects.append(ode)
         
-    def ActionCondition(self, condition, **kwargs):
+    def action_condition(self, condition, **kwargs):
         self.all_objects.append(condition)
         
-    def ActionOnCondition(self, on_condition, **kwargs):
+    def action_oncondition(self, on_condition, **kwargs):
         self.all_objects.append(on_condition)
         
-    def ActionOnEvent(self, on_event, **kwargs):
+    def action_onevent(self, on_event, **kwargs):
         self.all_objects.append(on_event)
 

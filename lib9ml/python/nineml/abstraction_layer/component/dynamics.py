@@ -174,7 +174,7 @@ class OnEvent(Transition):
 
     def accept_visitor(self, visitor,**kwargs):
         """ |VISITATION| """
-        return visitor.VisitOnEvent(self,**kwargs)
+        return visitor.visit_onevent(self,**kwargs)
 
     def __init__(self, src_port_name, state_assignments=None, event_outputs=None, target_regime_name=None):
         """Constructor for ``OnEvent``
@@ -198,7 +198,7 @@ class OnCondition(Transition):
 
     def accept_visitor(self, visitor,**kwargs):
         """ |VISITATION| """
-        return visitor.VisitOnCondition(self,**kwargs)
+        return visitor.visit_oncondition(self,**kwargs)
 
     def __init__(self, trigger, state_assignments=None, event_outputs=None, target_regime_name=None):
         """Constructor for ``OnEvent``
@@ -212,7 +212,7 @@ class OnCondition(Transition):
         """
         from nineml.abstraction_layer.visitors import ClonerVisitor
         if isinstance( trigger, Condition): 
-            self._trigger = ClonerVisitor().Visit( trigger )
+            self._trigger = ClonerVisitor().visit( trigger )
         elif isinstance( trigger, basestring): 
             self._trigger = Condition( rhs = trigger )
         else:  assert False
@@ -263,7 +263,7 @@ class Regime(object):
     # -------------
     def accept_visitor(self, visitor,**kwargs):
         """ |VISITATION| """
-        return visitor.VisitRegime(self,**kwargs)
+        return visitor.visit_regime(self,**kwargs)
 
 
     def __init__(self, name, time_derivatives, on_events=None, on_conditions=None, transitions=None):
@@ -499,7 +499,7 @@ class Dynamics(object):
 
     def accept_visitor(self,visitor,**kwargs):
         """ |VISITATION| """
-        return visitor.VisitDynamics(self, **kwargs)
+        return visitor.visit_dynamics(self, **kwargs)
 
     @property
     def regimes(self):
@@ -533,7 +533,7 @@ class StateVariable(object):
 
     def accept_visitor(self, visitor, **kwargs):
         """ |VISITATION| """
-        return visitor.VisitStateVariable(self, **kwargs)
+        return visitor.visit_statevariable(self, **kwargs)
     def __init__(self, name, ):
         """StateVariable Constructor
 

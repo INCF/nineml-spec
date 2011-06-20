@@ -24,16 +24,16 @@ class ComponentValidatorPerNamespace(InplaceActionVisitorDF, ComponentValidatorB
         ComponentValidatorBase.__init__(self)
         
         
-    #def PostActionComponentClass(self, component, namespace, **kwargs):
+    #def Postaction_componentclass(self, component, namespace, **kwargs):
         #pass
 
     
     # Over-ride this function, so we can extract out the 
     # namespace, then propogate this as a parameter.
-    def VisitComponentClass(self, component, **kwargs):
+    def visit_componentclass(self, component, **kwargs):
         namespace = component.get_node_addr()
-        InplaceActionVisitorDF.VisitComponentClass(self, component, namespace=namespace)
-        #self.PostActionComponentClass(self, component, namespace, **kwargs)
+        InplaceActionVisitorDF.visit_componentclass(self, component, namespace=namespace)
+        #self.Postaction_componentclass(self, component, namespace, **kwargs)
         
     
 

@@ -9,7 +9,7 @@ class OutputEvent(object):
 
     def accept_visitor(self, visitor, **kwargs):
         """ |VISITATION| """
-        return visitor.VisitOutputEvent(self, **kwargs)
+        return visitor.visit_outputevent(self, **kwargs)
 
     def __init__(self, port_name):
         """OutputEvent Constructor
@@ -39,7 +39,7 @@ class InputEvent(object):
 
     def accept_visitor(self, visitor, **kwargs):
         """ |VISITATION| """
-        return visitor.VisitInputEvent(self, **kwargs)
+        return visitor.visit_inputevent(self, **kwargs)
 
     def __init__(self,port_name):
         """InputEvent Constructor
