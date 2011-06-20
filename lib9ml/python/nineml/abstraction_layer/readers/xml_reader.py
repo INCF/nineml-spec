@@ -294,6 +294,20 @@ class XMLReader(object):
         return root
 
 
+
+    @classmethod
+    def read(cls, filename, component_name=None):
+        """Reads a single |COMPONENTCLASS| object from a filename.
+
+        :param filename: The name of the file.
+        :param component_name: If the file contains more than one ComponentClass
+            definition, this parameter must be provided as a ``string``
+            specifying which component to return, otherwise a
+            NineMLRuntimeException will be raised.
+        :rtype: Returns a |COMPONENTCLASS| object. 
+        """
+        return cls.read_component(filename, component_name=component_name)
+
     @classmethod
     def read_component(cls, filename, component_name=None):
         """Reads a single |COMPONENTCLASS| object from a filename.
