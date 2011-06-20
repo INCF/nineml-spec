@@ -8,6 +8,7 @@ from itertools import chain
 
 from nineml.abstraction_layer.component import math_namespace
 from nineml.abstraction_layer.component.expressions import MathUtil
+from nineml.abstraction_layer.component.namespaceaddress import NamespaceAddress
 
 
 
@@ -202,13 +203,23 @@ class ClonerVisitorPrefixNamespace(ClonerVisitor):
         prefix_excludes = ['t']
         kwargs = {'prefix':prefix, 'prefix_excludes':prefix_excludes }
 
+        
+        port_connections = []
+        for src,sink in component.portconnections:
+            src_new = NamespaceAddress( tuple(list( src.loctuple[:-1] ) + [src.getstr( ) ] )  )
+            sink_new = NamespaceAddress( tuple(list( sink.loctuple[:-1] ) + [sink.getstr( ) ] )  )
+            port_connections.append ( (src_new,sink_new) )
+            
+        #assert False
+
         ccn =  nineml.abstraction_layer.ComponentClass( name = component.name,
                                parameters  = [ p.accept_visitor(self,**kwargs) for p in component.parameters  ],
                                analog_ports= [ p.accept_visitor(self,**kwargs) for p in component.analog_ports],
                                event_ports = [ p.accept_visitor(self,**kwargs) for p in component.event_ports ],
                                dynamics    = component.dynamics.accept_visitor(self,**kwargs) if component.dynamics else None,
                                subnodes = dict( [ (k, v.accept_visitor(self,**kwargs)) for (k,v) in component.subnodes.iteritems() ] ),
-                               portconnections = component.portconnections,
+                               #portconnections = component.portconnections,
+                               portconnections  = port_connections
                                )
 
         return ccn

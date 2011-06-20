@@ -281,29 +281,31 @@ class ComponentFlattener(object):
         
         # Handle port mappings:
         # portconnections = [ (NS -> NS),(NS -> NS ), (NS -> NS) ]
-        portconnections = [model.query.get_fully_qualified_port_connections() for model in self.all_components] 
+        #portconnections = [model.query.get_fully_qualified_port_connections() for model in self.all_components] 
+        portconnections = [model.portconnections for model in self.all_components]
         portconnections = list( itertools.chain(* portconnections ) )
+        
+        print portconnections
 
         # A. Handle Recieve Ports:
         for srcAddr,dstAddr in portconnections[:]:
-            srcPort = new_ports[srcAddr.getstr()]
-            dstPort = new_ports[dstAddr.getstr()]
+            srcPort = new_ports[srcAddr.loctuple[-1] ]
+            dstPort = new_ports[dstAddr.loctuple[-1]]
             if dstPort.mode == 'recv':
                 globalRemapPort( dstPort.name, srcPort.name )
                 
-                del new_ports[ dstAddr.getstr() ]
-                self.reducedcomponent._analog_ports.remove( expect_single([p for p in self.reducedcomponent.analog_ports if p.name == dstAddr.getstr()]) )
+                del new_ports[ dstAddr.loctuple[-1] ]
+                self.reducedcomponent._analog_ports.remove( expect_single([p for p in self.reducedcomponent.analog_ports if p.name == dstAddr.loctuple[-1] ]) )
 
                 portconnections.remove( (srcAddr,dstAddr) )
-
 
         # B. Handle Reduce Ports:
         # 1/ Make a map { reduce_port -> [send_port1, send_port2, send_port3], ...}
         from collections import defaultdict
         reduce_connections = defaultdict( list )
         for src,dst in portconnections:
-            dstport = new_ports[dst.getstr() ]
-            srcport = new_ports[src.getstr()]
+            dstport = new_ports[dst.loctuple[-1] ]
+            srcport = new_ports[src.loctuple[-1] ]
             if dstport.mode == 'reduce':
                 reduce_connections[dstport].append(srcport)
 
