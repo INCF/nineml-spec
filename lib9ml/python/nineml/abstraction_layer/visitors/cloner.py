@@ -12,43 +12,43 @@ from nineml.abstraction_layer.component.expressions import MathUtil
 
 
 
-class InPlaceTransform(InplaceActionVisitorDF):
+class ExpandPortDefinition(InplaceActionVisitorDF):
     def __init__(self, originalname, targetname):
+        
+        InplaceActionVisitorDF.__init__(self, explicitly_require_action_overrides=False)
+        
         self.originalname = originalname
         self.targetname = targetname
 
 
-    def ActionComponentClass(self, component_node_combined):
-        pass
-
-    #def ActionComponent(self, component):
-    #    pass
-    #def ActionDynamics(self, dynamics):
-    #    pass
-    #def ActionRegime(self,regime):
-    #    pass
-    #def ActionStateVariable(self, state_variable):
-    #    pass
-    #def ActionParameter(self, parameter):
-    #    pass
-    #def ActionAnalogPort(self, port, **kwargs):
-    #    pass
-    #def ActionEventPort(self, port, **kwargs):
-    #    pass
-    #def ActionOutputEvent(self, output_event, **kwargs):
-    #    pass
-    #def ActionInputEvent(self, input_event, **kwargs):
-    #    pass
     def ActionAssignment(self, assignment, **kwargs):
         assignment.name_transform_inplace( {self.originalname:self.targetname} )
     def ActionAlias(self, alias, **kwargs):
         alias.name_transform_inplace( {self.originalname:self.targetname} )
-    def ActionODE(self,ode,**kwargs):
+    def ActionODE(self,ode, **kwargs):
         ode.name_transform_inplace( {self.originalname:self.targetname} )
-    def ActionCondition(self, condition):
+    def ActionCondition(self, condition, **kwargs):
         condition.rhs_name_transform_inplace( {self.originalname:self.targetname} )
 
 
+
+class ExpandAliasDefinition(InplaceActionVisitorDF):
+    def __init__(self, originalname, targetname):
+        
+        InplaceActionVisitorDF.__init__(self, explicitly_require_action_overrides=False)
+        
+        self.originalname = originalname
+        self.targetname = targetname
+
+
+    def ActionAssignment(self, assignment, **kwargs):
+        assignment.name_transform_inplace( {self.originalname:self.targetname} )
+    def ActionAlias(self, alias, **kwargs):
+        alias.rhs_name_transform_inplace( {self.originalname:self.targetname} )
+    def ActionODE(self,ode, **kwargs):
+        ode.name_transform_inplace( {self.originalname:self.targetname} )
+    def ActionCondition(self, condition, **kwargs):
+        condition.rhs_name_transform_inplace( {self.originalname:self.targetname} )
 
 
 
@@ -73,9 +73,6 @@ from base import ComponentVisitor
 
 class ClonerVisitor(ComponentVisitor):
 
-    def Visit(self, obj,**kwargs):
-        return obj.accept_visitor(self,**kwargs)
-
 
     def prefixVariable(self, variable, **kwargs):
         prefix = kwargs.get('prefix','')
@@ -88,19 +85,13 @@ class ClonerVisitor(ComponentVisitor):
 
     def VisitComponentClass(self, component, **kwargs ):
         assert False
-
         ccn =  nineml.abstraction_layer.ComponentClass( name = component.name,
                                parameters  = [ p.accept_visitor(self,**kwargs) for p in component.parameters  ],
                                analog_ports= [ p.accept_visitor(self,**kwargs) for p in component.analog_ports],
                                event_ports = [ p.accept_visitor(self,**kwargs) for p in component.event_ports ],
                                dynamics    = component.dynamics.accept_visitor(self,**kwargs) if component.dynamics else None,
-                               subnodes = dict( [ (k, v.accept_visitor(self,**kwargs)) for (k,v) in component.subnodes.iteritems() ] )
-                               )
-
-        # Copy Port COnnections:
-        assert 'portconnections' in ccn.__dict__
-        ccn.portconnections = component.portconnections[:]
-
+                               subnodes = dict( [ (k, v.accept_visitor(self,**kwargs)) for (k,v) in component.subnodes.iteritems() ] ),
+                               portconnections = component.portconnections[:] )
         return ccn
 
 
@@ -134,17 +125,14 @@ class ClonerVisitor(ComponentVisitor):
         return p
 
     def VisitEventPort(self, port, **kwargs):
-        return nineml.abstraction_layer.EventPort( name=
-                self.prefixVariable(port.name,**kwargs), mode=port.mode, reduce_op=port.reduce_op )
+        return nineml.abstraction_layer.EventPort( name = self.prefixVariable(port.name,**kwargs), mode=port.mode, reduce_op=port.reduce_op )
 
 
     def VisitOutputEvent(self, output_event, **kwargs):
-        return nineml.abstraction_layer.OutputEvent( port_name =
-                self.prefixVariable( output_event.port_name, **kwargs) )
+        return nineml.abstraction_layer.OutputEvent( port_name = self.prefixVariable( output_event.port_name, **kwargs) )
 
     def VisitInputEvent(self, input_event, **kwargs):
-        return nineml.abstraction_layer.InputEvent( port_name=
-                self.prefixVariable( input_event.port_name, **kwargs) )
+        return nineml.abstraction_layer.InputEvent( port_name = self.prefixVariable( input_event.port_name, **kwargs) )
 
     def VisitAssignment(self, assignment, **kwargs):
         prefix = kwargs.get( 'prefix','')
@@ -152,10 +140,7 @@ class ClonerVisitor(ComponentVisitor):
         lhs = assignment.lhs if assignment.lhs in prefix_excludes else prefix + assignment.lhs
         rhs = MathUtil.get_prefixed_rhs_string( expr_obj=assignment, prefix=prefix, exclude=prefix_excludes )
 
-        return nineml.abstraction_layer.Assignment( 
-                    lhs = lhs,
-                    rhs = rhs
-                    )
+        return nineml.abstraction_layer.Assignment( lhs = lhs, rhs = rhs )
 
 
     def VisitAlias(self, alias, **kwargs):
@@ -210,7 +195,6 @@ class ClonerVisitor(ComponentVisitor):
 
 
 class ClonerVisitorPrefixNamespace(ClonerVisitor):
-
 
     def VisitComponentClass(self, component, **kwargs ):
         prefix = component.get_node_addr().get_str_prefix()

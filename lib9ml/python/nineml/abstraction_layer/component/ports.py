@@ -89,7 +89,10 @@ class Port(object):
         opstr = ', op=%s'% (self.reduce_op or '' )
         return "%s('%s', mode='%s' %s)" % \
                     (classstring, self.name, self.mode, opstr)
-                   
+
+    def is_incoming(self):
+        """Returns True if the port's mode is 'recv' or 'reduce' """
+        return self.mode in ('recv', 'reduce')
                    
     @property
     def symbol(self):

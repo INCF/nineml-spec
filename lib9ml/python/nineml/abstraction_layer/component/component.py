@@ -2,6 +2,7 @@
 from operator import and_
 
 
+from nineml.exceptions import NineMLRuntimeError
 from namespaceaddress import NamespaceAddress
 import componentqueryer
 import nineml.utility
@@ -10,6 +11,7 @@ import dynamics as dyn
 
 import copy
 import itertools
+
 
 
 class ComponentClassMixinFlatStructure(object):
@@ -117,7 +119,7 @@ class ComponentClassMixinFlatStructure(object):
                     alias.substitute_alias( missing_alias )
                 else:
                     errmsg = "Unable to resolve alias %s" % alias.as_expr()
-                    raise NineMLRuntimeException(errmsg)
+                    raise NineMLRuntimeError(errmsg)
 
         
         for alias in self.aliases:
@@ -132,11 +134,14 @@ class ComponentClassMixinFlatStructure(object):
         StateVariables and recv/reduce AnalogPorts on the RHS.
         """
 
-        from nineml.abstraction_layer.visitors import InPlaceTransform
+        from nineml.abstraction_layer.visitors import ExpandAliasDefinition
 
+        #TODO. This is no longer true; we can directly call on the component,
+        # since we now have a new class ExpandAliasDefinition, instead of the old....
+        
         for alias in self.aliases:
-            trans = InPlaceTransform( originalname = alias.lhs, 
-                                      targetname = "(%s)"%alias.rhs )
+            trans = ExpandAliasDefinition( originalname = alias.lhs, 
+                                          targetname = "(%s)"%alias.rhs )
             # Since we do not want to backsub in lhs of this alias, we can't
             # call self.accept_visitor() directly
             for r in self.regimes:
@@ -320,8 +325,11 @@ class ComponentClass( ComponentClassMixinFlatStructure,
         #Finalise initiation:
         self._ResolveTransitionRegimeNames()
 
-        # Add some additional error checking:
-        # TODO
+        # Is the finished component valid?:
+        from nineml.abstraction_layer.validators.component_validator import ComponentValidator
+        ComponentValidator.validate_component(self)
+        
+        
 
 
     @property
@@ -361,6 +369,6 @@ class ComponentClass( ComponentClassMixinFlatStructure,
         for t in self.transitions:
             if not t.target_regime_name in regimeMap:
                 errmsg = "Can't find target regime: %s"%t.target_regime_name
-                raise NineMLRuntimeException(errmsg)
+                raise NineMLRuntimeError(errmsg)
             t.set_target_regime( regimeMap[t.target_regime_name] )
 

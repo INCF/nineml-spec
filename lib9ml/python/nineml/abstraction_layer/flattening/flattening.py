@@ -239,10 +239,7 @@ class ComponentFlattener(object):
         new_ports = flatten_first_level( [comp.analog_ports for comp in self.all_components]) 
         new_ports = dict( [ (p.name, p) for p in new_ports ] ) 
         
-        print "PORTS:"
-        for p,pname in new_ports.iteritems():
-            print p, pname
-        print "PORTS END"
+
 
 
         from nineml.utility import flatten_first_level
@@ -253,6 +250,10 @@ class ComponentFlattener(object):
                                 aliases = flatten_first_level( [ m.aliases for m in self.all_components ] ),
                                 state_variables = flatten_first_level( [ m.state_variables for m in self.all_components ]  ),
                                 )  
+
+
+        #Remap the event-ports:
+        
 
         self.reducedcomponent = al.ComponentClass( name=self.componentname, 
                                                          dynamics=dynamics, 
@@ -270,8 +271,8 @@ class ComponentFlattener(object):
         # Remap Ports:
         def globalRemapPort(originalname,targetname):
             print 'Global-Remap [%s -> %s]'%(originalname,targetname)
-            from nineml.abstraction_layer.visitors import InPlaceTransform
-            transform = InPlaceTransform( originalname=originalname, targetname=targetname)
+            from nineml.abstraction_layer.visitors import ExpandPortDefinition
+            transform = ExpandPortDefinition( originalname=originalname, targetname=targetname)
 
             self.reducedcomponent.accept_visitor(transform)
 

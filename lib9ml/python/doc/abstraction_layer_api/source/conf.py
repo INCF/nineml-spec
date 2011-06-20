@@ -318,5 +318,17 @@ def process_docstring_remove_copyright(app, what, name, obj, options, lines):
         while len(lines) > copyright_line:
             lines.pop()
 
+
+
+#def process_signature_shorten(app, what, name, obj, options, signature, return_annotation ):
+#    print return_annotation, what, name
+#    return_annotation = " -> " + name.replace('nineml.abstraction_layer.','nineml.al.')
+#    return (signature, return_annotation)
+
+
 def setup(app):
     app.connect('autodoc-process-docstring', process_docstring_remove_copyright)
+    #app.connect('autodoc-process-signature', process_signature_shorten)
+
+
+
