@@ -1,7 +1,12 @@
-from namespaceaddress import NamespaceAddress
 
-#from nineml.utility import expect_single, filter_expect_single, _filter, filter_by_type
-import nineml.utility
+from itertools import chain
+
+from namespaceaddress import NamespaceAddress
+#import nineml.utility
+from nineml.utility import filter_expect_single
+
+
+__all__ = ['ComponentQueryer']
 
 class ComponentQueryer(object):
     def __init__(self, component):
@@ -9,25 +14,28 @@ class ComponentQueryer(object):
 
     # Find basic properties by name
     def regime(self, name=None,):
-        assert isinstance(name,basestring)
-        return nineml.utility.filter_expect_single( self.component.regimes, lambda r:r.name==name ) 
+        assert isinstance(name, basestring)
+
+        return filter_expect_single( self.component.regimes, 
+                                     lambda r:r.name==name ) 
         
 
     # Query Ports:
     def event_send_ports(self):
-        return [ p for p in self.component.event_ports if p.mode=='send']
+        return [ p for p in self.component.event_ports if p.mode == 'send']
     
     def event_recv_ports(self):
-        return [ p for p in self.component.event_ports if p.mode=='recv']
+        return [ p for p in self.component.event_ports if p.mode == 'recv']
     
     @property
     def analog_reduce_ports(self):
-        reduce_ports = [ p for p in self.component.analog_ports if p.mode=='reduce' ]
-        return reduce_ports
+        return [ p for p in self.component.analog_ports if p.mode == 'reduce']
 
     def get_fully_addressed_analogports_new(self):
         comp_addr = self.component.get_node_addr()
-        return dict( [ (comp_addr.get_subns_addr(port.name), port) for port in self.component.analog_ports] )
+
+        kv = lambda port : (comp_addr.get_subns_addr(port.name), port) 
+        return dict( [ kv(port) for port in self.component.analog_ports] )
 
 
 
@@ -36,39 +44,43 @@ class ComponentQueryer(object):
     def recurse_all_components(self):
         yield self.component
         for subcomponent in self.component.subnodes.values():
-            for sc in subcomponent.query.recurse_all_components:
-                yield sc
+            for subcomp in subcomponent.query.recurse_all_components:
+                yield subcomp
     #More advanced searches on just this node:
 
     # Connections and Subnodes:
     def get_fully_qualified_port_connections(self):
+        assert False
         namespace = self.component.get_node_addr()
         def make_fqname(target):
             return NamespaceAddress.concat( namespace, target)
-        conns = [ (make_fqname(src),make_fqname(sink)) for (src,sink) in
+        conns = [ (make_fqname(src), make_fqname(sink)) for (src, sink) in
                 self.component.portconnections ]
         return conns
 
 
 
 
+    @property
+    def ports(self):
+        return chain(self.component.analog_ports, self.component.event_ports)  
 
 
     #Not currently used, but maybe useful in future:
     @property
     def ports_map(self):
         assert False
-        return dict( [ (p.name,p) for p in itertools.chain(self._analog_ports, self._event_ports) ] )
+        return dict( [ (p.name, p) for p in self.ports ] )
 
     @property
     def alias_symbols(self):
         assert False
-        return [ a.lhs for a in self.aliases ]
+        return [ a.lhs for a in self.component.aliases ]
 
 
     @property
     def on_conditions(self):
         assert False
-        for r in self.regimes:
-            for c in r.on_conditions:
-                yield c
+        for regime in self.component.regimes:
+            for condition in regime.on_conditions:
+                yield condition
