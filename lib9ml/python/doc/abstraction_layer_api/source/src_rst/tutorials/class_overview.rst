@@ -18,8 +18,8 @@ Transitions: Events, Conditions & Assignments
 
 
 
-Further Topics
-==============
+Further Classes
+===============
 
 Aliases
 ~~~~~~~~

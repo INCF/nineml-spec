@@ -27,6 +27,7 @@ Quickstart:
    :maxdepth: 2
 
    src_rst/tutorials/class_overview
+   src_rst/tutorials/resolution_transitions
    src_rst/tutorials/importing_exporting
    src_rst/tutorials/interfacing_pynn
    src_rst/tutorials/hierarchical_components

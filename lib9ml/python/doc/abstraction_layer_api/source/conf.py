@@ -300,3 +300,23 @@ rst_prolog = """
 
 .. |COMPONENTCLASS| replace:: :class:`~nineml.abstraction_layer.component.ComponentClass`
 """
+
+
+
+# Remove the copyright notice from docstrings:
+import re
+copyright_re = re.compile(r"""Copyright .*""")
+def process_docstring_remove_copyright(app, what, name, obj, options, lines):
+
+    copyright_line = None
+    for i,line in enumerate(lines):
+        if line.startswith('Copyright'):
+            copyright_line = i
+            break
+
+    if copyright_line:
+        while len(lines) > copyright_line:
+            lines.pop()
+
+def setup(app):
+    app.connect('autodoc-process-docstring', process_docstring_remove_copyright)
