@@ -63,6 +63,7 @@ class InplaceActionVisitorDF(ComponentVisitor):
         self.action_outputevent(output_event, **kwargs)
 
     def visit_inputevent(self, input_event, **kwargs):
+        assert False, 'We should remove this'
         self.action_inputevent(input_event, **kwargs)
 
     def visit_assignment(self, assignment, **kwargs):
@@ -72,7 +73,7 @@ class InplaceActionVisitorDF(ComponentVisitor):
         self.action_alias(alias, **kwargs)
 
     def visit_timederivative(self,ode,**kwargs):
-        self.action__timederivative(ode, **kwargs)
+        self.action_timederivative(ode, **kwargs)
 
     def visit_condition(self, condition, **kwargs):
         self.action_condition(condition, **kwargs)
@@ -131,7 +132,7 @@ class InplaceActionVisitorDF(ComponentVisitor):
     def action_alias(self, alias, **kwargs):
         self.check_pass()
         
-    def action__timederivative(self,ode, **kwargs):
+    def action_timederivative(self,ode, **kwargs):
         self.check_pass()
         
     def action_condition(self, condition, **kwargs):

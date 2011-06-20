@@ -303,3 +303,17 @@ class LocationMgr(object):
 
 
 
+def check_list_contain_same_items(lst1, lst2, desc1="", desc2=""):
+    set1 = set(lst1)
+    set2 = set(lst2)
+
+    # Are the lists subsets of each other.
+    if set1.issubset( set2 ) and set2.issubset( set1 ):
+        return
+
+    errmsg =  "Lists were suppose to contain the same elements, but don't!!" 
+    errmsg += "\n1: [%s]: %s"%(desc1, sorted(set1) )
+    errmsg += "\n2: [%s]: %s"%(desc2, sorted(set2) )
+    errmsg += "\nElements in : 1 (not 2): %s"% (sorted( set1-set2 )  )
+    errmsg += "\nElements in : 2 (not 1): %s"% (sorted( set2-set1 )  )
+    raise NineMLRuntimeError(errmsg)

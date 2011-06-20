@@ -13,6 +13,8 @@ import copy
 import itertools
 from nineml.abstraction_layer.visitors.cloner import ClonerVisitor
 from interface import Parameter
+from dynamics import StateVariable
+from ports import Port, EventPort
 
 
 class ComponentClassMixinFlatStructure(object):
@@ -254,8 +256,86 @@ class ComponentClassMixinNamespaceStructure(object):
 
         self._validate_self()
 
+   
+
+from nineml.abstraction_layer.visitors import InplaceActionVisitorDF
+
+class InterfaceInferer(InplaceActionVisitorDF):
+    """ Used to infer output EventPorts, statevariables & parameters."""
+
+    def __init__(self, dynamics, analog_ports):
+        InplaceActionVisitorDF.__init__(self,explicitly_require_action_overrides = True) 
+
+        # State Variables:
+        self.state_variable_names = set()
+        for regime in dynamics.regimes:
+            for time_derivatives in regime.time_derivatives:
+                self.state_variable_names.add( time_derivatives.dependent_variable )
+            for transition in regime.transitions:
+                for state_assignment in transition.state_assignments:
+                    self.state_variable_names.add( state_assignment.lhs)
+
+
+        # Which symbols can we account for: 
+        alias_symbols = set( dynamics.aliases_map.keys() )
+        incoming_analog_ports = [ ap.name for ap in analog_ports if ap.is_incoming() ]
+
+        self.accounted_for_symbols = set( itertools.chain(
+            self.state_variable_names, alias_symbols, incoming_analog_ports) )
+
+        #Parameters:
+        # Use visitation to collect all atoms that are not aliases and not
+        # state variables
+        
+        self.parameter_names = set()
+        self.input_event_port_names = set()
+        self.output_event_port_names = set()
+
+        self.visit(dynamics)
+
+
+    def action_dynamics(self, dynamics, **kwargs): pass
+    def action_regime(self,regime, **kwargs): pass
+    def action_statevariable(self,state_variable, **kwargs): pass
+
+    def notify_atom(self, atom):
+        if not atom in self.accounted_for_symbols:
+            self.parameter_names.add(atom)
+
+    # Events:
+    def action_outputevent(self, output_event, **kwargs):
+        self.output_event_port_names.add( output_event.port_name)
+
+    def action_onevent(self, on_event, **kwargs):
+        self.input_events_port_names.add( on_event.src_port_name )
+
+
+    # Atoms (possible parameters):
+    def action_assignment(self, assignment, **kwargs):
+        for atom in assignment.rhs_atoms:
+            self.notify_atom(atom)
+
+    def action_alias(self, alias, **kwargs):
+        for atom in alias.rhs_atoms:
+            self.notify_atom(atom)
+
+    def action_timederivative(self,time_derivative,**kwargs):
+        for atom in time_derivative.rhs_atoms:
+            self.notify_atom(atom)
+
+    def action_condition(self, condition, **kwargs):
+        for atom in condition.rhs_atoms:
+            self.notify_atom(atom)
+
+    def action_oncondition(self, on_condition, **kwargs): 
+        pass
+
+
+
+
     
 
+from nineml.utility import check_list_contain_same_items
 
 
 class ComponentClass( ComponentClassMixinFlatStructure, 
@@ -308,18 +388,58 @@ class ComponentClass( ComponentClassMixinFlatStructure,
             For examples
 
         """
+        parameters = parameters or []
+        event_ports = event_ports or []
 
+
+        # We should always create a dynamics object, even is it is empty:
+        if dynamics == None:
+            dynamics = dyn.Dynamics()
+
+        
         # Turn any strings in the parameter list into Parameters:
         from nineml.utility import filter_discrete_types
         param_td = filter_discrete_types( parameters, (basestring, Parameter) )
         parameters = param_td[Parameter] + [ Parameter(s) for s in param_td[basestring] ]
 
-
         self._query = componentqueryer.ComponentQueryer(self)
 
-        # We should always create a dynamics object, even is it is empty:
-        if dynamics == None:
-            dynamics = dyn.Dynamics()
+
+        
+        # EventPort, StateVariable and Parameter Inference:
+        inferred_structure = InterfaceInferer(dynamics, analog_ports=analog_ports)
+        inf_check = lambda l1,l2: check_list_contain_same_items( l1, l2,  desc1='Declared', desc2='Inferred') 
+        
+        # Check any supplied parameters match:
+        if parameters:
+            parameter_names = [p.name for p in parameters]
+            inf_check( parameter_names, inferred_structure.parameter_names )
+        else:
+            parameters = [Parameter(n) for n in inferred_structure.parameter_names]
+
+
+        # Check any supplied state_variables match:
+        if dynamics._state_variables:
+            state_variable_names = [p.name for p in dynamics.state_variables]
+            inf_check( state_variable_names, inferred_structure.state_variable_names )
+        else:
+            dynamics._state_variables = [StateVariable(n) for n in inferred_structure.state_variable_names ]
+
+
+        # Check Event Ports Match:
+        in_evt_port_names =  [ ep.name for ep in event_ports if ep.is_incoming() ]
+        out_evt_ports_names = [ ep.name for ep in event_ports if not ep.is_incoming() ]
+
+        if event_ports:
+            #Check things Match:
+            inf_check( in_evt_port_names, inferred_structure.input_event_port_names)
+            inf_check( out_evt_port_names, inferred_structure.output_event_port_names)
+        else:
+            for evt_port_name in inferred_structure.input_event_port_names:
+                event_ports.append( EventPort(name=evt_port_name, mode='recv') ) 
+            for evt_port_name in inferred_structure.output_event_port_names:
+                event_ports.append( EventPort(name=evt_port_name, mode='send') ) 
+
 
         # Construct super-classes:
         ComponentClassMixinFlatStructure.__init__(self, 

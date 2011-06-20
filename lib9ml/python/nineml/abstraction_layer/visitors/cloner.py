@@ -26,7 +26,7 @@ class ExpandPortDefinition(InplaceActionVisitorDF):
         assignment.name_transform_inplace( {self.originalname:self.targetname} )
     def action_alias(self, alias, **kwargs):
         alias.name_transform_inplace( {self.originalname:self.targetname} )
-    def action__timederivative(self,ode, **kwargs):
+    def action_timederivative(self,ode, **kwargs):
         ode.name_transform_inplace( {self.originalname:self.targetname} )
     def action_condition(self, condition, **kwargs):
         condition.rhs_name_transform_inplace( {self.originalname:self.targetname} )
@@ -46,7 +46,7 @@ class ExpandAliasDefinition(InplaceActionVisitorDF):
         assignment.name_transform_inplace( {self.originalname:self.targetname} )
     def action_alias(self, alias, **kwargs):
         alias.rhs_name_transform_inplace( {self.originalname:self.targetname} )
-    def action__timederivative(self,ode, **kwargs):
+    def action_timederivative(self,ode, **kwargs):
         ode.name_transform_inplace( {self.originalname:self.targetname} )
     def action_condition(self, condition, **kwargs):
         condition.rhs_name_transform_inplace( {self.originalname:self.targetname} )

@@ -266,7 +266,7 @@ class Regime(object):
         return visitor.visit_regime(self,**kwargs)
 
 
-    def __init__(self, name, time_derivatives, on_events=None, on_conditions=None, transitions=None):
+    def __init__(self, name, time_derivatives=None, on_events=None, on_conditions=None, transitions=None):
         """Regime constructor
             
             :param name: The name of the constructor. If none, then a name will
@@ -281,6 +281,7 @@ class Regime(object):
                 the appropriate classes automatically.
 
         """
+        time_derivatives = time_derivatives or []
 
         from nineml.utility import filter_discrete_types
         self._name = name if name else Regime.get_next_name()

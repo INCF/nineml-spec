@@ -158,7 +158,7 @@ single step:
 
 Note that here we used the *name* of the regime in the ``to`` argument to the
 ``On`` transition constructor, rather than a ``Regime`` object. These references
-are resolved automatically.
+are resolved automatically when the component is built.
 
 
 

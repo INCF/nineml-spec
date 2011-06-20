@@ -21,13 +21,14 @@ class ComponentValidatorTimeDerivativesAreDeclared(ComponentValidatorPerNamespac
         
         for namespace,time_derivatives in self.time_derivatives_used.iteritems():
             for td in time_derivatives:
-                assert td in self.sv_declared[namespace], 'StateVariable not declared: %s'%td
+                if not td in self.sv_declared[namespace]:
+                    raise NineMLRuntimeError('StateVariable not declared: %s'%td)
         
         
     def action_statevariable(self, state_variable, namespace, **kwargs):
         self.sv_declared[namespace].append(state_variable.name)
         
-    def action__timederivative(self, timederivative, namespace,**kwargs):
+    def action_timederivative(self, timederivative, namespace,**kwargs):
         self.time_derivatives_used[namespace].append(timederivative.dependent_variable)
 
 
@@ -46,7 +47,8 @@ class ComponentValidatorStateAssignmentsAreOnStateVariables(ComponentValidatorPe
         
         for namespace,state_assignments_lhs in self.state_assignments_lhses.iteritems():
             for td in state_assignments_lhs:
-                assert td in self.sv_declared[namespace]
+                if not td in self.sv_declared[namespace]:
+                    raise NineMLRuntimeError('Not Assigning to state-variable: %s'%state_assignment)
             
     def action_statevariable(self, state_variable, namespace, **kwargs):
         self.sv_declared[namespace].append(state_variable.name)
@@ -129,7 +131,8 @@ class ComponentValidatorAliasesAndStateVariablesHaveNoUnResolvedSymbols(Componen
             
         
     def add_symbol(self, namespace, symbol):
-        assert not symbol in self.available_symbols[namespace] 
+        if symbol in self.available_symbols[namespace]:
+            raise NineMLRuntimeError("Duplicate Symbol: [%s] found in namespace: %s"%(symbol,namespace) )
         self.available_symbols[namespace].append(symbol)
     
     def action_analogport(self, port, namespace, **kwargs):
@@ -197,13 +200,15 @@ class ComponentValidatorPortConnections(ComponentValidatorPerNamespace):
         
     def action_analogport(self, analogport, namespace):
         port_address = NamespaceAddress.concat( namespace, analogport.name) 
-        assert not port_address in self.ports
+        if port_address in self.ports:
+            raise NineMLRuntimeError('Duplicated Name for port found: %s'%port_address)
         self.ports[port_address] = analogport
         
         
     def action_eventport(self, analogport, namespace):
         port_address = NamespaceAddress.concat( namespace, analogport.name )
-        assert not port_address in self.ports
+        if port_address in self.ports:
+            raise NineMLRuntimeError('Duplicated Name for port found: %s'%port_address)
         self.ports[port_address] = analogport
         
         
@@ -300,7 +305,7 @@ class ComponentValidatorNoDuplicatedObjects(ComponentValidatorPerNamespace):
     def action_alias(self, alias, **kwargs):
         self.all_objects.append(alias)
         
-    def action__timederivative(self,ode, **kwargs):
+    def action_timederivative(self,ode, **kwargs):
         self.all_objects.append(ode)
         
     def action_condition(self, condition, **kwargs):
