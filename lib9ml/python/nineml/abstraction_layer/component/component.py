@@ -227,9 +227,11 @@ class ComponentClassMixinNamespaceStructure(object):
         """
 
         assert not namespace in self.subnodes
-        #self.subnodes[namespace] = copy.deepcopy( subnode ) 
         self.subnodes[namespace] = ClonerVisitor().visit( subnode )
         self.subnodes[namespace]._set_parent_model(self)
+        
+        self._validate_self()
+
 
     def connect_ports( self, src, sink ):
         """Connects the ports of 2 subcomponents.
@@ -250,7 +252,7 @@ class ComponentClassMixinNamespaceStructure(object):
         connection = (NamespaceAddress(src),NamespaceAddress(sink) )
         self.portconnections.append( connection ) 
 
-
+        self._validate_self()
 
     
 
@@ -331,9 +333,12 @@ class ComponentClass( ComponentClassMixinFlatStructure,
         self._ResolveTransitionRegimeNames()
 
         # Is the finished component valid?:
+        self._validate_self()
+        
+
+    def _validate_self(self):
         from nineml.abstraction_layer.validators.component_validator import ComponentValidator
         ComponentValidator.validate_component(self)
-        
         
 
 

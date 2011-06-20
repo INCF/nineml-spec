@@ -6,6 +6,7 @@ import math_namespace
 import itertools,re
 
 
+from nineml.exceptions import NineMLRuntimeError
 
 
 class RegimeElement(object):
@@ -183,7 +184,8 @@ class ExpressionWithSimpleLHS(ExpressionWithLHS):
 
         lhs=lhs.strip()
         single_symbol = re.compile("^[a-zA-Z_]+[a-zA-Z_0-9]*$")
-        assert single_symbol.match( lhs ) 
+        if not single_symbol.match( lhs ):
+            raise NineMLRuntimeError('Expecting a single symbol on the LHS; got: %s'%(lhs) )
         self.lhs = lhs
 
     def lhs_atoms(self):
