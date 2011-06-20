@@ -139,7 +139,7 @@ class ComponentClassMixinFlatStructure(object):
 
         from nineml.abstraction_layer.visitors import ExpandAliasDefinition
 
-        #TODO. This is no longer true; we can directly call on the component,
+        # TODO. This is no longer true; we can directly call on the component,
         # since we now have a new class ExpandAliasDefinition, instead of the old....
         
         for alias in self.aliases:
