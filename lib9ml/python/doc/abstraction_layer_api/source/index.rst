@@ -26,6 +26,7 @@ Quickstart:
 .. toctree::
    :maxdepth: 2
 
+   src_rst/tutorials/installation
    src_rst/tutorials/class_overview
    src_rst/tutorials/resolution_transitions
    src_rst/tutorials/importing_exporting

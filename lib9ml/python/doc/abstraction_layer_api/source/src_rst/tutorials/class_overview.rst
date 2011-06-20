@@ -76,12 +76,13 @@ first-order-differential equations with-respect-to time. In our example, the
 Izekivich model has 2 state-variables, *U* and *V*. 
 
 The state-variables can have different behaviours in when operating in
-different *Regimes*. A regime can be considered the 'mode' of the component;
-for example, an integrate-and-fire neuron with an explicit refactory period
-could be modelled as a component with 2 regimes, a default regime, where
-injected current affects membrane voltage, where and a second *refactory*
-regime where the voltage is fixed to a certain value. This will be further
-discussed in XX.
+different *Regimes*. A regime can be considered the 'mode' of the component; at
+any time, the component will be in a single 'regime', and it is possible to
+move between regimes.  for example, an integrate-and-fire neuron with an
+explicit refactory period could be modelled as a component with 2 regimes, a
+default regime, where injected current affects membrane voltage, where and a
+second *refactory* regime where the voltage is fixed to a certain value. This
+will be further discussed in XX.
 
 For this model, the differential-equations governing the state variables never
 change, so we only need a single regime.
@@ -145,7 +146,20 @@ only have a single regime, we will not change regime.
 
 
 Multiple Regimes & Transitions
--------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+We have only discussed the case of a single regime.  A leaky integrate-and-fire
+model with refractory period has two dynamical regimes - the subthreshold
+regime and the refractory regime. Just for fun, we'll define the component in a
+single step:
+
+
+.. literalinclude:: /tutorial_example_code/example2_leaky_iaf_2regime.py
+
+Note that here we used the *name* of the regime in the ``to`` argument to the
+``On`` transition constructor, rather than a ``Regime`` object. These references
+are resolved automatically.
+
 
 
 
