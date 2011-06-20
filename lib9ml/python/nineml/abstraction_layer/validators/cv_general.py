@@ -305,8 +305,8 @@ class ComponentValidatorNoDuplicatedObjects(ComponentValidatorPerNamespace):
     def action_alias(self, alias, **kwargs):
         self.all_objects.append(alias)
         
-    def action_timederivative(self,ode, **kwargs):
-        self.all_objects.append(ode)
+    def action_timederivative(self,time_derivative, **kwargs):
+        self.all_objects.append(time_derivative)
         
     def action_condition(self, condition, **kwargs):
         self.all_objects.append(condition)

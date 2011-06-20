@@ -26,8 +26,8 @@ class ExpandPortDefinition(InplaceActionVisitorDF):
         assignment.name_transform_inplace( {self.originalname:self.targetname} )
     def action_alias(self, alias, **kwargs):
         alias.name_transform_inplace( {self.originalname:self.targetname} )
-    def action_timederivative(self,ode, **kwargs):
-        ode.name_transform_inplace( {self.originalname:self.targetname} )
+    def action_timederivative(self,time_derivative, **kwargs):
+        time_derivative.name_transform_inplace( {self.originalname:self.targetname} )
     def action_condition(self, condition, **kwargs):
         condition.rhs_name_transform_inplace( {self.originalname:self.targetname} )
 
@@ -46,8 +46,8 @@ class ExpandAliasDefinition(InplaceActionVisitorDF):
         assignment.name_transform_inplace( {self.originalname:self.targetname} )
     def action_alias(self, alias, **kwargs):
         alias.rhs_name_transform_inplace( {self.originalname:self.targetname} )
-    def action_timederivative(self,ode, **kwargs):
-        ode.name_transform_inplace( {self.originalname:self.targetname} )
+    def action_timederivative(self,time_derivative, **kwargs):
+        time_derivative.name_transform_inplace( {self.originalname:self.targetname} )
     def action_condition(self, condition, **kwargs):
         condition.rhs_name_transform_inplace( {self.originalname:self.targetname} )
 
@@ -158,12 +158,12 @@ class ClonerVisitor(ComponentVisitor):
         return new_alias
 
 
-    def visit_timederivative(self,ode,**kwargs):
+    def visit_timederivative(self,time_derivative,**kwargs):
         prefix = kwargs.get( 'prefix','')
         prefix_excludes = kwargs.get('prefix_excludes',[] )
 
-        dep = ode.dependent_variable if ode.dependent_variable in prefix_excludes else prefix + ode.dependent_variable
-        rhs = MathUtil.get_prefixed_rhs_string( expr_obj=ode, prefix=prefix, exclude=prefix_excludes )
+        dep = time_derivative.dependent_variable if time_derivative.dependent_variable in prefix_excludes else prefix + time_derivative.dependent_variable
+        rhs = MathUtil.get_prefixed_rhs_string( expr_obj=time_derivative, prefix=prefix, exclude=prefix_excludes )
         return nineml.abstraction_layer.TimeDerivative( dependent_variable = dep, rhs =rhs)
 
 

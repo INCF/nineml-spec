@@ -164,7 +164,7 @@ class ComponentTestCase(unittest.TestCase):
 
         # catch a alias expression ...
         self.assertRaises(ValueError, nineml.AnalogPort, "q := v**2",mode='send')
-        # ode
+        # time_derivative
         self.assertRaises(ValueError, nineml.AnalogPort, "dq/dt = v**2",mode='send')
         # inplace
         self.assertRaises(ValueError, nineml.AnalogPort, "q += 10",mode='send')

@@ -72,8 +72,8 @@ class InplaceActionVisitorDF(ComponentVisitor):
     def visit_alias(self, alias, **kwargs):
         self.action_alias(alias, **kwargs)
 
-    def visit_timederivative(self,ode,**kwargs):
-        self.action_timederivative(ode, **kwargs)
+    def visit_timederivative(self,time_derivative,**kwargs):
+        self.action_timederivative(time_derivative, **kwargs)
 
     def visit_condition(self, condition, **kwargs):
         self.action_condition(condition, **kwargs)
@@ -132,7 +132,7 @@ class InplaceActionVisitorDF(ComponentVisitor):
     def action_alias(self, alias, **kwargs):
         self.check_pass()
         
-    def action_timederivative(self,ode, **kwargs):
+    def action_timederivative(self,time_derivative, **kwargs):
         self.check_pass()
         
     def action_condition(self, condition, **kwargs):

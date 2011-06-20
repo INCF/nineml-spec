@@ -21,8 +21,8 @@ class ExpressionsTestCase(unittest.TestCase):
         pfx_b = b.prefix("PRE_")
         assert pfx_b == "PRE_ntau(V) := 1/(PRE_q10*(PRE_alpha_n(V) + PRE_beta_n(V)))"
 
-        ode = TimeDerivative("V","t","(ina + ik + il + Isyn)/C")
-        pfx_ode = ode.prefix("PRE_")
+        time_derivative = TimeDerivative("V","t","(ina + ik + il + Isyn)/C")
+        pfx_ode = time_derivative.prefix("PRE_")
         assert pfx_ode == "dPRE_V/dt = (PRE_ina + PRE_ik + PRE_il + PRE_Isyn)/PRE_C"
 
         a = StateAssignment("U","gk(n)*(V - ek)")
@@ -53,9 +53,9 @@ class ExpressionsTestCase(unittest.TestCase):
         expr = c.rhs_name_transform(name_map)
         assert expr == "S_.X>10 & pi < 3 & exp(pi,S_.Y)==1"
         
-        ode = TimeDerivative("V","t","(g_L*(E_L-V) + ina + ik + il + Isyn)/C")
+        time_derivative = TimeDerivative("V","t","(g_L*(E_L-V) + ina + ik + il + Isyn)/C")
         name_map = {'V':'S_.VM'}
-        expr = ode.rhs_name_transform(name_map)
+        expr = time_derivative.rhs_name_transform(name_map)
         assert expr == "(g_L*(E_L-S_.VM) + ina + ik + il + Isyn)/C"
 
         # TODO more tests for other expr types here

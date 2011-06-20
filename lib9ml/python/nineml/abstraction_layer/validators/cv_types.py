@@ -42,8 +42,8 @@ class ComponentValidatorTypes(InplaceActionVisitorDF):
     def action_alias(self, alias, **kwargs):
         assert isinstance( alias, al.Alias )
 
-    def action_timederivative(self,ode,**kwargs):
-        assert isinstance( ode, al.TimeDerivative )
+    def action_timederivative(self,time_derivative,**kwargs):
+        assert isinstance( time_derivative, al.TimeDerivative )
 
     def action_condition(self, condition):
         assert isinstance( condition, al.Condition )
