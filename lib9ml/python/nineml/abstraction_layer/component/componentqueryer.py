@@ -12,6 +12,13 @@ class ComponentQueryer(object):
     def __init__(self, component):
         self.component = component
 
+
+
+    @property
+    def ports(self):
+        return chain(self.component.analog_ports, self.component.event_ports)  
+
+
     # Find basic properties by name
     def regime(self, name=None,):
         assert isinstance(name, basestring)
@@ -31,26 +38,16 @@ class ComponentQueryer(object):
     def analog_reduce_ports(self):
         return [ p for p in self.component.analog_ports if p.mode == 'reduce']
 
+
+
+
     def get_fully_addressed_analogports_new(self):
         comp_addr = self.component.get_node_addr()
 
         kv = lambda port : (comp_addr.get_subns_addr(port.name), port) 
         return dict( [ kv(port) for port in self.component.analog_ports] )
 
-
-
-
-    @property
-    def recurse_all_components(self):
-        yield self.component
-        for subcomponent in self.component.subnodes.values():
-            for subcomp in subcomponent.query.recurse_all_components:
-                yield subcomp
-    #More advanced searches on just this node:
-
-    # Connections and Subnodes:
     def get_fully_qualified_port_connections(self):
-        assert False
         namespace = self.component.get_node_addr()
         def make_fqname(target):
             return NamespaceAddress.concat( namespace, target)
@@ -60,27 +57,33 @@ class ComponentQueryer(object):
 
 
 
-
     @property
-    def ports(self):
-        return chain(self.component.analog_ports, self.component.event_ports)  
+    def recurse_all_components(self):
+        yield self.component
+        for subcomponent in self.component.subnodes.values():
+            for subcomp in subcomponent.query.recurse_all_components:
+                yield subcomp
 
 
-    #Not currently used, but maybe useful in future:
-    @property
-    def ports_map(self):
-        assert False
-        return dict( [ (p.name, p) for p in self.ports ] )
-
-    @property
-    def alias_symbols(self):
-        assert False
-        return [ a.lhs for a in self.component.aliases ]
 
 
-    @property
-    def on_conditions(self):
-        assert False
-        for regime in self.component.regimes:
-            for condition in regime.on_conditions:
-                yield condition
+
+
+    ##Not currently used, but maybe useful in future:
+    #@property
+    #def ports_map(self):
+    #    assert False
+    #    return dict( [ (p.name, p) for p in self.ports ] )
+
+    #@property
+    #def alias_symbols(self):
+    #    assert False
+    #    return [ a.lhs for a in self.component.aliases ]
+
+
+    #@property
+    #def on_conditions(self):
+    #    assert False
+    #    for regime in self.component.regimes:
+    #        for condition in regime.on_conditions:
+    #            yield condition
