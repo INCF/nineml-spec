@@ -12,7 +12,7 @@ import dynamics as dyn
 import copy
 import itertools
 from nineml.abstraction_layer.visitors.cloner import ClonerVisitor
-
+from interface import Parameter
 
 
 class ComponentClassMixinFlatStructure(object):
@@ -307,9 +307,13 @@ class ComponentClass( ComponentClassMixinFlatStructure,
             This can't be here, because we also need to know about dynamics.
             For examples
 
-        
-
         """
+
+        # Turn any strings in the parameter list into Parameters:
+        from nineml.utility import filter_discrete_types
+        param_td = filter_discrete_types( parameters, (basestring, Parameter) )
+        parameters = param_td[Parameter] + [ Parameter(s) for s in param_td[basestring] ]
+
 
         self._query = componentqueryer.ComponentQueryer(self)
 

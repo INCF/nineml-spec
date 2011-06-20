@@ -489,7 +489,7 @@ class Dynamics(object):
 
         # Load the state variables as objects or strings:
         svTD = filter_discrete_types( state_variables, (basestring, StateVariable ) )
-        sv_from_strings =  [ Statevariable(o) for o in svTD[basestring] ] 
+        sv_from_strings =  [ StateVariable(o) for o in svTD[basestring] ] 
         state_variables = svTD[StateVariable] + sv_from_strings
 
 

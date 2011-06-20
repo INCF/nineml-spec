@@ -7,34 +7,6 @@ from collections import defaultdict
 from nineml.abstraction_layer.validators.base import ComponentValidatorPerNamespace
 
 
-# Check that the sub-components stored are all of the
-# right types:
-#class ComponentValidatorPortNames(InplaceActionVisitorDF):
-#    """Checks that we only have a single port of each name""" 
-#    def __init__(self, component):
-#        InplaceActionVisitorDF.__init__(self, explicitly_require_action_overrides=False)
-#        
-#        self.recv_event_ports = []
-#        self.send_event_ports = []
-#        self.recv_analog_ports = []
-#        self.send_analog_ports = []
-#        
-#        self.visit(component)
-#
-#
-#    def action_componentclass(self, component):
-#        assert isinstance( component, al.ComponentClass )
-#        
-#        # Check for name duplication:
-#        portNames = [ p.name for p in chain( component.event_ports, component.analog_ports )] 
-#        assert_no_duplicates(portNames)
-#
-#        self.recv_event_port_names = [ p.name for p in component.event_ports if p.mode=='recv']
-#        self.send_event_port_names = [ p.name for p in component.event_ports if p.mode=='send']
-#        self.recv_analog_port_names = [ p.name for p in component.analog_ports if p.mode=='recv']
-#        self.send_analog_port_names = [ p.name for p in component.analog_ports if p.mode=='send']
-
-
 
 
 
@@ -78,7 +50,7 @@ class ComponentValidatorEventPorts(ComponentValidatorPerNamespace):
                 
                 if len(op_evts_on_port) + len(ip_evts_on_port) == 0:
                     print 'Unable to find events generated for: ', ns, evt_port_name
-                    assert False
+                    #assert False
             
         
     def action_eventport(self, port, namespace, **kwargs):
@@ -118,7 +90,8 @@ class ComponentValidatorOutputAnalogPorts(ComponentValidatorPerNamespace):
         
         for namespace, analogports in self.output_analogports.iteritems():
             for ap in analogports:
-                assert ap in self.available_symbols[namespace]
+                if not ap in self.available_symbols[namespace]:
+                    raise NineMLRuntimeError('Unable to find an Alias or State variable for analog-port: %s'%ap )
     
     
     def add_symbol(self, namespace, symbol):

@@ -197,7 +197,6 @@ class ComponentValidatorPortConnections(ComponentValidatorPerNamespace):
         
     def action_analogport(self, analogport, namespace):
         port_address = NamespaceAddress.concat( namespace, analogport.name) 
-        print 'Found Port', port_address
         assert not port_address in self.ports
         self.ports[port_address] = analogport
         
