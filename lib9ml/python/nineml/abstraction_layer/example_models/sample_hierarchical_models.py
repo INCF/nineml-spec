@@ -35,7 +35,7 @@ def get_iaf():
                                     ]
                             ),
                             analog_ports = [   al.SendPort("V"), 
-                                               al.ReducePort("ISyn", op="+"),],
+                                               al.ReducePort("ISyn", reduce_op="+"),],
                                                
                             event_ports = [ al.SendEventPort('spikeoutput'),],
                              parameters = [ al.Parameter(p) for p in ['cm','taurefrac','gl','vreset','vrest','vthresh']  ]
@@ -192,7 +192,7 @@ def get_hierachical_iaf_2coba_network(nNeurons = 2):
                     )
                     ],
             ports = [   al.SendPort("V"), 
-                        al.ReducePort("gSynapticInput", op="+"), 
+                        al.ReducePort("gSynapticInput", reduce_op="+"), 
                         al.RecvPort("q") ]
                 )
         

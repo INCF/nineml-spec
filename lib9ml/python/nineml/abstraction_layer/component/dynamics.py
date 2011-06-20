@@ -4,6 +4,7 @@ from operator import and_
 from expressions import *
 from conditions import *
 from ports import *
+from events import *
 from ..xmlns import *
 
 import nineml.utility

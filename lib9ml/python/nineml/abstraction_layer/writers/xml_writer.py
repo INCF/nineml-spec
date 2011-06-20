@@ -62,10 +62,10 @@ class XMLWriter(ComponentVisitor):
     def VisitAnalogPort(self, port, **kwargs):
         if port.reduce_op:
             kwargs['reduce_op']=port.reduce_op
-        return E(port.element_name, name=port.name, mode=port.mode, **kwargs)
+        return E('AnalogPort', name=port.name, mode=port.mode, **kwargs)
 
     def VisitEventPort(self, port, **kwargs):
-        return E(port.element_name, name=port.name, mode=port.mode, **kwargs)
+        return E('EventPort', name=port.name, mode=port.mode, **kwargs)
 
     def VisitAssignment(self, assignment, **kwargs):
         return E('StateAssignment',

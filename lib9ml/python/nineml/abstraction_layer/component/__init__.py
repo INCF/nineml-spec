@@ -8,6 +8,7 @@ from interface import *
 
 from expressions import * 
 from ports import * 
+from events import *
 from cond_parse import * 
 from expr_parse import * 
 from namespaceaddress import * 

@@ -85,12 +85,12 @@ class XMLLoader1(object):
         name = element.get("name")
         mode = element.get("mode")
         reduce_op = element.get("reduce_op",None)
-        return al.AnalogPort( internal_symbol = name, mode = mode, op = reduce_op )
+        return al.AnalogPort( name = name, mode = mode, reduce_op = reduce_op )
 
     def load_EventPort(self,element):
         name = element.get("name")
         mode = element.get("mode")
-        return al.EventPort( internal_symbol = name, mode = mode )
+        return al.EventPort( name = name, mode = mode )
 
 
 

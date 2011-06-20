@@ -3,19 +3,54 @@ from nineml.helpers import curry
 
 
 class Port(object):
-    """ Base class for EventPort and AnalogPort, etc."""
-    element_name = "port"
+    """ Base class for EventPort and AnalogPort.
+    
+    In general, a port has a ``name``, which can be used to reference it, 
+    and a ``mode``, which specifies whether it sends or recieves information. 
+    
+    Generally, a send port can be connected to recieve port to allow different
+    components to communicate. 
+    
+    In the case of an ``AnalogPort``, we have three
+    modes, ``send``, ``recv`` and ``reduce``. ``send`` ports can be connected to
+    any number of ``recv`` ports, but each ``recv`` port can only be connected
+    to a single ``send`` port. In order to collect analog input from several
+    ``send`` ports into a single port, we use a ``reduce`` port. A ``reduce``
+    port also requires an additional parameter, ``op``, which specifies how to
+    combine the information from the ports, for example, by adding thier values
+    together, `+`. 
+    
+    For example, if we had several Hodgekin-Huxley channels on a neuron, we
+    would want each one to have a ``send`` port, ``i`` containing the current
+    passing through that type of channel. Then, we would have a single
+    ``reduce`` port, ``I_in`` for example, with ``op='+'``, which would combine
+    them together to calculate the voltage change in the neuron.
+
+    """
     modes = ('send','recv','reduce')
     reduce_op_map = {'add':'+', 'sub':'-', 'mul':'*', 'div':'/',
                      '+':'+', '-':'-', '*':'*', '/':'/'}
 
-    def __init__(self, internal_symbol, mode='send', op=None):
-        
+    def __init__(self, name, mode='send', reduce_op=None):
+        """ Port Constructor.
+
+        :param name: The name of the port, as a `string`
+        :param mode: The mode of the port, which should be a string as either,
+            ``send``,``recv`` or ``reduce``.
+        :param reduce_op: This should be ``None`` unless the mode is ``reduce``.
+            If the mode is ``reduce``, then this must be a supported
+            ``reduce_op``
+
+        .. note::
+
+            Currently support ``reduce_op`` s are: ``+``.
+
+        """
 
         self.dimension="??" 
-        self.symbol = internal_symbol
+        self._name = name
         self.mode = mode
-        self.reduce_op = op
+        self.reduce_op = reduce_op
         
         if self.mode not in self.modes:
             raise ValueError, ("%s('%s')"+\
@@ -27,19 +62,19 @@ class Port(object):
                       "specified undefined reduce_op: '%s'") %\
                       (self.__class__.__name__, self.symbol, str(self.reduce_op))
 
-        if op and self.mode!="reduce":
+        if reduce_op and self.mode!="reduce":
             raise ValueError, "Port of mode!=reduce may not specify 'op'."
             
     
     @property
     def name(self):
-        return self.symbol
+        return self._name
+
+    @property
+    def symbol(self):
+        assert False
+        return self._name
     
-    def __eq__(self, other):
-        if not isinstance(other, self.__class__):
-            return False
-        return self.symbol == other.symbol and self.mode == other.mode\
-               and self.reduce_op == other.reduce_op
 
     def __repr__(self):
         classstring = self.__class__.__name__ 
@@ -48,50 +83,22 @@ class Port(object):
                    
                    
 
-    def encode(self, encoding):
-        assert False
-        return repr(self).encode(encoding)
-
-    def as_expr(self):
-        assert False
-        return repr(self)
-
 
 
 
 
 class AnalogPort(Port):
-    """ Port which may be in a Regime """
-    element_name = "AnalogPort"
-    
     def AcceptVisitor(self, visitor, **kwargs):
         return visitor.VisitAnalogPort(self,**kwargs)
 
 
 class EventPort(Port):
-    """ Port which may be in an Event """
-    element_name = "EventPort"
-    
     def AcceptVisitor(self, visitor, **kwargs):
         return visitor.VisitEventPort(self,**kwargs)
 
 
 
 
-class OutputEvent(object):
-    def AcceptVisitor(self, visitor, **kwargs):
-        return visitor.VisitOutputEvent(self, **kwargs)
-
-    def __init__(self, port):
-        self.port = port
-
-
-class InputEvent(object):
-    def AcceptVisitor(self, visitor, **kwargs):
-        return visitor.VisitInputEvent(self, **kwargs)
-
-    def __init__(self,port):
-        self.port = port
     
     
 

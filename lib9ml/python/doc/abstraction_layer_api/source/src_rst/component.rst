@@ -27,8 +27,8 @@ nineml.abstraction_layer.component [Transitions & Regimes]
     component.OnCondition
 
 
-nineml.abstraction_layer.component [Interface]
-===============================================
+nineml.abstraction_layer.component [Component Dynamics]
+=======================================================
 
 .. autosummary::
     :toctree: 
@@ -49,9 +49,18 @@ nineml.abstraction_layer.component [Interface]
     component.Port
     component.AnalogPort
     component.EventPort
+
+
+
+nineml.abstraction_layer.component [Events]
+===========================================
+
+.. currentmodule:: nineml.abstraction_layer
+
+
+.. autosummary::
+    :toctree: 
+
     component.OutputEvent
     component.InputEvent
-
-
-
 

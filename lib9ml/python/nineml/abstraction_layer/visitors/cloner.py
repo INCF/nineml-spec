@@ -128,11 +128,14 @@ class ClonerVisitor(ComponentVisitor):
         return nineml.abstraction_layer.Parameter(name = self.prefixVariable( parameter.name,**kwargs) )
 
     def VisitAnalogPort(self, port, **kwargs):
-        p =nineml.abstraction_layer.AnalogPort( internal_symbol= self.prefixVariable(port.name,**kwargs) , mode=port.mode, op=port.reduce_op )
+        p =nineml.abstraction_layer.AnalogPort( name=
+                self.prefixVariable(port.name,**kwargs) , mode=port.mode,
+                reduce_op=port.reduce_op )
         return p
 
     def VisitEventPort(self, port, **kwargs):
-        return nineml.abstraction_layer.EventPort( internal_symbol= self.prefixVariable(port.name,**kwargs), mode=port.mode, op=port.reduce_op )
+        return nineml.abstraction_layer.EventPort( name=
+                self.prefixVariable(port.name,**kwargs), mode=port.mode, reduce_op=port.reduce_op )
 
 
     def VisitOutputEvent(self, output_event, **kwargs):
