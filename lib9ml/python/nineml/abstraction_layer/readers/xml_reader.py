@@ -6,7 +6,7 @@
 
 import os
 
-from ..xmlns import etree, nineml_namespace, NINEML
+from nineml.abstraction_layer import etree, nineml_namespace, NINEML
 
 import nineml.abstraction_layer as al
 from nineml.utility import expect_single, filter_expect_single
@@ -77,19 +77,19 @@ class XMLLoader(object):
     def load_parameter(self, element):
         return al.Parameter(name=element.get('name')) 
 
-    def load_analogport(self,element):
+    def load_analogport(self, element):
         return al.AnalogPort( name = element.get("name"),
                               mode = element.get('mode'), 
-                              reduce_op = element.get("reduce_op",None)
+                              reduce_op = element.get("reduce_op", None)
                             )
 
-    def load_eventport(self,element):
+    def load_eventport(self, element):
         return al.EventPort( name = element.get('name'), 
                              mode = element.get('mode') )
 
 
 
-    def load_dynamics(self,element):
+    def load_dynamics(self, element):
         subblocks = ('Regime', 'Alias', 'StateVariable') 
         subnodes = self.loadBlocks( element, blocks= subblocks )
 
@@ -98,7 +98,7 @@ class XMLLoader(object):
                              state_variables = subnodes["StateVariable"] )
 
 
-    def load_regime(self,element):
+    def load_regime(self, element):
         subblocks = ('TimeDerivative', 'OnCondition', 'OnEvent')
         subnodes = self.loadBlocks( element, blocks=subblocks)
         return al.Regime( name=element.get('name'),
@@ -108,28 +108,28 @@ class XMLLoader(object):
 
 
 
-    def load_statevariable(self,element):
+    def load_statevariable(self, element):
         name = element.get("name")
         return al.StateVariable( name=name)
 
 
-    def load_timederivative(self,element):
+    def load_timederivative(self, element):
         variable = element.get("variable")
         expr = self.load_single_internal_maths_block(element)
         return al.TimeDerivative( dependent_variable=variable, 
                                   rhs=expr)
         
-    def load_alias(self,element):
+    def load_alias(self, element):
         name = element.get("name")
         rhs =  self.load_single_internal_maths_block(element)
         return al.Alias(lhs=name,  
                         rhs=rhs)
 
 
-    def load_oncondition(self,element):
+    def load_oncondition(self, element):
         subblocks = ('Trigger', 'StateAssignment', 'EventOut')
         subnodes = self.loadBlocks( element, blocks=subblocks)
-        target_regime = element.get('target_regime',None)
+        target_regime = element.get('target_regime', None)
 
         return al.OnCondition( trigger = expect_single( subnodes["Trigger"] ),
                                state_assignments = subnodes["StateAssignment"],
@@ -137,10 +137,10 @@ class XMLLoader(object):
                                target_regime_name = target_regime)
                                     
 
-    def load_onevent(self,element):
-        subblocks = ('StateAssignment','EventOut' ) 
+    def load_onevent(self, element):
+        subblocks = ('StateAssignment', 'EventOut' ) 
         subnodes = self.loadBlocks( element, blocks = subblocks )
-        target_regime_name = element.get('target_regime',None)
+        target_regime_name = element.get('target_regime', None)
 
 
         return al.OnEvent( src_port_name = element.get('port'),
@@ -149,25 +149,25 @@ class XMLLoader(object):
                            target_regime_name = target_regime_name
                          )
 
-    def load_trigger(self,element):
+    def load_trigger(self, element):
         return self.load_single_internal_maths_block ( element ) 
 
 
-    def load_stateassignment(self,element):
+    def load_stateassignment(self, element):
         lhs = element.get('variable')
         rhs = self.load_single_internal_maths_block(element)
         return al.StateAssignment(lhs=lhs, rhs=rhs)
 
-    def load_eventout(self,element):
+    def load_eventout(self, element):
         port_name = element.get('port')
         return al.OutputEvent(port_name=port_name)
 
 
-    def load_eventin(self,element):
+    def load_eventin(self, element):
         return al.InputEvent( port_name = element.get('port') )
 
 
-    def load_single_internal_maths_block(self,element, checkOnlyBlock=True):
+    def load_single_internal_maths_block(self, element, checkOnlyBlock=True):
         if checkOnlyBlock:
             elements = list(element.iterchildren(tag=etree.Element ) ) 
             if  len( elements ) != 1:
@@ -182,12 +182,12 @@ class XMLLoader(object):
 
 
     # These blocks map directly in to classes:
-    def loadBlocks(self, element, blocks=None, checkForSpuriousBlocks=True ):
+    def loadBlocks(self, element, blocks=None, check_for_spurious_blocks=True ):
         """ 
         Creates a dictionary that maps class-types to instantiated objects
         """
 
-        if blocks:
+        if blocks and check_for_spurious_blocks:
             for t in element.iterchildren(tag=etree.Element):
                 assert t.tag[len(NS):] in blocks  or t.tag in blocks
 
@@ -196,7 +196,7 @@ class XMLLoader(object):
 
         res = {}
         for blk in blocks:
-            elements =list ( element.findall(NS+blk) ) 
+            elements = list ( element.findall(NS+blk) ) 
             res[blk] = []
             if elements:
                 loader = XMLLoader.tag_to_loader[blk]
@@ -209,7 +209,6 @@ class XMLLoader(object):
 
     tag_to_loader = {
         "ComponentClass" : load_componentclass,
-        "Dynamics" : load_dynamics,
         "Regime" : load_regime,
         "StateVariable" : load_statevariable,
         "Parameter": load_parameter,
@@ -252,20 +251,20 @@ class XMLReader(object):
         filename = include_element.get('file')
 
         # Load the new XML
-        included_xml = cls._loadNestedXML( 
-                                filename = os.path.join(basedir,filename),
+        included_xml = cls._load_nested_xml( 
+                                filename = os.path.join(basedir, filename),
                                 xml_node_filename_map=xml_node_filename_map )
 
         #Insert it into the parent node:
-        indexOfNode = include_element.getparent().index(include_element)
-        for i,newchild in enumerate(included_xml.getchildren()):
-            include_element.getparent().insert(  i+indexOfNode,newchild)
+        index_of_node = include_element.getparent().index(include_element)
+        for i, newchild in enumerate(included_xml.getchildren()):
+            include_element.getparent().insert(  i+index_of_node, newchild)
 
         include_element.getparent().remove( include_element )
 
 
     @classmethod
-    def _loadNestedXML(cls,filename,xml_node_filename_map):
+    def _load_nested_xml(cls, filename, xml_node_filename_map):
         """ Load the XML, including  all referenced Include files .
 
         We also populate a dictionary, ``xml_node_filename_map`` which maps each
@@ -321,7 +320,7 @@ class XMLReader(object):
         """
 
         xml_node_filename_map = {}
-        root = cls._loadNestedXML( filename=filename, 
+        root = cls._load_nested_xml( filename=filename, 
                                    xml_node_filename_map=xml_node_filename_map)
 
         loader = XMLLoader( xmlroot=root, 
@@ -332,12 +331,12 @@ class XMLReader(object):
             return filter_expect_single(loader.components, key_func)
             
         else:
-            key_func = lambda c:c.name==component_name 
+            key_func = lambda c: c.name == component_name 
             return filter_expect_single(loader.components, key_func) 
                                          
 
     @classmethod
-    def read_components(cls,filename):
+    def read_components(cls, filename):
         """Reads a several |COMPONENTCLASS| object from a filename.
 
         :param filename: The name of the file.
@@ -346,7 +345,7 @@ class XMLReader(object):
         
         """
         xml_node_filename_map = {}
-        root = cls._loadNestedXML(filename)
+        root = cls._load_nested_xml(filename, xml_node_filename_map)
         loader = XMLLoader( xmlroot = root, 
                             xml_node_filename_map = xml_node_filename_map  )
         return loader.components

@@ -1,6 +1,9 @@
-from nineml.abstraction_layer.validators.base import ComponentValidatorPerNamespace
 
 from collections import defaultdict
+
+
+from base import ComponentValidatorPerNamespace
+
 from nineml.exceptions.exceptions import NineMLRuntimeError
 from nineml.abstraction_layer.component.namespaceaddress import NamespaceAddress
 from nineml.abstraction_layer import math_namespace
@@ -19,16 +22,17 @@ class ComponentValidatorTimeDerivativesAreDeclared(ComponentValidatorPerNamespac
             
         self.visit(component)
         
-        for namespace,time_derivatives in self.time_derivatives_used.iteritems():
+        for namespace, time_derivatives in self.time_derivatives_used.iteritems():
             for td in time_derivatives:
                 if not td in self.sv_declared[namespace]:
-                    raise NineMLRuntimeError('StateVariable not declared: %s'%td)
+                    err = 'StateVariable not declared: %s'%td
+                    raise NineMLRuntimeError(err)
         
         
     def action_statevariable(self, state_variable, namespace, **kwargs):
         self.sv_declared[namespace].append(state_variable.name)
         
-    def action_timederivative(self, timederivative, namespace,**kwargs):
+    def action_timederivative(self, timederivative, namespace, **kwargs):
         self.time_derivatives_used[namespace].append(timederivative.dependent_variable)
 
 
@@ -45,15 +49,16 @@ class ComponentValidatorStateAssignmentsAreOnStateVariables(ComponentValidatorPe
             
         self.visit(component)
         
-        for namespace,state_assignments_lhs in self.state_assignments_lhses.iteritems():
+        for namespace, state_assignments_lhs in self.state_assignments_lhses.iteritems():
             for td in state_assignments_lhs:
                 if not td in self.sv_declared[namespace]:
-                    raise NineMLRuntimeError('Not Assigning to state-variable: %s'%state_assignment)
+                    err = 'Not Assigning to state-variable: %s'%state_assignment
+                    raise NineMLRuntimeError(err)
             
     def action_statevariable(self, state_variable, namespace, **kwargs):
         self.sv_declared[namespace].append(state_variable.name)
         
-    def action_stateassignment(self, state_assignment, namespace,**kwargs):
+    def action_stateassignment(self, state_assignment, namespace, **kwargs):
         assert False
         self.state_assignments_lhses[namespace].append(state_assignment.lhs)
 
@@ -68,7 +73,7 @@ class ComponentValidatorStateAssignmentsAreOnStateVariables(ComponentValidatorPe
 class ComponentValidatorAliasesAreNotRecursive(ComponentValidatorPerNamespace):
     """Check that aliases are not self-referential"""
     
-    def __init__(self,component):
+    def __init__(self, component):
         ComponentValidatorPerNamespace.__init__(self, explicitly_require_action_overrides=False)
         self.visit(component)
         
@@ -92,7 +97,9 @@ class ComponentValidatorAliasesAreNotRecursive(ComponentValidatorPerNamespace):
                     del unresolved_aliases[r.lhs]
                 
             else:
-                errmsg = "Unable to resolve all aliases in %. You may have a recursion issue. Remaining Aliases: %s"% (namespace, ','.join(unresolved_aliases.keys()) )
+                errmsg =  "Unable to resolve all aliases in %s. " % namespace
+                errmsg += "You may have a recursion issue."
+                errmsg += "Remaining Aliases: %s"%  ','.join(unresolved_aliases.keys()) )
                 raise NineMLRuntimeError(errmsg)
             
             
@@ -104,7 +111,7 @@ class ComponentValidatorAliasesAreNotRecursive(ComponentValidatorPerNamespace):
 
 class ComponentValidatorAliasesAndStateVariablesHaveNoUnResolvedSymbols(ComponentValidatorPerNamespace):
     """Check that aliases and timederivatives are defined in terms of other parameters, aliases, statevariables and ports"""
-    def __init__(self,component):
+    def __init__(self, component):
         ComponentValidatorPerNamespace.__init__(self, explicitly_require_action_overrides=False)
 
         self.available_symbols = defaultdict(list)
@@ -117,7 +124,7 @@ class ComponentValidatorAliasesAndStateVariablesHaveNoUnResolvedSymbols(Componen
         #TODO:
         excludes = ['celsius'] + math_namespace.namespace.keys()
         
-        for ns,aliases in self.aliases.iteritems():
+        for ns, aliases in self.aliases.iteritems():
             for alias in aliases:
                 for rhs_atom in alias.rhs_atoms:
                     if not rhs_atom in self.available_symbols[ns] and not rhs_atom in excludes:
@@ -132,7 +139,7 @@ class ComponentValidatorAliasesAndStateVariablesHaveNoUnResolvedSymbols(Componen
         
     def add_symbol(self, namespace, symbol):
         if symbol in self.available_symbols[namespace]:
-            raise NineMLRuntimeError("Duplicate Symbol: [%s] found in namespace: %s"%(symbol,namespace) )
+            raise NineMLRuntimeError("Duplicate Symbol: [%s] found in namespace: %s"%(symbol, namespace) )
         self.available_symbols[namespace].append(symbol)
     
     def action_analogport(self, port, namespace, **kwargs):
@@ -166,7 +173,7 @@ class ComponentValidatorPortConnections(ComponentValidatorPerNamespace):
     """Check that all the port connections point to a port, and that
     each send & recv port only has a single connection. 
     """
-    def __init__(self,component):
+    def __init__(self, component):
         ComponentValidatorPerNamespace.__init__(self, explicitly_require_action_overrides=False)
 
         self.ports = defaultdict(list)
@@ -178,7 +185,7 @@ class ComponentValidatorPortConnections(ComponentValidatorPerNamespace):
         
         # Check each source and sink exist,
         # and that each recv port is connected at max once.
-        for src,sink in self.portconnections:
+        for src, sink in self.portconnections:
             if not src in self.ports:
                 raise NineMLRuntimeError('Unable to find port specified in connection: %s'%(src) )
             if self.ports[src].is_incoming():
@@ -213,7 +220,7 @@ class ComponentValidatorPortConnections(ComponentValidatorPerNamespace):
         
         
     def action_componentclass(self, component, namespace):
-        for src,sink in component.portconnections:
+        for src, sink in component.portconnections:
             full_src   = NamespaceAddress.concat( namespace, src )
             full_sink  = NamespaceAddress.concat( namespace, sink )
             self.portconnections.append( (full_src, full_sink) )
@@ -225,7 +232,7 @@ class ComponentValidatorPortConnections(ComponentValidatorPerNamespace):
     
 class ComponentValidatorRegimeGraph(ComponentValidatorPerNamespace):
     
-    def __init__(self,component):
+    def __init__(self, component):
         ComponentValidatorPerNamespace.__init__(self, explicitly_require_action_overrides=False)
         
         self.connected_regimes_from_regime = defaultdict( set ) 
@@ -265,7 +272,7 @@ class ComponentValidatorRegimeGraph(ComponentValidatorPerNamespace):
 
 
 class ComponentValidatorNoDuplicatedObjects(ComponentValidatorPerNamespace):
-    def __init__(self,component):
+    def __init__(self, component):
         ComponentValidatorPerNamespace.__init__(self, explicitly_require_action_overrides=True)
 
         self.all_objects = list()
@@ -281,7 +288,7 @@ class ComponentValidatorNoDuplicatedObjects(ComponentValidatorPerNamespace):
     def action_dynamics(self, dynamics, **kwargs):
         self.all_objects.append(dynamics)
         
-    def action_regime(self,regime,  **kwargs):
+    def action_regime(self, regime,  **kwargs):
         self.all_objects.append(regime)
         
     def action_statevariable(self, state_variable, **kwargs):
@@ -305,7 +312,7 @@ class ComponentValidatorNoDuplicatedObjects(ComponentValidatorPerNamespace):
     def action_alias(self, alias, **kwargs):
         self.all_objects.append(alias)
         
-    def action_timederivative(self,time_derivative, **kwargs):
+    def action_timederivative(self, time_derivative, **kwargs):
         self.all_objects.append(time_derivative)
         
     def action_condition(self, condition, **kwargs):

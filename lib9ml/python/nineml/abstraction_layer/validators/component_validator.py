@@ -1,24 +1,27 @@
+"""This file contains the ComponentValidator class for validating component"""
 
-from nineml.abstraction_layer.validators.cv_types import ComponentValidatorTypes
-from nineml.abstraction_layer.validators.cv_ports import ComponentValidatorEventPorts
-from nineml.abstraction_layer.validators.cv_ports import ComponentValidatorOutputAnalogPorts
-from nineml.abstraction_layer.validators.cv_namingconflicts import ComponentValidatorLocalNameConflicts
-from nineml.abstraction_layer.validators.cv_general import ComponentValidatorTimeDerivativesAreDeclared
-from nineml.abstraction_layer.validators.cv_general import ComponentValidatorNoDuplicatedObjects
-from nineml.abstraction_layer.validators.cv_general import ComponentValidatorAliasesAndStateVariablesHaveNoUnResolvedSymbols
-from nineml.abstraction_layer.validators.cv_general import ComponentValidatorPortConnections
-from nineml.abstraction_layer.validators.cv_general import ComponentValidatorStateAssignmentsAreOnStateVariables
-from nineml.abstraction_layer.validators.cv_general import ComponentValidatorAliasesAreNotRecursive
-from nineml.abstraction_layer.validators.cv_general import ComponentValidatorRegimeGraph
+from cv_types import ComponentValidatorTypes
+from cv_ports import ComponentValidatorEventPorts
+from cv_ports import ComponentValidatorOutputAnalogPorts
+from cv_namingconflicts import ComponentValidatorLocalNameConflicts
+from cv_general import ComponentValidatorTimeDerivativesAreDeclared
+from cv_general import ComponentValidatorNoDuplicatedObjects
+from cv_general import ComponentValidatorAliasesAndStateVariablesHaveNoUnResolvedSymbols
+from cv_general import ComponentValidatorPortConnections
+from cv_general import ComponentValidatorStateAssignmentsAreOnStateVariables
+from cv_general import ComponentValidatorAliasesAreNotRecursive
+from cv_general import ComponentValidatorRegimeGraph
 
 class ComponentValidator(object):
+    """Class for grouping all the component-validations tests together"""
     
     @classmethod
     def validate_component(cls, component):
+        """ Tests a componentclass against a variety of tests, to verify its
+        internal structure
+        """
 
-        #from nineml.abstraction_layer.writers import TextWriter
-        #TextWriter.write(component, filename='/tmp/nineml.huntingduplication.txt')
-        
+        #Check class structure:
         ComponentValidatorTypes(component)
         ComponentValidatorNoDuplicatedObjects(component)
         

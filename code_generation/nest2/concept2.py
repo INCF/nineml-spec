@@ -45,7 +45,7 @@ from nineml.abstraction_layer.example_models import get_hierachical_iaf_2coba
 #from nineml.abstraction_layer.models import reduce_to_single_component, ModelToSingleComponentReducer
 from nineml.abstraction_layer.flattening import flatten, ComponentFlattener
 from nineml.abstraction_layer.writers import dump_reduced
-from nineml.abstraction_layer.componentmodifiers import ModelModifier
+from nineml.abstraction_layer.componentmodifiers import ComponentModifier
 
 
 
@@ -56,7 +56,7 @@ nest_classname = "iaf_cond_exp_9ml"
 iaf_cond_exp_9ML_reduced = flatten( get_hierachical_iaf_2coba(), componentname=nest_classname )
 iaf_cond_exp_9ML_reduced.backsub_aliases()
 iaf_cond_exp_9ML_reduced.backsub_equations()
-ModelModifier.CloseAllReducePorts(component=iaf_cond_exp_9ML_reduced)
+ComponentModifier.close_all_reduce_ports(component=iaf_cond_exp_9ML_reduced)
 
 dump_reduced(iaf_cond_exp_9ML_reduced,'reduced.txt')
 
