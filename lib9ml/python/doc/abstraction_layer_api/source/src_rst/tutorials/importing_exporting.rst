@@ -66,7 +66,7 @@ Importing
 XML
 ~~~
 
-Since we can write to XML, we can also load files from XML. We do this with the ``XMLReader``::
+We can load files from XML; we do this with the ``XMLReader``::
 
 
     from nineml.abstraction_layer.readers import XMLReader

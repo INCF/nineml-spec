@@ -9,6 +9,9 @@ lib9ml/python/examples/AL/*.dot
 lib9ml/python/examples/AL/*.png
 lib9ml/python/examples/AL/*.xml
 
+.project
+.pydevproject
+
 # /code_generation/lems/
 /code_generation/lems/TestLEMS.xml
 /code_generation/lems/*.9ml
