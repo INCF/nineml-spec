@@ -54,7 +54,7 @@ class XMLWriter(ComponentVisitor):
         return E('StateVariable', name=state_variable.name,dimension='??')
 
     def VisitOutputEvent(self, output_event, **kwargs):
-        return E('EventOut', port = output_event.port ) 
+        return E('EventOut', port = output_event.port_name ) 
 
     def VisitParameter(self, parameter):
         return E('Parameter', name=parameter.name, dimension='??')

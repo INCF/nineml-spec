@@ -48,7 +48,7 @@ class Transition(object):
         from nineml.utility import filter_discrete_types
         state_assignments = state_assignments or []
         saTypeDict = filter_discrete_types( state_assignments, (basestring, Assignment ) )
-        sa_from_strings = [ StrToExpr.state_assignments(o) for o in saTypeDict[basestring] ] 
+        sa_from_strings = [ StrToExpr.state_assignment(o) for o in saTypeDict[basestring] ] 
         self._state_assignments = saTypeDict[Assignment] + sa_from_strings
         
 
@@ -445,7 +445,7 @@ def DoOnEvent(input_event, do=None, to=None):
     assert isinstance( input_event, InputEvent) 
     
     assignments,output_events = doToAsssignmentsAndEvents( do ) 
-    return OnEvent( src_port_name=input_event.port,
+    return OnEvent( src_port_name=input_event.port_name,
                     state_assignments = assignments,
                     event_outputs=output_events,
                     target_regime_name = to )

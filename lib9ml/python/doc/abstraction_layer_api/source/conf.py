@@ -297,4 +297,6 @@ autodoc_member_order = 'groupwise'
 rst_prolog = """
 .. |VISITATION| replace:: link to something about visitation.
 
+
+.. |COMPONENTCLASS| replace:: :class:`~nineml.abstraction_layer.component.ComponentClass`
 """

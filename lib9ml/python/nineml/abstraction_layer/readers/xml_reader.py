@@ -1,18 +1,15 @@
+""" This file defines classes for reading NineML files.
 
-from nineml.utility import LocationMgr, Join, expect_single, filter_expect_single
 
-
-from collections import defaultdict
+"""
 
 
 import os
 
-
-
+from ..xmlns import etree, nineml_namespace, NINEML
 
 import nineml.abstraction_layer as al
-#import nineml.abstraction_layer.component as core
-from ..xmlns import etree,E,MATHML,nineml_namespace,NINEML
+from nineml.utility import expect_single, filter_expect_single
 
 
 NS = "{CoModL}"
@@ -20,152 +17,155 @@ NS = "{CoModL}"
 
 
 
+__all__ = ['XMLReader']
 
 
 
+class XMLLoader(object):
+    """This class is used by XMLReader internally.
+    
+    This class loads a NineML XML tree.
 
-class XMLLoader1(object):
+    """
 
-    def __init__(self, xmlroot, xmlNodeFilenameMap):
+
+    def __init__(self, xmlroot, xml_node_filename_map):
         
         self.components = []
         self.component_srcs = {}
         for comp_block in xmlroot.findall(NS + "ComponentClass"):
-            component = self.load_ComponentClass( comp_block )
-            src_filename = xmlNodeFilenameMap[comp_block]
+            component = self.load_componentclass( comp_block )
 
             self.components.append(component)
-            self.component_srcs[component] = xmlNodeFilenameMap[comp_block]
+            self.component_srcs[component] = xml_node_filename_map[comp_block]
 
 
 
-    def load_ConnectPorts(self, element ):
+    def load_connectports(self, element ):
         return element.get('source'), element.get('sink')
 
 
 
-    def load_Subnode(self, subnode):
+    def load_subnode(self, subnode):
         namespace = subnode.get('namespace')
-        component = filter_expect_single( self.components, lambda c: c.name==subnode.get('node') )
-        return namespace,component
+        component = filter_expect_single( self.components, 
+                                          lambda c: c.name==subnode.get('node'))
+        return namespace, component
     
 
 
-    def load_ComponentClass(self,element):
-        
+    def load_componentclass(self, element):
+    
+        blocks = ('Parameter', 'AnalogPort', 'EventPort', 
+                  'Dynamics', 'Subnode', 'ConnectPorts') 
+    
+        subnodes = self.loadBlocks( element, blocks=blocks)
+    
+        dynamics = expect_single(subnodes["Dynamics"])
+        return al.ComponentClass(name=element.get('name'),
+                              parameters = subnodes["Parameter" ] ,
+                              analog_ports = subnodes["AnalogPort"] ,
+                              event_ports = subnodes["EventPort"],
+                              dynamics = dynamics,
+                              subnodes = dict(subnodes['Subnode'] ),
+                              portconnections = subnodes["ConnectPorts"])
 
-        from nineml.abstraction_layer import ComponentClass
-        name = element.get("name")
-         
-
-        subnodes = self.loadBlocks( element,blocks=('Parameter','AnalogPort','EventPort','Dynamics','Subnode','ConnectPorts' ) )
-
-        component = ComponentClass(  name=name,
-                                       parameters = subnodes["Parameter" ] ,
-                                       analog_ports = subnodes["AnalogPort"] ,
-                                       event_ports = subnodes["EventPort"],
-                                       dynamics = expect_single( subnodes["Dynamics"] )
-                                       )
-
-        # Load namespaces:
-        for namespace,componentclass in subnodes['Subnode']:
-            component.insert_subnode(subnode = componentclass, namespace=namespace)
-        
-        for src,sink in subnodes['ConnectPorts']:
-            component.connect_ports(src=src,sink=sink)
-
-        return component
 
        
-    def load_Parameter(self,element):
-        name = element.get("name")
-        return al.Parameter(name=name) 
+    def load_parameter(self, element):
+        return al.Parameter(name=element.get('name')) 
 
-    def load_AnalogPort(self,element):
-        name = element.get("name")
-        mode = element.get("mode")
-        reduce_op = element.get("reduce_op",None)
-        return al.AnalogPort( name = name, mode = mode, reduce_op = reduce_op )
+    def load_analogport(self,element):
+        return al.AnalogPort( name = element.get("name"),
+                              mode = element.get('mode'), 
+                              reduce_op = element.get("reduce_op",None)
+                            )
 
-    def load_EventPort(self,element):
-        name = element.get("name")
-        mode = element.get("mode")
-        return al.EventPort( name = name, mode = mode )
+    def load_eventport(self,element):
+        return al.EventPort( name = element.get('name'), 
+                             mode = element.get('mode') )
 
 
 
-    def load_Dynamics(self,element):
-        subnodes = self.loadBlocks( element, blocks=('Regime','Alias','StateVariable' )  )
+    def load_dynamics(self,element):
+        subblocks = ('Regime', 'Alias', 'StateVariable') 
+        subnodes = self.loadBlocks( element, blocks= subblocks )
+
         return al.Dynamics(  regimes = subnodes["Regime"] ,
-                                 aliases = subnodes["Alias"] ,
-                                 state_variables = subnodes["StateVariable"] ,
-                                 )
+                             aliases = subnodes["Alias"] ,
+                             state_variables = subnodes["StateVariable"] )
 
 
-    def load_RegimeClass(self,element):
-        name = element.get("name")
-        subnodes = self.loadBlocks( element, blocks=('TimeDerivative','OnCondition','OnEvent' )  )
-        return al.Regime( name=name,
-                              time_derivatives = subnodes["TimeDerivative"],
-                              on_events = subnodes["OnEvent"],
-                              on_conditions = subnodes["OnCondition"] )
+    def load_regime(self,element):
+        subblocks = ('TimeDerivative', 'OnCondition', 'OnEvent')
+        subnodes = self.loadBlocks( element, blocks=subblocks)
+        return al.Regime( name=element.get('name'),
+                          time_derivatives = subnodes["TimeDerivative"],
+                          on_events = subnodes["OnEvent"],
+                          on_conditions = subnodes["OnCondition"] )
 
 
 
-    def load_StateVariable(self,element):
+    def load_statevariable(self,element):
         name = element.get("name")
         return al.StateVariable( name=name)
 
 
-    def load_TimeDerivative(self,element):
+    def load_timederivative(self,element):
         variable = element.get("variable")
-        expr = self.load_SingleInternalMathsBlock(element)
-        return al.TimeDerivative( dependent_variable=variable, rhs=expr)
+        expr = self.load_single_internal_maths_block(element)
+        return al.TimeDerivative( dependent_variable=variable, 
+                                  rhs=expr)
         
-    def load_Alias(self,element):
+    def load_alias(self,element):
         name = element.get("name")
-        rhs =  self.load_SingleInternalMathsBlock(element)
-        return al.Alias( lhs=name,  rhs=rhs)
+        rhs =  self.load_single_internal_maths_block(element)
+        return al.Alias(lhs=name,  
+                        rhs=rhs)
 
 
-    def load_OnCondition(self,element):
-        subnodes = self.loadBlocks( element, blocks=('Trigger','StateAssignment','EventOut' )  )
+    def load_oncondition(self,element):
+        subblocks = ('Trigger', 'StateAssignment', 'EventOut')
+        subnodes = self.loadBlocks( element, blocks=subblocks)
         target_regime = element.get('target_regime',None)
 
-        return al.OnCondition(  trigger = expect_single( subnodes["Trigger"] ),
-                                     state_assignments = subnodes[ "StateAssignment"],
-                                     event_outputs = subnodes[ "EventOut" ],
-                                     target_regime_name = target_regime)
+        return al.OnCondition( trigger = expect_single( subnodes["Trigger"] ),
+                               state_assignments = subnodes["StateAssignment"],
+                               event_outputs = subnodes[ "EventOut" ],
+                               target_regime_name = target_regime)
                                     
 
-    def load_OnEvent(self,element):
-        subnodes = self.loadBlocks( element, blocks=('StateAssignment','EventOut' )  )
-        target_regime = element.get('target_regime',None)
-        src_port_name = element.get('port')
-        return al.OnEvent(  src_port_name = src_port_name,
-                                 state_assignments = subnodes[ "StateAssignment"],
-                                 event_outputs = subnodes[ "EventOut" ],
-                                 target_regime_name = target_regime)
-
-    def load_Trigger(self,element):
-        return self.load_SingleInternalMathsBlock ( element ) 
+    def load_onevent(self,element):
+        subblocks = ('StateAssignment','EventOut' ) 
+        subnodes = self.loadBlocks( element, blocks = subblocks )
+        target_regime_name = element.get('target_regime',None)
 
 
-    def load_StateAssignment(self,element):
+        return al.OnEvent( src_port_name = element.get('port'),
+                           state_assignments = subnodes["StateAssignment"],
+                           event_outputs = subnodes["EventOut"],
+                           target_regime_name = target_regime_name
+                         )
+
+    def load_trigger(self,element):
+        return self.load_single_internal_maths_block ( element ) 
+
+
+    def load_stateassignment(self,element):
         lhs = element.get('variable')
-        rhs = self.load_SingleInternalMathsBlock(element)
+        rhs = self.load_single_internal_maths_block(element)
         return al.Assignment(lhs=lhs, rhs=rhs)
 
-    def load_EventOut(self,element):
-        port = element.get('port')
-        return al.OutputEvent(port=port)
+    def load_eventout(self,element):
+        port_name = element.get('port')
+        return al.OutputEvent(port_name=port_name)
 
 
-    def load_EventIn(self,element):
-        return al.InputEvent( port = element.get('port') )
+    def load_eventin(self,element):
+        return al.InputEvent( port_name = element.get('port') )
 
 
-    def load_SingleInternalMathsBlock(self,element, checkOnlyBlock=True):
+    def load_single_internal_maths_block(self,element, checkOnlyBlock=True):
         if checkOnlyBlock:
             elements = list(element.iterchildren(tag=etree.Element ) ) 
             if  len( elements ) != 1:
@@ -179,14 +179,7 @@ class XMLLoader1(object):
 
 
 
-
-
-
-
-
-
-
-# These blocks map directly in to classes:
+    # These blocks map directly in to classes:
     def loadBlocks(self, element, blocks=None, checkForSpuriousBlocks=True ):
         """ 
         Creates a dictionary that maps class-types to instantiated objects
@@ -196,15 +189,15 @@ class XMLLoader1(object):
             for t in element.iterchildren(tag=etree.Element):
                 assert t.tag[len(NS):] in blocks  or t.tag in blocks
 
-        
-        blocks = blocks if blocks is not None else tag_to_class_dict.keys()
+        if blocks is None:
+            blocks = XMLLoader.tag_to_class_dict.keys()
 
         res = {}
         for blk in blocks:
             elements =list ( element.findall(NS+blk) ) 
             res[blk] = []
             if elements:
-                loader = tag_to_loader[blk]
+                loader = XMLLoader.tag_to_loader[blk]
                 res[blk].extend( [ loader(self, e ) for e in elements ] )
 
         return res
@@ -212,28 +205,25 @@ class XMLLoader1(object):
 
 
 
-
-
-
-tag_to_loader = {
-    "ComponentClass" : XMLLoader1.load_ComponentClass,
-    "Dynamics" : XMLLoader1.load_Dynamics,
-    "Regime" : XMLLoader1.load_RegimeClass,
-    "StateVariable" : XMLLoader1.load_StateVariable,
-    "Parameter": XMLLoader1.load_Parameter,
-    "EventPort": XMLLoader1.load_EventPort,
-    "AnalogPort": XMLLoader1.load_AnalogPort,
-    "Dynamics": XMLLoader1.load_Dynamics,
-    "OnCondition": XMLLoader1.load_OnCondition,
-    "OnEvent": XMLLoader1.load_OnEvent,
-    "Alias": XMLLoader1.load_Alias,
-    "TimeDerivative": XMLLoader1.load_TimeDerivative,
-    "Trigger": XMLLoader1.load_Trigger,
-    "StateAssignment": XMLLoader1.load_StateAssignment,
-    "EventOut": XMLLoader1.load_EventOut,
-    "EventIn": XMLLoader1.load_EventIn,
-    "Subnode": XMLLoader1.load_Subnode,
-    "ConnectPorts": XMLLoader1.load_ConnectPorts,
+    tag_to_loader = {
+        "ComponentClass" : load_componentclass,
+        "Dynamics" : load_dynamics,
+        "Regime" : load_regime,
+        "StateVariable" : load_statevariable,
+        "Parameter": load_parameter,
+        "EventPort": load_eventport,
+        "AnalogPort": load_analogport,
+        "Dynamics": load_dynamics,
+        "OnCondition": load_oncondition,
+        "OnEvent": load_onevent,
+        "Alias": load_alias,
+        "TimeDerivative": load_timederivative,
+        "Trigger": load_trigger,
+        "StateAssignment": load_stateassignment,
+        "EventOut": load_eventout,
+        "EventIn": load_eventin,
+        "Subnode": load_subnode,
+        "ConnectPorts": load_connectports,
         }
 
 
@@ -246,20 +236,35 @@ tag_to_loader = {
 
 
 
-xmlNodeFilenameMap = {}
+
+
+#xml_node_filename_map = {}
 
 
 
 class XMLReader(object):
+    """A class that can read |COMPONENTCLASS| objects from a NineML XML file. 
+    """
 
 
     @classmethod
-    def _load_include(cls,include_element, basedir):
+    def _load_include(cls, include_element, basedir, xml_node_filename_map):
+        """Help function for replacing <Include> nodes.
+        
+        We replace the include node with the tree referenced
+        by that filename. To do this, we load the file referenced,
+        get all the elements in the root node, and copy them over to the place
+        in the original tree where the original node was. It is important that
+        we preserve the order. Finally, we remove the <Include> element node.
+
+        """
+
         filename = include_element.get('file')
-        print "Loading 'Include:' %s" % filename
 
         # Load the new XML
-        included_xml = cls._loadNestedXML( os.path.join(basedir,filename) )
+        included_xml = cls._loadNestedXML( 
+                                filename = os.path.join(basedir,filename),
+                                xml_node_filename_map=xml_node_filename_map )
 
         #Insert it into the parent node:
         indexOfNode = include_element.getparent().index(include_element)
@@ -270,13 +275,22 @@ class XMLReader(object):
 
 
     @classmethod
-    def _loadNestedXML(cls,filename):
-        """ Load the XML, including Include files """
-        doc = etree.parse(filename)
+    def _loadNestedXML(cls,filename,xml_node_filename_map):
+        """ Load the XML, including  all referenced Include files .
 
+        We also populate a dictionary, ``xml_node_filename_map`` which maps each
+        node to the name of the filename that it was originally in, so that when
+        we load in single components from a file, which are hierachical and
+        contain references to other components, we can find the components that
+        were in the file specified.
+        
+        """
+        
+        
+        doc = etree.parse(filename)
         # Store the source filenames of all the nodes:
         for node in doc.getroot().getiterator():
-            xmlNodeFilenameMap[node] = filename
+            xml_node_filename_map[node] = filename
 
         
         root = doc.getroot()
@@ -284,25 +298,54 @@ class XMLReader(object):
         
         # Recursively Load Include Nodes:
         for include_element in root.getiterator(tag=NINEML+'Include'):
-            cls._load_include(include_element=include_element, basedir=os.path.dirname(filename) )
-
+            cls._load_include( include_element=include_element, 
+                               basedir=os.path.dirname(filename),
+                               xml_node_filename_map=xml_node_filename_map ) 
         return root
 
 
     @classmethod
     def read_component(cls, filename, component_name=None):
-        root = cls._loadNestedXML(filename)
-        loader1 = XMLLoader1( root, xmlNodeFilenameMap = xmlNodeFilenameMap  )
+        """Reads a single |COMPONENTCLASS| object from a filename.
+
+        :param filename: The name of the file.
+        :param component_name: If the file contains more than one ComponentClass
+            definition, this parameter must be provided as a ``string``
+            specifying which component to return, otherwise a
+            NineMLRuntimeException will be raised.
+        :rtype: Returns a |COMPONENTCLASS| object. 
+        """
+
+        xml_node_filename_map = {}
+        root = cls._loadNestedXML( filename=filename, 
+                                   xml_node_filename_map=xml_node_filename_map)
+
+        loader = XMLLoader( xmlroot=root, 
+                            xml_node_filename_map=xml_node_filename_map)
+
         if component_name == None:
-            return filter_expect_single( loader1.components, lambda c: loader1.component_srcs[c] == filename)
+            key_func = lambda c: loader.component_srcs[c] == filename
+            return filter_expect_single(loader.components, key_func)
+            
         else:
-            return filter_expect_single( loader1.components, lambda c:c.name==component_name )
+            key_func = lambda c:c.name==component_name 
+            return filter_expect_single(loader.components, key_func) 
+                                         
 
     @classmethod
     def read_components(cls,filename):
+        """Reads a several |COMPONENTCLASS| object from a filename.
+
+        :param filename: The name of the file.
+        :rtype: Returns a list of |COMPONENTCLASS| objects, for each
+            <ComponentClass> node in the XML tree.
+        
+        """
+        xml_node_filename_map = {}
         root = cls._loadNestedXML(filename)
-        loader1 = XMLLoader1( root, xmlNodeFilenameMap = xmlNodeFilenameMap  )
-        return loader1.components
+        loader = XMLLoader( xmlroot = root, 
+                            xml_node_filename_map = xml_node_filename_map  )
+        return loader.components
 
         
 

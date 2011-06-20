@@ -139,10 +139,12 @@ class ClonerVisitor(ComponentVisitor):
 
 
     def VisitOutputEvent(self, output_event, **kwargs):
-        return nineml.abstraction_layer.OutputEvent( port= self.prefixVariable( output_event.port,**kwargs) )
+        return nineml.abstraction_layer.OutputEvent( port_name =
+                self.prefixVariable( output_event.port_name, **kwargs) )
 
     def VisitInputEvent(self, input_event, **kwargs):
-        return nineml.abstraction_layer.InputEvent( port= self.prefixVariable( input_event.port,**kwargs) )
+        return nineml.abstraction_layer.InputEvent( port_name=
+                self.prefixVariable( input_event.port_name, **kwargs) )
 
     def VisitAssignment(self, assignment, **kwargs):
         prefix = kwargs.get( 'prefix','')

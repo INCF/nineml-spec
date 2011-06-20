@@ -136,10 +136,10 @@ class ComponentFlattener(object):
                 return tuple(dstRegimeTuple)
 
         def distribute_event(event_output):
-            print 'Distributing Event', event_output, event_output.port
+            print 'Distributing Event', event_output, event_output.port_name
             events = set()
             for p1,p2 in event_port_map:
-                if p1 == event_output.port:
+                if p1 == event_output.port_name:
                     events.append( p2 )
                     events = events + distribute_event(p2)
             return events
