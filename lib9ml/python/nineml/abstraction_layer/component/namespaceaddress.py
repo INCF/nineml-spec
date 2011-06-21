@@ -95,6 +95,14 @@ class NamespaceAddress(object):
         return NamespaceAddress( loc = tuple(self.loctuple[:-1]) )
 
 
+    def get_local_name(self):
+        """ Returns the local reference; i.e. the last field in the 
+        address, as a ``string``
+        """
+        assert len(self.loctuple) > 0
+        return self.loctuple[-1]
+
+
 
     def getstr(self, join_char='_'):
         """Returns the namespace address as a string.

@@ -49,6 +49,7 @@ class ComponentFlattener(object):
         
         
         self.build_new_regime_space()
+        self.build_flat_component()
         self.remap_ports()
 
 
@@ -110,8 +111,6 @@ class ComponentFlattener(object):
 
                 return state_assignments, output_events, targetRegime.name
 
-                newOnCondition = al.OnCondition(oldtransition.trigger, state_assignments=state_assignments, event_outputs = output_events, target_regime_name = targetRegime.name)
-                regimeNew.add_on_condition( newOnCondition)
 
     def distribute_event(self, event_output, event_port_map):
         print 'Distributing Event', event_output, event_output.port_name
@@ -179,15 +178,9 @@ class ComponentFlattener(object):
         event_port_map = [ (p1.getstr(), p2.getstr() ) for (p1,p2) in event_port_map ] 
 
 
-
-
-
+        # Create New Events for the Regime-Map
         for regimetuple,regimeNew in newRegimeLookupMap.iteritems():
-
             for regimeIndex, regime in enumerate( regimetuple ):
-                print 'Regime Index:',regimeIndex
-                
-                # Lets see what happens if we get events. The simple case is just changing the
                 
                 for oldtransition in regime.on_conditions:
 
@@ -226,42 +219,28 @@ class ComponentFlattener(object):
 
 
 
-
-    def remap_ports(self):
-        from nineml.utility import safe_dictionary_merge
-        newRegimeLookupMap = self.newRegimeLookupMap
-
-        from nineml.utility import flatten_first_level
-        from nineml.abstraction_layer.component import NamespaceAddress, ComponentClass
-
-        new_analog_ports = flatten_first_level( [comp.analog_ports for comp in self.all_components]) 
-        new_analog_ports = dict( [ (p.name, p) for p in new_analog_ports ] ) 
-        
-
-
-
-        from nineml.utility import flatten_first_level
-        #from nineml.abstraction_layer import ComponentClass
-
-        print 'Regimes:', newRegimeLookupMap.values()
-        dynamics = al.Dynamics( regimes = newRegimeLookupMap.values(),
+    def build_flat_component(self):
+        # We build the new object, 
+        dynamics = al.Dynamics( regimes = self.newRegimeLookupMap.values(),
                                 aliases = flatten_first_level( [ m.aliases for m in self.all_components ] ),
                                 state_variables = flatten_first_level( [ m.state_variables for m in self.all_components ]  ),
                                 )  
 
-
-        #Remap the event-ports:
-        
-
         self.reducedcomponent = al.ComponentClass( name=self.componentname, 
                                                          dynamics=dynamics, 
-                                                         analog_ports=new_analog_ports.values() , 
+                                                         analog_ports=flatten_first_level( [comp.analog_ports for comp in self.all_components] ), 
                                                          event_ports= flatten_first_level( [comp.event_ports for comp in self.all_components] ), 
-                                                         parameters=flatten_first_level( [ m.parameters for m in self.all_components ] ) )
+                                                         parameters=  flatten_first_level( [ m.parameters for m in self.all_components ] ) )
 
 
 
 
+
+
+    def remap_ports(self):
+        from nineml.utility import safe_dictionary_merge
+        from nineml.utility import flatten_first_level
+        from nineml.abstraction_layer.component import NamespaceAddress, ComponentClass
 
 
 
@@ -276,24 +255,28 @@ class ComponentFlattener(object):
 
 
 
+        new_analog_ports = flatten_first_level( [comp.analog_ports for comp in self.all_components]) 
+        new_analog_ports = dict( [ (p.name, p) for p in new_analog_ports ] ) 
+
+
         
         # Handle port mappings:
         # portconnections = [ (NS -> NS),(NS -> NS ), (NS -> NS) ]
-        #portconnections = [model.query.get_fully_qualified_port_connections() for model in self.all_components] 
         portconnections = [model.portconnections for model in self.all_components]
         portconnections = list( itertools.chain(* portconnections ) )
         
-        print portconnections
 
         # A. Handle Recieve Ports:
         for srcAddr,dstAddr in portconnections[:]:
-            srcPort = new_analog_ports[srcAddr.loctuple[-1] ]
-            dstPort = new_analog_ports[dstAddr.loctuple[-1]]
+            srcPort = new_analog_ports[srcAddr.get_local_name() ]
+            dstPort = new_analog_ports[dstAddr.get_local_name() ]
             if dstPort.mode == 'recv':
                 globalRemapPort( dstPort.name, srcPort.name )
                 
-                del new_analog_ports[ dstAddr.loctuple[-1] ]
-                self.reducedcomponent._analog_ports.remove( expect_single([p for p in self.reducedcomponent.analog_ports if p.name == dstAddr.loctuple[-1] ]) )
+                del new_analog_ports[ dstAddr.get_local_name() ]
+                self.reducedcomponent._analog_ports.remove( expect_single([p for
+                    p in self.reducedcomponent.analog_ports if p.name ==
+                    dstAddr.get_local_name() ]) )
 
                 portconnections.remove( (srcAddr,dstAddr) )
 
@@ -302,8 +285,8 @@ class ComponentFlattener(object):
         from collections import defaultdict
         reduce_connections = defaultdict( list )
         for src,dst in portconnections:
-            dstport = new_analog_ports[dst.loctuple[-1] ]
-            srcport = new_analog_ports[src.loctuple[-1] ]
+            dstport = new_analog_ports[dst.get_local_name() ]
+            srcport = new_analog_ports[src.get_local_name() ]
             if dstport.mode == 'reduce':
                 reduce_connections[dstport].append(srcport)
 
