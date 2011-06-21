@@ -283,7 +283,10 @@ class InterfaceInferer(ActionVisitor):
             self.state_variable_names, 
             alias_symbols, 
             analog_ports_in,
-            math_namespace.functions ) )
+            math_namespace.functions,
+            math_namespace.symbols,
+            math_namespace.reserved_symbols,
+            ) )
 
         #Parameters:
         # Use visitation to collect all atoms that are not aliases and not

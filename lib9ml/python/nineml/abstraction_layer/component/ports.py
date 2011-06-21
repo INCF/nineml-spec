@@ -2,6 +2,7 @@
 
 
 from nineml.helpers import curry
+from nineml.exceptions import NineMLRuntimeError
 
 
 class Port(object):
@@ -53,6 +54,12 @@ class Port(object):
         self._name = name
         self._mode = mode
         self._reduce_op = reduce_op
+
+        from util import MathUtil
+        if not MathUtil.is_single_symbol(name):
+            err = 'Invalid Port Name: %s'%name
+            raise NineMLRuntimeError(err)
+
         
         if self._mode not in Port._modes:
             raise ValueError, ("%s('%s')"+\

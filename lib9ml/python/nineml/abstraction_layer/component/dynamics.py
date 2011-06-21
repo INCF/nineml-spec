@@ -279,7 +279,7 @@ class Regime(object):
 
     def __init__(self, name, time_derivatives=None, 
                  on_events=None, on_conditions=None, 
-                 transitions=None):
+                 transitions=None, transition=None,  ):
         """Regime constructor
             
             :param name: The name of the constructor. If none, then a name will
@@ -295,6 +295,7 @@ class Regime(object):
 
         """
         time_derivatives = time_derivatives or []
+        # Un-named arguments are time_derivatives:
 
         from nineml.utility import filter_discrete_types
         self._name = name if name else Regime.get_next_name()
@@ -302,7 +303,12 @@ class Regime(object):
         # We support passing in 'transitions', which is a list of both OnEvents 
         # and OnConditions. So, lets filter this by type and add them
         # appropriately:
+        if transition and transitions:
+            raise NineMLRuntimeError('transitions specified twice')
         transitions = transitions or []
+        if transition: transitions.append(transition)
+        
+
         f_dict = filter_discrete_types( transitions, (OnEvent, OnCondition)) 
 
         td_types = (basestring, TimeDerivative )
