@@ -8,7 +8,7 @@ edit this file, add your name here
 from dynamics import Regime, Transition, On, OnEvent, OnCondition
 from dynamics import Dynamics, StateVariable
 from interface import Parameter
-from expressions import RegimeElement, MathUtil, Expression, Equation
+from expressions import RegimeElement,  Expression, Equation
 from expressions import ExpressionWithLHS, ExpressionWithSimpleLHS, Alias
 from expressions import StateAssignment, TimeDerivative
 from conditions import Condition
@@ -22,7 +22,7 @@ from component import ComponentClassMixinFlatStructure
 from component import ComponentClassMixinNamespaceStructure
 import math_namespace 
 from componentqueryer import ComponentQueryer
-from util import parse, StrToExpr
+from util import parse, StrToExpr, MathUtil
 
 
 from nineml import __version__

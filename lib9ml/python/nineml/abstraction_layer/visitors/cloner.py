@@ -7,7 +7,7 @@ from itertools import chain
 
 
 from nineml.abstraction_layer.component import math_namespace
-from nineml.abstraction_layer.component.expressions import MathUtil
+#from nineml.abstraction_layer.component import MathUtil
 from nineml.abstraction_layer.component.namespaceaddress import NamespaceAddress
 
 
@@ -135,6 +135,7 @@ class ClonerVisitor(ComponentVisitor):
         return nineml.abstraction_layer.InputEvent( port_name = self.prefixVariable( input_event.port_name, **kwargs) )
 
     def visit_assignment(self, assignment, **kwargs):
+        from nineml.abstraction_layer.component import MathUtil
         prefix = kwargs.get( 'prefix','')
         prefix_excludes = kwargs.get('prefix_excludes',[] )
         lhs = assignment.lhs if assignment.lhs in prefix_excludes else prefix + assignment.lhs
@@ -159,6 +160,7 @@ class ClonerVisitor(ComponentVisitor):
 
 
     def visit_timederivative(self,time_derivative,**kwargs):
+        from nineml.abstraction_layer.component import MathUtil
         prefix = kwargs.get( 'prefix','')
         prefix_excludes = kwargs.get('prefix_excludes',[] )
 
@@ -168,6 +170,7 @@ class ClonerVisitor(ComponentVisitor):
 
 
     def visit_condition(self, condition,**kwargs):
+        from nineml.abstraction_layer.component import MathUtil
         prefix = kwargs.get( 'prefix','')
         prefix_excludes = kwargs.get('prefix_excludes',[] )
         rhs = MathUtil.get_prefixed_rhs_string( expr_obj=condition, prefix=prefix, exclude=prefix_excludes )

@@ -11,7 +11,6 @@ import dynamics as dyn
 
 #import copy
 import itertools
-from nineml.abstraction_layer.visitors.cloner import ClonerVisitor
 from interface import Parameter
 from dynamics import StateVariable
 from ports import EventPort
@@ -227,6 +226,7 @@ class ComponentClassMixinNamespaceStructure(object):
         """
 
         assert not namespace in self.subnodes
+        from nineml.abstraction_layer.visitors.cloner import ClonerVisitor
         self.subnodes[namespace] = ClonerVisitor().visit( subnode )
         self.subnodes[namespace]._set_parent_model(self)
         

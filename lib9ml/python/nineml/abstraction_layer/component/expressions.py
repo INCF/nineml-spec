@@ -3,66 +3,18 @@
 import re
 import itertools
 
-from ..xmlns import *
 import math_namespace
-
-
 from nineml.exceptions import NineMLRuntimeError
+import util
+from expr_parse import expr_parse
+
+
 
 
 class RegimeElement(object):
     """ Base class for all things that can be elements of a regime """
     pass
 
-
-
-
-from expr_parse import expr_parse
-
-
-
-
-
-class MathUtil(object):
-    """Useful static methods for manipulating expressions that are string"""
-
-    @classmethod
-    def str_expr_replacement( cls, frm, to, expr_string, func_ok=False):
-        """ replaces all occurences of name 'frm' with 'to' in expr_string
-        ('frm' may not occur as a function name on the rhs) ...
-        'to' can be an arbitrary string so this function can also be used for argument substitution.
-
-        Returns the resulting string. """
-
-
-        # do replace using regex
-        # this matches names, using lookahead and lookbehind to be sure we don't
-        # match for example 'xp' in name 'exp' ...
-        if func_ok:
-            # func_ok indicates we may replace a function name
-            p_func = re.compile(r"(?<![a-zA-Z_0-9])(%s)(?![a-zA-Z_0-9])" % frm)
-        else:
-            # this will not replace a function name even if its name matches
-            # from due to the lookahead disallowing '('
-            p_func = re.compile(r"(?<![a-zA-Z_0-9])(%s)(?![(a-zA-Z_0-9])" % frm)
-        return p_func.sub(to, expr_string)
-
-
-    @classmethod 
-    def get_prefixed_rhs_string(cls, expr_obj, prefix="", exclude=None ):
-        
-        expr = expr_obj.rhs
-        for name in expr_obj.rhs_names:
-            if exclude and name in exclude:
-                continue
-            expr = MathUtil.str_expr_replacement(name, prefix+name, expr)
-        for func in expr_obj.rhs_funcs:
-            if func not in math_namespace.namespace:
-                expr = MathUtil.str_expr_replacement(func, 
-                                                     prefix+func, 
-                                                     expr, 
-                                                     func_ok=True)
-        return expr
 
 
 
@@ -127,7 +79,7 @@ class Expression(object):
 
         for name in name_map:
             replacment = name_map[name]
-            self.rhs = MathUtil.str_expr_replacement(name, replacment, self.rhs)
+            self.rhs = util.MathUtil.str_expr_replacement(name, replacment, self.rhs)
 
         
 
@@ -135,7 +87,7 @@ class Expression(object):
         """Substitute an alias into the rhs"""
         sub = "(%s)" % alias.rhs,
 
-        self.rhs = MathUtil.str_expr_replacement(alias.name, sub, self.rhs)
+        self.rhs = util.MathUtil.str_expr_replacement(alias.name, sub, self.rhs)
         
 
     @property
@@ -197,16 +149,12 @@ class ExpressionWithSimpleLHS(ExpressionWithLHS):
     def __init__(self, lhs, rhs):
         ExpressionWithLHS.__init__(self, rhs)
 
-        lhs = lhs.strip()
-        single_symbol = re.compile("^[a-zA-Z_]+[a-zA-Z_0-9]*$")
         
-        if not single_symbol.match( lhs ):
+        if not util.MathUtil.is_single_symbol( lhs ):
             err = 'Expecting a single symbol on the LHS; got: %s' % lhs
             raise NineMLRuntimeError(err)
 
-
-
-        self.lhs = lhs
+        self.lhs = lhs.strip()
 
     def lhs_atoms(self):
         return [self.lhs]
