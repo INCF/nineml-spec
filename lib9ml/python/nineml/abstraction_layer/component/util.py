@@ -68,7 +68,8 @@ class MathUtil(object):
     def str_expr_replacement( cls, frm, to, expr_string, func_ok=False):
         """ replaces all occurences of name 'frm' with 'to' in expr_string
         ('frm' may not occur as a function name on the rhs) ...
-        'to' can be an arbitrary string so this function can also be used for argument substitution.
+        'to' can be an arbitrary string so this function can also be used for
+        argument substitution.
 
         Returns the resulting string. """
 
