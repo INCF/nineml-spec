@@ -24,7 +24,7 @@ class XMLWriter(ComponentVisitor):
             if not flatten: 
                 assert False, 'Trying to save nested models not yet supported'
             else:
-                component = flattening.ComponentFlattener(component)
+                component = flattening.ComponentFlattener(component).reducedcomponent
 
         xml = XMLWriter().visit(component)
         doc = E.nineml(xml, xmlns=nineml_namespace)

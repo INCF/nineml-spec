@@ -28,10 +28,9 @@ Quickstart:
 
    src_rst/tutorials/installation
    src_rst/tutorials/class_overview
-   src_rst/tutorials/resolution_transitions
    src_rst/tutorials/importing_exporting
-   src_rst/tutorials/interfacing_pynn
    src_rst/tutorials/hierarchical_components
+   src_rst/tutorials/interfacing_pynn
    src_rst/tutorials/examples
 
 
@@ -44,6 +43,7 @@ For Developers:
 
    src_rst/tutorials/visitors
    src_rst/tutorials/xmlschema
+   src_rst/tutorials/resolution_transitions
 
 
 Module Reference:

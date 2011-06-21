@@ -31,12 +31,15 @@ def run(plot_and_show=True):
     sim.setup(timestep=0.1, min_delay=0.1)
 
 
-    testModel = get_hierachical_iaf_3coba()
+    test_component = get_hierachical_iaf_3coba()
+
+    from nineml.abstraction_layer.writers import XMLWriter
+    XMLWriter.write(test_component, 'iaf_3coba.xml')
 
 
     celltype_cls = pyNNml.nineml_celltype_from_model(
                                             name = "iaf_3coba",
-                                            nineml_model = testModel,
+                                            nineml_model = test_component,
                                             synapse_components = [
                                                 pyNNml.CoBaSyn( namespace='AMPA',  weight_connector='q' ),
                                                 pyNNml.CoBaSyn( namespace='GABAa',  weight_connector='q' ),

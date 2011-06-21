@@ -37,6 +37,7 @@ class XMLLoader(object):
         self.component_srcs = {}
         for comp_block in xmlroot.findall(NS + "ComponentClass"):
             component = self.load_componentclass( comp_block )
+            print 'Loading Block'
 
             self.components.append(component)
             self.component_srcs[component] = xml_node_filename_map[comp_block]

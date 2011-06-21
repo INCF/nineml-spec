@@ -133,11 +133,24 @@ def build_context(component, weight_variables, input_filename="[Unknown-Filename
 
 
 def write_nmodl(nineml_file, weight_variables={},hierarchical_mode=False): 
-    component = nineml.parse(nineml_file)
-    output_filename = nineml_file.replace(".xml", ".mod").replace("-", "_")
-    print "Converting %s to %s" % (nineml_file, output_filename)
-    write_nmodldirect(component=component, mod_filename=output_filename, weight_variables=weight_variables, hierarchical_mode=hierarchical_mode)
+
+    from nineml.abstraction_layer.readers import XMLReader
+    components = XMLReader.read_components(nineml_file)
+
+    if len(components) == 0:
+        print 'No components found in file!'
+
+    elif len(components) == 1:
+        output_filename = nineml_file.replace(".xml", ".mod").replace("-", "_")
+        print "Converting %s to %s" % (nineml_file, output_filename)
+        write_nmodldirect(component=component, mod_filename=output_filename, weight_variables=weight_variables, hierarchical_mode=hierarchical_mode)
     
+    else:
+        for c in components:
+            output_filename = nineml_file.replace(".xml", "_%s.mod"%c.name).replace("-", "_")
+            print "Converting %s to %s" % (nineml_file, output_filename)
+            write_nmodldirect(component=component, mod_filename=output_filename, weight_variables=weight_variables, hierarchical_mode=hierarchical_mode)
+
 
 
 

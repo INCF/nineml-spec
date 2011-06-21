@@ -98,7 +98,7 @@ class ComponentValidatorAliasesAreNotRecursive(ComponentValidatorPerNamespace):
             else:
                 errmsg =  "Unable to resolve all aliases in %s. " % namespace
                 errmsg += "You may have a recursion issue."
-                errmsg += "Remaining Aliases: %s"%  ','.join(unresolved_aliases.keys()) )
+                errmsg += "Remaining Aliases: %s"%  ','.join(unresolved_aliases.keys()) 
                 raise NineMLRuntimeError(errmsg)
             
             
