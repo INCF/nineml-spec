@@ -80,6 +80,9 @@ class ClonerVisitor(ComponentVisitor):
         prefix_excludes = kwargs.get('prefix_excludes',[])
         if variable in prefix_excludes:
             return variable
+        if math_namespace.is_in_math_namespace(variable): 
+            return variable
+
         else:
             return prefix + variable
 
@@ -136,23 +139,21 @@ class ClonerVisitor(ComponentVisitor):
         from nineml.abstraction_layer.component import MathUtil
         prefix = kwargs.get( 'prefix','')
         prefix_excludes = kwargs.get('prefix_excludes',[] )
-        lhs = assignment.lhs if assignment.lhs in prefix_excludes else prefix + assignment.lhs
+
+        lhs = self.prefixVariable( assignment.lhs, **kwargs )
         rhs = MathUtil.get_prefixed_rhs_string( expr_obj=assignment, prefix=prefix, exclude=prefix_excludes )
 
         return nineml.abstraction_layer.StateAssignment( lhs = lhs, rhs = rhs )
 
 
     def visit_alias(self, alias, **kwargs):
+        from nineml.abstraction_layer.component import MathUtil
         prefix = kwargs.get( 'prefix','')
         prefix_excludes = kwargs.get('prefix_excludes',[] )
 
-        def doPrefix(atom):
-            if a in prefix_excludes: return False
-            if math_namespace.is_in_math_namespace(a): return False
-            return True
 
         new_alias = nineml.abstraction_layer.Alias( lhs = alias.lhs, rhs = alias.rhs )
-        name_map = dict( [ (a, prefix+a) for a in new_alias.atoms if doPrefix(a) ])
+        name_map = dict( [ (a, self.prefixVariable(a,**kwargs) ) for a in new_alias.atoms ])
         new_alias.name_transform_inplace( name_map = name_map )
         return new_alias
 
@@ -162,7 +163,8 @@ class ClonerVisitor(ComponentVisitor):
         prefix = kwargs.get( 'prefix','')
         prefix_excludes = kwargs.get('prefix_excludes',[] )
 
-        dep = time_derivative.dependent_variable if time_derivative.dependent_variable in prefix_excludes else prefix + time_derivative.dependent_variable
+        dep = self.prefixVariable(time_derivative.dependent_variable, **kwargs)
+
         rhs = MathUtil.get_prefixed_rhs_string( expr_obj=time_derivative, prefix=prefix, exclude=prefix_excludes )
         return nineml.abstraction_layer.TimeDerivative( dependent_variable = dep, rhs =rhs)
 
@@ -205,11 +207,12 @@ class ClonerVisitorPrefixNamespace(ClonerVisitor):
         
         port_connections = []
         for src,sink in component.portconnections:
-            src_new = NamespaceAddress( tuple(list( src.loctuple[:-1] ) + [src.getstr( ) ] )  )
-            sink_new = NamespaceAddress( tuple(list( sink.loctuple[:-1] ) + [sink.getstr( ) ] )  )
+            #src_new = NamespaceAddress( tuple(list( src.loctuple[:-1] ) + [src.getstr( ) ] )  )
+            src_new = NamespaceAddress.concat( src.get_parent_addr(), src.getstr() )  
+            #sink_new = NamespaceAddress( tuple(list( sink.loctuple[:-1] ) + [sink.getstr( ) ] )  )
+            sink_new = NamespaceAddress.concat( sink.get_parent_addr(), sink.getstr() )  
             port_connections.append ( (src_new,sink_new) )
             
-        #assert False
 
         ccn =  nineml.abstraction_layer.ComponentClass( name = component.name,
                                parameters  = [ p.accept_visitor(self,**kwargs) for p in component.parameters  ],

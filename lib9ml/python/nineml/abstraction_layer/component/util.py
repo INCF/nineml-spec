@@ -88,6 +88,7 @@ class MathUtil(object):
 
     @classmethod 
     def get_prefixed_rhs_string(cls, expr_obj, prefix="", exclude=None ):
+        import math_namespace
         
         expr = expr_obj.rhs
         for name in expr_obj.rhs_names:
