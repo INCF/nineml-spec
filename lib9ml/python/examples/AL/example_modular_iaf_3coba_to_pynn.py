@@ -7,11 +7,17 @@ import nineml.abstraction_layer as al
 from nineml.abstraction_layer.writers import XMLWriter
 from nineml.abstraction_layer.readers import XMLReader
 from nineml.abstraction_layer.example_models import  get_hierachical_iaf_3coba
+from nineml.abstraction_layer.validators import ComponentEqualityChecker
+from nineml.abstraction_layer.flattening import flatten
 
 testModel = get_hierachical_iaf_3coba()
+testModel = flatten(testModel)
 
 XMLWriter.write( testModel, 'out1.txt')
 testIn = XMLReader.read( 'out1.txt')
+
+
+ComponentEqualityChecker.check_equal(testModel, testIn)
 
 
 print 'Finished OK'

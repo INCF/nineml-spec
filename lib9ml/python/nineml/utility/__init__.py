@@ -324,3 +324,22 @@ def check_list_contain_same_items(lst1, lst2, desc1="", desc2="", ignore=[],
     errmsg += "\nElements in : 1 (not 2): %s"% (sorted( set1-set2 )  )
     errmsg += "\nElements in : 2 (not 1): %s"% (sorted( set2-set1 )  )
     raise NineMLRuntimeError(errmsg)
+
+
+
+
+
+
+
+
+def safe_dict( vals ):
+    """ Create a dict, like dict(), but ensure no duplicate keys are given!
+    [Python silently allows dict( [(1:True),(1:None)] ) !!""" 
+    d = {}
+    for k,v in vals:
+        if k in vals:
+            err = 'safe_dict() failed with duplicated keys: %s'%k
+            raise NineMLRuntimeError(err)
+        d[k] = v
+    assert len(vals) == len(d)
+    return d

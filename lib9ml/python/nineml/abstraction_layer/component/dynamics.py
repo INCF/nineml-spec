@@ -497,10 +497,11 @@ class Dynamics(object):
            :param aliases: A list of aliases, which must be either ``Alias``
                objects or ``string``s.
            :param regimes: A list containing at least one ``Regime`` object.
-           :param state_variables: An optional list of the state variables, which can
-               either be ``StateVariable`` objects or `string` s. If provided, it
-               must match the inferred state-variables from the regimes; if it
-               is not provided it will be inferred automatically.
+           :param state_variables: An optional list of the state variables,
+                which can either be ``StateVariable`` objects or `string` s. If
+                provided, it must match the inferred state-variables from the
+                regimes; if it is not provided it will be inferred
+                automatically.
         """
 
         aliases = aliases or  []
@@ -531,6 +532,10 @@ class Dynamics(object):
     @property
     def regimes(self):
         return iter( self._regimes )
+
+    @property
+    def regime_map(self):
+        return dict( (r.name,r) for r in self.regimes )
 
     @property
     def transitions(self):
