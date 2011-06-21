@@ -133,9 +133,11 @@ class DotWriter(object):
         regime_text = Template(regime_node_tmpl_text, context ).respond()
 
         
-        # Remove Extra WhiteSpace
+        # Remove Extra whitespace - otherwise we end
+        # up with really long squares in the output
         p = re.compile(r'\s+')
         regime_text = p.sub(' ', regime_text)
+
         
         f = open(filename,'w')
         f.write( regime_text )

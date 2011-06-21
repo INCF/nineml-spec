@@ -13,6 +13,7 @@ from cv_general import ComponentValidatorStateAssignmentsAreOnStateVariables
 from cv_general import ComponentValidatorAliasesAreNotRecursive
 from cv_general import ComponentValidatorRegimeGraph
 from cv_general import ComponentValidatorRegimeOnlyHasOneHandlerPerEvent
+from cv_general import ComponentValidatorCheckNoLHSAssignmentsToMathsNamespace
 
 class ComponentValidator(object):
     """Class for grouping all the component-validations tests together"""
@@ -39,6 +40,7 @@ class ComponentValidator(object):
         ComponentValidatorPortConnections(component)
         ComponentValidatorRegimeGraph(component)
         ComponentValidatorRegimeOnlyHasOneHandlerPerEvent(component)
+        ComponentValidatorCheckNoLHSAssignmentsToMathsNamespace(component)
 
         
         

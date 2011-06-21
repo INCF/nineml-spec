@@ -351,6 +351,38 @@ class ComponentValidatorRegimeOnlyHasOneHandlerPerEvent(ComponentValidatorPerNam
         assert_no_duplicates( event_triggers )
 
         
+from nineml.abstraction_layer import math_namespace
 
+class ComponentValidatorCheckNoLHSAssignmentsToMathsNamespace(ComponentValidatorPerNamespace):
+    """
+    This class checks that there is not a mathematical symbols, (e.g. pi, e)
+    on the left-hand-side of an equation
+    """
 
+    def __init__(self, component):
+        ComponentValidatorPerNamespace.__init__(self, explicitly_require_action_overrides=False)
 
+        self.visit(component)
+
+    def check_lhssymbol_is_valid(self, symbol):
+        assert isinstance( symbol, basestring)
+
+        if symbol in math_namespace.symbols:
+            err = 'Symbol: %s found on left-hand-side of an equation'
+            raise NineMLRuntimeError(err)
+            
+    def action_statevariable(self, state_variable, **kwargs):
+        self.check_lhssymbol_is_valid( state_variable.name )
+        
+    def action_parameter(self, parameter, **kwargs):
+        self.check_lhssymbol_is_valid( parameter.name )
+        
+    def action_assignment(self, assignment, **kwargs):
+        self.check_lhssymbol_is_valid( assignment.lhs )
+        
+    def action_alias(self, alias, **kwargs):
+        self.check_lhssymbol_is_valid( alias.lhs)
+        
+    def action_timederivative(self, time_derivative, **kwargs):
+        self.check_lhssymbol_is_valid( time_derivative.dependent_variable)
+        

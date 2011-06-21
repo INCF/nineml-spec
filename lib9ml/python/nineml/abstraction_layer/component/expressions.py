@@ -342,15 +342,11 @@ class ODE(ExpressionWithLHS, RegimeElement):
         self._dependent_variable = dependent_variable
         self._independent_variable = independent_variable
 
-        if self._dependent_variable in math_namespace.symbols:
-            err =  "TimeDerivative '%s' redefines math symbols \
-                    (such as 'e', 'pi')" % str(self)
-            raise ValueError, err
 
     def __repr__(self):
-        return "ODE(d%s/d%s = %s)" % (self._dependent_variable,
-                                 self._independent_variable,
-                                 self.rhs)
+        return "ODE(d%s/d%s = %s)" % (  self.dependent_variable,
+                                        self.independent_variable,
+                                        self.rhs)
     @property
     def lhs(self):
         """Return a string of the lhs of the form: 'dS/dt' """
