@@ -13,7 +13,10 @@ testModel = get_hierachical_iaf_3coba()
 XMLWriter.write( testModel, 'out1.txt')
 testIn = XMLReader.read( 'out1.txt')
 
-assert False
+
+print 'Finished OK'
+import sys
+sys.exit(0)
 
 def run(plot_and_show=True):
     import sys
