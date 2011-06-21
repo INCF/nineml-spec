@@ -163,11 +163,6 @@ class XMLLoader(object):
         port_name = element.get('port')
         return al.OutputEvent(port_name=port_name)
 
-
-    def load_eventin(self, element):
-        return al.InputEvent( port_name = element.get('port') )
-
-
     def load_single_internal_maths_block(self, element, checkOnlyBlock=True):
         if checkOnlyBlock:
             elements = list(element.iterchildren(tag=etree.Element ) ) 
@@ -223,7 +218,7 @@ class XMLLoader(object):
         "Trigger": load_trigger,
         "StateAssignment": load_stateassignment,
         "EventOut": load_eventout,
-        "EventIn": load_eventin,
+        #"EventIn": load_eventin,
         "Subnode": load_subnode,
         "ConnectPorts": load_connectports,
         }

@@ -33,9 +33,6 @@ class ComponentValidatorTypes(ActionVisitor):
     def action_outputevent(self, output_event, **kwargs):
         assert isinstance( output_event, al.OutputEvent )
 
-    def action_inputevent(self, input_event, **kwargs):
-        assert isinstance( input_event, al.InputEvent )
-
     def action_assignment(self, assignment, **kwargs):
         assert isinstance( assignment, al.StateAssignment )
 

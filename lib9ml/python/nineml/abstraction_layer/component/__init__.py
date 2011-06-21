@@ -15,7 +15,7 @@ from conditions import Condition
 from ports import Port, AnalogPort, EventPort
 from ports import ReducePort, RecvPort, SendPort, RecvEventPort, SendEventPort
 
-from events import InputEvent, OutputEvent
+from events import OutputEvent
 from namespaceaddress import NamespaceAddress 
 from component import ComponentClass
 from component import ComponentClassMixinFlatStructure

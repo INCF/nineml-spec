@@ -4,8 +4,8 @@ from itertools import chain
 
 from expressions import StateAssignment, TimeDerivative, Alias 
 from conditions import  Condition
-from events import InputEvent, OutputEvent
-from util import StrToExpr
+from events import  OutputEvent
+from util import StrToExpr, MathUtil
 
 import nineml.utility
 from nineml.exceptions import NineMLRuntimeError
@@ -433,16 +433,20 @@ class Regime(object):
 
 # Forwarding Function:
 def On( trigger, do=None, to=None ):
-    if isinstance(do, (InputEvent, basestring)): 
+    if isinstance(do, (OutputEvent, basestring)): 
         do = [do]
     elif do == None: 
         do = []
     else: 
         pass
 
-    if isinstance( trigger, InputEvent):
-        return DoOnEvent(input_event=trigger, do=do, to=to)
-    elif isinstance( trigger, (OnCondition, basestring)):
+    if isinstance( trigger, basestring):
+        if MathUtil.is_single_symbol(trigger):
+            return DoOnEvent(input_event=trigger, do=do, to=to)
+        else:
+            return DoOnCondition(condition=trigger, do=do, to=to)
+
+    elif isinstance( trigger, OnCondition):
         return DoOnCondition(condition=trigger, do=do, to=to)
     else:
         assert False
@@ -464,10 +468,10 @@ def do_to_assignments_and_events(doList):
 
 
 def DoOnEvent(input_event, do=None, to=None):
-    assert isinstance( input_event, InputEvent) 
+    assert isinstance( input_event, basestring) 
     
     assignments, output_events = do_to_assignments_and_events( do ) 
-    return OnEvent( src_port_name=input_event.port_name,
+    return OnEvent( src_port_name=input_event,
                     state_assignments = assignments,
                     event_outputs=output_events,
                     target_regime_name = to )

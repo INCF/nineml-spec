@@ -12,7 +12,7 @@ from nineml.abstraction_layer.validators.base import ComponentValidatorPerNamesp
 
 
 class ComponentValidatorEventPorts(ComponentValidatorPerNamespace):
-    """Check that each InputEvent and OutputEvent has a corresponding EventPort defined,
+    """Check that each OutputEvent and OnEvent has a corresponding EventPort defined,
     and that the EventPort has the right direction. 
     """
     
@@ -50,7 +50,6 @@ class ComponentValidatorEventPorts(ComponentValidatorPerNamespace):
                 
                 if len(op_evts_on_port) + len(ip_evts_on_port) == 0:
                     print 'Unable to find events generated for: ', ns, evt_port_name
-                    #assert False
             
         
     def action_eventport(self, port, namespace, **kwargs):

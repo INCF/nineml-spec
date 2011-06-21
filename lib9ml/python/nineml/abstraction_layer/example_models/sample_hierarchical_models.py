@@ -53,7 +53,7 @@ def get_coba():
                                          name = "cobadefaultregime",
                                          time_derivatives = ["dg/dt = -g/tau",],
                                          transitions = [
-                                             al.On(al.InputEvent('spikeinput'), do=["g=g+q"]),
+                                             al.On('spikeinput', do=["g=g+q"]),
                                              ],
                                          )
                                         ],
@@ -72,7 +72,7 @@ def nmda():
     inter_event_regime = al.Regime(
         name="intereventregime",
         time_derivatives = ["dA/dt = -A/taur", "dB/dt = -B/taud" ],
-        transitions=[al.On(al.InputEvent('spikeinput'),
+        transitions=[al.On('spikeinput',
                               do=["A = A + weight*factor",
                                   "B = B + weight*factor"])] 
         )
