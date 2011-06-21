@@ -22,7 +22,7 @@ output = 'output/'
 
 
 def main():
-    src_dir = 'components/'
+    src_dir = 'components_done/'
 
     print
     print ' Testing all Components in: ', src_dir
