@@ -413,13 +413,13 @@ class ComponentClass( ComponentClassMixinFlatStructure,
         
         # EventPort, StateVariable and Parameter Inference:
         inferred_struct = InterfaceInferer(dynamics, analog_ports=analog_ports)
-        inf_check = lambda l1, l2: check_list_contain_same_items( l1, l2,
-                desc1='Declared', desc2='Inferred', ignore=['t']) 
+        inf_check = lambda l1, l2, desc: check_list_contain_same_items( l1, l2,
+                desc1='Declared', desc2='Inferred', ignore=['t'], desc=desc) 
         
         # Check any supplied parameters match:
         if parameters:
             parameter_names = [p.name for p in parameters]
-            inf_check( parameter_names, inferred_struct.parameter_names )
+            inf_check( parameter_names, inferred_struct.parameter_names,'Parameters' )
         else:
             parameters = [Parameter(n) for n in inferred_struct.parameter_names]
 
@@ -427,7 +427,7 @@ class ComponentClass( ComponentClassMixinFlatStructure,
         # Check any supplied state_variables match:
         if dynamics._state_variables:
             state_var_names = [p.name for p in dynamics.state_variables]
-            inf_check( state_var_names, inferred_struct.state_variable_names )
+            inf_check( state_var_names, inferred_struct.state_variable_names, 'StateVariables' )
         else:
             state_vars = [StateVariable(n) for n in 
                             inferred_struct.state_variable_names ] 
@@ -440,8 +440,8 @@ class ComponentClass( ComponentClassMixinFlatStructure,
 
         if event_ports:
             #Check things Match:
-            inf_check(ip_evtport_names, inferred_struct.input_event_port_names)
-            inf_check(op_evtport_names, inferred_struct.output_event_port_names)
+            inf_check(ip_evtport_names, inferred_struct.input_event_port_names, 'Event Ports In')
+            inf_check(op_evtport_names, inferred_struct.output_event_port_names,'Event Ports Out')
         else:
             #Event ports not supplied, so lets use the inferred ones.
             for evt_port_name in inferred_struct.input_event_port_names:

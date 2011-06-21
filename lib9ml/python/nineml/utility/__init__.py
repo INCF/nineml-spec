@@ -303,7 +303,8 @@ class LocationMgr(object):
 
 
 
-def check_list_contain_same_items(lst1, lst2, desc1="", desc2="", ignore=[]):
+def check_list_contain_same_items(lst1, lst2, desc1="", desc2="", ignore=[],
+        desc=""):
     set1 = set(lst1)
     set2 = set(lst2)
 
@@ -317,6 +318,7 @@ def check_list_contain_same_items(lst1, lst2, desc1="", desc2="", ignore=[]):
         return
 
     errmsg =  "Lists were suppose to contain the same elements, but don't!!" 
+    if desc: errmsg += '\n' + desc
     errmsg += "\n1: [%s]: %s"%(desc1, sorted(set1) )
     errmsg += "\n2: [%s]: %s"%(desc2, sorted(set2) )
     errmsg += "\nElements in : 1 (not 2): %s"% (sorted( set1-set2 )  )

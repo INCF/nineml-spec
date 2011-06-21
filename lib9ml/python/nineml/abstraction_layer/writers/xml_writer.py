@@ -27,7 +27,7 @@ class XMLWriter(ComponentVisitor):
                 component = flattening.ComponentFlattener(component).reducedcomponent
 
         xml = XMLWriter().visit(component)
-        doc = E.nineml(xml, xmlns=nineml_namespace)
+        doc = E.NineML(xml, xmlns=nineml_namespace)
         etree.ElementTree(doc).write(file, encoding="UTF-8", pretty_print=True, xml_declaration=True)
 
 
@@ -78,7 +78,7 @@ class XMLWriter(ComponentVisitor):
                  name=alias.lhs)
 
     def visit_timederivative(self,time_derivative,**kwargs):
-        return E('TimeDeriative',
+        return E('TimeDerivative',
                  E("MathInline", time_derivative.rhs),
                  variable=time_derivative.dependent_variable,
                  )

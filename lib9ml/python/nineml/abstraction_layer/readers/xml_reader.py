@@ -11,10 +11,11 @@ from nineml.abstraction_layer import etree, nineml_namespace, NINEML
 import nineml.abstraction_layer as al
 from nineml.utility import expect_single, filter_expect_single
 
+from nineml.exceptions import NineMLRuntimeError
 
-NS = "{CoModL}"
+#NS = "{CoModL}"
 
-
+NS=NINEML
 
 
 __all__ = ['XMLReader']
@@ -144,7 +145,7 @@ class XMLLoader(object):
         target_regime_name = element.get('target_regime', None)
 
 
-        return al.OnEvent( src_port_name = element.get('port'),
+        return al.OnEvent( src_port_name = element.get('src_port'),
                            state_assignments = subnodes["StateAssignment"],
                            event_outputs = subnodes["EventOut"],
                            target_regime_name = target_regime_name
@@ -183,22 +184,25 @@ class XMLLoader(object):
         Creates a dictionary that maps class-types to instantiated objects
         """
 
-        if blocks and check_for_spurious_blocks:
-            for t in element.iterchildren(tag=etree.Element):
-                assert t.tag[len(NS):] in blocks  or t.tag in blocks
 
-        if blocks is None:
-            blocks = XMLLoader.tag_to_class_dict.keys()
+        res =  dict( (block,[]) for block in blocks ) 
 
-        res = {}
-        for blk in blocks:
-            elements = list ( element.findall(NS+blk) ) 
-            res[blk] = []
-            if elements:
-                loader = XMLLoader.tag_to_loader[blk]
-                res[blk].extend( [ loader(self, e ) for e in elements ] )
+        for t in element.iterchildren(tag=etree.Element):
+            if t.tag.startswith(NS):
+                tag = t.tag[len(NS):]
+            else:
+                tag = t.tag
 
+            
+
+            if check_for_spurious_blocks and not tag in blocks:
+                    err = "Unexpected Block tag: %s "%tag
+                    err += '\n Expected: %s'%','.join(blocks)
+                    raise NineMLRuntimeError(err)
+            
+            res[tag].append( XMLLoader.tag_to_loader[tag](self,t) ) 
         return res
+
 
 
 
@@ -318,6 +322,11 @@ class XMLReader(object):
         xml_node_filename_map = {}
         root = cls._load_nested_xml( filename=filename, 
                                    xml_node_filename_map=xml_node_filename_map)
+
+
+        print 'ROOT:', root
+        for c in root:
+            print '  ', c
 
         loader = XMLLoader( xmlroot=root, 
                             xml_node_filename_map=xml_node_filename_map)

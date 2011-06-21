@@ -3,8 +3,17 @@
 Example of using a cell type defined in 9ML with pyNN.neuron
 """
 
+import nineml.abstraction_layer as al
+from nineml.abstraction_layer.writers import XMLWriter
+from nineml.abstraction_layer.readers import XMLReader
+from nineml.abstraction_layer.example_models import  get_hierachical_iaf_3coba
 
+testModel = get_hierachical_iaf_3coba()
 
+XMLWriter.write( testModel, 'out1.txt')
+testIn = XMLReader.read( 'out1.txt')
+
+assert False
 
 def run(plot_and_show=True):
     import sys

@@ -1,10 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <NineML xmlns="http://nineml.org/9ML/0.1"
-    xmlns:comodl="CoModL"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://nineml.org/9ML/0.1 NineML_v0.2.xsd">
 
-  <ComponentClass name="iaf" xmlns="CoModL">
+  <ComponentClass name="iaf">
 
     <Parameter name="gl" dimension='none'/>
     <Parameter name="vrest" dimension='none'/>
