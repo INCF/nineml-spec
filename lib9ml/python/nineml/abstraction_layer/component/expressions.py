@@ -154,13 +154,17 @@ class ExpressionWithSimpleLHS(ExpressionWithLHS):
             err = 'Expecting a single symbol on the LHS; got: %s' % lhs
             raise NineMLRuntimeError(err)
 
-        self.lhs = lhs.strip()
+        self._lhs = lhs.strip()
+
+    @property
+    def lhs(self):
+        return self._lhs
 
     def lhs_atoms(self):
         return [self.lhs]
 
     def lhs_name_transform_inplace( self, name_map ):
-        self.lhs = name_map.get(self.lhs, self.lhs) 
+        self._lhs = name_map.get(self.lhs, self.lhs) 
    
 
 
