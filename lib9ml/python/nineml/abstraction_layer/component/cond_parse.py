@@ -40,8 +40,11 @@ class Parser(object):
             modname = os.path.split(os.path.splitext(__file__)[0])[1] + "_" + self.__class__.__name__
         except:
             modname = "parser"+"_"+self.__class__.__name__
-        self.debugfile = modname + ".dbg"
-        self.tabmodule = modname + "_" + "parsetab"
+        #self.debugfile = modname + ".dbg"
+        #self.tabmodule = modname + "_" + "parsetab"
+        
+        self.debugfile = LocationMgr.getTmpDir() + modname + ".dbg"
+        self.tabmodule = LocationMgr.getTmpDir() + modname + "_" + "parsetab"
         #print self.debugfile, self.tabmodule
 
         # Build the lexer and parser
