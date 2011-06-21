@@ -62,43 +62,36 @@ SeeAlso: iaf_cond_exp_sfa_rr, aeif_cond_alpha, iaf_psc_delta, iaf_psc_exp, iaf_c
 
 """
 
-import nineml.abstraction_layer as nineml
+import nineml.abstraction_layer as al
 
-subthreshold_regime = nineml.Regime(
-    "dV/dt = (g_L*(E_L-V) + g_sfa*(E_sfa-V) + g_rr*(E_rr-V) + Isyn)/C",
-    "dg_sfa/dt = -g_sfa/tau_sfa",
-    "dg_rr/dt = -g_rr/tau_rr",
-    transitions = nineml.On("V> theta",
-                            do=["g_sfa += q_sfa", "g_rr += q_rr", "t_spike = t",
-                                nineml.SpikeOutputEvent],
-                            to="refractory_regime"),
-    name="subthreshold_regime"
-    )
+def get_component():
+    subthreshold_regime = al.Regime(
+        name="subthreshold_regime",
+        time_derivatives = [
+            "dV/dt = (g_L*(E_L-V) + g_sfa*(E_sfa-V) + g_rr*(E_rr-V) + Isyn)/C",
+            "dg_sfa/dt = -g_sfa/tau_sfa",
+            "dg_rr/dt = -g_rr/tau_rr",
+        ],
+        transition = al.On("V> theta",
+                                do=["g_sfa =g_sfa +  q_sfa", "g_rr =g_rr + q_rr", "t_spike = t",
+                                    al.OutputEvent('spikeoutput')],
+                                to="refractory_regime"),
+        )
 
-refractory_regime = nineml.Regime(
-    transitions = nineml.On("t >= t_spike + t_ref",
-                            to=subthreshold_regime),
-    name="refractory_regime"
-    )
+    refractory_regime = al.Regime(
+        name="refractory_regime",
+        transition = al.On("t >= t_spike + t_ref",
+                                to='subthreshold_regime'),
+        )
 
-ports = [nineml.SendPort("V"),
-         nineml.ReducePort("Isyn",op="+")]
+    analog_ports = [al.SendPort("V"),
+                    al.ReducePort("Isyn",reduce_op="+")]
 
-c1 = nineml.Component("iaf_sfa_relref", regimes = [subthreshold_regime, refractory_regime])
+    c1 = al.ComponentClass("iaf_sfa_relref", 
+                            regimes = [subthreshold_regime, refractory_regime],
+                            analog_ports = analog_ports,
+                            )
+
+    return c1
 
 
-
-# write to file object f if defined
-try:
-    # This case is used in the test suite for examples.
-    c1.write(f)
-except NameError:
-    import os
-
-    base = "iaf_sfa_relref"
-    c1.write(base+".xml")
-    c2 = nineml.parse(base+".xml")
-    assert c1==c2
-
-    c1.to_dot(base+".dot")
-    os.system("dot -Tpng %s -o %s" % (base+".dot",base+".png"))

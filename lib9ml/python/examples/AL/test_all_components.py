@@ -53,12 +53,23 @@ def get_component_functor( filename ):
         fnc = module_contents.get_component
 
         print '  -- Found get_component()'
-        return fnc
+
+        print '  -- Trying to find MetaData'
+        meta_data = None
+        if 'MetaData' in module_contents.__dict__:
+            meta_data = module_contents.MetaData
+            print '  -- MetaData Found'
+        else:
+            print '  -- No MetaData'
+
+
+        return fnc, meta_data
 
     except Exception, e:
         print '***** ERROR: Failed to import module ********'
         print
         print e
+        return None, None
 
 
 
@@ -70,11 +81,13 @@ def test_component_file( filename ):
     print
     print '  Looking in file:', filename
 
-    component_functor = get_component_functor(filename)
+    component_functor,meta_data = get_component_functor(filename)
 
 
     if not component_functor:
         return
+
+
     print '  -- Instantiating Component'
     component = component_functor()
     assert component
@@ -88,11 +101,18 @@ def test_component_file( filename ):
     # Run some tests:
     test_one_and_a_half_trips(component)
     test_write_dot(component)
-    test_write_mod(component)
+
+    
+    if meta_data:
+
+        if meta_data.is_neuron_model:
+            test_write_mod(component)
 
 
     
     #Save all the output files:
+    print '  Everything Ran Fine'
+    print '  -------------------'
     
 
 

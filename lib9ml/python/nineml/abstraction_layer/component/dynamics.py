@@ -454,7 +454,9 @@ def On( trigger, do=None, to=None ):
     elif isinstance( trigger, OnCondition):
         return DoOnCondition(condition=trigger, do=do, to=to)
     else:
-        assert False
+        err = "Unexpected Type for On() trigger: %s %s" %(type(trigger),
+                str(trigger) )
+        raise NineMLRuntimeError(err)
 
 
 
