@@ -8,17 +8,14 @@ nineml.abstraction_layer.component [Internal-General]
     :toctree: 
 
     component.Condition
-    component.Parser
     component.CalcCond
     component.CalcExpr
-    component.UnimplementedError
     component.RegimeElement
     component.Expression
     component.Equation
     component.ExpressionWithLHS
     component.ExpressionWithSimpleLHS
     component.NineMLMathParseError
-    component.Parser
 
 
 nineml.abstraction_layer.component [Internal-Component Base Classes]

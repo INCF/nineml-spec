@@ -62,5 +62,4 @@ nineml.abstraction_layer.component [Events]
     :toctree: 
 
     component.OutputEvent
-    component.InputEvent
 

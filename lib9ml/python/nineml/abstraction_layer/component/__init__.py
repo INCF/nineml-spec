@@ -25,6 +25,9 @@ from componentqueryer import ComponentQueryer
 from util import parse, StrToExpr, MathUtil
 
 
+from cond_parse import CalcCond
+from expr_parse import NineMLMathParseError, CalcExpr
+
 from nineml import __version__
 
 
