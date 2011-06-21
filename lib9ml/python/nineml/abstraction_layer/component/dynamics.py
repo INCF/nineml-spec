@@ -196,10 +196,13 @@ class OnEvent(Transition):
     def src_port_name(self):
         return self._src_port_name
 
+    def __repr__(self):
+        return """OnEvent( %s )"""%self.src_port_name
+
 
 
 class OnCondition(Transition):
-    element_name = "OnCondition"
+    #element_name = "OnCondition"
 
     def accept_visitor(self, visitor, **kwargs):
         """ |VISITATION| """
@@ -229,8 +232,8 @@ class OnCondition(Transition):
                             target_regime_name=target_regime_name)
 
 
-    def __str__(self):
-        return 'OnCondition( %s )' % self.trigger
+    def __repr__(self):
+        return 'OnCondition( %s )' % self.trigger.rhs
     
     @property
     def trigger(self):

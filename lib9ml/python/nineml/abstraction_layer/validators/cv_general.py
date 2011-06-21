@@ -108,32 +108,43 @@ class ComponentValidatorAliasesAreNotRecursive(ComponentValidatorPerNamespace):
 
 
 
-class ComponentValidatorAliasesAndStateVariablesHaveNoUnResolvedSymbols(ComponentValidatorPerNamespace):
+class ComponentValidatorAssignmentsAliasesAndStateVariablesHaveNoUnResolvedSymbols(ComponentValidatorPerNamespace):
     """Check that aliases and timederivatives are defined in terms of other parameters, aliases, statevariables and ports"""
     def __init__(self, component):
         ComponentValidatorPerNamespace.__init__(self, explicitly_require_action_overrides=False)
 
         self.available_symbols = defaultdict(list)
         self.aliases = defaultdict(list)
-        self.timederivatives = defaultdict(list)
+        self.time_derivatives = defaultdict(list)
+        self.state_assignments = defaultdict(list)
         
         self.visit(component)
 
         
         #TODO:
-        excludes = ['celsius'] + math_namespace.namespace.keys()
+        excludes = ['celsius', 't'] + math_namespace.namespace.keys()
         
+        # Check Aliases:
         for ns, aliases in self.aliases.iteritems():
             for alias in aliases:
                 for rhs_atom in alias.rhs_atoms:
                     if not rhs_atom in self.available_symbols[ns] and not rhs_atom in excludes:
                         raise NineMLRuntimeError('Unresolved Symbol in Alias: %s [%s]'%(rhs_atom, alias))                
-        
-        for ns, timederivatives in self.timederivatives.iteritems():
+
+        #Check TimeDerivatives:
+        for ns, timederivatives in self.time_derivatives.iteritems():
             for timederivative in timederivatives:
                 for rhs_atom in timederivative.rhs_atoms:
                     if not rhs_atom in self.available_symbols[ns] and not rhs_atom in excludes:
                         raise NineMLRuntimeError('Unresolved Symbol in Time Derivative: %s [%s]'%(rhs_atom, timederivative))
+
+        # Check StateAssignments
+        for ns, state_assignments in self.state_assignments.iteritems():
+            for state_assignment in state_assignments:
+                for rhs_atom in state_assignment.rhs_atoms:
+                    if not rhs_atom in self.available_symbols[ns] and not rhs_atom in excludes:
+                        err = 'Unresolved Symbol in Assignment: %s [%s]'%(rhs_atom, state_assignment)
+                        raise NineMLRuntimeError(err)
             
         
     def add_symbol(self, namespace, symbol):
@@ -149,7 +160,7 @@ class ComponentValidatorAliasesAndStateVariablesHaveNoUnResolvedSymbols(Componen
         self.add_symbol(namespace=namespace, symbol=state_variable.name)
         
     def action_timederivative(self, time_derivative, namespace, **kwargs):
-        self.aliases[namespace].append(time_derivative)
+        self.time_derivatives[namespace].append(time_derivative)
                         
     def action_alias(self, alias, namespace, **kwargs):
         self.add_symbol(namespace=namespace, symbol=alias.lhs )
@@ -158,6 +169,8 @@ class ComponentValidatorAliasesAndStateVariablesHaveNoUnResolvedSymbols(Componen
     def action_parameter(self, parameter, namespace, **kwargs):
         self.add_symbol(namespace=namespace, symbol=parameter.name )
 
+    def action_assignment(self, state_assignment, namespace, **kwargs):
+        self.state_assignments[namespace].append(state_assignment)
 
 
 
@@ -322,4 +335,22 @@ class ComponentValidatorNoDuplicatedObjects(ComponentValidatorPerNamespace):
         
     def action_onevent(self, on_event, **kwargs):
         self.all_objects.append(on_event)
+
+
+
+
+class ComponentValidatorRegimeOnlyHasOneHandlerPerEvent(ComponentValidatorPerNamespace):
+    def __init__(self, component):
+        ComponentValidatorPerNamespace.__init__(self, explicitly_require_action_overrides=False)
+
+        self.visit(component)
+        
+
+    def action_regime(self, regime, namespace, **kwargs):
+        event_triggers = [on_event.src_port_name for on_event in regime.on_events ] 
+        assert_no_duplicates( event_triggers )
+
+        
+
+
 

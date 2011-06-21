@@ -6,11 +6,13 @@ from cv_ports import ComponentValidatorOutputAnalogPorts
 from cv_namingconflicts import ComponentValidatorLocalNameConflicts
 from cv_general import ComponentValidatorTimeDerivativesAreDeclared
 from cv_general import ComponentValidatorNoDuplicatedObjects
-from cv_general import ComponentValidatorAliasesAndStateVariablesHaveNoUnResolvedSymbols
+#from cv_general import ComponentValidatorAliasesAndStateVariablesHaveNoUnResolvedSymbols
+from cv_general import ComponentValidatorAssignmentsAliasesAndStateVariablesHaveNoUnResolvedSymbols
 from cv_general import ComponentValidatorPortConnections
 from cv_general import ComponentValidatorStateAssignmentsAreOnStateVariables
 from cv_general import ComponentValidatorAliasesAreNotRecursive
 from cv_general import ComponentValidatorRegimeGraph
+from cv_general import ComponentValidatorRegimeOnlyHasOneHandlerPerEvent
 
 class ComponentValidator(object):
     """Class for grouping all the component-validations tests together"""
@@ -33,8 +35,10 @@ class ComponentValidator(object):
         ComponentValidatorTimeDerivativesAreDeclared(component)
         ComponentValidatorStateAssignmentsAreOnStateVariables(component)
         ComponentValidatorAliasesAreNotRecursive(component)
-        ComponentValidatorAliasesAndStateVariablesHaveNoUnResolvedSymbols(component)
+        ComponentValidatorAssignmentsAliasesAndStateVariablesHaveNoUnResolvedSymbols(component)
         ComponentValidatorPortConnections(component)
         ComponentValidatorRegimeGraph(component)
+        ComponentValidatorRegimeOnlyHasOneHandlerPerEvent(component)
+
         
         

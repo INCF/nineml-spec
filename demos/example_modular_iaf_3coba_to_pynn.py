@@ -33,6 +33,12 @@ def run(plot_and_show=True):
 
     test_component = get_hierachical_iaf_3coba()
 
+    from nineml.abstraction_layer.writers import DotWriter
+    DotWriter.write(test_component, 'test1.dot')
+    
+    import sys
+    sys.exit(0)
+
     from nineml.abstraction_layer.writers import XMLWriter
     XMLWriter.write(test_component, 'iaf_3coba.xml')
 
