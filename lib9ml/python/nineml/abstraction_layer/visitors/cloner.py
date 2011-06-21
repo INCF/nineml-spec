@@ -207,10 +207,10 @@ class ClonerVisitorPrefixNamespace(ClonerVisitor):
         
         port_connections = []
         for src,sink in component.portconnections:
-            #src_new = NamespaceAddress( tuple(list( src.loctuple[:-1] ) + [src.getstr( ) ] )  )
             src_new = NamespaceAddress.concat( src.get_parent_addr(), src.getstr() )  
-            #sink_new = NamespaceAddress( tuple(list( sink.loctuple[:-1] ) + [sink.getstr( ) ] )  )
             sink_new = NamespaceAddress.concat( sink.get_parent_addr(), sink.getstr() )  
+            print 'Source', src_new
+            print 'SINK', sink_new
             port_connections.append ( (src_new,sink_new) )
             
 
