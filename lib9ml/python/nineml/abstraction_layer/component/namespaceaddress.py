@@ -78,7 +78,6 @@ class NamespaceAddress(object):
         NameSpaceAddress: '/level1/level2/level3/subcomponent/'
 
         """
-        #comp_ns = NamespaceAddress(component_name)
         return NamespaceAddress.concat(self.loctuple, component_name )
 
     def get_parent_addr(self):

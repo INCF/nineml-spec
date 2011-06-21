@@ -9,10 +9,9 @@ from nineml.abstraction_layer.component.namespaceaddress import NamespaceAddress
 from nineml.abstraction_layer import math_namespace
 from nineml.utility import assert_no_duplicates
 
-# Check that the sub-components stored are all of the
-# right types:
 class ComponentValidatorTimeDerivativesAreDeclared(ComponentValidatorPerNamespace):
-    """ 
+    """ Check all variables used in TimeDerivative blocks are defined 
+        as  StateVariables.
     """
      
     def __init__(self, component):

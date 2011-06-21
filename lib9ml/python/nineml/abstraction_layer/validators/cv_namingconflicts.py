@@ -27,6 +27,8 @@ class ComponentValidatorLocalNameConflicts(ComponentValidatorPerNamespace):
     def __init__(self, component):
         ComponentValidatorPerNamespace.__init__(self, explicitly_require_action_overrides=False)
         self.symbols = defaultdict(list)
+
+        self.visit(component)
     
     def check_comflicting_symbol(self, namespace, symbol):
         assert not symbol in self.symbols[namespace]
