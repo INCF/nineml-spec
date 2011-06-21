@@ -202,7 +202,6 @@ class OnEvent(Transition):
 
 
 class OnCondition(Transition):
-    #element_name = "OnCondition"
 
     def accept_visitor(self, visitor, **kwargs):
         """ |VISITATION| """

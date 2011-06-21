@@ -87,7 +87,7 @@ class Expression(object):
         """Substitute an alias into the rhs"""
         sub = "(%s)" % alias.rhs,
 
-        self.rhs = util.MathUtil.str_expr_replacement(alias.name, sub, self.rhs)
+        self.rhs = util.MathUtil.str_expr_replacement(alias.lhs, sub, self.rhs)
         
 
     @property

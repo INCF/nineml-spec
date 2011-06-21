@@ -21,6 +21,8 @@ import os
 from expr_parse import NineMLMathParseError, call_expr_func
 import math_namespace
 
+from nineml.utility import LocationMgr
+
 # for now avoid duplication, but maintain distinctness
 call_cond_func = call_expr_func
 

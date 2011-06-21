@@ -122,7 +122,7 @@ class ComponentValidatorAssignmentsAliasesAndStateVariablesHaveNoUnResolvedSymbo
 
         
         #TODO:
-        excludes = ['celsius', 't'] + math_namespace.namespace.keys()
+        excludes = ['celsius', 't'] + list( math_namespace.functions)
         
         # Check Aliases:
         for ns, aliases in self.aliases.iteritems():

@@ -5,6 +5,7 @@ analysis.
 
 # This is to make 'join' available in other modules:
 from os.path import join as Join
+from os.path import exists as Exists
 
 
 from os.path import dirname, normpath
@@ -282,6 +283,8 @@ def join_norm(*args):
 
 class LocationMgr(object):
 
+    temp_dir = '/tmp/'
+        
     @classmethod
     def getRootDir(cls):
         localDir = dirname( __file__ )
@@ -291,6 +294,12 @@ class LocationMgr(object):
     @classmethod
     def getCatalogDir(cls):
         return join_norm( cls.getRootDir(), "catalog/" )
+
+    @classmethod
+    def getTmpDir(cls):
+        if not Exists(cls.temp_dir):
+            raise NineMLRuntimeError("tmp_dir does not exist:%s"%cls.tmp_dir)
+        return cls.temp_dir + '/'
 
     @classmethod
     def StdAppendToPath(cls):

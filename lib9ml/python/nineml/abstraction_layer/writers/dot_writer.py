@@ -1,3 +1,5 @@
+import os
+
 
 def dot_escape(s):
 
@@ -118,7 +120,29 @@ class DotWriter(object):
     """Dot Writer docstring"""
 
     @classmethod
+    def build(cls, dot_filename, output_types=None):
+        """Runs the commandline tool, ``dot`` on a filename to produce output
+        figures.
+
+        :params dot_filename: The filename of the .dot file.
+        :params output_types: The types of output that should be produced, by
+            default 'pdf' will be produced. This should be a list, for example, 
+            ['svg','pdf','png']
+        
+        """
+
+        output_types = output_types or ['pdf']
+        
+        for t in output_types:
+            t = t.replace('.','')
+            f_out = dot_filename.replace('.dot','.'+t)
+            exec_str = 'dot -T%s %s -o %s'%(t,dot_filename,f_out) 
+            os.system(exec_str) 
+
+    
+    @classmethod
     def write(self, component, filename, flatten=True):
+        """ Writes a component out to the .dot format"""
         
 
         if not component.is_flat() and flatten:

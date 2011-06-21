@@ -120,8 +120,10 @@ class ComponentClassMixinFlatStructure(object):
                     build_and_resolve_alias( missing_alias )
                     # resolve (lower level is already resolved now) 
                     alias.substitute_alias( missing_alias )
+                elif missing_alias_name in math_namespace.functions:
+                    pass
                 else:
-                    errmsg = "Unable to resolve alias %s" % alias.as_expr()
+                    errmsg = "Unable to resolve alias %s" % str(alias)
                     raise NineMLRuntimeError(errmsg)
 
         
@@ -281,7 +283,7 @@ class InterfaceInferer(ActionVisitor):
             self.state_variable_names, 
             alias_symbols, 
             analog_ports_in,
-            math_namespace.namespace.keys() ) )
+            math_namespace.functions ) )
 
         #Parameters:
         # Use visitation to collect all atoms that are not aliases and not
@@ -353,7 +355,10 @@ class ComponentClass( ComponentClassMixinFlatStructure,
 
     def __init__(self, name, parameters=None, analog_ports=None, 
                     event_ports=None, dynamics=None, subnodes=None, 
-                    portconnections=None, interface=None):
+                    portconnections=None, interface=None,
+                    regimes=None, aliases=None,state_variables=None
+                    
+                    ):
         """Constructs a ComponentClass
         
         :param name: The name of the component.
@@ -395,10 +400,20 @@ class ComponentClass( ComponentClassMixinFlatStructure,
         analog_ports = analog_ports or []
 
 
-        # We should always create a dynamics object, even is it is empty:
-        if dynamics == None:
-            dynamics = dyn.Dynamics()
-
+        # We can specify in the componentclass, and they will get forwarded to
+        # the dynamics class. We check that we do not specify half-and-half:
+        if dynamics:
+            if regimes or aliases or state_variables:
+                err =  "Either specify a 'dynamics' parameter, or "
+                err += "state_variables /regimes/aliases, but not both!"
+                raise NineMLRuntimeError(err)
+        
+        else:
+            ## We should always create a dynamics object, even is it is empty:
+            dynamics = dyn.Dynamics(regimes=regimes,
+                                    aliases=aliases,
+                                    state_variables=state_variables)
+                    
         
         # Turn any strings in the parameter list into Parameters:
         from nineml.utility import filter_discrete_types

@@ -13,4 +13,7 @@ from component import *
 from xmlns import * 
 from nineml import __version__
 
+#import readers
+#import writers
+#import validators
 
