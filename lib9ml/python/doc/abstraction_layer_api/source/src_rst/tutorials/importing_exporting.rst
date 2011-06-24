@@ -50,7 +50,7 @@ Text
 ~~~~~
 
 It can be useful to export a component to an easy-to-read text file format.
-This can be down with the ``TextWriter`` ::
+This can be done with the ``TextWriter`` ::
 
     from nineml.abstraction_layer.writers import TextWriter
     TextWriter.write(c,"test.dot")

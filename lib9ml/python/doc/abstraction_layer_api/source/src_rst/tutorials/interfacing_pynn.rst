@@ -2,13 +2,13 @@ Simulating
 ==========
 
 
-Interfacing to directly to NEURON
+Interfacing directly to NEURON
 ---------------------------------
 
 It is possible to export NineML to .mod files, for use in NEURON simulations.
 This can be done directly from the commandline, with the commandline tool::
 
-    $nineml2nmodl.py myninemlfile.xml
+    $ nineml2nmodl.py myninemlfile.xml
 
 If there is a single component in this file, this script will generate out a
 single file ``myninemlfile.mod``, containing a mod-file which represents the
@@ -29,9 +29,9 @@ component we want to create the mod-file from.
 Interfacing to PyNN (NEST & NEURON)
 -----------------------------------
 
-To use a component with pyNN; we construct the component as we have been doing
-previously; then we construct a class that pyNN can use for simulation. If we
-are using the neuron-backend, this internally takes care of creating and
+To use a component with PyNN; we construct the component as we have been doing
+previously; then we construct a class that PyNN can use for simulation. If we
+are using the NEURON backend, this internally takes care of creating and
 compiling the relevant mod-file for the simulation, and if we are using the NEST
 back-end, it will automatically create the relevant module. 
 

@@ -2,7 +2,7 @@
 Basic Structure of NineML Abstraction Layer
 ===========================================
 
-In this tutorial, we build the Izekevich model neuron. It is defined by the
+In this tutorial, we build the Izhikevich model neuron. It is defined by the
 following dynamics:
 
 .. math::
@@ -28,7 +28,7 @@ Interfaces: Parameters and Ports
 We begin by defining the *interface* to our neuron. The interface is composed of 
 
  * **Parameters**: values used to instantiate a component of a particular type. In this case, these would be
-     *a*,*b*,*c* and *d*. Parameters are set once at the beginning of a simulation.
+     *a*, *b*, *c* and *d*. Parameters are set once at the beginning of a simulation.
 
  * **Ports**: which allow the component to communicate with other components
      during the simulation. Ports are divided into two categories:
@@ -43,8 +43,8 @@ We begin by defining the *interface* to our neuron. The interface is composed of
     the component, ``recv`` (And ``reduce``, which will be discussed later.) 
 
 In this case, the neuron recieves an injected current *I*, which will be a
-``recv`` Analog-port. Other components (such as synapses) maybe interested in
-the neurons voltage, *V*, so we should transmit this as a ``send`` Analog-port.
+``recv`` Analog-port. Other components (such as synapses) may be interested in
+the neuron's voltage, *V*, so we should transmit this as a ``send`` Analog-port.
 When the neuron reaches the condition for firing (:math:`v> 30mV`), we may also
 want to notify other components about this event, so we also have a ``send``
 Event-port. 
@@ -73,15 +73,15 @@ to define the internal *dynamics* of the system, to give it some behaviour. A
 ComponentClass can contain ``StateVariables``, which are variables that
 describe the internal state of the neuron. Typically, these are specified by
 first-order-differential equations with-respect-to time. In our example, the
-Izekivich model has 2 state-variables, *U* and *V*. 
+Izhikevich model has 2 state-variables, *U* and *V*. 
 
-The state-variables can have different behaviours in when operating in
+The state-variables can have different behaviours when operating in
 different *Regimes*. A regime can be considered the 'mode' of the component; at
 any time, the component will be in a single 'regime', and it is possible to
 move between regimes.  for example, an integrate-and-fire neuron with an
-explicit refactory period could be modelled as a component with 2 regimes, a
+explicit refactory period could be modelled as a component with two regimes, a
 default regime, where injected current affects membrane voltage, where and a
-second *refactory* regime where the voltage is fixed to a certain value. This
+second *refractory* regime where the voltage is fixed to a certain value. This
 will be further discussed in XX.
 
 For this model, the differential-equations governing the state variables never
@@ -126,7 +126,7 @@ When a ``transition`` occurs, three things can optionally occur:
 
 
 
-For the Izekivich model, we will use an 'OnCondition' transition, which should
+For the Izhikevich model, we will use an 'OnCondition' transition, which should
 update the state-variables, *U* and *V* according to the equations:
 
 

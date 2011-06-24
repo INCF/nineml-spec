@@ -17,7 +17,9 @@ See http://codespeak.net/lxml/installation.html
 Installing PLY
 ==============
 
-$ easy_install ply
+::
+
+    $ easy_install ply
 
 or download from http://pypi.python.org/pypi/ply/ or install from your packaging system.
 
