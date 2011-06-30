@@ -469,6 +469,7 @@ class ComponentClass( ComponentClassMixinFlatStructure,
             inf_check(ip_evtport_names, inferred_struct.input_event_port_names, 'Event Ports In')
             inf_check(op_evtport_names, inferred_struct.output_event_port_names,'Event Ports Out')
         else:
+            event_ports = []
             #Event ports not supplied, so lets use the inferred ones.
             for evt_port_name in inferred_struct.input_event_port_names:
                 event_ports.append( EventPort(name=evt_port_name, mode='recv')) 

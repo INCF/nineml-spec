@@ -149,7 +149,7 @@ class DotWriter(object):
 
         if not component.is_flat() and flatten:
             
-            component = nineml.al.flattening.Flatten(component)
+            component = nineml.al.flattening.flatten(component)
 
 
 

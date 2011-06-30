@@ -29,14 +29,12 @@ def get_component():
         "il := gl*(el - V )"]
 
     hh_regime = al.Regime(
+        "dn/dt = (ninf-n)/ntau",
+        "dm/dt = (minf-m)/mtau",
+        "dh/dt = (hinf-h)/htau",
+        "dV/dt = (ina + ik + il + Isyn)/C",
+        transitions=al.On("V > theta",do=al.OutputEvent('spikeoutput')),
         name="hh_regime",
-        time_derivatives = [
-            "dn/dt = (ninf-n)/ntau",
-            "dm/dt = (minf-m)/mtau",
-            "dh/dt = (hinf-h)/htau",
-            "dV/dt = (ina + ik + il + Isyn)/C",
-            ],
-        transition=al.On("V > theta",do=[al.OutputEvent('spikeoutput')])
     )
 
 # the rest are not "parameters" but aliases, assigned vars, state vars, indep vars, analog_analog_ports, etc.

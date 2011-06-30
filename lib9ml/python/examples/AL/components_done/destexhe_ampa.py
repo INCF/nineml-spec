@@ -154,7 +154,7 @@ def get_component():
         "dRon/dt =  -Ron/Rtau",
         "dRoff/dt = -Beta*Roff",
         ],
-        transition=On('spikeoutput',
+        transitions=On('spikeoutput',
                         do=["t_off = t+Cdur",
                             "r0 = r0*exp(-Beta*(t - t0))",
                             "t0 = t",

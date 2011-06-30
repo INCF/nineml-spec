@@ -8,7 +8,7 @@ def get_component():
                 al.Regime(
                  name = "cobadefaultregime",
                  time_derivatives = ["dg/dt = -g/tau",],
-                 transition = al.On('spikeinput', do=["g=g+q"]),
+                 transitions = al.On('spikeinput', do=["g=g+q"]),
                     )
                 ],
             state_variables = [ al.StateVariable('g') ],

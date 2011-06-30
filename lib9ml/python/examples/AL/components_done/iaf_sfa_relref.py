@@ -72,7 +72,7 @@ def get_component():
             "dg_sfa/dt = -g_sfa/tau_sfa",
             "dg_rr/dt = -g_rr/tau_rr",
         ],
-        transition = al.On("V> theta",
+        transitions = al.On("V> theta",
                                 do=["g_sfa =g_sfa +  q_sfa", "g_rr =g_rr + q_rr", "t_spike = t",
                                     al.OutputEvent('spikeoutput')],
                                 to="refractory_regime"),
@@ -80,7 +80,7 @@ def get_component():
 
     refractory_regime = al.Regime(
         name="refractory_regime",
-        transition = al.On("t >= t_spike + t_ref",
+        transitions = al.On("t >= t_spike + t_ref",
                                 to='subthreshold_regime'),
         )
 

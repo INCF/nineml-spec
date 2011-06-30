@@ -7,7 +7,7 @@ def get_component():
                         al.Regime(
                             name = "subthresholdregime",
                             time_derivatives = ["dV/dt = ( gl*( vrest - V ) + ISyn)/(cm)"],
-                            transition = al.On("V > vthresh",
+                            transitions = al.On("V > vthresh",
                                                      do=["tspike = t",
                                                          "V = vreset",
                                                          al.OutputEvent('spikeoutput')],

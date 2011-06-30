@@ -220,9 +220,14 @@ class ClonerVisitor(ComponentVisitor):
     def visit_regime(self,regime,**kwargs):
         return nineml.abstraction_layer.Regime(  name = regime.name,
                         time_derivatives =  [t.accept_visitor(self,**kwargs) for t in regime.time_derivatives],
-                        on_events =         [t.accept_visitor(self,**kwargs) for t in regime.on_events],
-                        on_conditions =     [t.accept_visitor(self,**kwargs) for t in regime.on_conditions],
-                        )
+                        transitions =         [t.accept_visitor(self,**kwargs) for t in regime.transitions], )
+                        #on_conditions =     [t.accept_visitor(self,**kwargs) for t in regime.on_conditions],
+                        #)
+        #return nineml.abstraction_layer.Regime(  name = regime.name,
+        #                time_derivatives =  [t.accept_visitor(self,**kwargs) for t in regime.time_derivatives],
+        #                on_events =         [t.accept_visitor(self,**kwargs) for t in regime.on_events],
+        #                on_conditions =     [t.accept_visitor(self,**kwargs) for t in regime.on_conditions],
+        #                )
 
         
 

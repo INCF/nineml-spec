@@ -7,6 +7,7 @@ import itertools
 
 
 from nineml.abstraction_layer.visitors import ClonerVisitor, ClonerVisitorPrefixNamespace
+import nineml
 
 class ComponentFlattener(object):
     
@@ -111,8 +112,7 @@ class ComponentFlattener(object):
 
         return nineml.al.Regime( name=None, 
                         time_derivatives = time_derivatives,
-                        on_events=[], 
-                        on_conditions=[] )
+                        transitions=[],  )
 
 
         

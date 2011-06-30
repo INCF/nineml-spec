@@ -429,6 +429,26 @@ def file_sha1_hexdigest(filename):
 
 
 
+def ensure_iterable( expected_list ):
+    if isinstance(expected_list, basestring):
+        return [expected_list,]
+    try:
+        for obj in expected_list:
+            pass
+        return expected_list
+    except TypeError, e:
+        return [expected_list,]
+
+    assert False, 'Unreachable Code'
+
+def none_to_empty_list( obj ):
+    if obj is None:
+        return []
+    else:
+        return obj
+
+def normalise_parameter_as_list( param ):
+    return ensure_iterable( none_to_empty_list( param) )
 
 
 

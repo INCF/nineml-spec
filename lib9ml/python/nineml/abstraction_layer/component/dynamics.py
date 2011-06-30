@@ -11,6 +11,7 @@ import nineml.utility
 from nineml.exceptions import NineMLRuntimeError
 
 
+#from nineml.utility import filter_discrete_types
 
 
 class Transition(object):
@@ -254,6 +255,7 @@ class OnCondition(Transition):
 
 
 
+
 class Regime(object):
     """
     A regime is something that contains TimeDerivatives, has temporal extent, defines a set of Transitions
@@ -277,9 +279,11 @@ class Regime(object):
         return visitor.visit_regime(self, **kwargs)
 
 
-    def __init__(self, name, time_derivatives=None, 
-                 on_events=None, on_conditions=None, 
-                 transitions=None, transition=None,  ):
+    def __init__(self, name=None,
+                 transitions=None, 
+                 time_derivatives = None,
+                 
+                 ):
         """Regime constructor
             
             :param name: The name of the constructor. If none, then a name will
@@ -287,45 +291,42 @@ class Regime(object):
             :param time_derivatives: A list of time derivatives, as
                 either ``string``s (e.g 'dg/dt = g/gtau') or as TimeDerivative
                 objects.
-            :param on_events: A list of ``OnEvent`` objects. 
-            :param on_condition: A list of ``OnCondition`` objects. 
             :param transitions: A list containing either ``OnEvent`` or
                 ``OnCondition`` objects, which will automatically be sorted into
                 the appropriate classes automatically.
+            :param *args: Any non-keyword arguments will be treated as
+                time_derivatives.
+
 
         """
-        time_derivatives = time_derivatives or []
-        # Un-named arguments are time_derivatives:
 
-        from nineml.utility import filter_discrete_types
+        # Generate a name for unnamed regions:
         self._name = name if name else Regime.get_next_name()
 
-        # We support passing in 'transitions', which is a list of both OnEvents 
-        # and OnConditions. So, lets filter this by type and add them
-        # appropriately:
-        if transition and transitions:
-            raise NineMLRuntimeError('transitions specified twice')
-        transitions = transitions or []
-        if transition: transitions.append(transition)
-        
 
-        f_dict = filter_discrete_types( transitions, (OnEvent, OnCondition)) 
+        # Un-named arguments are time_derivatives:
+        time_derivatives = nineml.utility.normalise_parameter_as_list(time_derivatives) 
+        #time_derivatives.extend( args )
 
         td_types = (basestring, TimeDerivative )
-        td_type_dict = filter_discrete_types( time_derivatives, td_types  )
+        td_type_dict = nineml.utility.filter_discrete_types(time_derivatives, td_types)
         td_from_str = [StrToExpr.time_derivative(o) for o in td_type_dict[basestring]]  
-        tds = td_type_dict[TimeDerivative] + td_from_str
+        self._time_derivatives = td_type_dict[TimeDerivative] + td_from_str
 
 
+        # We support passing in 'transitions', which is a list of both OnEvents
+        # and OnConditions. So, lets filter this by type and add them
+        # appropriately:
 
-        self._time_derivatives = tds
+        transitions = nineml.utility.normalise_parameter_as_list(transitions)
+        f_dict = nineml.utility.filter_discrete_types( transitions, (OnEvent, OnCondition)) 
         self._on_events = [] 
         self._on_conditions = [] 
 
         # Add all the OnEvents and OnConditions:
-        for event in (on_events or [] ) + f_dict[OnEvent] :
+        for event in f_dict[OnEvent] :
             self.add_on_event(event)
-        for condition in (on_conditions or [] ) + f_dict[OnCondition]:
+        for condition in f_dict[OnCondition]:
             self.add_on_condition(condition)
 
 

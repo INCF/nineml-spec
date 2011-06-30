@@ -38,7 +38,7 @@ def get_component():
                                 time_derivatives = [
                                     "dV/dt = -g_L*(V-E_L)/C_m + g_L*Delta*exp((V-V_T)/Delta-w/S)/C_m+ Isyn/C_m",
                                     "dw/dt = (a*(V-E_L)-w)/tau_w", ],
-                                transition=al.On("V > V_T",
+                                transitions=al.On("V > V_T",
                                                do=["V = E_L",
                                                    "w = w + b",
                                                    al.OutputEvent('spikeoutput')],
@@ -47,7 +47,7 @@ def get_component():
 
                          al.Regime(                              
                                 name="refractoryregime",
-                                transition=al.On("t>=tspike+trefractory",
+                                transitions=al.On("t>=tspike+trefractory",
                                                to="subthresholdregime"),
                                 )    
                                ],                

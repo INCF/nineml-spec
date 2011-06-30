@@ -16,6 +16,7 @@ from cv_general import ComponentValidatorAliasesAreNotRecursive
 from cv_general import ComponentValidatorRegimeGraph
 from cv_general import ComponentValidatorRegimeOnlyHasOneHandlerPerEvent
 from cv_general import ComponentValidatorCheckNoLHSAssignmentsToMathsNamespace
+from cv_regimenames import ComponentValidatorDuplicateRegimeNames
 
 class ComponentValidator(object):
     """Class for grouping all the component-validations tests together"""
@@ -37,6 +38,7 @@ class ComponentValidator(object):
         ComponentValidatorTypes(component)
         ComponentValidatorNoDuplicatedObjects(component)
         
+        ComponentValidatorDuplicateRegimeNames(component)
         ComponentValidatorLocalNameConflicts(component)
         
         ComponentValidatorEventPorts(component)

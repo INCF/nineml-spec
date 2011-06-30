@@ -92,10 +92,11 @@ class XMLLoader(object):
     def load_regime(self, element):
         subblocks = ('TimeDerivative', 'OnCondition', 'OnEvent')
         subnodes = self.loadBlocks( element, blocks=subblocks)
+        transitions = subnodes["OnEvent"] + subnodes['OnCondition'] 
         return nineml.al.Regime( name=element.get('name'),
                           time_derivatives = subnodes["TimeDerivative"],
-                          on_events = subnodes["OnEvent"],
-                          on_conditions = subnodes["OnCondition"] )
+                          transitions = transitions )
+                          #on_conditions = subnodes["OnCondition"] )
 
 
 
