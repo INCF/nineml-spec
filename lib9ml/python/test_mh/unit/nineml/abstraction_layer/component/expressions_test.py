@@ -14,7 +14,7 @@ import nineml
 def test_expr_to_obj():
     # Signature: name(s, name=None)
 	# Construct nineml objects from expressions 
-
+    #from nineml.abstraction_layer.component.expressions import expr_to_obj
     warnings.warn('Tests not implemented')
     # raise NotImplementedError()
 
@@ -35,6 +35,7 @@ class Alias_test(object):
     def test_accept_visitor(self):
         # Signature: name(self, visitor, **kwargs)
 		# |VISITATION| 
+        #from nineml.abstraction_layer.component.expressions import Alias
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -42,6 +43,7 @@ class Alias_test(object):
     def test_atoms(self):
         # Signature: name
 		# No Docstring
+        #from nineml.abstraction_layer.component.expressions import Alias
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -49,6 +51,7 @@ class Alias_test(object):
     def test_lhs(self):
         # Signature: name
 		# No Docstring
+        #from nineml.abstraction_layer.component.expressions import Alias
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -56,6 +59,7 @@ class Alias_test(object):
     def test_lhs_atoms(self):
         # Signature: name
 		# No Docstring
+        #from nineml.abstraction_layer.component.expressions import Alias
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -63,6 +67,7 @@ class Alias_test(object):
     def test_lhs_name_transform_inplace(self):
         # Signature: name(self, name_map)
 		# No Docstring
+        #from nineml.abstraction_layer.component.expressions import Alias
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -70,6 +75,7 @@ class Alias_test(object):
     def test_name_transform_inplace(self):
         # Signature: name(self, name_map)
 		# No Docstring
+        #from nineml.abstraction_layer.component.expressions import Alias
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -77,6 +83,7 @@ class Alias_test(object):
     def test_rhs(self):
         # Signature: name
 		# No Docstring
+        #from nineml.abstraction_layer.component.expressions import Alias
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -84,6 +91,7 @@ class Alias_test(object):
     def test_rhs_as_python_func(self):
         # Signature: name(self, namespace=None)
 		# No Docstring
+        #from nineml.abstraction_layer.component.expressions import Alias
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -91,6 +99,7 @@ class Alias_test(object):
     def test_rhs_atoms(self):
         # Signature: name
 		# No Docstring
+        #from nineml.abstraction_layer.component.expressions import Alias
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -98,6 +107,7 @@ class Alias_test(object):
     def test_rhs_funcs(self):
         # Signature: name
 		# No Docstring
+        #from nineml.abstraction_layer.component.expressions import Alias
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -106,6 +116,7 @@ class Alias_test(object):
         # Signature: name(self)
 		# returns True if at least 1 function on the rhs is not in the math
 		# namespace
+        #from nineml.abstraction_layer.component.expressions import Alias
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -114,6 +125,7 @@ class Alias_test(object):
         # Signature: name
 		# yield names of functions in the rhs which are not in the math
 		# namespace
+        #from nineml.abstraction_layer.component.expressions import Alias
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -121,6 +133,7 @@ class Alias_test(object):
     def test_rhs_name_transform_inplace(self):
         # Signature: name(self, name_map)
 		# Replace atoms on the RHS with values in the name_map
+        #from nineml.abstraction_layer.component.expressions import Alias
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -128,6 +141,7 @@ class Alias_test(object):
     def test_rhs_names(self):
         # Signature: name
 		# No Docstring
+        #from nineml.abstraction_layer.component.expressions import Alias
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -135,6 +149,7 @@ class Alias_test(object):
     def test_substitute_alias(self):
         # Signature: name(self, alias)
 		# Substitute an alias into the rhs
+        #from nineml.abstraction_layer.component.expressions import Alias
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -156,6 +171,7 @@ class Equation_test(object):
     def test_rhs(self):
         # Signature: name
 		# No Docstring
+        #from nineml.abstraction_layer.component.expressions import Equation
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -163,6 +179,7 @@ class Equation_test(object):
     def test_rhs_as_python_func(self):
         # Signature: name(self, namespace=None)
 		# No Docstring
+        #from nineml.abstraction_layer.component.expressions import Equation
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -170,6 +187,7 @@ class Equation_test(object):
     def test_rhs_atoms(self):
         # Signature: name
 		# No Docstring
+        #from nineml.abstraction_layer.component.expressions import Equation
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -177,6 +195,7 @@ class Equation_test(object):
     def test_rhs_funcs(self):
         # Signature: name
 		# No Docstring
+        #from nineml.abstraction_layer.component.expressions import Equation
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -185,6 +204,7 @@ class Equation_test(object):
         # Signature: name(self)
 		# returns True if at least 1 function on the rhs is not in the math
 		# namespace
+        #from nineml.abstraction_layer.component.expressions import Equation
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -193,6 +213,7 @@ class Equation_test(object):
         # Signature: name
 		# yield names of functions in the rhs which are not in the math
 		# namespace
+        #from nineml.abstraction_layer.component.expressions import Equation
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -200,6 +221,7 @@ class Equation_test(object):
     def test_rhs_name_transform_inplace(self):
         # Signature: name(self, name_map)
 		# Replace atoms on the RHS with values in the name_map
+        #from nineml.abstraction_layer.component.expressions import Equation
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -207,6 +229,7 @@ class Equation_test(object):
     def test_rhs_names(self):
         # Signature: name
 		# No Docstring
+        #from nineml.abstraction_layer.component.expressions import Equation
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -214,6 +237,7 @@ class Equation_test(object):
     def test_substitute_alias(self):
         # Signature: name(self, alias)
 		# Substitute an alias into the rhs
+        #from nineml.abstraction_layer.component.expressions import Equation
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -235,6 +259,7 @@ class Expression_test(object):
     def test_rhs(self):
         # Signature: name
 		# No Docstring
+        #from nineml.abstraction_layer.component.expressions import Expression
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -242,6 +267,7 @@ class Expression_test(object):
     def test_rhs_as_python_func(self):
         # Signature: name(self, namespace=None)
 		# No Docstring
+        #from nineml.abstraction_layer.component.expressions import Expression
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -249,6 +275,7 @@ class Expression_test(object):
     def test_rhs_atoms(self):
         # Signature: name
 		# No Docstring
+        #from nineml.abstraction_layer.component.expressions import Expression
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -256,6 +283,7 @@ class Expression_test(object):
     def test_rhs_funcs(self):
         # Signature: name
 		# No Docstring
+        #from nineml.abstraction_layer.component.expressions import Expression
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -264,6 +292,7 @@ class Expression_test(object):
         # Signature: name(self)
 		# returns True if at least 1 function on the rhs is not in the math
 		# namespace
+        #from nineml.abstraction_layer.component.expressions import Expression
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -272,6 +301,7 @@ class Expression_test(object):
         # Signature: name
 		# yield names of functions in the rhs which are not in the math
 		# namespace
+        #from nineml.abstraction_layer.component.expressions import Expression
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -279,6 +309,7 @@ class Expression_test(object):
     def test_rhs_name_transform_inplace(self):
         # Signature: name(self, name_map)
 		# Replace atoms on the RHS with values in the name_map
+        #from nineml.abstraction_layer.component.expressions import Expression
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -286,6 +317,7 @@ class Expression_test(object):
     def test_rhs_names(self):
         # Signature: name
 		# No Docstring
+        #from nineml.abstraction_layer.component.expressions import Expression
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -293,6 +325,7 @@ class Expression_test(object):
     def test_substitute_alias(self):
         # Signature: name(self, alias)
 		# Substitute an alias into the rhs
+        #from nineml.abstraction_layer.component.expressions import Expression
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -314,6 +347,7 @@ class ExpressionWithLHS_test(object):
     def test_atoms(self):
         # Signature: name
 		# No Docstring
+        #from nineml.abstraction_layer.component.expressions import ExpressionWithLHS
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -321,6 +355,7 @@ class ExpressionWithLHS_test(object):
     def test_lhs_atoms(self):
         # Signature: name
 		# No Docstring
+        #from nineml.abstraction_layer.component.expressions import ExpressionWithLHS
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -328,6 +363,7 @@ class ExpressionWithLHS_test(object):
     def test_lhs_name_transform_inplace(self):
         # Signature: name(self, name_map)
 		# No Docstring
+        #from nineml.abstraction_layer.component.expressions import ExpressionWithLHS
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -335,6 +371,7 @@ class ExpressionWithLHS_test(object):
     def test_name_transform_inplace(self):
         # Signature: name(self, name_map)
 		# No Docstring
+        #from nineml.abstraction_layer.component.expressions import ExpressionWithLHS
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -342,6 +379,7 @@ class ExpressionWithLHS_test(object):
     def test_rhs(self):
         # Signature: name
 		# No Docstring
+        #from nineml.abstraction_layer.component.expressions import ExpressionWithLHS
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -349,6 +387,7 @@ class ExpressionWithLHS_test(object):
     def test_rhs_as_python_func(self):
         # Signature: name(self, namespace=None)
 		# No Docstring
+        #from nineml.abstraction_layer.component.expressions import ExpressionWithLHS
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -356,6 +395,7 @@ class ExpressionWithLHS_test(object):
     def test_rhs_atoms(self):
         # Signature: name
 		# No Docstring
+        #from nineml.abstraction_layer.component.expressions import ExpressionWithLHS
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -363,6 +403,7 @@ class ExpressionWithLHS_test(object):
     def test_rhs_funcs(self):
         # Signature: name
 		# No Docstring
+        #from nineml.abstraction_layer.component.expressions import ExpressionWithLHS
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -371,6 +412,7 @@ class ExpressionWithLHS_test(object):
         # Signature: name(self)
 		# returns True if at least 1 function on the rhs is not in the math
 		# namespace
+        #from nineml.abstraction_layer.component.expressions import ExpressionWithLHS
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -379,6 +421,7 @@ class ExpressionWithLHS_test(object):
         # Signature: name
 		# yield names of functions in the rhs which are not in the math
 		# namespace
+        #from nineml.abstraction_layer.component.expressions import ExpressionWithLHS
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -386,6 +429,7 @@ class ExpressionWithLHS_test(object):
     def test_rhs_name_transform_inplace(self):
         # Signature: name(self, name_map)
 		# Replace atoms on the RHS with values in the name_map
+        #from nineml.abstraction_layer.component.expressions import ExpressionWithLHS
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -393,6 +437,7 @@ class ExpressionWithLHS_test(object):
     def test_rhs_names(self):
         # Signature: name
 		# No Docstring
+        #from nineml.abstraction_layer.component.expressions import ExpressionWithLHS
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -400,6 +445,7 @@ class ExpressionWithLHS_test(object):
     def test_substitute_alias(self):
         # Signature: name(self, alias)
 		# Substitute an alias into the rhs
+        #from nineml.abstraction_layer.component.expressions import ExpressionWithLHS
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -421,6 +467,7 @@ class ExpressionWithSimpleLHS_test(object):
     def test_atoms(self):
         # Signature: name
 		# No Docstring
+        #from nineml.abstraction_layer.component.expressions import ExpressionWithSimpleLHS
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -428,6 +475,7 @@ class ExpressionWithSimpleLHS_test(object):
     def test_lhs(self):
         # Signature: name
 		# No Docstring
+        #from nineml.abstraction_layer.component.expressions import ExpressionWithSimpleLHS
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -435,6 +483,7 @@ class ExpressionWithSimpleLHS_test(object):
     def test_lhs_atoms(self):
         # Signature: name
 		# No Docstring
+        #from nineml.abstraction_layer.component.expressions import ExpressionWithSimpleLHS
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -442,6 +491,7 @@ class ExpressionWithSimpleLHS_test(object):
     def test_lhs_name_transform_inplace(self):
         # Signature: name(self, name_map)
 		# No Docstring
+        #from nineml.abstraction_layer.component.expressions import ExpressionWithSimpleLHS
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -449,6 +499,7 @@ class ExpressionWithSimpleLHS_test(object):
     def test_name_transform_inplace(self):
         # Signature: name(self, name_map)
 		# No Docstring
+        #from nineml.abstraction_layer.component.expressions import ExpressionWithSimpleLHS
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -456,6 +507,7 @@ class ExpressionWithSimpleLHS_test(object):
     def test_rhs(self):
         # Signature: name
 		# No Docstring
+        #from nineml.abstraction_layer.component.expressions import ExpressionWithSimpleLHS
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -463,6 +515,7 @@ class ExpressionWithSimpleLHS_test(object):
     def test_rhs_as_python_func(self):
         # Signature: name(self, namespace=None)
 		# No Docstring
+        #from nineml.abstraction_layer.component.expressions import ExpressionWithSimpleLHS
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -470,6 +523,7 @@ class ExpressionWithSimpleLHS_test(object):
     def test_rhs_atoms(self):
         # Signature: name
 		# No Docstring
+        #from nineml.abstraction_layer.component.expressions import ExpressionWithSimpleLHS
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -477,6 +531,7 @@ class ExpressionWithSimpleLHS_test(object):
     def test_rhs_funcs(self):
         # Signature: name
 		# No Docstring
+        #from nineml.abstraction_layer.component.expressions import ExpressionWithSimpleLHS
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -485,6 +540,7 @@ class ExpressionWithSimpleLHS_test(object):
         # Signature: name(self)
 		# returns True if at least 1 function on the rhs is not in the math
 		# namespace
+        #from nineml.abstraction_layer.component.expressions import ExpressionWithSimpleLHS
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -493,6 +549,7 @@ class ExpressionWithSimpleLHS_test(object):
         # Signature: name
 		# yield names of functions in the rhs which are not in the math
 		# namespace
+        #from nineml.abstraction_layer.component.expressions import ExpressionWithSimpleLHS
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -500,6 +557,7 @@ class ExpressionWithSimpleLHS_test(object):
     def test_rhs_name_transform_inplace(self):
         # Signature: name(self, name_map)
 		# Replace atoms on the RHS with values in the name_map
+        #from nineml.abstraction_layer.component.expressions import ExpressionWithSimpleLHS
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -507,6 +565,7 @@ class ExpressionWithSimpleLHS_test(object):
     def test_rhs_names(self):
         # Signature: name
 		# No Docstring
+        #from nineml.abstraction_layer.component.expressions import ExpressionWithSimpleLHS
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -514,6 +573,7 @@ class ExpressionWithSimpleLHS_test(object):
     def test_substitute_alias(self):
         # Signature: name(self, alias)
 		# Substitute an alias into the rhs
+        #from nineml.abstraction_layer.component.expressions import ExpressionWithSimpleLHS
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -549,6 +609,7 @@ class StateAssignment_test(object):
     def test_accept_visitor(self):
         # Signature: name(self, visitor, **kwargs)
 		# |VISITATION| 
+        #from nineml.abstraction_layer.component.expressions import StateAssignment
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -556,6 +617,7 @@ class StateAssignment_test(object):
     def test_atoms(self):
         # Signature: name
 		# No Docstring
+        #from nineml.abstraction_layer.component.expressions import StateAssignment
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -563,6 +625,7 @@ class StateAssignment_test(object):
     def test_lhs(self):
         # Signature: name
 		# No Docstring
+        #from nineml.abstraction_layer.component.expressions import StateAssignment
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -570,6 +633,7 @@ class StateAssignment_test(object):
     def test_lhs_atoms(self):
         # Signature: name
 		# No Docstring
+        #from nineml.abstraction_layer.component.expressions import StateAssignment
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -577,6 +641,7 @@ class StateAssignment_test(object):
     def test_lhs_name_transform_inplace(self):
         # Signature: name(self, name_map)
 		# No Docstring
+        #from nineml.abstraction_layer.component.expressions import StateAssignment
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -584,6 +649,7 @@ class StateAssignment_test(object):
     def test_name_transform_inplace(self):
         # Signature: name(self, name_map)
 		# No Docstring
+        #from nineml.abstraction_layer.component.expressions import StateAssignment
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -591,6 +657,7 @@ class StateAssignment_test(object):
     def test_rhs(self):
         # Signature: name
 		# No Docstring
+        #from nineml.abstraction_layer.component.expressions import StateAssignment
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -598,6 +665,7 @@ class StateAssignment_test(object):
     def test_rhs_as_python_func(self):
         # Signature: name(self, namespace=None)
 		# No Docstring
+        #from nineml.abstraction_layer.component.expressions import StateAssignment
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -605,6 +673,7 @@ class StateAssignment_test(object):
     def test_rhs_atoms(self):
         # Signature: name
 		# No Docstring
+        #from nineml.abstraction_layer.component.expressions import StateAssignment
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -612,6 +681,7 @@ class StateAssignment_test(object):
     def test_rhs_funcs(self):
         # Signature: name
 		# No Docstring
+        #from nineml.abstraction_layer.component.expressions import StateAssignment
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -620,6 +690,7 @@ class StateAssignment_test(object):
         # Signature: name(self)
 		# returns True if at least 1 function on the rhs is not in the math
 		# namespace
+        #from nineml.abstraction_layer.component.expressions import StateAssignment
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -628,6 +699,7 @@ class StateAssignment_test(object):
         # Signature: name
 		# yield names of functions in the rhs which are not in the math
 		# namespace
+        #from nineml.abstraction_layer.component.expressions import StateAssignment
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -635,6 +707,7 @@ class StateAssignment_test(object):
     def test_rhs_name_transform_inplace(self):
         # Signature: name(self, name_map)
 		# Replace atoms on the RHS with values in the name_map
+        #from nineml.abstraction_layer.component.expressions import StateAssignment
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -642,6 +715,7 @@ class StateAssignment_test(object):
     def test_rhs_names(self):
         # Signature: name
 		# No Docstring
+        #from nineml.abstraction_layer.component.expressions import StateAssignment
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -649,6 +723,7 @@ class StateAssignment_test(object):
     def test_substitute_alias(self):
         # Signature: name(self, alias)
 		# Substitute an alias into the rhs
+        #from nineml.abstraction_layer.component.expressions import StateAssignment
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -670,6 +745,7 @@ class TimeDerivative_test(object):
     def test_accept_visitor(self):
         # Signature: name(self, visitor, **kwargs)
 		# |VISITATION| 
+        #from nineml.abstraction_layer.component.expressions import TimeDerivative
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -677,6 +753,7 @@ class TimeDerivative_test(object):
     def test_atoms(self):
         # Signature: name
 		# No Docstring
+        #from nineml.abstraction_layer.component.expressions import TimeDerivative
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -684,6 +761,7 @@ class TimeDerivative_test(object):
     def test_dependent_variable(self):
         # Signature: name
 		# Return the dependent variable
+        #from nineml.abstraction_layer.component.expressions import TimeDerivative
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -691,6 +769,7 @@ class TimeDerivative_test(object):
     def test_independent_variable(self):
         # Signature: name
 		# Return the independent variable
+        #from nineml.abstraction_layer.component.expressions import TimeDerivative
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -698,6 +777,7 @@ class TimeDerivative_test(object):
     def test_lhs(self):
         # Signature: name
 		# Return a string of the lhs of the form: 'dS/dt' 
+        #from nineml.abstraction_layer.component.expressions import TimeDerivative
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -705,6 +785,7 @@ class TimeDerivative_test(object):
     def test_lhs_atoms(self):
         # Signature: name
 		# No Docstring
+        #from nineml.abstraction_layer.component.expressions import TimeDerivative
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -712,6 +793,7 @@ class TimeDerivative_test(object):
     def test_lhs_name_transform_inplace(self):
         # Signature: name(self, name_map)
 		# Replace atoms on the LHS with mapping in name_map 
+        #from nineml.abstraction_layer.component.expressions import TimeDerivative
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -719,6 +801,7 @@ class TimeDerivative_test(object):
     def test_name_transform_inplace(self):
         # Signature: name(self, name_map)
 		# No Docstring
+        #from nineml.abstraction_layer.component.expressions import TimeDerivative
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -726,6 +809,7 @@ class TimeDerivative_test(object):
     def test_rhs(self):
         # Signature: name
 		# No Docstring
+        #from nineml.abstraction_layer.component.expressions import TimeDerivative
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -733,6 +817,7 @@ class TimeDerivative_test(object):
     def test_rhs_as_python_func(self):
         # Signature: name(self, namespace=None)
 		# No Docstring
+        #from nineml.abstraction_layer.component.expressions import TimeDerivative
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -740,6 +825,7 @@ class TimeDerivative_test(object):
     def test_rhs_atoms(self):
         # Signature: name
 		# No Docstring
+        #from nineml.abstraction_layer.component.expressions import TimeDerivative
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -747,6 +833,7 @@ class TimeDerivative_test(object):
     def test_rhs_funcs(self):
         # Signature: name
 		# No Docstring
+        #from nineml.abstraction_layer.component.expressions import TimeDerivative
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -755,6 +842,7 @@ class TimeDerivative_test(object):
         # Signature: name(self)
 		# returns True if at least 1 function on the rhs is not in the math
 		# namespace
+        #from nineml.abstraction_layer.component.expressions import TimeDerivative
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -763,6 +851,7 @@ class TimeDerivative_test(object):
         # Signature: name
 		# yield names of functions in the rhs which are not in the math
 		# namespace
+        #from nineml.abstraction_layer.component.expressions import TimeDerivative
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -770,6 +859,7 @@ class TimeDerivative_test(object):
     def test_rhs_name_transform_inplace(self):
         # Signature: name(self, name_map)
 		# Replace atoms on the RHS with values in the name_map
+        #from nineml.abstraction_layer.component.expressions import TimeDerivative
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -777,6 +867,7 @@ class TimeDerivative_test(object):
     def test_rhs_names(self):
         # Signature: name
 		# No Docstring
+        #from nineml.abstraction_layer.component.expressions import TimeDerivative
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -784,6 +875,7 @@ class TimeDerivative_test(object):
     def test_substitute_alias(self):
         # Signature: name(self, alias)
 		# Substitute an alias into the rhs
+        #from nineml.abstraction_layer.component.expressions import TimeDerivative
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -805,6 +897,7 @@ class ODE_test(object):
     def test_atoms(self):
         # Signature: name
 		# No Docstring
+        #from nineml.abstraction_layer.component.expressions import ODE
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -812,6 +905,7 @@ class ODE_test(object):
     def test_dependent_variable(self):
         # Signature: name
 		# Return the dependent variable
+        #from nineml.abstraction_layer.component.expressions import ODE
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -819,6 +913,7 @@ class ODE_test(object):
     def test_independent_variable(self):
         # Signature: name
 		# Return the independent variable
+        #from nineml.abstraction_layer.component.expressions import ODE
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -826,6 +921,7 @@ class ODE_test(object):
     def test_lhs(self):
         # Signature: name
 		# Return a string of the lhs of the form: 'dS/dt' 
+        #from nineml.abstraction_layer.component.expressions import ODE
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -833,6 +929,7 @@ class ODE_test(object):
     def test_lhs_atoms(self):
         # Signature: name
 		# No Docstring
+        #from nineml.abstraction_layer.component.expressions import ODE
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -840,6 +937,7 @@ class ODE_test(object):
     def test_lhs_name_transform_inplace(self):
         # Signature: name(self, name_map)
 		# Replace atoms on the LHS with mapping in name_map 
+        #from nineml.abstraction_layer.component.expressions import ODE
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -847,6 +945,7 @@ class ODE_test(object):
     def test_name_transform_inplace(self):
         # Signature: name(self, name_map)
 		# No Docstring
+        #from nineml.abstraction_layer.component.expressions import ODE
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -854,6 +953,7 @@ class ODE_test(object):
     def test_rhs(self):
         # Signature: name
 		# No Docstring
+        #from nineml.abstraction_layer.component.expressions import ODE
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -861,6 +961,7 @@ class ODE_test(object):
     def test_rhs_as_python_func(self):
         # Signature: name(self, namespace=None)
 		# No Docstring
+        #from nineml.abstraction_layer.component.expressions import ODE
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -868,6 +969,7 @@ class ODE_test(object):
     def test_rhs_atoms(self):
         # Signature: name
 		# No Docstring
+        #from nineml.abstraction_layer.component.expressions import ODE
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -875,6 +977,7 @@ class ODE_test(object):
     def test_rhs_funcs(self):
         # Signature: name
 		# No Docstring
+        #from nineml.abstraction_layer.component.expressions import ODE
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -883,6 +986,7 @@ class ODE_test(object):
         # Signature: name(self)
 		# returns True if at least 1 function on the rhs is not in the math
 		# namespace
+        #from nineml.abstraction_layer.component.expressions import ODE
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -891,6 +995,7 @@ class ODE_test(object):
         # Signature: name
 		# yield names of functions in the rhs which are not in the math
 		# namespace
+        #from nineml.abstraction_layer.component.expressions import ODE
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -898,6 +1003,7 @@ class ODE_test(object):
     def test_rhs_name_transform_inplace(self):
         # Signature: name(self, name_map)
 		# Replace atoms on the RHS with values in the name_map
+        #from nineml.abstraction_layer.component.expressions import ODE
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -905,6 +1011,7 @@ class ODE_test(object):
     def test_rhs_names(self):
         # Signature: name
 		# No Docstring
+        #from nineml.abstraction_layer.component.expressions import ODE
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -912,6 +1019,7 @@ class ODE_test(object):
     def test_substitute_alias(self):
         # Signature: name(self, alias)
 		# Substitute an alias into the rhs
+        #from nineml.abstraction_layer.component.expressions import ODE
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 

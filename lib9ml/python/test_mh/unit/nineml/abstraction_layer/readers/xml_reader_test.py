@@ -28,6 +28,7 @@ class XMLReader_test(object):
 		#     specifying which component to return, otherwise a
 		#     NineMLRuntimeException will be raised.
 		# :rtype: Returns a |COMPONENTCLASS| object. 
+        #from nineml.abstraction_layer.readers.xml_reader import XMLReader
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -42,6 +43,7 @@ class XMLReader_test(object):
 		#     specifying which component to return, otherwise a
 		#     NineMLRuntimeException will be raised.
 		# :rtype: Returns a |COMPONENTCLASS| object. 
+        #from nineml.abstraction_layer.readers.xml_reader import XMLReader
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -53,6 +55,7 @@ class XMLReader_test(object):
 		# :param filename: The name of the file.
 		# :rtype: Returns a list of |COMPONENTCLASS| objects, for each
 		#     <ComponentClass> node in the XML tree.
+        #from nineml.abstraction_layer.readers.xml_reader import XMLReader
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -74,6 +77,7 @@ class XMLLoader_test(object):
     def test_loadBlocks(self):
         # Signature: name(self, element, blocks=None, check_for_spurious_blocks=True)
 		# Creates a dictionary that maps class-types to instantiated objects
+        #from nineml.abstraction_layer.readers.xml_reader import XMLLoader
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -81,6 +85,7 @@ class XMLLoader_test(object):
     def test_load_alias(self):
         # Signature: name(self, element)
 		# No Docstring
+        #from nineml.abstraction_layer.readers.xml_reader import XMLLoader
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -88,6 +93,7 @@ class XMLLoader_test(object):
     def test_load_analogport(self):
         # Signature: name(self, element)
 		# No Docstring
+        #from nineml.abstraction_layer.readers.xml_reader import XMLLoader
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -95,6 +101,7 @@ class XMLLoader_test(object):
     def test_load_componentclass(self):
         # Signature: name(self, element)
 		# No Docstring
+        #from nineml.abstraction_layer.readers.xml_reader import XMLLoader
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -102,6 +109,7 @@ class XMLLoader_test(object):
     def test_load_connectports(self):
         # Signature: name(self, element)
 		# No Docstring
+        #from nineml.abstraction_layer.readers.xml_reader import XMLLoader
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -109,6 +117,7 @@ class XMLLoader_test(object):
     def test_load_dynamics(self):
         # Signature: name(self, element)
 		# No Docstring
+        #from nineml.abstraction_layer.readers.xml_reader import XMLLoader
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -116,6 +125,7 @@ class XMLLoader_test(object):
     def test_load_eventout(self):
         # Signature: name(self, element)
 		# No Docstring
+        #from nineml.abstraction_layer.readers.xml_reader import XMLLoader
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -123,6 +133,7 @@ class XMLLoader_test(object):
     def test_load_eventport(self):
         # Signature: name(self, element)
 		# No Docstring
+        #from nineml.abstraction_layer.readers.xml_reader import XMLLoader
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -130,6 +141,7 @@ class XMLLoader_test(object):
     def test_load_oncondition(self):
         # Signature: name(self, element)
 		# No Docstring
+        #from nineml.abstraction_layer.readers.xml_reader import XMLLoader
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -137,6 +149,7 @@ class XMLLoader_test(object):
     def test_load_onevent(self):
         # Signature: name(self, element)
 		# No Docstring
+        #from nineml.abstraction_layer.readers.xml_reader import XMLLoader
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -144,6 +157,7 @@ class XMLLoader_test(object):
     def test_load_parameter(self):
         # Signature: name(self, element)
 		# No Docstring
+        #from nineml.abstraction_layer.readers.xml_reader import XMLLoader
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -151,6 +165,7 @@ class XMLLoader_test(object):
     def test_load_regime(self):
         # Signature: name(self, element)
 		# No Docstring
+        #from nineml.abstraction_layer.readers.xml_reader import XMLLoader
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -158,6 +173,7 @@ class XMLLoader_test(object):
     def test_load_single_internal_maths_block(self):
         # Signature: name(self, element, checkOnlyBlock=True)
 		# No Docstring
+        #from nineml.abstraction_layer.readers.xml_reader import XMLLoader
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -165,6 +181,7 @@ class XMLLoader_test(object):
     def test_load_stateassignment(self):
         # Signature: name(self, element)
 		# No Docstring
+        #from nineml.abstraction_layer.readers.xml_reader import XMLLoader
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -172,6 +189,7 @@ class XMLLoader_test(object):
     def test_load_statevariable(self):
         # Signature: name(self, element)
 		# No Docstring
+        #from nineml.abstraction_layer.readers.xml_reader import XMLLoader
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -179,6 +197,7 @@ class XMLLoader_test(object):
     def test_load_subnode(self):
         # Signature: name(self, subnode)
 		# No Docstring
+        #from nineml.abstraction_layer.readers.xml_reader import XMLLoader
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -186,6 +205,7 @@ class XMLLoader_test(object):
     def test_load_timederivative(self):
         # Signature: name(self, element)
 		# No Docstring
+        #from nineml.abstraction_layer.readers.xml_reader import XMLLoader
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -193,6 +213,7 @@ class XMLLoader_test(object):
     def test_load_trigger(self):
         # Signature: name(self, element)
 		# No Docstring
+        #from nineml.abstraction_layer.readers.xml_reader import XMLLoader
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -208,6 +229,7 @@ class XMLLoader_test(object):
 		#         d[k] = v
 		# dict(**kwargs) -> new dictionary initialized with the name=value pairs
 		#     in the keyword argument list.  For example:  dict(one=1, two=2)
+        #from nineml.abstraction_layer.readers.xml_reader import XMLLoader
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 

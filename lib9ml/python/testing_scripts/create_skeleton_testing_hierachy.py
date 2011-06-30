@@ -126,7 +126,7 @@ def test_${name}():
     # Signature: name${fsig}
     #
 ${doc}
-
+    $import_stmt
     warnings.warn('Tests not implemented')
     # raise NotImplementedError()
 
@@ -149,6 +149,7 @@ class ${test_classname}(object):
         # Signature: name${fsig}
         #
 ${doc}
+        $import_stmt
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -158,6 +159,16 @@ ${doc}
 
 
 """
+
+
+
+def get_package_import(obj):
+    mod = inspect.getmodule(obj)
+    if not mod:
+        return "# [Can't find module]"
+   
+    pkg = mod.__name__#.replace(root_dir,'') 
+    return "#from %s import %s"%(pkg, obj.__name__)
 
 # Represents a Test File:
 class TestingFile(object):
@@ -203,7 +214,8 @@ class TestingFile(object):
 
         context = { 'cls':cls,
                     'test_classname': cls.__name__ + '_test',
-                    'to_test': to_test
+                    'to_test': to_test,
+                    'import_stmt':get_package_import(cls),
 
                 } 
         t = Template(test_class_templ, context).respond()
@@ -220,7 +232,8 @@ class TestingFile(object):
 
             d = inspect.cleandoc( obj.__doc__ ) 
             return '\n'.join([ prefix + l for l in d.splitlines() ] )
-        
+       
+
         fsig = ''
         try:
             fsig = inspect.formatargspec(*inspect.getargspec(func))
@@ -231,7 +244,8 @@ class TestingFile(object):
 
         context = { 'func':func,
                     'test_classname': func.__name__ + '_test',
-                    'to_test': to_test
+                    'to_test': to_test,
+                    'import_stmt':get_package_import(func),
                 } 
 
         t = Template(test_func_templ, context).respond()
@@ -242,7 +256,7 @@ class TestingFile(object):
     
     def create_skeleton( self, suffix='' ):
         full_path = self.full_path + suffix
-        if os.path.exists( full_path ):
+        if False and os.path.exists( full_path ):
             print 'Not Overwriting file:', full_path
             return
 

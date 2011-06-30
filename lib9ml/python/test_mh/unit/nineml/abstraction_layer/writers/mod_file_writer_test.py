@@ -21,6 +21,7 @@ class ModFileWriter_test(object):
     def test_compile_modfiles(self):
         # Signature: name(cls, directory)
 		# No Docstring
+        #from nineml.abstraction_layer.writers.mod_file_writer import ModFileWriter
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -28,6 +29,7 @@ class ModFileWriter_test(object):
     def test_write(self):
         # Signature: name(cls, component, filename)
 		# No Docstring
+        #from nineml.abstraction_layer.writers.mod_file_writer import ModFileWriter
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 

@@ -14,7 +14,7 @@ import nineml
 def test__dot_escape():
     # Signature: name(s)
 	# No Docstring
-
+    #from nineml.abstraction_layer.writers.dot_writer import _dot_escape
     warnings.warn('Tests not implemented')
     # raise NotImplementedError()
 
@@ -41,6 +41,7 @@ class DotWriter_test(object):
 		# :params output_types: The types of output that should be produced, by
 		#     default 'pdf' will be produced. This should be a list, for example, 
 		#     ['svg','pdf','png']
+        #from nineml.abstraction_layer.writers.dot_writer import DotWriter
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -48,6 +49,7 @@ class DotWriter_test(object):
     def test_write(self):
         # Signature: name(self, component, filename, flatten=True)
 		# Writes a component out to the .dot format
+        #from nineml.abstraction_layer.writers.dot_writer import DotWriter
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 

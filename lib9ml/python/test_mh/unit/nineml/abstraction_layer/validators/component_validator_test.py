@@ -22,6 +22,7 @@ class ComponentValidator_test(object):
         # Signature: name(cls, component)
 		# Tests a componentclass against a variety of tests, to verify its
 		# internal structure
+        #from nineml.abstraction_layer.validators.component_validator import ComponentValidator
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 

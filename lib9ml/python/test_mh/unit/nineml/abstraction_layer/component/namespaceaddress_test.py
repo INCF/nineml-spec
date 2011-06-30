@@ -30,6 +30,7 @@ class NamespaceAddress_test(object):
 		# 
 		# >>> NamespaceAddress.concat('first.second','third.forth','fifth.sixth')
 		#     NameSpaceAddress: '/first/second/third/forth/fifth/sixth'
+        #from nineml.abstraction_layer.component.namespaceaddress import NamespaceAddress
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -41,6 +42,7 @@ class NamespaceAddress_test(object):
 		# 
 		# >>> nineml.abstraction_layer.NamespaceAddress.create_root()
 		# NameSpaceAddress: '//'    
+        #from nineml.abstraction_layer.component.namespaceaddress import NamespaceAddress
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -49,6 +51,7 @@ class NamespaceAddress_test(object):
         # Signature: name(self)
 		# Returns the local reference; i.e. the last field in the 
 		# address, as a ``string``
+        #from nineml.abstraction_layer.component.namespaceaddress import NamespaceAddress
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -62,6 +65,7 @@ class NamespaceAddress_test(object):
 		# NameSpaceAddress: '/level1/level2/level3/'
 		# >>> a.get_parent_addr()
 		# NameSpaceAddress: '/level1/level2/'
+        #from nineml.abstraction_layer.component.namespaceaddress import NamespaceAddress
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -73,6 +77,7 @@ class NamespaceAddress_test(object):
 		# variables.
 		# 
 		# :param join_char: The character used to join the levels in the address.
+        #from nineml.abstraction_layer.component.namespaceaddress import NamespaceAddress
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -86,6 +91,7 @@ class NamespaceAddress_test(object):
 		# >>> a = NamespaceAddress('level1.level2.level3')
 		# >>> a.get_subns_addr('subcomponent')
 		# NameSpaceAddress: '/level1/level2/level3/subcomponent/'
+        #from nineml.abstraction_layer.component.namespaceaddress import NamespaceAddress
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -95,6 +101,7 @@ class NamespaceAddress_test(object):
 		# Returns the namespace address as a string.
 		# 
 		# :param join_char: The character used to join the levels in the address.
+        #from nineml.abstraction_layer.component.namespaceaddress import NamespaceAddress
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 

@@ -14,7 +14,7 @@ import nineml
 def test_check_list_contain_same_items():
     # Signature: name(lst1, lst2, desc1='', desc2='', ignore=[], desc='')
 	# No Docstring
-
+    #from nineml.utility import check_list_contain_same_items
     warnings.warn('Tests not implemented')
     # raise NotImplementedError()
 
@@ -45,7 +45,7 @@ def test_filter_expect_single():
 	#  >>> find_smith = lambda s: s.split()[-1] == 'Smith'
 	#  >>> filter_expect_single( ['John Smith','Tim Jones'], func=find_smith )  #doctest: +NORMALIZE_WHITESPACE 
 	#  'John Smith'
-
+    #from nineml.utility import filter_expect_single
     warnings.warn('Tests not implemented')
     # raise NotImplementedError()
 
@@ -93,7 +93,7 @@ def test_expect_single():
 	# >>> #Slightly more tersly:
 	# >>> expect_single( [], RuntimeError('Aggh') ) #doctest: +SKIP
 	# RuntimeError: Aggh
-
+    #from nineml.utility import expect_single
     warnings.warn('Tests not implemented')
     # raise NotImplementedError()
 
@@ -110,7 +110,7 @@ def test_flatten_first_level():
 	# 
 	# >>> flatten_first_level( [ ['This','is'],['a','short'],['phrase'] ] ) #doctest: +NORMALIZE_WHITESPACE 
 	# ['This', 'is', 'a', 'short', 'phrase'] 
-
+    #from nineml.utility import flatten_first_level
     warnings.warn('Tests not implemented')
     # raise NotImplementedError()
 
@@ -134,7 +134,7 @@ def test_invert_dictionary():
 	#     {v1:k1, v2:k2, v3:k3, ...} 
 	# 
 	# It checks to make sure that no values are duplicated before converting.
-
+    #from nineml.utility import invert_dictionary
     warnings.warn('Tests not implemented')
     # raise NotImplementedError()
 
@@ -153,7 +153,7 @@ def test_assert_no_duplicates():
 	# to a set and comparing the lengths.
 	# 
 	# It raises an `NineMLRuntimeError` if the lengths are not equal.
-
+    #from nineml.utility import assert_no_duplicates
     warnings.warn('Tests not implemented')
     # raise NotImplementedError()
 
@@ -167,7 +167,7 @@ def test_assert_no_duplicates():
 def test_file_sha1_hexdigest():
     # Signature: name(filename)
 	# Returns the SHA1 hex-digest of a file
-
+    #from nineml.utility import file_sha1_hexdigest
     warnings.warn('Tests not implemented')
     # raise NotImplementedError()
 
@@ -184,7 +184,7 @@ def test_filter_by_type():
 	# 
 	# This is a syntactic sugar function, which returns a list of all the
 	# objects in a iterable for which  ``isinstance(o,acceptedtype) == True``
-
+    #from nineml.utility import filter_by_type
     warnings.warn('Tests not implemented')
     # raise NotImplementedError()
 
@@ -210,7 +210,7 @@ def test_filter_discrete_types():
 	# 
 	# 
 	# The function checks that each object is mapped to exactly one type
-
+    #from nineml.utility import filter_discrete_types
     warnings.warn('Tests not implemented')
     # raise NotImplementedError()
 
@@ -224,7 +224,7 @@ def test_filter_discrete_types():
 def test_join_norm():
     # Signature: name(*args)
 	# No Docstring
-
+    #from nineml.utility import join_norm
     warnings.warn('Tests not implemented')
     # raise NotImplementedError()
 
@@ -240,7 +240,7 @@ def test_restore_sys_path():
 	# Decorator used to restore the sys.path
 	# to the value it was before the function call.
 	# This is useful for loading modules.
-
+    #from nineml.utility import restore_sys_path
     warnings.warn('Tests not implemented')
     # raise NotImplementedError()
 
@@ -255,7 +255,7 @@ def test_safe_dict():
     # Signature: name(vals)
 	# Create a dict, like dict(), but ensure no duplicate keys are given!
 	# [Python silently allows dict( [(1:True),(1:None)] ) !!
-
+    #from nineml.utility import safe_dict
     warnings.warn('Tests not implemented')
     # raise NotImplementedError()
 
@@ -278,7 +278,7 @@ def test_safe_dictionary_merge():
 	# 
 	# >>> safe_dictionary_merge( [ {1:'One',2:'Two'},{3:'Three',1:'One'} ] ) #doctest: +NORMALIZE_WHITESPACE +IGNORE_EXCEPTION_DETAIL +SKIP
 	# NineMLRuntimeError: Key Collision while merging dictionarys
-
+    #from nineml.utility import safe_dictionary_merge
     warnings.warn('Tests not implemented')
     # raise NotImplementedError()
 
@@ -294,7 +294,7 @@ def test__dispatch_error_func():
 	# Internal function for dispatching errors. 
 	# 
 	# This was seperated out because it happens in a lot of utility functions
-
+    #from nineml.utility import _dispatch_error_func
     warnings.warn('Tests not implemented')
     # raise NotImplementedError()
 
@@ -334,7 +334,7 @@ def test__filter():
 	# 
 	# >>> _filter( [None,] )                   #doctest: +NORMALIZE_WHITESPACE 
 	# []
-
+    #from nineml.utility import _filter
     warnings.warn('Tests not implemented')
     # raise NotImplementedError()
 
@@ -355,6 +355,7 @@ class LocationMgr_test(object):
     def test_StdAppendToPath(self):
         # Signature: name(cls)
 		# No Docstring
+        #from nineml.utility import LocationMgr
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -362,6 +363,7 @@ class LocationMgr_test(object):
     def test_getCatalogDir(self):
         # Signature: name(cls)
 		# No Docstring
+        #from nineml.utility import LocationMgr
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -369,6 +371,7 @@ class LocationMgr_test(object):
     def test_getComponentDir(self):
         # Signature: name(cls)
 		# No Docstring
+        #from nineml.utility import LocationMgr
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -376,6 +379,7 @@ class LocationMgr_test(object):
     def test_getRootDir(self):
         # Signature: name(cls)
 		# No Docstring
+        #from nineml.utility import LocationMgr
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -383,6 +387,7 @@ class LocationMgr_test(object):
     def test_getTmpDir(self):
         # Signature: name(cls)
 		# No Docstring
+        #from nineml.utility import LocationMgr
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -394,6 +399,7 @@ class LocationMgr_test(object):
 		# Returns True when the argument x is true, False otherwise.
 		# The builtins True and False are the only two instances of the class bool.
 		# The class bool is a subclass of the class int, and cannot be subclassed.
+        #from nineml.utility import LocationMgr
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -404,6 +410,7 @@ class LocationMgr_test(object):
 		# 
 		# Return a nice string representation of the object.
 		# If the argument is a string, the return value is the same object.
+        #from nineml.utility import LocationMgr
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -429,6 +436,7 @@ class Settings_test(object):
 		# Returns True when the argument x is true, False otherwise.
 		# The builtins True and False are the only two instances of the class bool.
 		# The class bool is a subclass of the class int, and cannot be subclassed.
+        #from nineml.utility import Settings
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 

@@ -14,7 +14,7 @@ import nineml
 def test_internal_error():
     # Signature: name(s)
 	# No Docstring
-
+    #from nineml.exceptions.exceptions import internal_error
     warnings.warn('Tests not implemented')
     # raise NotImplementedError()
 
@@ -28,7 +28,7 @@ def test_internal_error():
 def test_raise_exception():
     # Signature: name(exception=None)
 	# No Docstring
-
+    #from nineml.exceptions.exceptions import raise_exception
     warnings.warn('Tests not implemented')
     # raise NotImplementedError()
 
@@ -49,6 +49,7 @@ class NineMLRuntimeError_test(object):
     def test_args(self):
         # Signature: name
 		# No Docstring
+        #from nineml.exceptions.exceptions import NineMLRuntimeError
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -56,6 +57,7 @@ class NineMLRuntimeError_test(object):
     def test_message(self):
         # Signature: name
 		# No Docstring
+        #from nineml.exceptions.exceptions import NineMLRuntimeError
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 

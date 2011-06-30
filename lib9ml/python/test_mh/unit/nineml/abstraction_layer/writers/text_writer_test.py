@@ -14,7 +14,7 @@ import nineml
 def test_dump_reduced():
     # Signature: name(component, filename)
 	# No Docstring
-
+    #from nineml.abstraction_layer.writers.text_writer import dump_reduced
     warnings.warn('Tests not implemented')
     # raise NotImplementedError()
 
@@ -35,6 +35,7 @@ class TextWriter_test(object):
     def test_write(self):
         # Signature: name(cls, component, filename)
 		# No Docstring
+        #from nineml.abstraction_layer.writers.text_writer import TextWriter
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 

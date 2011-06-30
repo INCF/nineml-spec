@@ -21,6 +21,7 @@ class ComponentQueryer_test(object):
     def test_analog_reduce_ports(self):
         # Signature: name
 		# Get the ``reduce`` EventPorts
+        #from nineml.abstraction_layer.component.componentqueryer import ComponentQueryer
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -28,6 +29,7 @@ class ComponentQueryer_test(object):
     def test_event_recv_ports(self):
         # Signature: name(self)
 		# Get the ``recv`` EventPorts
+        #from nineml.abstraction_layer.component.componentqueryer import ComponentQueryer
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -35,6 +37,7 @@ class ComponentQueryer_test(object):
     def test_event_send_ports(self):
         # Signature: name(self)
 		# Get the ``send`` EventPorts
+        #from nineml.abstraction_layer.component.componentqueryer import ComponentQueryer
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -45,6 +48,7 @@ class ComponentQueryer_test(object):
 		# 
 		# This method returns a d list of tuples of the 
 		# the fully-qualified port connections
+        #from nineml.abstraction_layer.component.componentqueryer import ComponentQueryer
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -53,6 +57,7 @@ class ComponentQueryer_test(object):
         # Signature: name
 		# Return an iterator over all the port (Event & Analog) in the
 		# component
+        #from nineml.abstraction_layer.component.componentqueryer import ComponentQueryer
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -60,6 +65,7 @@ class ComponentQueryer_test(object):
     def test_recurse_all_components(self):
         # Signature: name
 		# Returns an iterator over this component and all subcomponents
+        #from nineml.abstraction_layer.component.componentqueryer import ComponentQueryer
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -67,6 +73,7 @@ class ComponentQueryer_test(object):
     def test_regime(self):
         # Signature: name(self, name=None)
 		# Find a regime in the component by name
+        #from nineml.abstraction_layer.component.componentqueryer import ComponentQueryer
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 

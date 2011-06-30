@@ -14,7 +14,7 @@ import nineml
 def test_check_flat_component():
     # Signature: name(func)
 	# No Docstring
-
+    #from nineml.abstraction_layer.util import check_flat_component
     warnings.warn('Tests not implemented')
     # raise NotImplementedError()
 

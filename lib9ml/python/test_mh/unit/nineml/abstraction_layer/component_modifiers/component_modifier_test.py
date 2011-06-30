@@ -21,6 +21,7 @@ class ComponentModifier_test(object):
     def test_close_all_reduce_ports(self):
         # Signature: name(*args, **kwargs)
 		# No Docstring
+        #from nineml.abstraction_layer.component_modifiers.component_modifier import ComponentModifier
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -28,6 +29,7 @@ class ComponentModifier_test(object):
     def test_close_analog_port(self):
         # Signature: name(*args, **kwargs)
 		# No Docstring
+        #from nineml.abstraction_layer.component_modifiers.component_modifier import ComponentModifier
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
@@ -35,6 +37,7 @@ class ComponentModifier_test(object):
     def test_rename_port(self):
         # Signature: name(*args, **kwargs)
 		# No Docstring
+        #from nineml.abstraction_layer.component_modifiers.component_modifier import ComponentModifier
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
