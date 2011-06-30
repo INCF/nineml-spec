@@ -122,13 +122,15 @@ test_func_templ = """
 
 #set name,value,doc, fsig = $to_test
 
-def test_${name}():
-    # Signature: name${fsig}
-    #
+class Test${name}(unittest.TestCase):
+
+    def test_${name}(self):
+        # Signature: name${fsig}
+        #
 ${doc}
-    $import_stmt
-    warnings.warn('Tests not implemented')
-    # raise NotImplementedError()
+        $import_stmt
+        warnings.warn('Tests not implemented')
+        # raise NotImplementedError()
 
 
 """
@@ -138,7 +140,7 @@ test_class_templ = """
 
 # Testing Skeleton for class: $cls.__name__
 
-class ${test_classname}(object):
+class ${test_classname}(unittest.TestCase):
     
     def test_Constructor(self):
         pass
@@ -226,7 +228,7 @@ class TestingFile(object):
 
     def get_func_skeleton_text(self, func):
         def get_doc(obj):
-            prefix = '\t# '
+            prefix = '\t\t# '
             if not obj.__doc__:
                 return prefix + 'No Docstring'
 
@@ -256,7 +258,8 @@ class TestingFile(object):
     
     def create_skeleton( self, suffix='' ):
         full_path = self.full_path + suffix
-        if False and os.path.exists( full_path ):
+        if os.path.exists( full_path ):
+        #if False and os.path.exists( full_path ):
             print 'Not Overwriting file:', full_path
             return
 

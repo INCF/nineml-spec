@@ -47,7 +47,15 @@ def _dispatch_error_func(error_func, default_error=NineMLRuntimeError() ):
 
 
 
+def _is_iterable(obj):
+    return hasattr(obj,'__iter__')
 
+def _is_hashable(obj):
+    try:
+        hash(obj)
+        return True
+    except:
+        return False
 
 
 def expect_single(lst, error_func = None):
@@ -88,6 +96,14 @@ def expect_single(lst, error_func = None):
     RuntimeError: Aggh
 
     """
+
+    if not _is_iterable(lst):
+        raise NineMLRuntimeError('Object not iterable')
+    if issubclass(lst.__class__, (dict)):
+        err = "Dictionary passed to expect_single. This could be ambiguous"
+        err +="\nIf this is what you intended, please explicity pass '.keys' "
+        raise NineMLRuntimeError(err)
+
     lst = list(lst)
 
     # Good case:
@@ -109,7 +125,7 @@ def _filter(lst, func=None):
     Takes a sequence [o1,o2,..] and returns a list contains those which 
     are not `None` and satisfy the predicate `func(o)`
 
-    :param lst: Input iterable
+    :param lst: Input iterable (not a dictionary)
     :param func: Predicate function. If ``none``, this function always returns ``True``
 
 
@@ -170,7 +186,11 @@ def filter_by_type(lst, acceptedtype):
     """ Find all the objects of a certain type in a list
     
         This is a syntactic sugar function, which returns a list of all the
-        objects in a iterable for which  ``isinstance(o,acceptedtype) == True``
+        objects in a iterable for which  ``isinstance(o,acceptedtype) == True`` 
+        and for which the objects are not ``None``. i.e::
+
+            filter_by_type([None], types.NoneType)
+            []
 
     """
     return _filter( lst, lambda x: isinstance(x, acceptedtype))
@@ -205,10 +225,13 @@ def assert_no_duplicates(lst, error_func=None):
     """Check for duplicates in a sequence.
     
     This function checks that a list contains no duplicates, by casting the list
-    to a set and comparing the lengths.
+    to a set and comparing the lengths. (This means that we cannot compare
+    sequences containing unhashable types, like dictionaries and lists).
 
     It raises an `NineMLRuntimeError` if the lengths are not equal.
     """
+
+    
 
     if len(lst) != len( set(lst) ):
         
@@ -240,6 +263,11 @@ def invert_dictionary(dct):
     It checks to make sure that no values are duplicated before converting.
     """
 
+    for v in dct.values():
+        if not _is_hashable(v):
+            err = "Can't invert a dictionary containing unhashable keys"
+            raise NineMLRuntimeError(err)
+
     assert_no_duplicates( dct.values() )
     return dict( zip(dct.values(), dct.keys()) )
 
@@ -250,7 +278,25 @@ def flatten_first_level( nested_list ):
         >>> flatten_first_level( [ ['This','is'],['a','short'],['phrase'] ] ) #doctest: +NORMALIZE_WHITESPACE 
         ['This', 'is', 'a', 'short', 'phrase'] 
 
+        >>> flatten_first_level( [ [1,2],[3,4,5],[6] ] ) #doctest: +NORMALIZE_WHITESPACE 
+        [1,2,3,4,5,6] 
+
     """
+    if isinstance(nested_list, basestring):
+        err = "Shouldn't pass a string to flatten_first_level."
+        err +="Use list(str) instead"
+        raise NineMLRuntimeError(err)
+    
+    if not _is_iterable(nested_list):
+        err = 'flatten_first_level() expects an iterable'
+        raise NineMLRuntimeError(err)
+
+    for nl in nested_list:
+        if not _is_iterable(nl):
+            err = 'flatten_first_level() expects all arguments to be iterable'
+            raise NineMLRuntimeError(err)
+
+    
     return list( itertools.chain(*nested_list) )
 
 def safe_dictionary_merge( dictionaries ):
