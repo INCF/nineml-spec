@@ -27,7 +27,9 @@ class ComponentValidatorLocalNameConflicts(ComponentValidatorPerNamespace):
         self.visit(component)
     
     def check_comflicting_symbol(self, namespace, symbol):
-        assert not symbol in self.symbols[namespace]
+        if symbol in self.symbols[namespace]:
+            err = 'Duplication of symbol found: %s in %s'%(symbol, namespace)
+            raise NineMLRuntimeError(err)
         self.symbols[namespace].append(symbol)
             
     def action_statevariable(self, state_variable, namespace, **kwargs):

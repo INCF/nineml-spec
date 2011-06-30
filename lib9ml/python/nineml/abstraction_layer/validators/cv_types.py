@@ -1,7 +1,7 @@
 
 #import nineml.abstraction_layer as al
 from nineml.abstraction_layer.visitors import ActionVisitor
-
+import nineml
 
 
 class ComponentValidatorTypes(ActionVisitor):

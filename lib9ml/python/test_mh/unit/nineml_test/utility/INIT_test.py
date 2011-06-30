@@ -385,7 +385,7 @@ class Testfile_sha1_hexdigest(unittest.TestCase):
         # Signature: name(filename)
 		# Returns the SHA1 hex-digest of a file
         #from nineml.utility import file_sha1_hexdigest
-        warnings.warn('Tests not implemented')
+        warnings.warn('Tests not implemented: sha1_hex_digest')
 
 
 
@@ -525,9 +525,24 @@ class Testsafe_dict(unittest.TestCase):
         # Signature: name(vals)
 		# Create a dict, like dict(), but ensure no duplicate keys are given!
 		# [Python silently allows dict( [(1:True),(1:None)] ) !!
-        #from nineml.utility import safe_dict
-        warnings.warn('Tests not implemented')
-        # raise NotImplementedError()
+
+        from nineml.utility import safe_dict
+        from nineml.exceptions import NineMLRuntimeError
+
+        self.assertEqual( 
+                safe_dict( [[1,'One'],[2,'Two']]),
+                {1:'One',2:'Two'} 
+                        )
+        self.assertEqual( 
+                safe_dict( [[1,'One'],[2,'Two'],[3,'Three'],[4,'Four']]),
+                {1:'One',2:'Two',3:'Three',4:'Four'} 
+                        )
+
+        self.assertRaises(
+                NineMLRuntimeError,
+                safe_dict,
+                [ [1,'One'],[2,'Two'],[3,'Three'],[1,'One'],[4,'Four'] ]
+                )
 
 
 
@@ -550,10 +565,23 @@ class Testsafe_dictionary_merge(unittest.TestCase):
 		# 
 		# >>> safe_dictionary_merge( [ {1:'One',2:'Two'},{3:'Three',1:'One'} ] ) #doctest: +NORMALIZE_WHITESPACE +IGNORE_EXCEPTION_DETAIL +SKIP
 		# NineMLRuntimeError: Key Collision while merging dictionarys
-        #from nineml.utility import safe_dictionary_merge
-        warnings.warn('Tests not implemented')
-        # raise NotImplementedError()
 
+        from nineml.utility import safe_dictionary_merge
+        from nineml.exceptions import NineMLRuntimeError
+        self.assertEqual( 
+                safe_dictionary_merge( [{1:'One'},{2:'Two'}]),
+                {1:'One',2:'Two'} 
+                        )
+        self.assertEqual( 
+                safe_dictionary_merge( [{1:'One'},{2:'Two',3:'Three'},{4:'Four'}]),
+                {1:'One',2:'Two',3:'Three',4:'Four'} 
+                        )
+
+        self.assertRaises(
+                NineMLRuntimeError,
+                safe_dictionary_merge,
+                [ {1:'One'},{2:'Two',3:'Three',1:'One'},{4:'Four'} ]
+                )
 
 
 
@@ -599,7 +627,7 @@ class Test_filter(unittest.TestCase):
 		# >>> _filter( [None,] )                   #doctest: +NORMALIZE_WHITESPACE 
 		# []
         #from nineml.utility import _filter
-        warnings.warn('Tests not implemented')
+        warnings.warn('Tests not implemented: _filter')
         # raise NotImplementedError()
 
 

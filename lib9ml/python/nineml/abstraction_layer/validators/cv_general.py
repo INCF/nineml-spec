@@ -3,6 +3,7 @@ from collections import defaultdict
 
 
 from base import ComponentValidatorPerNamespace
+import nineml
 
 #from nineml.exceptions import NineMLRuntimeError
 #from nineml.abstraction_layer.component.namespaceaddress import NamespaceAddress
@@ -121,14 +122,15 @@ class ComponentValidatorAssignmentsAliasesAndStateVariablesHaveNoUnResolvedSymbo
         self.visit(component)
 
         
-        #TODO:
         excludes = ['celsius', 't'] + list( nineml.al.math_namespace.functions)
-        
+
         # Check Aliases:
         for ns, aliases in self.aliases.iteritems():
             for alias in aliases:
                 for rhs_atom in alias.rhs_atoms:
-                    if not rhs_atom in self.available_symbols[ns] and not rhs_atom in excludes:
+                    if rhs_atom in excludes:
+                        continue
+                    if not rhs_atom in self.available_symbols[ns]:
                         err = 'Unresolved Symbol in Alias: %s [%s]'%(rhs_atom, alias)                
                         raise nineml.exceptions.NineMLRuntimeError(err)                
 

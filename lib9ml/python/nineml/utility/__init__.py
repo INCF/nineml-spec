@@ -366,7 +366,7 @@ class LocationMgr(object):
 
 
 class Settings(object):
-    enable_component_validation = False
+    enable_component_validation = True
 
 
 def check_list_contain_same_items(lst1, lst2, desc1="", desc2="", ignore=[],
@@ -407,7 +407,8 @@ def safe_dict( vals ):
             err = 'safe_dict() failed with duplicated keys: %s'%k
             raise NineMLRuntimeError(err)
         d[k] = v
-    assert len(vals) == len(d)
+    if len(vals) != len(d):
+        raise NineMLRuntimeError('Duplicate keys given')
     return d
 
 

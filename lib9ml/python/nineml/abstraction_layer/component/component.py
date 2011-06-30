@@ -277,7 +277,11 @@ class InterfaceInferer(ActionVisitor):
 
         # Which symbols can we account for: 
         alias_symbols = set( dynamics.aliases_map.keys() )
-        analog_ports_in = [ap.name for ap in analog_ports if ap.is_incoming()]
+
+        if analog_ports is not None:
+            analog_ports_in = [ap.name for ap in analog_ports if ap.is_incoming()]
+        else:
+            analog_ports_in = []
 
         self.accounted_for_symbols = set( itertools.chain(
             self.state_variable_names, 
@@ -398,14 +402,17 @@ class ComponentClass( ComponentClassMixinFlatStructure,
             For examples
 
         """
-        parameters = parameters or []
-        event_ports = event_ports or []
-        analog_ports = analog_ports or []
+        #if parameters is None:
+        #    parameters = []
+        #if event_ports is None:
+        #    event_ports = []
+        #if analog_ports is None:
+        #    analog_ports = []
 
 
         # We can specify in the componentclass, and they will get forwarded to
         # the dynamics class. We check that we do not specify half-and-half:
-        if dynamics:
+        if dynamics is not None:
             if regimes or aliases or state_variables:
                 err =  "Either specify a 'dynamics' parameter, or "
                 err += "state_variables /regimes/aliases, but not both!"
@@ -420,9 +427,10 @@ class ComponentClass( ComponentClassMixinFlatStructure,
         
         # Turn any strings in the parameter list into Parameters:
         from nineml.utility import filter_discrete_types
-        param_td = filter_discrete_types( parameters, (basestring, Parameter) )
-        params_from_strings = [Parameter(s) for s in param_td[basestring]]
-        parameters = param_td[Parameter] + params_from_strings
+        if parameters is not None:
+            param_td = filter_discrete_types( parameters, (basestring, Parameter) )
+            params_from_strings = [Parameter(s) for s in param_td[basestring]]
+            parameters = param_td[Parameter] + params_from_strings
 
 
         self._query = componentqueryer.ComponentQueryer(self)
@@ -435,7 +443,7 @@ class ComponentClass( ComponentClassMixinFlatStructure,
                 desc1='Declared', desc2='Inferred', ignore=['t'], desc=desc) 
         
         # Check any supplied parameters match:
-        if parameters:
+        if parameters is not None:
             parameter_names = [p.name for p in parameters]
             inf_check( parameter_names, inferred_struct.parameter_names,'Parameters' )
         else:
@@ -453,10 +461,10 @@ class ComponentClass( ComponentClassMixinFlatStructure,
 
 
         # Check Event Ports Match:
-        ip_evtport_names =  [ep.name for ep in event_ports if ep.is_incoming()]
-        op_evtport_names = [ep.name for ep in event_ports if ep.is_outgoing()]
 
-        if event_ports:
+        if event_ports is not None:
+            ip_evtport_names =  [ep.name for ep in event_ports if ep.is_incoming()]
+            op_evtport_names = [ep.name for ep in event_ports if ep.is_outgoing()]
             #Check things Match:
             inf_check(ip_evtport_names, inferred_struct.input_event_port_names, 'Event Ports In')
             inf_check(op_evtport_names, inferred_struct.output_event_port_names,'Event Ports Out')
