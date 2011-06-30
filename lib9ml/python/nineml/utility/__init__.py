@@ -12,6 +12,7 @@ from os.path import dirname, normpath
 import sys
 
 import itertools
+import hashlib
 
 
 from nineml.exceptions import internal_error, raise_exception
@@ -282,7 +283,7 @@ def join_norm(*args):
 
 
 class LocationMgr(object):
-
+    std_append_to_path_called = False
     temp_dir = '/tmp/'
         
     @classmethod
@@ -303,9 +304,12 @@ class LocationMgr(object):
 
     @classmethod
     def StdAppendToPath(cls):
+        if LocationMgr.std_append_to_path_called:
+            return 
         root = cls.getRootDir()
         sys.path.append(Join(root, "lib9ml/python/examples/AL"))
         sys.path.append(Join(root, "code_generation/nmodl"))     
+        LocationMgr.std_append_to_path_called = True
 
 
 
@@ -352,3 +356,20 @@ def safe_dict( vals ):
         d[k] = v
     assert len(vals) == len(d)
     return d
+
+
+
+
+def file_sha1_hexdigest(filename):
+    """Returns the SHA1 hex-digest of a file"""
+
+    f = open(filename ,'rb')
+    hashhex = hashlib.sha1(f.read()).hexdigest()
+    f.close()
+    return hashhex
+
+
+
+
+
+

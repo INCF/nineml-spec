@@ -3,48 +3,10 @@
 Example of using a cell type defined in 9ML with pyNN.neuron
 """
 
-
-
-
-import sys
-from os.path import abspath, realpath, join
-import nineml
-
-
-#import os
-#print os.environ['PATH']
-#assert False
-
-
-root = abspath(join(realpath(nineml.__path__[0]), "../../.."))
-sys.path.append(join(root, "lib9ml/python/examples/AL"))
-sys.path.append(join(root, "code_generation/nmodl"))     
-           
-
 from nineml.abstraction_layer.example_models import  get_hierachical_iaf_nmda
-from nineml.abstraction_layer.flattening import ComponentFlattener
+from nineml.abstraction_layer.testing_utils import std_pynn_simulation, RecordValue 
 
-import pyNN.neuron as sim
-import pyNN.neuron.nineml as pyNNml
-
-from pyNN.utility import init_logging
-
-
-init_logging(None, debug=True)
-sim.setup(timestep=0.1, min_delay=0.1)
-
-
-testModel = get_hierachical_iaf_nmda()
-
-
-celltype_cls = pyNNml.nineml_celltype_from_model(
-                                        name = "iaf_nmda",
-                                        nineml_model = testModel,
-                                        synapse_components = [
-                                            pyNNml.CoBaSyn( namespace='nmda',  weight_connector='weight' ),
-                                            pyNNml.CoBaSyn( namespace='cobaExcit',  weight_connector='q' ),
-                                                   ]
-                                        )
+test_component = get_hierachical_iaf_nmda()
 
 parameters = {
     'iaf.cm': 1.0,
@@ -63,58 +25,35 @@ parameters = {
     'nmda.beta': 3.57 #mM
 }
 
+initial_values = {
+    'iaf_V': parameters['iaf.vrest'],
+    'tspike': -1e99,
+    'regime': 1002,
+        }
 
-parameters = ComponentFlattener.flatten_namespace_dict( parameters )
-
-
-cells = sim.Population(1, celltype_cls, parameters)
-
-cells.initialize('iaf_V', parameters['iaf_vrest'])
-cells.initialize('tspike', -1e99) # neuron not refractory at start
-cells.initialize('regime', 1002) # temporary hack
-
-input = sim.Population(1, sim.SpikeSourcePoisson, {'rate': 100})
-
-connector = sim.OneToOneConnector(weights=1.0, delays=0.5)
+synapse_components = [
+    ( 'nmda',  'weight' ),
+    ( 'cobaExcit', 'q' ),
+    ]
 
 
-conn = [
-        sim.Projection(input[0:1], cells, connector, target='nmda'),
-        sim.Projection(input[0:1], cells, connector, target='cobaExcit'),
+
+records = [
+    RecordValue( what='iaf_V',       tag='Voltage [mV]',     label='Membrane Voltage' ),
+    RecordValue( what='nmda_g',      tag='Conductance [ns]', label='NMDA-g' ),
+    RecordValue( what='cobaExcit_g', tag='Conductance [ns]', label='cobaexcit-g' ),
+    RecordValue( what='regime',      tag='Regime',           label='Regime' ),
         ]
 
 
-cells._record('iaf_V')
-cells._record('nmda_g')
-cells._record('cobaExcit_g')
-cells.record()
+std_pynn_simulation( test_component = test_component,
+                     parameters = parameters, 
+                     initial_values = initial_values, 
+                     synapse_components = synapse_components, 
+                     records = records
+                     )
 
-sim.run(100.0)
-
-cells.recorders['iaf_V'].write("Results/nineml_neuron.V", filter=[cells[0]])
-cells.recorders['nmda_g'].write("Results/nineml_neuron.g_nmda", filter=[cells[0]])
-cells.recorders['cobaExcit_g'].write("Results/nineml_neuron.g_cobaExcit", filter=[cells[0]])
+           
 
 
-t = cells.recorders['iaf_V'].get()[:,1]
-v = cells.recorders['iaf_V'].get()[:,2]
-gNMDA = cells.recorders['nmda_g'].get()[:,2]
-gExcit = cells.recorders['cobaExcit_g'].get()[:,2]
-
-import pylab
-
-pylab.subplot(211)
-pylab.plot(t,v)
-pylab.ylabel('voltage [mV]')
-pylab.subplot(212)
-pylab.plot(t,gNMDA, label='g-NMDA')
-pylab.plot(t,gExcit, label='g-Excitatory Synapse')
-pylab.ylabel('conductance [nS]')
-pylab.xlabel('t [ms]')
-pylab.legend()
-
-pylab.suptitle("From Tree-Model Pathway")
-pylab.show()
-
-sim.end()
 
