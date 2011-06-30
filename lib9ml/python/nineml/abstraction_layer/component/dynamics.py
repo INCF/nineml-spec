@@ -280,7 +280,7 @@ class Regime(object):
 
 
     #def __init__(self, name=None, transitions=None, time_derivatives = None):
-    def __init__(self, *time_derivatives, **kwargs):
+    def __init__(self, *args, **kwargs):
         """Regime constructor
             
             :param name: The name of the constructor. If none, then a name will
@@ -296,12 +296,16 @@ class Regime(object):
 
 
         """
-        valid_kwargs = ('name','transitions')
+        valid_kwargs = ('name','transitions','time_derivatives')
         for arg in kwargs:
-            assert arg in valid_kwargs
+            if not arg in valid_kwargs:
+                err = 'Unexpected Arg: %s'%arg
+                raise NineMLRuntimeError(err)
 
         transitions=kwargs.get('transitions',None)
         name = kwargs.get('name', None)
+        kw_tds = nineml.utility.normalise_parameter_as_list( kwargs.get('time_derivatives',None))
+        time_derivatives = list(args) + kw_tds
         
 
 
@@ -323,7 +327,7 @@ class Regime(object):
         # and OnConditions. So, lets filter this by type and add them
         # appropriately:
 
-        transitions = nineml.utility.normalise_parameter_as_list(transitions)
+        transitions = nineml.utility.normalise_parameter_as_list(transitions) 
         f_dict = nineml.utility.filter_discrete_types( transitions, (OnEvent, OnCondition)) 
         self._on_events = [] 
         self._on_conditions = [] 

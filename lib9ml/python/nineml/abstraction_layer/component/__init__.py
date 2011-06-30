@@ -28,6 +28,8 @@ from util import parse, StrToExpr, MathUtil
 from cond_parse import CalcCond
 from expr_parse import NineMLMathParseError, CalcExpr
 
+
+from syntacticsugar import SpikeOutputEvent
 from nineml import __version__
 
 

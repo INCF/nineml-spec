@@ -33,8 +33,7 @@ def get_component():
         "dm/dt = (minf-m)/mtau",
         "dh/dt = (hinf-h)/htau",
         "dV/dt = (ina + ik + il + Isyn)/C",
-        transitions=al.On("V > theta",do=al.OutputEvent('spikeoutput')),
-        name="hh_regime",
+        transitions=al.On("V > theta",do=al.SpikeOutputEvent() )
     )
 
 # the rest are not "parameters" but aliases, assigned vars, state vars, indep vars, analog_analog_ports, etc.
