@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 
 import os
 import glob
@@ -23,6 +25,7 @@ from nineml.abstraction_layer.testing_utils import TestWriteDot
 from nineml.utility import file_sha1_hexdigest
 
 
+from nineml.abstraction_layer.testing_utils import std_pynn_simulation
 
 
 
@@ -34,23 +37,33 @@ def clear_and_recreate_dir(dir_name):
 
 
 
-def main():
+def main(src='components_done/'):
     build_dir = 'build/'
     output_dir = 'output/'
-    src_dir = 'components_done/'
 
     print 'Clearing output directory: %s' % output_dir
     clear_and_recreate_dir(output_dir)
 
-    print ' Testing all Components in: %s'% src_dir
 
-    for src_file in glob.glob( src_dir + '/*.py'):
+    single_file_mode = os.path.isfile(src)
+
+    if single_file_mode:
+        print ' Testing Component: %s'% src
+        src_files = [src]
+    else:
+        print ' Testing all Components in: %s'% src
+        src_files = glob.glob( src + '/*.py')
+
+
+    for src_file in src_files:
 
         # Clear the build-dir
         clear_and_recreate_dir(build_dir)
+        clear_and_recreate_dir('nineml_mechanisms')
 
         # Load the file:
-        t = TestableComponent(filename)
+        print '  -- Loading from file: %s' % src_file
+        t = TestableComponent(src_file)
 
         # Run some tests:
         TestXMLWriteReadWrite.test(t, build_dir=build_dir)
@@ -59,12 +72,17 @@ def main():
         if t.has_metadata():
             if t.metadata.is_neuron_model:
                 test_write_mod(t)
+        
+            if single_file_mode:
+                flg = 'supports_test_pynn_neuron_std'
+                if t.metadata.__dict__.get(flg, False):
+                    test_pynn_neuron_std(t)
 
         #Save all the output files:
         
         shutil.move(build_dir, output_dir)
         shutil.move( os.path.join(output_dir,build_dir),
-                os.path.join(output_dir,srcfile.replace('.py','') ) )
+                os.path.join(output_dir,src_file.replace('.py','') ) )
         print '  Everything Ran Fine'
         print '  -------------------'
     
@@ -73,61 +91,6 @@ def main():
 
 
 
-
-
-def test_component_file( filename ):
-    pass
-    
-    
-
-
-
-
-
-
-#def test_one_and_a_half_trips(testable_component):
-#    component = testable_component()
-#    print '  -- Testing One and a half trips...'
-#
-#    if not component.is_flat():
-#        component = flatten(component)
-#
-#
-#    xmlfile1 = build_dir + component.name + '1.xml'
-#    xmlfile2 = build_dir + component.name + '2.xml'
-#
-#
-#    print '    -- Saving Component To XML:', xmlfile1
-#    writers.XMLWriter.write( component, xmlfile1 ) 
-#
-#    print '    -- Loading Component To XML.'
-#    reloaded_comp = readers.XMLReader.read(xmlfile1)
-#
-#    print '    -- Checking Components are identical'
-#    validators.ComponentEqualityChecker.check_equal( component, reloaded_comp)
-#
-#    print '    -- Saving Reloaded Component to XML',xmlfile2
-#    writers.XMLWriter.write( reloaded_comp, xmlfile2 ) 
-#
-#    print '    -- Checking the SHA1 Checksum of the two xml files:'
-#    hash1 = file_sha1_hexdigest(xmlfile1)
-#    hash2 = file_sha1_hexdigest(xmlfile2)
-#    print '      -->', hash1
-#    print '      -->', hash2
-#
-#    if hash1 != hash2: 
-#        raise ValueError('XML files are different. This may not be an error but please report it to the developers')
-#    
-#
-#
-#def test_write_dot(testable_component):
-#    component = testable_component()
-#    print '  -- Writing Component to .dot'
-#    dotfile = build_dir + component.name + '.dot'
-#    writers.DotWriter.write(component, dotfile)
-#
-#    print '  -- Building .dot -> pdf, svg, png'
-#    writers.DotWriter.build(dotfile, output_types=['pdf','svg','png'])
 
 
 def test_write_mod(testable_component):
@@ -146,12 +109,43 @@ def test_write_mod(testable_component):
 
 
 
+def test_pynn_neuron_std(testable_component):
+    t = testable_component 
+    
+    flg = 'supports_test_pynn_neuron_std'
+    assert t.metadata.__dict__.get(flg, False)
+
+    std_pynn_simulation( 
+                test_component = testable_component(),
+                parameters = t.metadata.parameters, 
+                initial_values = t.metadata.initial_values, 
+                synapse_components = t.metadata.synapse_components, 
+                records = t.metadata.records
+                         )
 
 
 
 
 
-main()
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+if len(sys.argv) == 1:
+    main()
+
+elif len(sys.argv) == 2:
+    main(src=sys.argv[1])
+
+else:
+    raise NineMLRuntimeError('Invalid Usage: test_all_components.py [src]')

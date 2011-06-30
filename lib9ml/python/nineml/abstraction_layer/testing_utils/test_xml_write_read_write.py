@@ -13,7 +13,7 @@ class TestXMLWriteReadWrite(object):
         print '  -- Testing One and a half trips...'
 
         if not component.is_flat():
-            component = flatten(component)
+            component = flattening.flatten(component)
 
 
         xmlfile1 = build_dir + component.name + '1.xml'

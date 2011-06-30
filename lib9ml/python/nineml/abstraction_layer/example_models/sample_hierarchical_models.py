@@ -6,40 +6,37 @@ import nineml.abstraction_layer as al
 
 def get_iaf():
     iaf = al.ComponentClass( 
-                            name = "iaf",
-                            dynamics = al.Dynamics( 
-                                regimes = [
-                                    al.Regime(
-                                        time_derivatives = ["dV/dt = ( gl*( vrest - V ) + ISyn)/(cm)"],
-                                        transitions = [al.On("V > vthresh",
-                                                                 do=["tspike = t",
-                                                                     "V = vreset",
-                                                                     al.OutputEvent('spikeoutput')],
-                                                                 to="refractoryregime"),
-                                                       ],
-                                        name = "subthresholdregime"
-                                        ),
-
-                                    al.Regime(
-                                        time_derivatives = ["dV/dt = 0"],
-                                        transitions = [ al.On("t >= tspike + taurefrac",
-                                                                  to="subthresholdregime") ],
-                                        name = "refractoryregime"
-                                        )
-                                    ],
-                                aliases = [],
-                                state_variables = [
-                                    al.StateVariable( 'V'),
-                                    al.StateVariable( 'tspike'),
-                                                
-                                    ]
+                name = "iaf",
+                regimes = [
+                        al.Regime(
+                            name = "subthresholdregime",
+                            time_derivatives = ["dV/dt = ( gl*( vrest - V ) + ISyn)/(cm)"],
+                            transition = al.On("V > vthresh",
+                                                     do=["tspike = t",
+                                                         "V = vreset",
+                                                         al.OutputEvent('spikeoutput')],
+                                                     to="refractoryregime"),
                             ),
-                            analog_ports = [   al.SendPort("V"), 
-                                               al.ReducePort("ISyn", reduce_op="+"),],
-                                               
-                            event_ports = [ al.SendEventPort('spikeoutput'),],
-                             parameters = [ al.Parameter(p) for p in ['cm','taurefrac','gl','vreset','vrest','vthresh']  ]
+
+                        al.Regime(
+                            name = "refractoryregime"
+                            time_derivatives = ["dV/dt = 0"],
+                            transitions = [ al.On("t >= tspike + taurefrac",
+                                                      to="subthresholdregime") ],
                             )
+                        ],
+                    aliases = [],
+                    state_variables = [
+                        al.StateVariable( 'V'),
+                        al.StateVariable( 'tspike'),
+                                    
+                        ],
+                analog_ports = [   al.SendPort("V"), 
+                                   al.ReducePort("ISyn", reduce_op="+"),],
+                                   
+                event_ports = [ al.SendEventPort('spikeoutput'),],
+                 parameters = [ 'cm','taurefrac','gl','vreset','vrest','vthresh' ]
+                )
     return iaf
 
 def get_coba():

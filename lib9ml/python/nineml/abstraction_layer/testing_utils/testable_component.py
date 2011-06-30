@@ -35,7 +35,7 @@ def load_py_module( filename ):
 class TestableComponent(object):
 
     functor_name = 'get_component'
-    metadata_name = 'MetaData'
+    metadata_name = 'ComponentMetaData'
 
     def __repr__(self):
         s = 'Testable Component from %s [MetaData=%s]'%(self.filename, self.has_metadata)

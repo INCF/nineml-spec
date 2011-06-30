@@ -113,7 +113,7 @@ class ComponentFlattener(object):
 
 
     def distribute_event(self, event_output, event_port_map):
-        print 'Distributing Event', event_output, event_output.port_name
+        #print 'Distributing Event', event_output, event_output.port_name
         events = set()
         for p1,p2 in event_port_map:
             if p1 == event_output.port_name:
@@ -247,7 +247,7 @@ class ComponentFlattener(object):
 
         # Remap Ports:
         def globalRemapPort(originalname,targetname):
-            print 'Global-Remap [%s -> %s]'%(originalname,targetname)
+            #print 'Global-Remap [%s -> %s]'%(originalname,targetname)
             from nineml.abstraction_layer.visitors import ExpandPortDefinition
             transform = ExpandPortDefinition( originalname=originalname, targetname=targetname)
 
