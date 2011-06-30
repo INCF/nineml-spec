@@ -1,5 +1,7 @@
-from nineml.abstraction_layer.visitors.base import ActionVisitor
 
+#from nineml.abstraction_layer.visitors import ActionVisitor
+
+from ..visitors import ActionVisitor
 
 class ComponentValidatorBase(object):
     

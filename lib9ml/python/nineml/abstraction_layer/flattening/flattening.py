@@ -6,7 +6,6 @@ import copy
 import itertools
 
 
-import nineml.abstraction_layer as al
 from nineml.abstraction_layer.visitors import ClonerVisitor, ClonerVisitorPrefixNamespace
 
 class ComponentFlattener(object):
@@ -29,7 +28,7 @@ class ComponentFlattener(object):
 
 
     def __init__(self,model, componentname=None):
-        assert isinstance( model, al.ComponentClass)
+        assert isinstance( model, nineml.al.ComponentClass)
 
         # Is our component already flat??
         if model.is_flat():
@@ -42,7 +41,7 @@ class ComponentFlattener(object):
 
 
         # Flatten all the namespaces:
-        self.model = ClonerVisitorPrefixNamespace().visit(model)
+        self.model = nineml.al.visitors.ClonerVisitorPrefixNamespace().visit(model)
 
         # Make a list of all components, and those components with regimes: 
         self.all_components = list( self.model.query.recurse_all_components )
@@ -69,7 +68,7 @@ class ComponentFlattener(object):
         # from the input string:
         #  old_regime_string = 'iaf:subthresholdregime cobaInhib:cobadefaultregime cobaExcit:cobadefaultregime'
         nsstr_regimename = [ l.split(':') for l in old_regime_string.split()  ]
-        ns_regimename = dict([ (al.NamespaceAddress(ns), regime_name) for (ns,regime_name) in nsstr_regimename] )
+        ns_regimename = dict([ (nineml.al.NamespaceAddress(ns), regime_name) for (ns,regime_name) in nsstr_regimename] )
 
         # OK, now lets go through our old componentswithregimes,
         # and find the regime that was specified. 
@@ -110,7 +109,7 @@ class ComponentFlattener(object):
         time_derivatives = flatten_first_level( [ r.time_derivatives for r in regimetuple ] )
         time_derivatives = [ ClonerVisitor().visit(td) for td in time_derivatives ]
 
-        return al.Regime( name=None, 
+        return nineml.al.Regime( name=None, 
                         time_derivatives = time_derivatives,
                         on_events=[], 
                         on_conditions=[] )
@@ -169,6 +168,7 @@ class ComponentFlattener(object):
 
     def getRegimeTupleResponseToEvent( self, regimeTuple, eventName ):
         " Do not recurse, but iterate once over each regime in the tuple"
+        import nineml.al.visitors as visitors
 
         state_assignments = []
         event_outputs = []
@@ -180,8 +180,8 @@ class ComponentFlattener(object):
             if not on_events: continue
 
             on_event = on_events[0]
-            state_assignments.extend( [sa.accept_visitor( ClonerVisitor() ) for sa in on_event.state_assignments ]) 
-            event_outputs.extend( [eo.accept_visitor( ClonerVisitor() ) for eo in one_event.event_outputs ]) 
+            state_assignments.extend( [sa.accept_visitor( visitors.ClonerVisitor() ) for sa in on_event.state_assignments ]) 
+            event_outputs.extend( [eo.accept_visitor( visitors.ClonerVisitor() ) for eo in one_event.event_outputs ]) 
             
             #Update dstRegime
             dstRegimeName = oldtransition.to.get_ref() if oldtransition.to else regime
@@ -236,7 +236,7 @@ class ComponentFlattener(object):
                             event_port_map=event_port_map)
 
                     state_assignments, output_events, target_regime_name = res
-                    newOnCondition = al.OnCondition(oldtransition.trigger, state_assignments=state_assignments, event_outputs = output_events, target_regime_name = target_regime_name)
+                    newOnCondition = nineml.al.OnCondition(oldtransition.trigger, state_assignments=state_assignments, event_outputs = output_events, target_regime_name = target_regime_name)
                     regimeNew.add_on_condition( newOnCondition)
 
                 for oldtransition in regime.on_events:
@@ -248,7 +248,7 @@ class ComponentFlattener(object):
                             event_port_map=event_port_map)
 
                     state_assignments, output_events, target_regime_name = res
-                    newOnCondition = al.OnEvent(oldtransition.src_port_name, state_assignments=state_assignments, event_outputs = output_events, target_regime_name = target_regime_name)
+                    newOnCondition = nineml.al.OnEvent(oldtransition.src_port_name, state_assignments=state_assignments, event_outputs = output_events, target_regime_name = target_regime_name)
                     regimeNew.add_on_event( newOnCondition)
                     
         self.newRegimeLookupMap = newRegimeLookupMap
@@ -265,12 +265,12 @@ class ComponentFlattener(object):
 
     def build_flat_component(self):
         # We build the new object, 
-        dynamics = al.Dynamics( regimes = self.newRegimeLookupMap.values(),
+        dynamics = nineml.al.Dynamics( regimes = self.newRegimeLookupMap.values(),
                                 aliases = flatten_first_level( [ m.aliases for m in self.all_components ] ),
                                 state_variables = flatten_first_level( [ m.state_variables for m in self.all_components ]  ),
                                 )  
 
-        self.reducedcomponent = al.ComponentClass( name=self.componentname, 
+        self.reducedcomponent = nineml.al.ComponentClass( name=self.componentname, 
                                                          dynamics=dynamics, 
                                                          analog_ports=flatten_first_level( [comp.analog_ports for comp in self.all_components] ), 
                                                          event_ports= flatten_first_level( [comp.event_ports for comp in self.all_components] ), 

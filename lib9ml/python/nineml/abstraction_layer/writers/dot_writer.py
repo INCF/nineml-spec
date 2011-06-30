@@ -1,7 +1,13 @@
+
+
 import os
+import re
+from Cheetah.Template import Template
+
+import nineml
 
 
-def dot_escape(s):
+def _dot_escape(s):
 
     dot_escape_table = {
     "&": "&amp;",
@@ -17,7 +23,7 @@ def dot_escape(s):
 
 
 
-regime_node_tmpl_text = """
+_regime_node_tmpl_text = """
 
 digraph G1 {
 
@@ -111,10 +117,6 @@ $regime_node_names[regime] [ style = "filled, bold"
 """
 
 
-import re
-from Cheetah.Template import Template
-
-from nineml.abstraction_layer.flattening import flatten as Flatten
 
 class DotWriter(object):
     """Dot Writer docstring"""
@@ -146,15 +148,16 @@ class DotWriter(object):
         
 
         if not component.is_flat() and flatten:
-            component = Flatten(component)
+            
+            component = nineml.al.flattening.Flatten(component)
 
 
 
         regime_node_names = dict( (regime,'regime%d'%i) for i,regime in enumerate(component.regimes) )
         context = { 'component':component, 
                     'regime_node_names': regime_node_names, 
-                    'dot_escape':dot_escape}
-        regime_text = Template(regime_node_tmpl_text, context ).respond()
+                    'dot_escape':_dot_escape}
+        regime_text = Template(_regime_node_tmpl_text, context ).respond()
 
         
         # Remove Extra whitespace - otherwise we end

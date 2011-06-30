@@ -2,13 +2,9 @@
 
 
 
-import nineml.abstraction_layer as al
-from nineml.abstraction_layer.visitors import ActionVisitor
 from nineml.utility import *
-from itertools import chain
-
 from collections import defaultdict
-from nineml.abstraction_layer.validators.base import ComponentValidatorPerNamespace
+from base import ComponentValidatorPerNamespace
 
 
 
