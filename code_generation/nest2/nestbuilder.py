@@ -29,6 +29,9 @@ class NestStateVar(object):
     
     # TODO: units
     def __init__(self, symbol, initial_value, parent_component, Ctype = "nest::double_t", unit="[unspecified unit]", notes = ""):
+        print symbol, initial_value
+        assert initial_value is not None
+
         self.symbol = symbol
         self.Ctype = Ctype
         self.unit = unit
@@ -44,7 +47,10 @@ class NestODE(object):
         parent_component = parent_regime.parent_component
         name_map = parent_component.name_map
         self.dependent_variable = ode.dependent_variable
-        self.CODE = name_map[ode.dependent_variable] + " += (" + ode.rhs_name_transform(name_map) + ")*h;"
+
+        from nineml.abstraction_layer.component import MathUtil
+        rhs = MathUtil.get_rhs_substituted( ode, name_map )
+        self.CODE = name_map[ode.dependent_variable] + " += (" + rhs  + ")*h;"
 
 class NestCondition(object):
 
@@ -54,7 +60,11 @@ class NestCondition(object):
         parent_component = parent_trans.parent_component
         name_map = parent_component.name_map
         # code to evaluate the condition
-        self.CODE = "transPendingTmp[%d] = (%s)" % (parent_trans.index, condition.rhs_name_transform(name_map))
+        
+        from nineml.abstraction_layer.component import MathUtil
+        condition_expr = MathUtil.get_rhs_substituted( condition, name_map )
+
+        self.CODE = "transPendingTmp[%d] = (%s)" % (parent_trans.index, condition_expr)
         # where the state of the evaluated condition may be stored
         self.PENDING = "transPendingTmp[%d]" % parent_trans.index
         # conditions, unlike eventports, can happen only once
@@ -80,6 +90,8 @@ class NestInputEventPort(object):
         #self.PENDING_FINALIZE = 'B_.spike_inputs_[%s-INF_SPIKE_RECEPTOR-1].get_list(lag).pop_back();' % eventport.name MH
         self.PENDING_FINALIZE = 'B_.spike_inputs_[%s-INF_SPIKE_RECEPTOR-1].get_list(lag).pop_back();' % eventport
 
+        print 'NestInputEventPort(): event_port=[%s]'% eventport
+
 
 class NestOutputEventPort(object):
 
@@ -87,6 +99,8 @@ class NestOutputEventPort(object):
         self.parent_trans = parent_trans
         self.event_port = event_port
         self.CODE = "set_spiketime(nest::Time::step(origin.get_steps()+lag+1));nest::SpikeEvent se;network()->send(*this, se, lag);"
+        print event_port
+        
 
 
 class NestAssignment(object):
@@ -96,7 +110,10 @@ class NestAssignment(object):
         self.assginment = assignment
         parent_component = parent_trans.parent_component
         name_map = parent_component.name_map
-        self.CODE = name_map[assignment.lhs]+" = "+assignment.rhs_name_transform(name_map)+";"
+
+        from nineml.abstraction_layer.component import MathUtil
+        rhs = MathUtil.get_rhs_substituted( assignment, name_map )
+        self.CODE = name_map[assignment.lhs]+" = "+rhs+";"
 
 
 class NestRegime(object):
@@ -117,7 +134,7 @@ class NestTransition(object):
         self.parent_component = parent_component
         self.transition = transition
         self.index = index
-        self.to = parent_component.regime_map[transition.to]
+        self.to = parent_component.regime_map[transition.target_regime.name]
         #self.nodes = [NestAssignment(a, self) for a in transition.equations] MH
         self.nodes = [NestAssignment(a, self) for a in transition.state_assignments]
         #event_ports = list(transition.event_ports) MH
@@ -200,8 +217,12 @@ class NestModel(object):
         for r in self.regimes:
             self.regime_map[r.regime.name] = r
             
-        print self.regime_map.keys()
+        #print self.regime_map.keys()
         self.initial_regime = self.regime_map[initial_regime].symbol
+        
+        print self.initial_regime
+        #print self.initial_regime
+        #assert False
 
         # NB: iteration order accross iterations is assumed in the template
         # so this must be true for the type of self.transitions

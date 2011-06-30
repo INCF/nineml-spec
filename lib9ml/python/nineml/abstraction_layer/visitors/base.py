@@ -123,9 +123,6 @@ class ActionVisitor(ComponentVisitor):
     def action_outputevent(self, output_event, **kwargs):
         self.check_pass()
         
-    #def action_inputevent(self, input_event, **kwargs):
-    #    self.check_pass()
-        
     def action_assignment(self, assignment, **kwargs):
         self.check_pass()
         

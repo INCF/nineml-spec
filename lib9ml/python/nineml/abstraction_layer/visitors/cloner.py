@@ -59,6 +59,118 @@ class ExpandAliasDefinition(ActionVisitor):
 
 
 
+class RenameSymbol(ActionVisitor):
+    """ Can be used for:
+    StateVariables, Aliases, Ports
+    """
+    def __init__(self, component, old_symbol_name, new_symbol_name):
+        ActionVisitor.__init__(self, explicitly_require_action_overrides=True)
+        self.old_symbol_name = old_symbol_name
+        self.new_symbol_name = new_symbol_name
+        self.namemap = {old_symbol_name: new_symbol_name }
+        
+        if not component.is_flat():
+            raise NineMLRuntimeError('Rename Symbol called on non-flat model')
+
+        self.lhs_changes = []
+        self.rhs_changes = []
+        self.port_changes = []
+
+        self.visit(component)
+        component._validate_self()
+
+        print 'LHS Changes:'
+        print self.lhs_changes
+
+        print 'RHS Changes:'
+        print self.rhs_changes
+
+        print 'Port Changes:'
+        print self.port_changes
+
+        #assert False
+
+
+    def note_lhs_changed(self, what):
+        self.lhs_changes.append(what)
+
+    def note_rhs_changed(self, what):
+        self.rhs_changes.append(what)
+
+    def note_port_changed(self, what):
+        self.port_changes.append(what)
+
+
+
+    def action_componentclass(self, component,  **kwargs):
+        pass
+        
+    def action_dynamics(self, dynamics, **kwargs):
+        pass
+        
+    def action_regime(self, regime,  **kwargs):
+        pass
+        
+    def action_statevariable(self, state_variable, **kwargs):
+        if state_variable.name == self.old_symbol_name:
+            state_variable._name = self.new_symbol_name
+            self.note_lhs_changed(state_variable)
+        
+    def action_parameter(self, parameter, **kwargs):
+        if parameter.name == self.old_symbol_name:
+            parameter._name = self.new_symbol_name
+            self.note_lhs_changed(parameter)
+        
+    def action_analogport(self, port, **kwargs):
+        if port.name == self.old_symbol_name:
+            port._name = self.new_symbol_name
+            self.note_port_changed(port)
+        
+    def action_eventport(self, port, **kwargs):
+        if port.name == self.old_symbol_name:
+            port._name = self.new_symbol_name
+            self.note_port_changed(port)
+        
+    def action_outputevent(self, output_event, **kwargs):
+        if output_event.port_name == self.old_symbol_name:
+            output_event._port_name = self.new_symbol_name
+            self.note_rhs_changed(output_event)
+        
+    def action_assignment(self, assignment, **kwargs):
+        if self.old_symbol_name in assignment.atoms:
+            self.note_rhs_changed( assignment )
+            assignment.name_transform_inplace( self.namemap  )
+        
+    def action_alias(self, alias, **kwargs):
+        if alias.lhs == self.old_symbol_name:
+            self.note_lhs_changed( alias )
+            alias.name_transform_inplace( self.namemap  )
+        elif self.old_symbol_name in alias.atoms:
+            self.note_rhs_changed( alias )
+            alias.name_transform_inplace( self.namemap  )
+        
+    def action_timederivative(self,timederivative, **kwargs):
+        if timederivative.dependent_variable == self.old_symbol_name:
+            self.note_lhs_changed( timederivative )
+            timederivative.name_transform_inplace( self.namemap  )
+        elif self.old_symbol_name in timederivative.atoms:
+            self.note_rhs_changed( timederivative )
+            timederivative.name_transform_inplace( self.namemap  )
+        
+    def action_condition(self, condition, **kwargs):
+        if self.old_symbol_name in condition.rhs_atoms:
+            self.note_rhs_changed( condition )
+            condition.rhs_name_transform_inplace( self.namemap  )
+
+    def action_oncondition(self, on_condition, **kwargs):
+        pass
+
+    def action_onevent(self, on_event, **kwargs):
+        if on_event.src_port_name == self.old_symbol_name:
+            on_event._src_port_name = self.new_symbol_name
+            self.note_rhs_changed(on_event)
+        
+
 
 
 

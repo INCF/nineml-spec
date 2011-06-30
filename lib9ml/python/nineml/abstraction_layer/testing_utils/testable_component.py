@@ -9,8 +9,12 @@ from nineml.utility import LocationMgr
 
 @restore_sys_path
 def load_py_module( filename ):
+    """Takes the fully qualified path of a python file,
+    loads it and returns the module object
+    """
+
     if not os.path.exists(filename):
-        print os.getcwd()
+        print "CWD:", os.getcwd()
         raise NineMLRuntimeError('File does not exist %s'%filename )
 
     dirname,fname = os.path.split( filename )
@@ -67,7 +71,8 @@ class TestableComponent(object):
             c = self.component_functor()
        except Exception, e:
            print e
-           raise NineMLRuntimeError('component_functor() threw an exception')
+           raise 
+           #raise NineMLRuntimeError('component_functor() threw an exception')
 
        from nineml.abstraction_layer import ComponentClass
        if not isinstance(c, ComponentClass):

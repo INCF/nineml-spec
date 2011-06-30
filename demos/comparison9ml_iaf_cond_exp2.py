@@ -31,16 +31,20 @@ nest.SetStatus([0],{'resolution':dt})
 iaf = nest.Create('iaf_cond_exp',1)
 iaf9ml =  nest.Create('iaf_cond_exp_9ml',1)
 
+
 iafParams = {'V_th':-57.0, 'V_reset': -70.0, 't_ref': 20.0, 'g_L':28.95,
 'C_m':289.5, 'E_L' : -70.0, 'E_ex': 0.0, 'E_in': -75.0, 'tau_syn_ex':1.5,
 'tau_syn_in': 10.0}
 
-iafParamsML = {'iaf_vthresh':-57.0, 'iaf_vreset': -70.0, 'iaf_taurefrac': 20.0, 'iaf_gl':28.95,
-'iaf_cm':289.5, 'iaf_vrest' : -70.0, 'cobaExcit_vrev': 0.0, 'cobaInhib_vrev': -75.0, 'cobaExcit_tau':1.5,
-'cobaInhib_tau': 10.0}
+
+# Check that we are not just displaying the same graph
+iafParamsML = iafParams.copy()
+iafParamsML['V_reset'] = -65.0
+#iafParamsML['Regime9ML'] = 1.
 
 
-nest.SetStatus(iaf,iafParams)
+
+nest.SetStatus(iaf,   iafParams)
 nest.SetStatus(iaf9ml,iafParamsML)
 
 
@@ -109,10 +113,13 @@ m = nest.Create('multimeter',
 
 nest.Connect(m, iaf)
 
+
+
 m_9ml = nest.Create('multimeter',
                 params = {'withtime': True, 
                           'interval': 0.1,
-                          'record_from': ['iaf_V', 'cobaExcit_g', 'cobaInhib_g', 'Regime9ML']})
+                          'record_from': ['V_m', 'g_ex', 'g_in', 'Regime9ML']})
+                          
 
 nest.Connect(m_9ml, iaf9ml)
 
@@ -134,13 +141,13 @@ data_9ml = nest.GetStatus(m_9ml)[0]['events']
 t = data["times"]
 
 g_in = data["g_in"]
-g_in_9ml = data_9ml["cobaInhib_g"]
+g_in_9ml = data_9ml["g_in"]
 
 g_ex = data["g_ex"]
-g_ex_9ml = data_9ml["cobaExcit_g"]
+g_ex_9ml = data_9ml["g_ex"]
 
 v = data["V_m"]
-v_9ml = data_9ml["iaf_V"]
+v_9ml = data_9ml['V_m']
 
 regime = data_9ml["Regime9ML"]
 

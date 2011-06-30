@@ -32,6 +32,17 @@ class ComponentModifier(object):
             ComponentModifier.close_analog_port(component=component, 
                                                 port_name=arp.name, 
                                                 value='0' )
+
+    @classmethod
+    @check_flat_component
+    def rename_port( cls, component, old_port_name, new_port_name ):
+        """ Renames a port in a component """
+        
+        
+        # Find the old port:
+        port = filter_expect_single( component.analog_ports, 
+                                     lambda ap: ap.name==old_port_name)
+        port._name = new_port_name
     
 
 

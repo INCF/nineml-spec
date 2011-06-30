@@ -39,83 +39,48 @@ Copyright (C) 2011 Eilif Muller. All Rights Reserved.
 
 
 import nineml.abstraction_layer as nineml
-import os
-#import nineml.models
-#from nineml.abstraction_layer.example_models import get_hierachical_iaf_2coba
+#import os
 from nineml.abstraction_layer.testing_utils import TestableComponent
-#from nineml.abstraction_layer.models import reduce_to_single_component, ModelToSingleComponentReducer
 from nineml.abstraction_layer.flattening import flatten, ComponentFlattener
-from nineml.abstraction_layer.writers import dump_reduced
-from nineml.abstraction_layer.componentmodifiers import ModelModifier
+from nineml.abstraction_layer.component_modifiers import ComponentModifier
+from nineml.utility import LocationMgr
+from nineml.abstraction_layer.visitors import RenameSymbol
+
+LocationMgr.StdAppendToPath()
+
+
+comp_data = TestableComponent('nestequivalent_iaf_cond_exp')
+
+# Build the component:
+component = comp_data()
+component = flatten( component )
+component.backsub_all()
+ComponentModifier.close_all_reduce_ports(component=component)
+
+
+# Copy the descriptive strings:
+component.short_description = comp_data.metadata.short_description 
+component.long_description = comp_data.metadata.long_description 
 
 
 
-nest_classname = "iaf_cond_exp_9ml"
-
-
-
-iaf_cond_exp_9ML_reduced = flatten( TestComponent('hierachical_iaf_2coba'), componentname=nest_classname )
-iaf_cond_exp_9ML_reduced.backsub_aliases()
-iaf_cond_exp_9ML_reduced.backsub_equations()
-ModelModifier.CloseAllReducePorts(component=iaf_cond_exp_9ML_reduced)
-
-dump_reduced(iaf_cond_exp_9ML_reduced,'reduced.txt')
-
-
-
-iaf_cond_exp_9ML_reduced.long_description = """
-Long description of the iaf_cond_exp ...
-Author: Eilif Muller, Ecublens, 2011
-"""
-
-
-iaf_cond_exp_9ML_reduced.short_description = "Standard integrate and fire with exponential conductance based synapses"
-
-
-# Things we need to know which should come from the user layer
-synapse_ports = ['cobaExcit_spikeinput', 'cobaInhib_spikeinput']
-AP_port = 'spike_output'
-V_port = 'V_m'
-initial_regime = "Regime9"
-
-initial_values = {
-    'iaf_V': -70.0,
-    'cobaExcit_g': 0.0,
-    'cobaInhib_g': 0.0,
-    'iaf_tspike':0.0
-    }
-
-
-parameters = {
-    'iaf.cm': 1.0,
-    'iaf.gl': 50.0,
-    'iaf.taurefrac': 5.0,
-    'iaf.vrest': -65.0,
-    'iaf.vreset': -65.0,
-    'iaf.vthresh': -50.0,
-    'cobaExcit.tau': 2.0,
-    'cobaInhib.tau': 5.0,
-    'cobaExcit.vrev': 0.0,
-    'cobaInhib.vrev': -70.0,
-    'cobaExcit.q': 2.0,
-    'cobaInhib.q': 2.0,
-    'iaf.ISyn':0.0,
-
-    'cobaExcit.gl': 0.0,
-}
-
-
-default_values = ComponentFlattener.flatten_namespace_dict( parameters )
+# Get the initial regime. If this component comes from an flattened component, 
+# then we should look up the new regime from the locations in the old
+# components, hence the nedd for this code:
+initial_regime = comp_data.metadata.initial_regime
+if component.was_flattened():
+    new_regime = component.flattener.get_new_regime(initial_regime)
+    initial_regime = new_regime.name
 
 
 
 from nestbuilder import NestFileBuilder
-nfb = NestFileBuilder(  nest_classname = nest_classname, 
-                        component = iaf_cond_exp_9ML_reduced, 
-                        synapse_ports = synapse_ports,
-                        initial_regime =  initial_regime,
-                        initial_values = initial_values,
-                        default_values = default_values,
+nfb = NestFileBuilder(  nest_classname = comp_data.metadata.nest_classname, 
+                        component = component, 
+                        synapse_ports =  comp_data.metadata.synapse_ports,
+                        initial_regime = initial_regime, # new_regime.name,
+                        initial_values = comp_data.metadata.initial_values,
+                        default_values = comp_data.metadata.parameters,
                         )
 nfb.compile_files()
 

@@ -1,5 +1,7 @@
 """This file contains the ComponentValidator class for validating component"""
 
+from nineml.utility import Settings
+
 from cv_types import ComponentValidatorTypes
 from cv_ports import ComponentValidatorEventPorts
 from cv_ports import ComponentValidatorOutputAnalogPorts
@@ -24,10 +26,16 @@ class ComponentValidator(object):
         internal structure
         """
 
+
+        if not Settings.enable_component_validation :
+            import os
+            assert os.getlogin() == 'hull', """Checking only mike turns off component-validation :) """
+            print "  **** WARNING WARNIGN COMPONENT VALIDATION TURNRED OFF ****"
+            return 
+
         #Check class structure:
         ComponentValidatorTypes(component)
         ComponentValidatorNoDuplicatedObjects(component)
-        
         
         ComponentValidatorLocalNameConflicts(component)
         

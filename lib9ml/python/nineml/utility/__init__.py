@@ -298,7 +298,8 @@ class LocationMgr(object):
 
     @classmethod
     def getComponentDir(cls):
-        return join_norm( cls.getRootDir(), "lib9ml/python/examples/AL/components/" )
+        return join_norm( cls.getRootDir(),
+                "lib9ml/python/examples/AL/components_done/" )
 
     @classmethod
     def getTmpDir(cls):
@@ -313,11 +314,13 @@ class LocationMgr(object):
         root = cls.getRootDir()
         sys.path.append(Join(root, "lib9ml/python/examples/AL"))
         sys.path.append(Join(root, "code_generation/nmodl"))     
+        sys.path.append(Join(root, "code_generation/nest2"))     
         LocationMgr.std_append_to_path_called = True
 
 
 
-
+class Settings(object):
+    enable_component_validation = False
 
 
 def check_list_contain_same_items(lst1, lst2, desc1="", desc2="", ignore=[],

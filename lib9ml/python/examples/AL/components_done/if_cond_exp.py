@@ -6,6 +6,30 @@ synapses, like the IF_cond_exp standard cell model in PyNN
 
 import nineml.abstraction_layer as al
 
+
+#class ComponentMetaData(object):
+#    parameters = {
+#            'iaf_vthresh':-57.0, 
+#            'iaf_vreset': -70.0, 
+#            'iaf_taurefrac': 20.0, 
+#            'iaf_gl':28.95,
+#            'iaf_cm':289.5, 
+#            'iaf_vrest' : -70.0, 
+#            'cobaExcit_vrev': 0.0, 
+#            'cobaInhib_vrev': -75.0, 
+#            'cobaExcit_tau':1.5,
+#            'cobaInhib_tau': 10.0}
+#
+#    synapse_components = [
+#        ('cobaInhib', 'q' ),
+#        ('cobaExcit', 'q' )
+#            ]
+#    
+#
+#
+
+
+
 def get_component():
     regimes = [
         al.Regime(

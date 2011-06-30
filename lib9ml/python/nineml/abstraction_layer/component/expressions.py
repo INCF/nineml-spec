@@ -129,11 +129,12 @@ class ExpressionWithLHS(Equation):
 
     @property
     def atoms(self):
-        return itertools.chain(self.rhs_atoms, self.lhs_atoms() )
+        return itertools.chain(self.rhs_atoms, self.lhs_atoms )
     
     def lhs_name_transform_inplace(self, name_map):
         raise NotImplementedError()
 
+    @property
     def lhs_atoms(self):
         raise NotImplementedError()
 
@@ -160,6 +161,7 @@ class ExpressionWithSimpleLHS(ExpressionWithLHS):
     def lhs(self):
         return self._lhs
 
+    @property
     def lhs_atoms(self):
         return [self.lhs]
 
@@ -238,6 +240,7 @@ class Alias(ExpressionWithSimpleLHS, RegimeElement):
 
 
 class StateAssignment(ExpressionWithSimpleLHS, RegimeElement):
+
     """Assignments represent a change that happens to the value of a
     ``StateVariable`` during a transition between regimes. 
     
@@ -323,6 +326,10 @@ class ODE(ExpressionWithLHS, RegimeElement):
 
         indep = self._independent_variable
         self._independent_variable = name_map.get(indep, indep) 
+
+    @property
+    def lhs_atoms(self):
+        return [self.independent_variable, self.dependent_variable ]
 
 
 class TimeDerivative(ODE):

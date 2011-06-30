@@ -45,7 +45,7 @@ class NamespaceAddress(object):
 
     def __init__(self, loc):
         if isinstance(loc, basestring):
-            self.loctuple = loc.split('.')
+            self.loctuple = tuple( loc.split('.') )
         elif isinstance(loc, tuple):
             self.loctuple = loc
         elif isinstance(loc, NamespaceAddress):
@@ -56,6 +56,8 @@ class NamespaceAddress(object):
 
     # Since we often store Namespace addresses in dictionaries:
     def __hash__(self):
+        #print self.loctuple
+        assert isinstance( self.loctuple, tuple)
         return hash(self.loctuple)
 
     def __eq__(self,rhs):

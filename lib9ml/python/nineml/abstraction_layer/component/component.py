@@ -483,9 +483,27 @@ class ComponentClass( ComponentClassMixinFlatStructure,
         #Finalise initiation:
         self._resolve_transition_regime_names()
 
+        # Store flattening Information:
+        self._flattener = None
+
         # Is the finished component valid?:
         self._validate_self()
         
+    
+    @property
+    def flattener(self):
+        return self._flattener
+    
+    def set_flattener(self, flattener):
+        if not flattener:
+            raise NineMLRuntimeError('Setting flattener to None??')
+        if self.flattener:
+            raise NineMLRuntimeError('Trying to change flattener')
+        self._flattener = flattener
+
+    def was_flattened(self):
+        return self.flattener != None
+
 
     def _validate_self(self):
         from nineml.abstraction_layer.validators import ComponentValidator

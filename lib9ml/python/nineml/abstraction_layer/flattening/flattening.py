@@ -33,7 +33,8 @@ class ComponentFlattener(object):
 
         # Is our component already flat??
         if model.is_flat():
-            self.reducedcomponent = ClonerVisitor.visit( model )
+            self.reducedcomponent = ClonerVisitor().visit( model )
+            self.reducedcomponent.set_flattener( model.flattener )
             return
 
         # New components name
@@ -52,7 +53,50 @@ class ComponentFlattener(object):
         self.build_flat_component()
         self.remap_ports()
 
+        
+        # Attach this flattening information to the component:
+        self.reducedcomponent.set_flattener( self )
 
+
+
+    def get_new_regime(self, old_regime_string ):
+        """ 
+        for example:
+        old_regime_string = /iaf:subthresholdregime /cobaInhib:cobadefaultregime /cobaExcit:cobadefaultregime'
+        """
+
+        # Lets create a dictionary that maps 'NamespaceAddress' to regime name
+        # from the input string:
+        #  old_regime_string = 'iaf:subthresholdregime cobaInhib:cobadefaultregime cobaExcit:cobadefaultregime'
+        nsstr_regimename = [ l.split(':') for l in old_regime_string.split()  ]
+        ns_regimename = dict([ (al.NamespaceAddress(ns), regime_name) for (ns,regime_name) in nsstr_regimename] )
+
+        # OK, now lets go through our old componentswithregimes,
+        # and find the regime that was specified. 
+        target_regime_tuple = []
+        for c in self.componentswithregimes:
+            comp_ns = c.get_node_addr()
+            if not comp_ns in ns_regimename:
+                err = 'Looking for a regime in namespace: %s, but not found.' %str(comp_ns)
+                err = '\nSpecified String: %s'% old_regime_string
+            target_regime_name = ns_regimename[comp_ns]
+            
+            regime_map = dict( [ (r.name,r) for r in c.regimes] )
+            if not target_regime_name in regime_map:
+                err =  'Namespace has no regime named: %s'
+                err += '\nRegimes: %s'%(str(regime_map.keys()))
+                raise NineMLRuntimeError(err)
+
+            target_regime_tuple.append( regime_map[target_regime_name] )
+
+        
+        target_regime_tuple = tuple(target_regime_tuple)
+        
+        new_regime =  self.newRegimeLookupMap[target_regime_tuple]
+#        print new_regime
+#        import sys
+#        sys.exit(0)
+        return new_regime
 
 
 
@@ -300,6 +344,6 @@ class ComponentFlattener(object):
 
 
 def flatten( model, componentname=None ):
-    reducer = ComponentFlattener(model,componentname)
+    reducer = ComponentFlattener(model, componentname)
     return reducer.reducedcomponent
 

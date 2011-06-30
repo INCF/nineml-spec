@@ -86,6 +86,13 @@ class MathUtil(object):
             p_func = re.compile(r"(?<![a-zA-Z_0-9])(%s)(?![(a-zA-Z_0-9])" % frm)
         return p_func.sub(to, expr_string)
 
+    @classmethod 
+    def get_rhs_substituted(cls, expr_obj, namemap ):
+        expr = expr_obj.rhs
+        for frm,to in namemap.iteritems():
+            expr =  MathUtil.str_expr_replacement( frm, to, expr, func_ok=False)
+        return expr
+        
 
     @classmethod 
     def get_prefixed_rhs_string(cls, expr_obj, prefix="", exclude=None ):
