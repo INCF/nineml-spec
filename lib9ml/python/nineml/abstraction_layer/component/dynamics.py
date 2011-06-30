@@ -279,11 +279,8 @@ class Regime(object):
         return visitor.visit_regime(self, **kwargs)
 
 
-    def __init__(self, name=None,
-                 transitions=None, 
-                 time_derivatives = None,
-                 
-                 ):
+    #def __init__(self, name=None, transitions=None, time_derivatives = None):
+    def __init__(self, *time_derivatives, **kwargs):
         """Regime constructor
             
             :param name: The name of the constructor. If none, then a name will
@@ -299,6 +296,14 @@ class Regime(object):
 
 
         """
+        valid_kwargs = ('name','transitions')
+        for arg in kwargs:
+            assert arg in valid_kwargs
+
+        transitions=kwargs.get('transitions',None)
+        name = kwargs.get('name', None)
+        
+
 
         # Generate a name for unnamed regions:
         self._name = name if name else Regime.get_next_name()

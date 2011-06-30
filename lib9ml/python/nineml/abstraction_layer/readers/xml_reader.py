@@ -96,7 +96,6 @@ class XMLLoader(object):
         return nineml.al.Regime( name=element.get('name'),
                           time_derivatives = subnodes["TimeDerivative"],
                           transitions = transitions )
-                          #on_conditions = subnodes["OnCondition"] )
 
 
 
