@@ -18,7 +18,8 @@ def run(plot_and_show=True):
     sys.path.append(join(root, "code_generation/nest2"))       
                
 
-    from nineml.abstraction_layer.example_models import  get_hierachical_iaf_3coba
+    #from nineml.abstraction_layer.example_models import  get_hierachical_iaf_3coba
+    from nineml.abstraction_layer.testing_utils import TestableComponent
     from nineml.abstraction_layer.flattening import  ComponentFlattener
 
     import pyNN.neuron as sim
@@ -31,13 +32,12 @@ def run(plot_and_show=True):
     sim.setup(timestep=0.1, min_delay=0.1)
 
 
-    test_component = get_hierachical_iaf_3coba()
+    #test_component = get_hierachical_iaf_3coba()
+    test_component = TestableComponent('hierachical_iaf_3coba')()
 
     from nineml.abstraction_layer.writers import DotWriter
     DotWriter.write(test_component, 'test1.dot')
     
-    import sys
-    sys.exit(0)
 
     from nineml.abstraction_layer.writers import XMLWriter
     XMLWriter.write(test_component, 'iaf_3coba.xml')

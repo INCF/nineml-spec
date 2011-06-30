@@ -6,10 +6,11 @@ Example of using a cell type defined in 9ML with pyNN.neuron
 
 #from std_pynn_simulation import std_pynn_simulation, RecordValue
 
-from nineml.abstraction_layer.example_models import  get_hierachical_iaf_2coba
+
+from nineml.abstraction_layer.testing_utils import TestableComponent
 from nineml.abstraction_layer.testing_utils import std_pynn_simulation, RecordValue 
 
-test_component = get_hierachical_iaf_2coba()
+test_component = TestableComponent('hierachical_iaf_2coba')()
 
 parameters = {
     'iaf.cm': 1.0,

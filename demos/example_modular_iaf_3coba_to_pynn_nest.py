@@ -22,7 +22,8 @@ os.environ['LD_LIBRARY_PATH']=os.environ.get('LD_LIBRARY_PATH','')+':%s/code_gen
 print os.environ['LD_LIBRARY_PATH']
            
 
-from nineml.abstraction_layer.example_models import  get_hierachical_iaf_3coba
+#from nineml.abstraction_layer.example_models import  get_hierachical_iaf_3coba
+from nineml.abstraction_layer.testing_utils import TestableComponent
 from nineml.abstraction_layer.models import ModelToSingleComponentReducer
 
 #import pyNN.neuron as sim
@@ -42,7 +43,8 @@ init_logging(None, debug=True)
 sim.setup(timestep=0.01, min_delay=0.1)
 
 
-testModel = get_hierachical_iaf_3coba()
+#testModel = get_hierachical_iaf_3coba()
+testModel = TestableComponent('hierachical_iaf_3coba')
 
 
 celltype_cls = pyNNml.nineml_celltype_from_model(

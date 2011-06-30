@@ -2,15 +2,9 @@ import os
 import sys
 
 from nineml.exceptions import NineMLRuntimeError
+from nineml.utility import restore_sys_path
+from nineml.utility import LocationMgr
 
-def restore_sys_path( func ):
-    def newfunc(*args,**kwargs):
-        oldpath = sys.path[:]
-        try:
-            return func(*args, **kwargs)
-        finally:
-            sys.path = oldpath
-    return newfunc
 
 
 @restore_sys_path
@@ -37,7 +31,7 @@ class TestableComponent(object):
     functor_name = 'get_component'
     metadata_name = 'ComponentMetaData'
 
-    def __repr__(self):
+    def __str__(self):
         s = 'Testable Component from %s [MetaData=%s]'%(self.filename, self.has_metadata)
         return s
 
@@ -49,6 +43,13 @@ class TestableComponent(object):
 
     def __init__(self, filename):
        cls = TestableComponent 
+
+       # If we recieve a filename like 'iaf', that doesn't
+       # end in '.py', then lets prepend the component directory 
+       # and append .py
+       if not filename.endswith('.py'):
+           compdir = LocationMgr.getComponentDir()
+           filename = os.path.join(compdir, '%s.py'%filename)
 
        self.filename = filename
        self.mod = load_py_module(filename )

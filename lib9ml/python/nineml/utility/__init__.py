@@ -297,6 +297,10 @@ class LocationMgr(object):
         return join_norm( cls.getRootDir(), "catalog/" )
 
     @classmethod
+    def getComponentDir(cls):
+        return join_norm( cls.getRootDir(), "lib9ml/python/examples/AL/components/" )
+
+    @classmethod
     def getTmpDir(cls):
         if not Exists(cls.temp_dir):
             raise NineMLRuntimeError("tmp_dir does not exist:%s"%cls.tmp_dir)
@@ -370,6 +374,31 @@ def file_sha1_hexdigest(filename):
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+def restore_sys_path( func ):
+    """Decorator used to restore the sys.path
+    to the value it was before the function call.
+    This is useful for loading modules.
+    """
+    def newfunc(*args,**kwargs):
+        oldpath = sys.path[:]
+        try:
+            return func(*args, **kwargs)
+        finally:
+            sys.path = oldpath
+    return newfunc
 
 
 

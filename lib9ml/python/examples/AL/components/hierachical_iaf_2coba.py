@@ -41,7 +41,7 @@ class ComponentMetaData(object):
 
 
     records = [
-        RecordValue( what='iaf_V',       tag='Voltage [mV]',     label='Membrane Voltage' ),
+        RecordValue( what='iaf_V',       tag='Voltage [mV]',     label='Membrane Voltage'),
         RecordValue( what='cobaInhib_g', tag='Conductance [ns]', label='cobaInhib-g' ),
         RecordValue( what='cobaExcit_g', tag='Conductance [ns]', label='cobaExcit-g' ),
         RecordValue( what='regime',      tag='Regime',           label='Regime' ),
