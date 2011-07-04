@@ -91,6 +91,7 @@ class ComponentClass_test(unittest.TestCase):
                 )
 
         # Duplicate Alias Names:
+        ComponentClass( name='C1', aliases = ['H:=0','G:=1'] )
         self.assertRaises( 
                 NineMLRuntimeError,
                 ComponentClass, name='C1', aliases = ['H:=0','H:=1']
@@ -164,13 +165,31 @@ class ComponentClass_test(unittest.TestCase):
                 ComponentClass, 
                     name='C1', aliases = ['tanh := 0'],
                 )
+        self.assertRaises( 
+                NineMLRuntimeError,
+                ComponentClass, 
+                    name='C1', aliases = ['pi := 0'],
+                )
 
     def test_aliases_map(self):
         # Signature: name
 		# Forwarding function to self.dynamics.alias_map
-        #from nineml.abstraction_layer.component.component import ComponentClass
-        warnings.warn('Tests not implemented')
-        # raise NotImplementedError()
+        from nineml.abstraction_layer.component.component import ComponentClass
+        
+        self.assertEqual(
+            ComponentClass( name='C1' ).aliases_map, {} 
+            )
+
+        self.assertEqual(
+                sorted( ComponentClass( name='C1', aliases=['A:=3']).aliases_map.keys() ), 
+                ['A']
+            )
+
+        self.assertEqual(
+                sorted( ComponentClass( name='C1', 
+                                        aliases=['A:=3', 'B:=3']).aliases_map.keys() ), 
+                ['A','B']
+            )
 
 
     def test_analog_ports(self):
