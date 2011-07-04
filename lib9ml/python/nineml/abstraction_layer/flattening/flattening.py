@@ -217,7 +217,7 @@ class ComponentFlattener(object):
 
         # Check for event-emission cycles:
         # TODO
-        recv_event_input_ports = flatten_first_level( [comp.query.event_recv_ports() for comp in self.all_components] )
+        recv_event_input_ports = flatten_first_level( [comp.query.event_recv_ports for comp in self.all_components] )
         event_port_map = flatten_first_level( [comp.query.get_fully_qualified_port_connections() for comp in self.all_components] )
         event_port_map = [ (p1.getstr(), p2.getstr() ) for (p1,p2) in event_port_map ] 
 

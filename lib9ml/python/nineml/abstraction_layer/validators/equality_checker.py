@@ -129,8 +129,8 @@ class ComponentEqualityChecker(object):
 
         # Check Regimes:
 
-        rgm1Dict = d1.regime_map
-        rgm2Dict = d2.regime_map
+        rgm1Dict = d1.regimes_map
+        rgm2Dict = d2.regimes_map
         assert_equal_list( rgm1Dict.keys(), rgm2Dict.keys() )
         for regime_name in rgm1Dict.keys():
             rgm1 = rgm1Dict[regime_name]

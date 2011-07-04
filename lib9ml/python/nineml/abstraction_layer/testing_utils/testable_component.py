@@ -32,6 +32,23 @@ def load_py_module( filename ):
 
 class TestableComponent(object):
 
+
+    @classmethod
+    def list_available(cls):
+        """Returns a list of strings, of the available components"""
+        compdir = LocationMgr.getComponentDir()
+        comps = []
+        for fname in os.listdir(compdir):
+            fname, ext = os.path.splitext(fname)
+            if not ext == '.py':
+                continue
+            if fname == '__init__':
+                continue
+            comps.append(fname)
+        return comps
+
+
+
     functor_name = 'get_component'
     metadata_name = 'ComponentMetaData'
 

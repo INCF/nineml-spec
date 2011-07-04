@@ -32,9 +32,16 @@ iaf = nest.Create('iaf_cond_exp',1)
 iaf9ml =  nest.Create('iaf_cond_exp_9ml',1)
 
 
-iafParams = {'V_th':-57.0, 'V_reset': -70.0, 't_ref': 20.0, 'g_L':28.95,
-'C_m':289.5, 'E_L' : -70.0, 'E_ex': 0.0, 'E_in': -75.0, 'tau_syn_ex':1.5,
-'tau_syn_in': 10.0}
+iafParams = {'V_th':-57.0, 
+             'V_reset': -70.0, 
+             't_ref': 20.0, 
+             'g_L':28.95,
+             'C_m':289.5, 
+             'E_L' : -70.0, 
+             'E_ex': 0.0, 
+             'E_in': -75.0, 
+             'tau_syn_ex':1.5,
+             'tau_syn_in': 10.0 }
 
 
 # Check that we are not just displaying the same graph
@@ -86,8 +93,10 @@ nest.DivergentConnect(igi,pi,model='static_synapse')
 nest.ConvergentConnect(pe,iaf,[2.0],[dt],model='static_synapse')
 nest.ConvergentConnect(pi,iaf,[-2.0],[dt],model='static_synapse')
 
+
 # 9ml neuron needs to set receptor type
-cParams = {'weight': 1.0, 'receptor_type': 1, #'model':'static_synapse',
+cParams = {'weight': 1.0, 
+            'receptor_type': 1, #'model':'static_synapse',
            'delay': dt}
 for x in pe:
     nest.Connect([x],iaf9ml,params=cParams )

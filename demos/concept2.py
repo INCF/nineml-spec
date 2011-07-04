@@ -38,13 +38,14 @@ Copyright (C) 2011 Eilif Muller. All Rights Reserved.
 """
 
 
-import nineml.abstraction_layer as nineml
+#import nineml.abstraction_layer as nineml
 #import os
 from nineml.abstraction_layer.testing_utils import TestableComponent
-from nineml.abstraction_layer.flattening import flatten, ComponentFlattener
+from nineml.abstraction_layer.flattening import flatten
+#from nineml.abstraction_layer.flattening import ComponentFlattener
 from nineml.abstraction_layer.component_modifiers import ComponentModifier
 from nineml.utility import LocationMgr
-from nineml.abstraction_layer.visitors import RenameSymbol
+#from nineml.abstraction_layer.visitors import RenameSymbol
 
 LocationMgr.StdAppendToPath()
 

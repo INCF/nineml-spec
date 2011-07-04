@@ -1,8 +1,3 @@
-.. NineML AbstractionLayer API documentation master file, created by
-   sphinx-quickstart on Wed Jun 15 16:54:44 2011.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
 
 
 NineML Python API
@@ -25,7 +20,6 @@ simulations from scratch in python or matlab can become more and more complex; t
 time to debug and producing hard to find bugs. On the otherhand, writing simulator
 specific models can reduce some of this duplication, but means the model will
 only run on a single simulator.
-
 
 
 Some common problems for modellers are:
