@@ -1,17 +1,7 @@
 """Contains the classes for defining the interface for a componentclass"""
 
-#from operator import and_
-#from expressions import *
-#from conditions import *
-#from ports import *
-#from ..xmlns import *
 
-#import nineml.utility
-#
-#
-#from itertools import chain
-
-
+import nineml
 
 
 
@@ -26,11 +16,13 @@ class Parameter(object):
     future, wrapping in into its own object may make the transition easier
     """
 
-    def __init__(self, name, ):
+    def __init__(self, name):
         """Parameter Constructor
 
         :param name:  The name of the parameter.
         """
+        name=name.strip()
+        nineml.utility.ensure_valid_c_variable_name(name)
 
         self._name = name
 

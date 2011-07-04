@@ -29,6 +29,8 @@ class ComponentClassMixinFlatStructure(object):
         self._event_ports = event_ports or []
         self._dynamics = dynamics
 
+        import nineml
+        nineml.utility.ensure_valid_c_variable_name(name)
 
     # Basic properties:
     @property

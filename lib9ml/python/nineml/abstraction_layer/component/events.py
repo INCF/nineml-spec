@@ -21,6 +21,8 @@ class OutputEvent(object):
             ``NineMLRuntimeException`` will be raised.
         
         """
+        import nineml
+        nineml.utility.ensure_valid_c_variable_name(port_name)
 
         self._port_name = port_name
 

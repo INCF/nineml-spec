@@ -1,3 +1,5 @@
+
+import nineml
 import expressions
 from expressions import Expression
 
@@ -12,7 +14,6 @@ class Condition(expressions.Expression):
 
 
     def _parse_rhs(self, rhs):
-        #from cond_parse import cond_parse
         import parse
         return parse.cond(rhs)
         
@@ -28,25 +29,41 @@ class Condition(expressions.Expression):
     #            assert val==True
     #            return True
 
+    #def rhs_as_python_func(self, namespace=None):
+    #    """ Returns a python callable which evaluates the expression in
+    #    namespace and returns the result """
+    #    namespace = namespace or {}
+
+    #    return eval("lambda %s: %s" % (','.join(self.rhs_names), self.rhs), \
+    #            nineml.maths.str_to_npfunc_map, namespace)
+    #            #math_namespace.namespace, namespace)
+
+
+
     def rhs_as_python_func(self, namespace={}):
         """ Returns a python callable which evaluates the expression in
         namespace and returns the result """
 
-        # overriding Expression.python_func
-        import math_namespace
 
         
-        expr = self.rhs
-        # fix syntax to match python
-        expr = expr.replace('&', ' and ')
-        expr = expr.replace('|', ' or ')
-        expr = expr.replace('!',' not ')
-        # use name_replace, as we don't want to replace 'mytrue' to 'myTrue'
-        expr = self.name_replace('true', 'True', expr)
-        expr = self.name_replace('false', 'False', expr)
+        
+        import util 
+        rhs = self.rhs
 
-        return eval("lambda %s: %s" % (','.join(self.names), expr), math_namespace.namespace, namespace)
+        rhs = rhs.replace('!',' not ')
+        rhs = rhs.replace('&',' and ')
+        rhs = rhs.replace('|',' or ')
 
+        name_map = {
+            'true':'True',
+            'false':'False'
+                }
+
+        for frm,to in name_map.iteritems():
+            rhs = util.MathUtil.str_expr_replacement(frm, to, rhs)
+
+        lmda_str = "lambda %s: %s" % (','.join(self.rhs_names), rhs) 
+        return eval(lmda_str, nineml.maths.str_to_npfunc_map, namespace)
 
     def __repr__(self):
         return "Condition('%s')" % (self.rhs)

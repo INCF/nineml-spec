@@ -51,15 +51,19 @@ class Port(object):
 
         """
 
+
+        name=name.strip()
+        nineml.utility.ensure_valid_c_variable_name(name)
+
         self.dimension = "??" 
         self._name = name
         self._mode = mode
         self._reduce_op = reduce_op
 
-        from util import MathUtil
-        if not MathUtil.is_single_symbol(name):
-            err = 'Invalid Port Name: %s'%name
-            raise nineml.exceptions.NineMLRuntimeError(err)
+        #from util import MathUtil
+        #if not MathUtil.is_single_symbol(name):
+        #    err = 'Invalid Port Name: %s'%name
+        #    raise nineml.exceptions.NineMLRuntimeError(err)
 
         
         if self._mode not in Port._modes:
@@ -74,7 +78,6 @@ class Port(object):
                 raise nineml.exceptions.NineMLRuntimeError(err)
 
         if reduce_op and mode != "reduce":
-            #raise ValueError, "Port of mode!=reduce may not specify 'op'."
             err = "Port of mode!=reduce may not specify 'op'."
             raise nineml.exceptions.NineMLRuntimeError(err)
             

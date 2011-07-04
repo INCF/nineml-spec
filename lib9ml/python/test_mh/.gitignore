@@ -1,0 +1,9 @@
+
+.coverage
+coverage_htmlout/
+output/*
+functional/round_trip_xml_testing/output/*
+functional/round_trip_xml_testing/htmloout/*
+functional/round_trip_xml_testing/nineml_mechanisms/*
+functional/round_trip_xml_testing/.coverage
+

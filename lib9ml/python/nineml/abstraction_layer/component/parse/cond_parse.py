@@ -196,8 +196,9 @@ class CalcCond(Parser):
         # EM: Supports up to 3 args.  Don't know how to support N.
 
         func_name = p[1][:-1].strip()
-        import nineml.maths
-        if func_name not in maths.namespace:
+        from nineml.maths import is_builtin_math_function
+        if not is_builtin_math_function(func_name):
+        #if func_name not in nineml.maths.namespace:
             raise NineMLMathParseError, "Undefined function '%s'" % func_name
         self.funcs.append(func_name)
 

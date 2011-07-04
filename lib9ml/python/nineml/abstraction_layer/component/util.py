@@ -74,6 +74,11 @@ class MathUtil(object):
         Returns the resulting string. """
 
 
+        # Escape the original string, so we can handle special 
+        # characters.
+        frm = re.escape(frm)
+
+
         # do replace using regex
         # this matches names, using lookahead and lookbehind to be sure we don't
         # match for example 'xp' in name 'exp' ...

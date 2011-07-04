@@ -510,7 +510,7 @@ class ComponentClass_test(unittest.TestCase):
         from nineml.abstraction_layer import ComponentClass
         from nineml.abstraction_layer import NamespaceAddress
 
-        d = ComponentClass(name='D')
+        d = ComponentClass(name='D',) 
         e = ComponentClass(name='E')
         f = ComponentClass(name='F')
         g = ComponentClass(name='G')
@@ -780,6 +780,19 @@ class ComponentClass_test(unittest.TestCase):
                 )
 
 
+        #Duplicate Names:
+
+        self.assertRaises(
+                NineMLRuntimeError,
+                ComponentClass, name='cl', 
+                                 regimes = [
+                                    Regime('dX/dt=0',
+                                           name = 'r',
+                                           transitions = On('X>X1', do=['X=X0'] ) ),
+                                    Regime('dX/dt=0', 
+                                           name = 'r', 
+                                           transitions = On('X>X1', do=['X=X0'],) ),] 
+                        )
 
 
 

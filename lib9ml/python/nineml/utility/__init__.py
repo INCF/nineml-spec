@@ -488,3 +488,15 @@ class curry:
             kw = kwargs or self.kwargs
 
         return self.fun(*(self.pending + args), **kw)
+
+
+
+
+import re
+r = re.compile(r"""[a-zA-Z][a-zA-Z0-9]*$""")
+def ensure_valid_c_variable_name( tok):
+    if r.match(tok):
+        return
+    else:
+        raise NineMLRuntimeError("Invalid Token name: %s " % tok)
+

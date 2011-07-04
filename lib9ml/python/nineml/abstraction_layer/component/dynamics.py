@@ -191,7 +191,8 @@ class OnEvent(Transition):
         Transition.__init__(self, state_assignments=state_assignments, 
                             event_outputs=event_outputs, 
                             target_regime_name=target_regime_name)
-        self._src_port_name = src_port_name
+        self._src_port_name = src_port_name.strip()
+        nineml.utility.ensure_valid_c_variable_name(self._src_port_name)
 
     @property
     def src_port_name(self):
@@ -279,7 +280,6 @@ class Regime(object):
         return visitor.visit_regime(self, **kwargs)
 
 
-    #def __init__(self, name=None, transitions=None, time_derivatives = None):
     def __init__(self, *args, **kwargs):
         """Regime constructor
             
@@ -310,7 +310,9 @@ class Regime(object):
 
 
         # Generate a name for unnamed regions:
-        self._name = name if name else Regime.get_next_name()
+        self._name = name.strip() if name else Regime.get_next_name()
+        nineml.utility.ensure_valid_c_variable_name(self._name)
+
 
 
         # Un-named arguments are time_derivatives:
@@ -321,6 +323,10 @@ class Regime(object):
         td_type_dict = nineml.utility.filter_discrete_types(time_derivatives, td_types)
         td_from_str = [StrToExpr.time_derivative(o) for o in td_type_dict[basestring]]  
         self._time_derivatives = td_type_dict[TimeDerivative] + td_from_str
+
+        # Check for double definitions:
+        td_dep_vars = [td.dependent_variable for td in self._time_derivatives]
+        nineml.utility.assert_no_duplicates(td_dep_vars)
 
 
         # We support passing in 'transitions', which is a list of both OnEvents
@@ -360,7 +366,10 @@ class Regime(object):
 
         """
 
-        assert isinstance(on_event, OnEvent)
+        if not isinstance(on_event, OnEvent):
+            err = "Expected 'OnEvent' Obj, but got %s"%(type(on_event))
+            raise NineMLRuntimeError(err)
+
         self._resolve_references_on_transition(on_event)
         self._on_events.append( on_event )
 
@@ -375,7 +384,9 @@ class Regime(object):
         The source regime for this transition will be set as this regime.
 
         """
-        assert isinstance(on_condition, OnCondition)
+        if not isinstance(on_condition, OnCondition):
+            err = "Expected 'OnCondition' Obj, but got %s"%(type(on_condition))
+            raise NineMLRuntimeError(err)
         self._resolve_references_on_transition(on_condition)
         self._on_conditions.append( on_condition )
 
@@ -592,7 +603,9 @@ class StateVariable(object):
 
         :param name:  The name of the state variable.
         """
-        self._name = name
+        self._name = name.strip()
+        nineml.utility.ensure_valid_c_variable_name(self._name)
+
 
     @property
     def name(self):

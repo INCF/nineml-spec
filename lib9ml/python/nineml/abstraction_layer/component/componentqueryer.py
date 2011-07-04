@@ -75,23 +75,17 @@ class ComponentQueryer(object):
                 key = lambda p:p.name )
 
 
-    #def get_fully_addressed_analogports_new(self):
-    #    """Used by the flattening code.
-    #    
-    #    This method returns a ditionary mapping
-    #    the fully-qulified-addresses to the port
-    #    """
-    #    assert False
-    #    comp_addr = self.component.get_node_addr()
 
-    #    kv = lambda port : (comp_addr.get_subns_addr(port.name), port) 
-    #    return dict( [ kv(port) for port in self.component.analog_ports] )
-
+    # Used by the flattening code:
     def get_fully_qualified_port_connections(self):
         """Used by the flattening code.
         
         This method returns a d list of tuples of the 
-        the fully-qualified port connections
+        the fully-qualified port connections.
+        For example,
+        [("a.b.C","d.e.F"),("g.h.I","j.k.L"), ..., ("u.W","x.y.Z") ]
+        but note that it is not ``string`` objects that are returned, but 
+        NamespaceAddress objects.
         """
         namespace = self.component.get_node_addr()
         conns = []
