@@ -341,7 +341,7 @@ class Regime(object):
 
 
     def _resolve_references_on_transition(self, transition):
-        if not transition.target_regime_name:
+        if transition.target_regime_name is None:
             transition.set_target_regime(self)
         
         assert not transition._source_regime_name
@@ -521,9 +521,9 @@ class Dynamics(object):
                 automatically.
         """
 
-        aliases = aliases or  []
-        regimes = regimes or []
-        state_variables = state_variables or []
+        aliases = nineml.utility.normalise_parameter_as_list(aliases)
+        regimes = nineml.utility.normalise_parameter_as_list(regimes)
+        state_variables = nineml.utility.normalise_parameter_as_list(state_variables)
 
         # Load the aliases as objects or strings:
         from nineml.utility import filter_discrete_types
@@ -551,7 +551,7 @@ class Dynamics(object):
         return iter( self._regimes )
 
     @property
-    def regime_map(self):
+    def regimes_map(self):
         return dict( (r.name,r) for r in self.regimes )
 
     @property
@@ -569,6 +569,10 @@ class Dynamics(object):
     @property
     def state_variables(self):
         return iter( self._state_variables )
+
+    @property
+    def state_variables_map(self):
+        return dict( [(sv.name, sv) for sv in self._state_variables ] )
     
     
 

@@ -69,6 +69,11 @@ class ComponentClassMixinFlatStructure(object):
         return self._dynamics.regimes
 
     @property
+    def regimes_map(self):
+        """Forwarding function to self.dynamics.regimes_map"""
+        return self._dynamics.regimes_map
+
+    @property
     def transitions(self):
         """Forwarding function to self.dynamics.transitions"""
         return self._dynamics.transitions
@@ -77,6 +82,11 @@ class ComponentClassMixinFlatStructure(object):
     def state_variables(self):
         """Forwarding function to self.dynamics.state_variables"""
         return self._dynamics.state_variables
+
+    @property
+    def state_variables_map(self):
+        """Forwarding function to self.dynamics.state_variables_map"""
+        return self._dynamics.state_variables_map
     # -------------------------- #
 
 
@@ -208,9 +218,23 @@ class ComponentClassMixinNamespaceStructure(object):
             return parent.get_node_addr().get_subns_addr( contained_namespace ) 
 
 
+    def get_subnode(self, addr):
+        namespace_addr = NamespaceAddress(addr)
+
+        # Look up the first name in the namespace
+        if len( namespace_addr.loctuple ) == 0:
+            return self
+
+        local_namespace_ref = namespace_addr.loctuple[0]
+        if not local_namespace_ref in self.subnodes:
+            err = "Attempted to lookup node: %s, but doesn't exist in this namespace %s"% (local_namespace_ref, self.subnodes.keys() )
+            raise NineMLRuntimeError(err)
+
+        return self.subnodes[local_namespace_ref].get_subnode( addr = NamespaceAddress(namespace_addr.loctuple[1:] ) )
+
         
 
-    def insert_subnode(self, subnode, namespace):
+    def insert_subnode(self,  namespace, subnode ):
         """Insert a subnode into this component
         
 
@@ -226,8 +250,17 @@ class ComponentClassMixinNamespaceStructure(object):
             This method will clone the subnode.
 
         """
+        if not isinstance( namespace, basestring):
+            err = 'Invalid Namespace: %s'%type(subnode)
+            raise NineMLRuntimeError(err)
 
-        assert not namespace in self.subnodes
+        if not isinstance( subnode, ComponentClass):
+            err = 'Attempting to insert invalid object as subcomponent: %s'%type(subnode)
+            raise NineMLRuntimeError(err)
+
+        if namespace in self.subnodes:
+            err = 'Trying to insert duplicate key into namespace: %s'%namespace
+            raise NineMLRuntimeError(err)
         from nineml.abstraction_layer.visitors.cloner import ClonerVisitor
         self.subnodes[namespace] = ClonerVisitor().visit( subnode )
         self.subnodes[namespace]._set_parent_model(self)
@@ -405,12 +438,6 @@ class ComponentClass( ComponentClassMixinFlatStructure,
             For examples
 
         """
-        #if parameters is None:
-        #    parameters = []
-        #if event_ports is None:
-        #    event_ports = []
-        #if analog_ports is None:
-        #    analog_ports = []
 
 
         # We can specify in the componentclass, and they will get forwarded to

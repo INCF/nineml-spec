@@ -60,7 +60,8 @@ class NamespaceAddress(object):
         assert isinstance( self.loctuple, tuple)
         return hash(self.loctuple)
 
-    def __eq__(self,rhs):
+    def __eq__(self, rhs):
+
         if not isinstance(rhs, self.__class__): 
             return False
         return self.loctuple == rhs.loctuple
