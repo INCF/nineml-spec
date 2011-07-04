@@ -427,15 +427,20 @@ class ComponentClass_test(unittest.TestCase):
     def test_event_ports(self):
         # Signature: name
 		# No Docstring
-        #from nineml.abstraction_layer.component.component import ComponentClass
-        warnings.warn('Tests not implemented')
-        # raise NotImplementedError()
+        from nineml.abstraction_layer import ComponentClass, Regime, On
+        import nineml.abstraction_layer as al
 
         # Check inference of event ports:
         c = ComponentClass( 
                 name = 'Comp1',
-                regimes = Regime(),
+                regimes = Regime(
+                    transitions = [
+                        On('V > a', do=al.OutputEvent('ev_port1') ),
+                        On('V < b', do=al.OutputEvent('ev_port2') ),
+                        ]
+                    ),
                 )
+        self.assertEquals( len(c.event_ports), 2 ) 
         
 
 
