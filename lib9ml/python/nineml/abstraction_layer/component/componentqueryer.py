@@ -52,6 +52,15 @@ class ComponentQueryer(object):
         return [ p for p in self.component.analog_ports if p.mode == 'reduce']
 
 
+    @property
+    def analog_send_ports(self):
+        """Get the ``send`` AnalogPorts"""
+        return [ p for p in self.component.analog_ports if p.mode == 'send']
+
+    @property
+    def analog_recv_ports(self):
+        """Get the ``recv`` AnalogPorts"""
+        return [ p for p in self.component.analog_ports if p.mode == 'recv']
 
 
     #def get_fully_addressed_analogports_new(self):

@@ -63,3 +63,13 @@ def get_reserved_and_builtin_symbols():
     return get_builtin_symbols() | _reserved_symbols
 
 
+str_to_npfunc_map = {
+    "exp":numpy.exp,
+    "sqrt":numpy.sqrt,
+    "sin":numpy.sin,
+    "cos":numpy.cos,
+    "atan2":numpy.arctan2,
+    "log":numpy.log,
+    "pi":numpy.pi,
+    "e":numpy.e
+    }

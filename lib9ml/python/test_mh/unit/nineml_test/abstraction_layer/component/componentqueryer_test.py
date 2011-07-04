@@ -18,12 +18,7 @@ class ComponentQueryer_test(unittest.TestCase):
         pass
 
 
-    def test_analog_reduce_ports(self):
-        # Signature: name
-		# Get the ``reduce`` EventPorts
-        #from nineml.abstraction_layer.component.componentqueryer import ComponentQueryer
-        warnings.warn('Tests not implemented')
-        # raise NotImplementedError()
+    # The analog_port functions are testing in component_test.py
 
 
     def test_event_recv_ports(self):

@@ -174,73 +174,162 @@ class ComponentClass_test(unittest.TestCase):
     def test_aliases_map(self):
         # Signature: name
 		# Forwarding function to self.dynamics.alias_map
-        from nineml.abstraction_layer.component.component import ComponentClass
+        from nineml.abstraction_layer.component import ComponentClass, Dynamics
         
         self.assertEqual(
             ComponentClass( name='C1' ).aliases_map, {} 
             )
 
-        self.assertEqual(
-                sorted( ComponentClass( name='C1', aliases=['A:=3']).aliases_map.keys() ), 
-                ['A']
-            )
+        c1 = ComponentClass( name='C1', aliases=['A:=3'])
+        self.assertEqual( c1.aliases_map['A'].rhs_as_python_func()(), 3)
+        self.assertEqual( len(c1.aliases_map), 1)
 
-        self.assertEqual(
-                sorted( ComponentClass( name='C1', 
-                                        aliases=['A:=3', 'B:=3']).aliases_map.keys() ), 
-                ['A','B']
-            )
 
+        c2 = ComponentClass( name='C1', aliases=['A:=3','B:=5'])
+        self.assertEqual( c2.aliases_map['A'].rhs_as_python_func()(), 3)
+        self.assertEqual( c2.aliases_map['B'].rhs_as_python_func()(), 5)
+        self.assertEqual( len(c2.aliases_map), 2)
+
+
+        c3 = ComponentClass( name='C1', dynamics=Dynamics(aliases=['C:=13','Z:=15']))
+        self.assertEqual( c3.aliases_map['C'].rhs_as_python_func()(), 13)
+        self.assertEqual( c3.aliases_map['Z'].rhs_as_python_func()(), 15)
+
+        self.assertEqual( len(c3.aliases_map), 2)
+        
 
     def test_analog_ports(self):
         # Signature: name
 		# No Docstring
-        #from nineml.abstraction_layer.component.component import ComponentClass
-        warnings.warn('Tests not implemented')
-        # raise NotImplementedError()
+        from nineml.abstraction_layer import ComponentClass 
+        from nineml.abstraction_layer import SendPort, RecvPort, ReducePort
+        from nineml.exceptions import NineMLRuntimeError
+        
+        c = ComponentClass( name='C1')
+        self.assertEqual( len( c.analog_ports), 0)
+
+        c = ComponentClass( name='C1')
+        self.assertEqual( len( c.analog_ports), 0)
+
+        
+        c = ComponentClass( name='C1', aliases=['A:=2'], analog_ports=[SendPort('A')])
+        self.assertEqual( len( c.analog_ports), 1)
+        self.assertEqual( c.analog_ports[0].mode, 'send' )
+        self.assertEqual( len(c.query.analog_send_ports), 1 )
+        self.assertEqual( len(c.query.analog_recv_ports), 0 )
+        self.assertEqual( len(c.query.analog_reduce_ports), 0 )
+
+        c = ComponentClass( name='C1', analog_ports=[RecvPort('B')])
+        self.assertEqual( len( c.analog_ports), 1)
+        self.assertEqual( c.analog_ports[0].mode, 'recv' )
+        self.assertEqual( len(c.query.analog_send_ports), 0 )
+        self.assertEqual( len(c.query.analog_recv_ports), 1 )
+        self.assertEqual( len(c.query.analog_reduce_ports), 0 )
+
+        c = ComponentClass( name='C1', analog_ports=[ReducePort('B', reduce_op='+')])
+        self.assertEqual( len( c.analog_ports), 1)
+        self.assertEqual( c.analog_ports[0].mode, 'reduce' )
+        self.assertEqual( c.analog_ports[0].reduce_op, '+' )
+        self.assertEqual( len(c.query.analog_send_ports), 0 )
+        self.assertEqual( len(c.query.analog_recv_ports), 0 )
+        self.assertEqual( len(c.query.analog_reduce_ports), 1 )
 
 
+        # Duplicate Port Names:
+        self.assertRaises(
+                NineMLRuntimeError,
+                ComponentClass, 
+                    name='C1', 
+                    aliases = ['A:=1'],
+                    analog_ports=[ReducePort('B',reduce_op='+'), SendPort('B')]
+                )
+
+        self.assertRaises(
+                NineMLRuntimeError,
+                ComponentClass, 
+                    name='C1', 
+                    aliases = ['A:=1'],
+                    analog_ports=[SendPort('A'), SendPort('A')]
+                )
+
+
+        self.assertRaises(
+                NineMLRuntimeError,
+                ComponentClass, 
+                    name='C1', 
+                    aliases = ['A:=1'],
+                    analog_ports=[RecvPort('A'), RecvPort('A')]
+                )
+
+        self.assertRaises(
+                NineMLRuntimeError,
+                lambda: ComponentClass(name='C1', analog_ports=[RecvPort('1')])
+                )
+
+        self.assertRaises(
+                NineMLRuntimeError,
+                lambda: ComponentClass(name='C1', analog_ports=[RecvPort('?')])
+                )
+
+
+    def duplicate_port_name_event_analog(self):
+        from nineml.abstraction_layer import ComponentClass 
+        from nineml.abstraction_layer import SendPort, RecvPort, ReducePort
+        from nineml.exceptions import NineMLRuntimeError
+
+        #Check different names are OK:
+        ComponentClass(
+            name='C1', aliases = ['A:=1'],
+            event_ports = [ RecvEventPort('A') ],
+            analog_ports=[ SendPort('A')] )
+
+
+        self.assertRaises(
+                NineMLRuntimeError,
+                ComponentClass, 
+                    name='C1', 
+                    aliases = ['A:=1'],
+                    event_ports = [ RecvEventPort('A') ],
+                    analog_ports=[ SendPort('A')]
+                )
+
+
+    # Testing done in test_backsub_all()
     def test_backsub_aliases(self):
-        # Signature: name(self)
-		# Expands all alias definitions within the local aliases.
-		# 
-		# This function finds aliases with which are defined in terms of other
-		# aliases, and expands them, such that each aliases only has Parameters,
-		# StateVariables and recv/reduce AnalogPorts on the RHS.
-        #from nineml.abstraction_layer.component.component import ComponentClass
-        warnings.warn('Tests not implemented')
-        # raise NotImplementedError()
+        pass
+    def test_backsub_equations(self):
+        pass
+
 
 
     def test_backsub_all(self):
-        # Signature: name(self)
-		# Expand all alias definitions in local equations.
-		# 
-		# This function finds ``Aliases``, ``TimeDerivatives``, ``SendPorts``, ``Assignments``
-		# and ``Conditions``  with which are defined in terms of other aliases,
-		# and expands them, such that each only has Parameters,
-		# StateVariables and recv/reduce AnalogPorts on the RHS.
-		# 
-		# It is syntactic sugar for::
-		#     
-		#     self.backsub_aliases()
-		#     self.backsub_equations()
-        #from nineml.abstraction_layer.component.component import ComponentClass
-        warnings.warn('Tests not implemented')
-        # raise NotImplementedError()
+
+        from nineml.abstraction_layer.component import ComponentClass, Dynamics
+        from nineml.exceptions import NineMLRuntimeError
 
 
-    def test_backsub_equations(self):
-        # Signature: name(self)
-		# Expands all equations definitions within the local aliases.
-		# 
-		# This function finds ``TimeDerivatives``, ``SendPorts``, ``Assignments``
-		# and ``Conditions``  with which are defined in terms of other aliases,
-		# and expands them, such that each only has Parameters,
-		# StateVariables and recv/reduce AnalogPorts on the RHS.
-        #from nineml.abstraction_layer.component.component import ComponentClass
+        # Check the aliases:
+        # ====================== #
+        c2 = ComponentClass( name='C1', aliases=['A:=1+2','B:=5*A','C:=B+2'])
+        self.assertEqual( c2.aliases_map['A'].rhs_as_python_func()(), 3)
+
+        # This should assert, because its not yet back-subbed
+        c2.backsub_all()
+        self.assertEqual( c2.aliases_map['B'].rhs_as_python_func()(), 15)
+        # Check the ordering:
+        self.assertEqual( c2.aliases_map['C'].rhs_as_python_func()(), ((5*(3))+2) )
+        # ====================== #
+
+
+
+        # Check the equations:
+        # ====================== #
         warnings.warn('Tests not implemented')
-        # raise NotImplementedError()
+        # ====================== #
+
+
+
+
 
 
     def test_connect_ports(self):
@@ -256,17 +345,83 @@ class ComponentClass_test(unittest.TestCase):
 		# :param sink: The sink port of one sub-component; this should either an
 		#     event port or analog port, but it *must* be either a 'recv' or a
 		#     'reduce' port.
-        #from nineml.abstraction_layer.component.component import ComponentClass
-        warnings.warn('Tests not implemented')
-        # raise NotImplementedError()
+
+        from nineml.abstraction_layer import ComponentClass
+        from nineml.abstraction_layer.testing_utils import TestableComponent
+        from nineml.exceptions import NineMLRuntimeError
+
+        tIaf = TestableComponent('iaf')
+        tCoba = TestableComponent('coba_synapse')
+        
+        # Should be fine:
+        c = ComponentClass( name = 'C1',
+                subnodes = { 'iaf': tIaf(), 'coba':tCoba() } )
+        c.connect_ports( 'iaf.V', 'coba.V' )
+
+        c = ComponentClass( name = 'C1',
+                subnodes = { 'iaf': tIaf(), 'coba':tCoba() },
+                portconnections = [ ('iaf.V', 'coba.V') ]
+                )
+
+
+        # Non existant Ports:
+
+        c = ComponentClass( name = 'C1',
+                subnodes = { 'iaf': tIaf(), 'coba':tCoba() } )
+        self.assertRaises(
+                NineMLRuntimeError,
+                c.connect_ports, 'iaf.V1', 'coba.V' )
+        self.assertRaises(
+                NineMLRuntimeError,
+                c.connect_ports, 'iaf.V', 'coba.V1' )
+
+        self.assertRaises(
+                NineMLRuntimeError,
+                    ComponentClass,
+                        name = 'C1',
+                        subnodes = { 'iaf': tIaf(), 'coba':tCoba() },
+                        portconnections = [ ('iaf.V1', 'coba.V') ]
+                )
+
+        self.assertRaises(
+                NineMLRuntimeError,
+                    ComponentClass,
+                        name = 'C1',
+                        subnodes = { 'iaf': tIaf(), 'coba':tCoba() },
+                        portconnections = [ ('iaf.V', 'coba.V1') ]
+                )
+
+        # Connect ports the wronf way around:
+        # [Check the wright way around works:]
+        c = ComponentClass( name = 'C1',
+                subnodes = { 'iaf': tIaf(), 'coba':tCoba() },
+                portconnections = [ ('coba.I', 'iaf.ISyn') ]
+                )
+        # And the wrong way around:
+        c = ComponentClass( name = 'C1',
+                subnodes = { 'iaf': tIaf(), 'coba':tCoba() } )
+        self.assertRaises(
+                NineMLRuntimeError,
+                c.connect_ports, 'iaf.ISyn.', 'coba.I' )
+        self.assertRaises(
+                NineMLRuntimeError,
+                c.connect_ports, 'coba.V', 'iaf.V' )
+
+
+        # Error raised on duplicate port-connection:
+        c = ComponentClass( name = 'C1',
+                subnodes = { 'iaf': tIaf(), 'coba':tCoba() },
+                )
+
+        c.connect_ports( 'coba.I', 'iaf.ISyn' )
+        self.assertRaises(
+                NineMLRuntimeError,
+                c.connect_ports, 'coba.I', 'iaf.ISyn'  )
+
 
 
     def test_dynamics(self):
-        # Signature: name
-		# No Docstring
-        #from nineml.abstraction_layer.component.component import ComponentClass
-        warnings.warn('Tests not implemented')
-        # raise NotImplementedError()
+        pass
 
 
     def test_event_ports(self):
@@ -275,6 +430,13 @@ class ComponentClass_test(unittest.TestCase):
         #from nineml.abstraction_layer.component.component import ComponentClass
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
+
+        # Check inference of event ports:
+        c = ComponentClass( 
+                name = 'Comp1',
+                regimes = Regime(),
+                )
+        
 
 
     def test_flattener(self):

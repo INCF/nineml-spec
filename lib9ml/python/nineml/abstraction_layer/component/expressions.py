@@ -69,12 +69,13 @@ class Expression(object):
         return itertools.chain(self.rhs_names, self.rhs_funcs)
 
     def rhs_as_python_func(self, namespace=None):
-        namespace = namespace or {}
         """ Returns a python callable which evaluates the expression in
         namespace and returns the result """
+        namespace = namespace or {}
 
         return eval("lambda %s: %s" % (','.join(self.rhs_names), self.rhs), \
-                math_namespace.namespace, namespace)
+                nineml.maths.str_to_npfunc_map, namespace)
+                #math_namespace.namespace, namespace)
 
 
     def rhs_name_transform_inplace(self, name_map):
