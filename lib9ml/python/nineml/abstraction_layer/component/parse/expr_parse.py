@@ -10,21 +10,26 @@
 # -----------------------------------------------------------------------------
 
 
-# EM: Added floats funcs, collect names and funcs instead of eval'ing.
 
-# This is a conditional parser
 
 
 import ply.lex as lex
 import ply.yacc as yacc
 import os
-from expr_parse import NineMLMathParseError, call_expr_func
-import math_namespace
 
-from nineml.utility import LocationMgr
+#import nineml.maths.math_namespace
+import nineml
 
-# for now avoid duplication, but maintain distinctness
-call_cond_func = call_expr_func
+
+
+def call_expr_func(expr_func, ns):
+    args = []
+    for var in expr_func.func_code.co_varnames:
+        try:
+            args.append(ns[var])
+        except KeyError:
+            raise KeyError, "call_expr_func: namespace missing variable '%s'" % var
+    return expr_func(*args)
 
 
 class Parser(object):
@@ -42,11 +47,11 @@ class Parser(object):
             modname = os.path.split(os.path.splitext(__file__)[0])[1] + "_" + self.__class__.__name__
         except:
             modname = "parser"+"_"+self.__class__.__name__
-        #self.debugfile = modname + ".dbg"
-        #self.tabmodule = modname + "_" + "parsetab"
-        
+
+        from nineml.utility import LocationMgr
         self.debugfile = LocationMgr.getTmpDir() + modname + ".dbg"
         self.tabmodule = LocationMgr.getTmpDir() + modname + "_" + "parsetab"
+
         #print self.debugfile, self.tabmodule
 
         # Build the lexer and parser
@@ -63,21 +68,24 @@ class Parser(object):
             yacc.parse(expr)
         except NineMLMathParseError, e:
             raise NineMLMathParseError, str(e)+" Expression was: '%s'" % expr
-        #return set(self.names), set(self.funcs)
 
+        # remove names from the math_namespace
+        #from nineml.maths
         self.names = set(self.names)
-        self.names.difference_update(math_namespace.namespace)
+        #self.names.difference_update(math_namespace.namespace)
+        self.names.difference_update(nineml.maths.namespace)
 
         return self.names, set(self.funcs)
 
 
+
     
-class CalcCond(Parser):
+class CalcExpr(Parser):
 
     tokens = (
-        'NAME','NUMBER','CONDITIONAL','NOT','LOGICAL',
+        'NAME','NUMBER',
         'PLUS','MINUS','EXP', 'TIMES','DIVIDE',
-        'LPAREN','RPAREN','LFUNC', 'COMMA', 'BOOL'
+        'LPAREN','RPAREN','LFUNC', 'COMMA'
         )
 
     # Tokens
@@ -86,23 +94,12 @@ class CalcCond(Parser):
     t_MINUS   = r'-'
     t_EXP     = r'\*\*'
     t_TIMES   = r'\*'
-    t_CONDITIONAL   = r'(<=)|(>=)|(==)|(!=)|(>)|(<)'
-    t_LOGICAL = r'(&)|(\|)'
-    t_NOT = r'\!'
     t_DIVIDE  = r'/'
     t_LPAREN  = r'\('
     t_RPAREN  = r'\)'
+    t_NAME    = r'[a-zA-Z_][a-zA-Z0-9_]*'
+    t_LFUNC    = r'[a-zA-Z_][a-zA-Z0-9_]*[ ]*\('
     t_COMMA   = r','
-
-    def t_LFUNC(self,t):
-        r'[a-zA-Z_][a-zA-Z0-9_]*[ ]*\('
-        return t
-        
-    def t_NAME(self,t):
-        r'[a-zA-Z_][a-zA-Z0-9_]*'
-        if t.value in ('True','true','False','false'):
-            t.type = 'BOOL'
-        return t
 
 
     def t_NUMBER(self, t):
@@ -117,46 +114,18 @@ class CalcCond(Parser):
 
     
     def t_error(self, t):
-        raise NineMLMathParseError, \
-            "Illegal character '%s' in '%s'" % (t.value[0],t)
+        raise NineMLMathParseError, "Illegal character '%s' in '%s'" % (t.value[0],t)
 
     precedence = (
-        ('left','NAME'),
         ('left','PLUS','MINUS'),
         ('left','TIMES','DIVIDE'),
         ('left', 'EXP'),
         ('right','UMINUS'),
-        ('right','UNOT'),
-        ('left','NOT'),
-        ('left','LFUNC')
+        ('left','LFUNC'),
         )
 
-    start = 'conditional'
-
-    def p_conditional(self, p):
-        'conditional : boolean'
-        pass
-
-    def p_boolean_bool(self, p):
-        "boolean : BOOL"
-        pass
-
-
-    def p_boolean_not(self, p):
-        'boolean : NOT boolean %prec UNOT'
-        pass
-
-
-    def p_boolean_logical(self, p):
-        'boolean : boolean LOGICAL boolean'
-        pass
-
-    def p_boolean_group(self, p):
-        'boolean : LPAREN boolean RPAREN'
-        pass
-
-    def p_boolean_conditional(self, p):
-        'boolean : expression CONDITIONAL expression'
+    def p_statement_expr(self, p):
+        'statement : expression'
         pass
 
     def p_expression_binop(self, p):
@@ -173,6 +142,19 @@ class CalcCond(Parser):
         'expression : MINUS expression %prec UMINUS'
         pass
 
+    def p_func(self,p):
+        """expression : LFUNC expression RPAREN\n | LFUNC RPAREN
+                        | LFUNC expression COMMA expression RPAREN
+                        | LFUNC expression COMMA expression COMMA expression RPAREN
+        """
+        # EM: Supports up to 3 args.  Don't know how to support N.
+        
+        # check that function name is known
+        func_name = p[1][:-1].strip()
+        #if func_name not in math_namespace.namespace:
+        #    raise NineMLMathParseError, "Undefined function '%s'" % func_name
+        self.funcs.append(func_name)
+
     def p_expression_group(self, p):
         'expression : LPAREN expression RPAREN'
         pass
@@ -185,37 +167,21 @@ class CalcCond(Parser):
         'expression : NAME'
         self.names.append(p[1])
 
-
-    def p_func(self,p):
-        """expression : LFUNC expression RPAREN\n | LFUNC RPAREN
-                        | LFUNC expression COMMA expression RPAREN
-                        | LFUNC expression COMMA expression COMMA expression RPAREN
-        """
-        # EM: Supports up to 3 args.  Don't know how to support N.
-
-        func_name = p[1][:-1].strip()
-        if func_name not in math_namespace.namespace:
-            raise NineMLMathParseError, "Undefined function '%s'" % func_name
-        self.funcs.append(func_name)
-
-
     def p_error(self, p):
         if p:
-            raise NineMLMathParseError, \
-                    "Syntax error at '%s'" % p.value
+            raise NineMLMathParseError, "Syntax error at '%s'" % p.value
         else:
-            raise NineMLMathParseError, \
-                    "Syntax error at EOF, probably unmatched parenthesis."
+            raise NineMLMathParseError, "Syntax error at EOF, probably unmatched parenthesis."
 
 
-def cond_parse(conditional):
-    """ Parses a conditinal expression 
+def expr_parse(rhs):
+    """ Parses an expression rhs, i.e. no "=, +=, -=, etc." in the expr
     and returns var names and func names as sets """
 
-    calc = CalcCond()
-    return calc.parse(conditional)
+    calc = CalcExpr()
+    return calc.parse(rhs)
     
 if __name__ == '__main__':
-    calc = CalcCond()
-    p = calc.parse("q > 1 / (( 1 + mg_conc * eta *  exp ( -1 * gamma*V))")
+    calc = CalcExpr()
+    p = calc.parse("1 / (( 1 + mg_conc * eta *  exp ( -1 * gamma*V))")
     print p

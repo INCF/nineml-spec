@@ -25,8 +25,12 @@ from componentqueryer import ComponentQueryer
 from util import parse, StrToExpr, MathUtil
 
 
-from cond_parse import CalcCond
-from expr_parse import NineMLMathParseError, CalcExpr
+#from cond_parse import CalcCond
+#from expr_parse import NineMLMathParseError, CalcExpr
+
+
+#from expr_parse import NineMLMathParseError
+from parse import NineMLMathParseError
 
 
 from syntacticsugar import SpikeOutputEvent

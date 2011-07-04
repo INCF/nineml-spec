@@ -12,8 +12,9 @@ class Condition(expressions.Expression):
 
 
     def _parse_rhs(self, rhs):
-        from cond_parse import cond_parse
-        return cond_parse(rhs)
+        #from cond_parse import cond_parse
+        import parse
+        return parse.cond(rhs)
         
 
 

@@ -283,6 +283,8 @@ class InterfaceInferer(ActionVisitor):
         else:
             analog_ports_in = []
 
+        import nineml.maths as math_namespace    
+
         self.accounted_for_symbols = set( itertools.chain(
             self.state_variable_names, 
             alias_symbols, 

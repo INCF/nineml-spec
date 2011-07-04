@@ -6,7 +6,9 @@ import itertools
 import math_namespace
 from nineml.exceptions import NineMLRuntimeError
 import util
-from expr_parse import expr_parse
+
+import parse
+#from expr_parse import expr_parse
 
 
 
@@ -35,7 +37,8 @@ class Expression(object):
     def _parse_rhs(self, rhs):
         # A temporary measure, this is until the parser is 
         # generalised to handle conditionals
-        return expr_parse(rhs)
+        #return parse.expr_parse(rhs)
+        return parse.expr(rhs)
 
     
     # If we assign to rhs, then we need to update the 
