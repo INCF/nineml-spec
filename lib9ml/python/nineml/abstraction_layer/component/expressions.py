@@ -3,13 +3,13 @@
 import re
 import itertools
 
-import math_namespace
+#import math_namespace
 from nineml.exceptions import NineMLRuntimeError
 import util
 
 import parse
 #from expr_parse import expr_parse
-
+import nineml
 
 
 
@@ -157,8 +157,12 @@ class ExpressionWithSimpleLHS(ExpressionWithLHS):
         if not util.MathUtil.is_single_symbol( lhs ):
             err = 'Expecting a single symbol on the LHS; got: %s' % lhs
             raise NineMLRuntimeError(err)
+        if not nineml.maths.is_valid_lhs_target(lhs):
+            err = 'Invalid LHS target: %s'%lhs
+            raise NineMLRuntimeError(err)
 
         self._lhs = lhs.strip()
+        
 
     @property
     def lhs(self):

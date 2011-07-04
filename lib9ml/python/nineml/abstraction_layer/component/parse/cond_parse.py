@@ -67,7 +67,8 @@ class Parser(object):
 
 
         self.names = set(self.names)
-        self.names.difference_update(nineml.maths.namespace)
+        #self.names.difference_update(nineml.maths.namespace)
+        self.names.difference_update( nineml.maths.get_builtin_symbols() )
 
         return self.names, set(self.funcs)
 

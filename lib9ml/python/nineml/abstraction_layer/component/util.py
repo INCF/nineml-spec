@@ -96,7 +96,7 @@ class MathUtil(object):
 
     @classmethod 
     def get_prefixed_rhs_string(cls, expr_obj, prefix="", exclude=None ):
-        import math_namespace
+        #import math_namespace
         
         expr = expr_obj.rhs
         for name in expr_obj.rhs_names:
@@ -104,7 +104,7 @@ class MathUtil(object):
                 continue
             expr = MathUtil.str_expr_replacement(name, prefix+name, expr)
         for func in expr_obj.rhs_funcs:
-            if func not in math_namespace.namespace:
+            if not nineml.maths.is_builtin_symbol(func):
                 expr = MathUtil.str_expr_replacement(func, 
                                                      prefix+func, 
                                                      expr, 

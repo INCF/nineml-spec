@@ -122,7 +122,7 @@ class ComponentValidatorAssignmentsAliasesAndStateVariablesHaveNoUnResolvedSymbo
         self.visit(component)
 
          
-        excludes = ['celsius', 't'] + list( nineml.maths.functions)
+        excludes =  nineml.maths.get_reserved_and_builtin_symbols()
 
         # Check Aliases:
         for ns, aliases in self.aliases.iteritems():
@@ -372,7 +372,7 @@ class ComponentValidatorCheckNoLHSAssignmentsToMathsNamespace(ComponentValidator
     def check_lhssymbol_is_valid(self, symbol):
         assert isinstance( symbol, basestring)
 
-        if symbol in nineml.maths.symbols:
+        if not nineml.maths.is_valid_lhs_target(symbol) :
             err = 'Symbol: %s found on left-hand-side of an equation'
             raise nineml.exceptions.NineMLRuntimeError(err)
             

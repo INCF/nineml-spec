@@ -14,7 +14,7 @@ import itertools
 from interface import Parameter
 from dynamics import StateVariable
 from ports import EventPort
-import math_namespace 
+#import math_namespace 
 from nineml.utility import check_list_contain_same_items
 
 
@@ -289,9 +289,10 @@ class InterfaceInferer(ActionVisitor):
             self.state_variable_names, 
             alias_symbols, 
             analog_ports_in,
-            math_namespace.functions,
-            math_namespace.symbols,
-            math_namespace.reserved_symbols,
+            nineml.maths.get_reserved_and_builtin_symbols()
+            #math_namespace.functions,
+            #math_namespace.symbols,
+            #math_namespace.reserved_symbols,
             ) )
 
         #Parameters:

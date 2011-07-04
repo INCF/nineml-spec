@@ -7,7 +7,7 @@ from itertools import chain
 
 
 import nineml.abstraction_layer 
-from nineml.abstraction_layer.component import math_namespace
+#from nineml.abstraction_layer.component import math_namespace
 from nineml.abstraction_layer.component.namespaceaddress import NamespaceAddress
 
 
@@ -192,7 +192,8 @@ class ClonerVisitor(ComponentVisitor):
         prefix_excludes = kwargs.get('prefix_excludes',[])
         if variable in prefix_excludes:
             return variable
-        if math_namespace.is_in_math_namespace(variable): 
+
+        if nineml.maths.is_builtin_symbol(variable): 
             return variable
 
         else:

@@ -20,16 +20,9 @@ from namespaceaddress import NamespaceAddress
 from component import ComponentClass
 from component import ComponentClassMixinFlatStructure
 from component import ComponentClassMixinNamespaceStructure
-import math_namespace 
 from componentqueryer import ComponentQueryer
 from util import parse, StrToExpr, MathUtil
 
-
-#from cond_parse import CalcCond
-#from expr_parse import NineMLMathParseError, CalcExpr
-
-
-#from expr_parse import NineMLMathParseError
 from parse import NineMLMathParseError
 
 
