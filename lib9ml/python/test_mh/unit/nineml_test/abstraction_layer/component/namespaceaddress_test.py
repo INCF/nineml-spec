@@ -8,6 +8,9 @@ import nineml
 
 
 
+from nineml.abstraction_layer import NamespaceAddress
+from nineml.abstraction_layer import NamespaceAddress as NSA
+
 
 
 # Testing Skeleton for class: NamespaceAddress
@@ -31,8 +34,18 @@ class NamespaceAddress_test(unittest.TestCase):
 		# >>> NamespaceAddress.concat('first.second','third.forth','fifth.sixth')
 		#     NameSpaceAddress: '/first/second/third/forth/fifth/sixth'
         #from nineml.abstraction_layer.component.namespaceaddress import NamespaceAddress
-        warnings.warn('Tests not implemented')
-        # raise NotImplementedError()
+        self.assertEqual( 
+                NSA.concat( NSA('a.b.c'), NSA('d.e.f'), NSA('g.h.i') ),
+                NSA('a.b.c.d.e.f.g.h.i') )
+        self.assertEqual( 
+                NSA.concat( NSA.create_root(), NSA('a.b.c'), NSA.create_root() ) ,
+                NSA('a.b.c')
+                ) 
+        self.assertEqual( 
+                NSA.concat( NSA.create_root(), NSA.create_root() ) ,
+                NSA.create_root()
+                ) 
+
 
 
     def test_create_root(self):
@@ -43,8 +56,8 @@ class NamespaceAddress_test(unittest.TestCase):
 		# >>> nineml.abstraction_layer.NamespaceAddress.create_root()
 		# NameSpaceAddress: '//'    
         #from nineml.abstraction_layer.component.namespaceaddress import NamespaceAddress
-        warnings.warn('Tests not implemented')
-        # raise NotImplementedError()
+        self.assertEqual( NSA.create_root().loctuple, () )
+
 
 
     def test_get_local_name(self):
@@ -69,17 +82,6 @@ class NamespaceAddress_test(unittest.TestCase):
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
 
-
-    def test_get_str_prefix(self):
-        # Signature: name(self, join_char='_')
-		# Returns the same as ``getstr``, but prepends the ``join_char`` to
-		# the end of the string, so that the string can be used to prefix
-		# variables.
-		# 
-		# :param join_char: The character used to join the levels in the address.
-        #from nineml.abstraction_layer.component.namespaceaddress import NamespaceAddress
-        warnings.warn('Tests not implemented')
-        # raise NotImplementedError()
 
 
     def test_get_subns_addr(self):
@@ -106,6 +108,16 @@ class NamespaceAddress_test(unittest.TestCase):
         # raise NotImplementedError()
 
 
+    def test_get_str_prefix(self):
+        # Signature: name(self, join_char='_')
+		# Returns the same as ``getstr``, but prepends the ``join_char`` to
+		# the end of the string, so that the string can be used to prefix
+		# variables.
+		# 
+		# :param join_char: The character used to join the levels in the address.
+        #from nineml.abstraction_layer.component.namespaceaddress import NamespaceAddress
+        warnings.warn('Tests not implemented')
+        # raise NotImplementedError()
 
 
 

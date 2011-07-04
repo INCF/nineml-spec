@@ -231,7 +231,7 @@ class Alias(ExpressionWithSimpleLHS, RegimeElement):
 
     """
 
-    def __init__(self, lhs, rhs):
+    def __init__(self, lhs=None, rhs=None):
         """ Constructor for an Alias 
 
         :param lhs: A `string` specifying the left-hand-side, i.e. the alias
@@ -242,6 +242,7 @@ class Alias(ExpressionWithSimpleLHS, RegimeElement):
             component.
         
         """
+
         ExpressionWithSimpleLHS.__init__(self, lhs, rhs)
 
     def __repr__(self):

@@ -21,9 +21,20 @@ class Alias_test(unittest.TestCase):
     def test_accept_visitor(self):
         # Signature: name(self, visitor, **kwargs)
 		# |VISITATION| 
-        #from nineml.abstraction_layer.component.expressions import Alias
-        warnings.warn('Tests not implemented')
-        # raise NotImplementedError()
+        from nineml.abstraction_layer.component import  Alias
+        class TestVisitor(object):
+            def visit(self, obj, **kwargs):
+                return obj.accept_visitor(self, **kwargs)
+            def visit_alias(self, component, **kwargs):
+                return kwargs
+        
+        c = Alias(lhs='V', rhs='0')
+        v = TestVisitor()
+        
+        self.assertEqual(
+            v.visit(c, kwarg1='Hello', kwarg2='Hello2'),
+            {'kwarg1':'Hello', 'kwarg2':'Hello2'}
+            )
 
 
 
@@ -208,9 +219,20 @@ class StateAssignment_test(unittest.TestCase):
     def test_accept_visitor(self):
         # Signature: name(self, visitor, **kwargs)
 		# |VISITATION| 
-        #from nineml.abstraction_layer.component.expressions import StateAssignment
-        warnings.warn('Tests not implemented')
-        # raise NotImplementedError()
+        from nineml.abstraction_layer.component.expressions import StateAssignment
+        class TestVisitor(object):
+            def visit(self, obj, **kwargs):
+                return obj.accept_visitor(self, **kwargs)
+            def visit_assignment(self, component, **kwargs):
+                return kwargs
+        
+        c = StateAssignment(lhs='V', rhs='0')
+        v = TestVisitor()
+        
+        self.assertEqual(
+            v.visit(c, kwarg1='Hello', kwarg2='Hello2'),
+            {'kwarg1':'Hello', 'kwarg2':'Hello2'}
+            )
 
 
     def test_lhs(self):
@@ -232,9 +254,21 @@ class TimeDerivative_test(unittest.TestCase):
     def test_accept_visitor(self):
         # Signature: name(self, visitor, **kwargs)
 		# |VISITATION| 
-        #from nineml.abstraction_layer.component.expressions import TimeDerivative
-        warnings.warn('Tests not implemented')
-        # raise NotImplementedError()
+
+        from nineml.abstraction_layer.component.expressions import TimeDerivative
+        class TestVisitor(object):
+            def visit(self, obj, **kwargs):
+                return obj.accept_visitor(self, **kwargs)
+            def visit_timederivative(self, component, **kwargs):
+                return kwargs
+        
+        c = TimeDerivative(dependent_variable='V', rhs='0')
+        v = TestVisitor()
+        
+        self.assertEqual(
+            v.visit(c, kwarg1='Hello', kwarg2='Hello2'),
+            {'kwarg1':'Hello', 'kwarg2':'Hello2'}
+            )
 
 
     def test_atoms(self):

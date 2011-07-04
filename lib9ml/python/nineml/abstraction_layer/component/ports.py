@@ -32,9 +32,10 @@ class Port(object):
 
     """
     _modes = ('send', 'recv', 'reduce')
-    _reduce_op_map = {'add':'+', 'sub':'-', 'mul':'*', 'div':'/',
-                     '+':'+', '-':'-', '*':'*', '/':'/'}
+    #_reduce_op_map = {'add':'+', 'sub':'-', 'mul':'*', 'div':'/',
+    #                 '+':'+', '-':'-', '*':'*', '/':'/'}
 
+    _reduce_op_map = {'add':'+', '+':'+', }
     def __init__(self, name, mode='send', reduce_op=None):
         """ Port Constructor.
 
@@ -68,7 +69,7 @@ class Port(object):
         
         if self._mode not in Port._modes:
             err = ("%s('%s')"+ "specified undefined mode: '%s'") %\
-                  (self.__class__.__name__, self.symbol, mode)
+                  (self.__class__.__name__, self.name, mode)
             raise nineml.exceptions.NineMLRuntimeError(err)
 
         if mode == 'reduce':
@@ -112,11 +113,11 @@ class Port(object):
         """Returns True if the port's mode is 'send' """
         return not self.is_incoming()
                    
-    @property
-    def symbol(self):
-        """Deprecated, do not use"""
-        assert False
-        return self._name
+#    @property
+#    def symbol(self):
+#        """Deprecated, do not use"""
+#        assert False
+#        return self._name
 
 
 
