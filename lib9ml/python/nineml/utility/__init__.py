@@ -493,7 +493,7 @@ class curry:
 
 
 import re
-r = re.compile(r"""[a-zA-Z][a-zA-Z0-9]*$""")
+r = re.compile(r"""[a-zA-Z][a-zA-Z0-9_]*$""")
 def ensure_valid_c_variable_name( tok):
     if r.match(tok):
         return

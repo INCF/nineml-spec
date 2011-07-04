@@ -108,8 +108,7 @@ def build_context(component, weight_variables, input_filename="[Unknown-Filename
         weights_as_states = True
    
 
-    component.backsub_aliases()
-    component.backsub_equations()
+    component.backsub_all()
         
     
     context = {

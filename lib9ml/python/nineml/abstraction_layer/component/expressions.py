@@ -87,19 +87,22 @@ class Expression(object):
 
         
 
-    def substitute_alias(self, alias):
-        """Substitute an alias into the rhs"""
-        sub = "(%s)" % alias.rhs,
-
-        self.rhs = util.MathUtil.str_expr_replacement(alias.lhs, sub, self.rhs)
+    #def substitute_alias(self, alias):
+    #    """Substitute an alias into the rhs"""
+    #    assert False, 'Deprecated' 
+    #    "Use expr.rhs_name_transform_inplace({alias.lhs:'(%s)'%alias.rhs})"
+    #    sub = "(%s)" % alias.rhs,
+    #    self.rhs = util.MathUtil.str_expr_replacement(alias.lhs, sub, self.rhs)
         
 
     @property
     def rhs_missing_functions(self):
         """ yield names of functions in the rhs which are not in the math
         namespace"""
+        from nineml.maths import is_builtin_math_function
         for func in self.rhs_funcs:
-            if func not in math_namespace.namespace:
+            if not is_builtin_math_function(func):
+                raise NineMLRuntimeError('Unexpected Missing Function: %s'%func)
                 yield func
 
 
@@ -108,9 +111,13 @@ class Expression(object):
     def rhs_has_missing_functions(self):
         """ returns True if at least 1 function on the rhs is not in the math
         namespace"""
-        res = len(list(self.rhs_missing_functions)) != 0
-        assert not res
-        return res
+        from nineml.maths import is_builtin_math_function
+        for func in self.rhs_funcs:
+            if not is_builtin_math_function(func):
+                raise NineMLRuntimeError('Unexpected Missing Function: %s'%func)
+                return True
+        return False
+
 
 
 

@@ -36,7 +36,7 @@ def get_component():
              al.ReducePort("Isyn",reduce_op="+")]
 
 
-    c1 = al.ComponentClass("Morris-Lecar", 
+    c1 = al.ComponentClass("MorrisLecar", 
                             dynamics = al.Dynamics(
                                         regimes = [r],
                            

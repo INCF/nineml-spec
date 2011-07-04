@@ -22,9 +22,10 @@ class OutputEvent(object):
         
         """
         import nineml
-        nineml.utility.ensure_valid_c_variable_name(port_name)
 
-        self._port_name = port_name
+
+        self._port_name = port_name.strip()
+        nineml.utility.ensure_valid_c_variable_name(self._port_name)
 
     @property
     def port_name(self):

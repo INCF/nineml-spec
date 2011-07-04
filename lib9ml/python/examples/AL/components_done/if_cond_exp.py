@@ -33,7 +33,7 @@ import nineml.abstraction_layer as al
 def get_component():
     regimes = [
         al.Regime(
-            name = "sub-threshold-regime",
+            name = "sub_threshold_regime",
             time_derivatives = [
                 "dV/dt = (v_rest - V)/tau_m + (gE*(e_rev_E - V) + gI*(e_rev_I - V) + i_offset)/cm",
                 "dgE/dt = -gE/tau_syn_E",
@@ -42,17 +42,17 @@ def get_component():
                                      do=["t_spike = t",
                                          "V = v_reset",
                                          al.OutputEvent('spikeoutput')],
-                                     to="refractory-regime"),
+                                     to="refractory_regime"),
                            al.On('excitatory', do="gE=gE+q"),
                            al.On('inhibitory', do="gI=gI+q"),
                           ),
         ),
         al.Regime(
-            name = "refractory-regime",
+            name = "refractory_regime",
             time_derivatives = [
                 "dgE/dt = -gE/tau_syn_E",
                 "dgI/dt = -gI/tau_syn_I",],
-            transitions = (al.On("t >= t_spike + tau_refrac", to="sub-threshold-regime"),
+            transitions = (al.On("t >= t_spike + tau_refrac", to="sub_threshold_regime"),
                            al.On('excitatoryspike', do="gE=gE+q"),
                            al.On('inhibitoryspike', do="gI=gI+q"),
                            ),

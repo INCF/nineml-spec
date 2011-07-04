@@ -103,52 +103,6 @@ class ComponentClassMixinFlatStructure(object):
         and expands them, such that each only has Parameters,
         StateVariables and recv/reduce AnalogPorts on the RHS.
         
-        It is syntactic sugar for::
-            
-            self.backsub_aliases()
-            self.backsub_equations()
-
-        """
-
-        self.backsub_aliases()
-        self.backsub_equations()
-
-
-    def backsub_aliases(self):
-        """Expands all alias definitions within the local aliases.
-        
-        This function finds aliases with which are defined in terms of other
-        aliases, and expands them, such that each aliases only has Parameters,
-        StateVariables and recv/reduce AnalogPorts on the RHS.
-
-        """
-
-        # Back-substitute aliases, by resolving them
-        # them then substituting recursively:
-        def build_and_resolve_alias(alias):
-            for missing_alias_name in alias.rhs_missing_functions:
-                if missing_alias_name in self.aliases_map:
-                    missing_alias = self.aliases_map[missing_alias_name]
-                    build_and_resolve_alias( missing_alias )
-                    # resolve (lower level is already resolved now) 
-                    alias.substitute_alias( missing_alias )
-                elif missing_alias_name in math_namespace.functions:
-                    pass
-                else:
-                    errmsg = "Unable to resolve alias %s" % str(alias)
-                    raise NineMLRuntimeError(errmsg)
-
-        
-        for alias in self.aliases:
-            build_and_resolve_alias(alias)
-
-    def backsub_equations(self):
-        """Expands all equations definitions within the local aliases.
-        
-        This function finds ``TimeDerivatives``, ``SendPorts``, ``Assignments``
-        and ``Conditions``  with which are defined in terms of other aliases,
-        and expands them, such that each only has Parameters,
-        StateVariables and recv/reduce AnalogPorts on the RHS.
         """
 
         from nineml.abstraction_layer.visitors import ExpandAliasDefinition
@@ -156,6 +110,9 @@ class ComponentClassMixinFlatStructure(object):
             alias_expander = ExpandAliasDefinition(originalname=alias.lhs, 
                                                    targetname="(%s)"%alias.rhs )
             alias_expander.visit(self)
+
+
+
 
 
     def write(self, file, flatten=True):

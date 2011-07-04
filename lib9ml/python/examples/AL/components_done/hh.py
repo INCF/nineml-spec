@@ -41,7 +41,7 @@ def get_component():
 
     analog_ports = [al.SendPort("V"), al.ReducePort("Isyn",reduce_op="+")]
 
-    c1 = al.ComponentClass("Hodgkin-Huxley", 
+    c1 = al.ComponentClass("HodgkinHuxley", 
                           parameters=parameters,
                           regimes=(hh_regime,),
                           aliases=aliases, 
