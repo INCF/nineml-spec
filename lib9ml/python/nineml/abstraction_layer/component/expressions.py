@@ -102,10 +102,15 @@ class Expression(object):
             if func not in math_namespace.namespace:
                 yield func
 
+
+
+    
     def rhs_has_missing_functions(self):
         """ returns True if at least 1 function on the rhs is not in the math
         namespace"""
-        return len(list(self.rhs_missing_functions)) != 0
+        res = len(list(self.rhs_missing_functions)) != 0
+        assert not res
+        return res
 
 
 

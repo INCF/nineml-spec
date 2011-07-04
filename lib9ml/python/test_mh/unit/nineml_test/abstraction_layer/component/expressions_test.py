@@ -40,11 +40,11 @@ class Expression_test(unittest.TestCase):
         from nineml.abstraction_layer import Expression
         # rhs, expt_vars, expt_funcs, result, values
         valid_rhses = [
-                ( ('a'),                ('a'),              (), 5,      {'a':5}, ), 
-                ( ('b'),                ('b'),              (), 7,      {'b':7}, ),
-                ( ('a+b'),              ('a','b'),          (), 13,     {'a':12,'b':1} ),
-                ( ('1/(alpha+2*beta)'),  ('alpha','beta'),   (), 0.2,    {'alpha':1,'beta':2} ),
-                ( ('pi'),                (),                 (), 3.142,  {} ),
+                ( ('a'),                ('a'),                (), 5,            {'a':5}, ), 
+                ( ('b'),                ('b'),                (), 7,            {'b':7}, ),
+                ( ('a+b'),              ('a','b'),            (), 13,           {'a':12,'b':1} ),
+                ( ('1./(alpha+2*beta)'),  ('alpha','beta'),   (), 0.2,          {'alpha':1,'beta':2} ),
+                ( ('pi'),                (),                  (), 3.14159265,   {} ),
                 ]
 
         
@@ -52,11 +52,8 @@ class Expression_test(unittest.TestCase):
             e = Expression(rhs)
             self.assertEquals( set( e.rhs_names), set( exp_var) )
             self.assertEquals( set( e.rhs_funcs), set( exp_func) )
-
-            #res = 
             self.assertAlmostEqual( e.rhs_as_python_func()(**params), exp_res, places=4 )
             
-
 
 
     
@@ -94,16 +91,6 @@ class Expression_test(unittest.TestCase):
         #from nineml.abstraction_layer.component.expressions import Expression
         warnings.warn('Tests not implemented')
         # raise NotImplementedError()
-
-
-    def test_rhs_has_missing_functions(self):
-        # Signature: name(self)
-		# returns True if at least 1 function on the rhs is not in the math
-		# namespace
-        #from nineml.abstraction_layer.component.expressions import Expression
-        warnings.warn('Tests not implemented')
-        # raise NotImplementedError()
-
 
     def test_rhs_missing_functions(self):
         # Signature: name
