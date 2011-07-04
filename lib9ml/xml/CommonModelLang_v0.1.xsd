@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<xs:schema targetNamespace="CoModL"
+    xmlns="CoModL"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    elementFormDefault="qualified"
+    attributeFormDefault="unqualified">
+
+
+    <xs:complexType name="NineML">
+
+        <xs:sequence>
+            <xs:element name="ComponentClass" type="ComponentClass" minOccurs="0" maxOccurs="unbounded"/>
+            <!--<xs:element name="node" type="Node" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="structure" type="Structure" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="group" type="Group" minOccurs="0" maxOccurs="unbounded"/>-->
+        </xs:sequence>
+
+        <xs:attribute name="name" type="xs:string" use="optional"/>
+
+    </xs:complexType>
+
+    <xs:complexType name="ComponentClass">
+    
+        <xs:sequence>
+            <xs:element name="Parameter" type="Parameter" minOccurs="1" maxOccurs="unbounded"/>
+            <xs:element name="AnalogPort" type="AnalogPort" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="EventPort" type="EventPort" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="Dynamics" type="Dynamics" minOccurs="1" maxOccurs="1"/>
+        </xs:sequence>
+
+        <xs:attribute name="name" type="xs:string" use="required"/>
+    </xs:complexType>
+
+
+    <xs:complexType name="Parameter">
+        <xs:attribute name="name" type="xs:string" use="required"/>
+        <xs:attribute name="dimension" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="Math">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <xs:complexType name="AnalogPort">
+        <xs:attribute name="name" type="xs:string" use="required"/>
+        <xs:attribute name="mode" type="xs:string" use="required"/>   <!-- Prob should be restriction to enum -->
+        <xs:attribute name="dimension" type="xs:string" use="required"/>
+         <!-- <xs:attribute name="op" type="xs:string" use="optional"/>  Prob should be restriction to enum -->
+    </xs:complexType>
+
+    <xs:complexType name="EventPort">
+        <xs:attribute name="name" type="xs:string" use="required"/>
+        <xs:attribute name="mode" type="xs:string" use="required"/>   <!-- Prob should be restriction to enum -->
+    </xs:complexType>
+
+    <xs:complexType name="Dynamics">
+        <xs:sequence>
+            <xs:element name="StateVariable" type="StateVariable" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="Regime" type="Regime" minOccurs="1" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+
+    <xs:complexType name="Regime">
+        <xs:sequence>
+            <xs:element name="TimeDerivative" type="TimeDerivative" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="OnCondition" type="OnCondition" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:string" use="required"/>
+    </xs:complexType>
+    
+    
+    <xs:complexType name="StateVariable">
+        <xs:attribute name="name" type="xs:string" use="required"/>
+        <xs:attribute name="dimension" type="xs:string" use="required"/>
+    </xs:complexType>
+
+
+    <xs:complexType name="TimeDerivative">
+        <xs:sequence>
+            <xs:element name="MathInline" type="Math" minOccurs="1" maxOccurs="1"/>
+        </xs:sequence>
+
+        <!--<xs:attribute name="independent_variable" type="xs:string" use="required"/>-->
+        <xs:attribute name="name" type="xs:string" use="optional"/>
+        <xs:attribute name="variable" type="xs:string" use="required"/>
+    </xs:complexType>
+    
+    
+    <xs:complexType name="OnCondition">
+        <xs:sequence>
+            <xs:element name="Trigger" type="Trigger" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="StateAssignment" type="StateAssignment" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="EventOut" type="EventOut" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="StateAssignment">
+        <xs:sequence>
+            <xs:element name="MathInline" type="Math" minOccurs="1" maxOccurs="1"/>
+        </xs:sequence>
+        <xs:attribute name="variable" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="Trigger">
+        <xs:sequence>
+            <xs:element name="MathInline" type="Math" minOccurs="1" maxOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    
+    <xs:complexType name="EventOut">
+        <xs:attribute name="port" type="xs:string" use="required"/>
+    </xs:complexType>
+    
+</xs:schema>
+
+
+
