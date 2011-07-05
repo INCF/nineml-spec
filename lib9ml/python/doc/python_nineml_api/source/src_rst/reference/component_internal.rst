@@ -8,8 +8,6 @@ nineml.abstraction_layer.component [Internal-General]
     :toctree: 
 
     component.Condition
-    component.CalcCond
-    component.CalcExpr
     component.RegimeElement
     component.Expression
     component.Equation
