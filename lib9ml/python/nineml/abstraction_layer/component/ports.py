@@ -32,9 +32,6 @@ class Port(object):
 
     """
     _modes = ('send', 'recv', 'reduce')
-    #_reduce_op_map = {'add':'+', 'sub':'-', 'mul':'*', 'div':'/',
-    #                 '+':'+', '-':'-', '*':'*', '/':'/'}
-
     _reduce_op_map = {'add':'+', '+':'+', }
     def __init__(self, name, mode='send', reduce_op=None):
         """ Port Constructor.
@@ -150,6 +147,8 @@ class EventPort(Port):
         return visitor.visit_eventport(self, **kwargs)
 
 
+    def __init__(self, name, mode='send', reduce_op=None):
+        Port.__init__(self,name=name,mode=mode,reduce_op=reduce_op)
 
 
     

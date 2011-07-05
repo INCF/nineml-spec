@@ -603,7 +603,6 @@ class StateVariable_test(unittest.TestCase):
 
 
 
-# Testing Skeleton for class: Transition
 # Tested in subclasses:
 
 #class Transition_test(unittest.TestCase):

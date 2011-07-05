@@ -21,7 +21,6 @@ import os
 import nineml
 
 
-
 def call_expr_func(expr_func, ns):
     args = []
     for var in expr_func.func_code.co_varnames:
@@ -62,6 +61,7 @@ class Parser(object):
                   tabmodule=self.tabmodule)
 
     def parse(self,expr):
+        from nineml.abstraction_layer.component.parse import NineMLMathParseError
         self.names = []
         self.funcs = []
         try:
@@ -107,6 +107,7 @@ class CalcExpr(Parser):
         try:
             t.value = float(t.value)
         except ValueError:
+            from nineml.abstraction_layer.component.parse import NineMLMathParseError
             raise NineMLMathParseError, "Invalid number %s" % t.value
         return t
 
@@ -114,6 +115,7 @@ class CalcExpr(Parser):
 
     
     def t_error(self, t):
+        from nineml.abstraction_layer.component.parse import NineMLMathParseError
         raise NineMLMathParseError, "Illegal character '%s' in '%s'" % (t.value[0],t)
 
     precedence = (
@@ -168,6 +170,7 @@ class CalcExpr(Parser):
         self.names.append(p[1])
 
     def p_error(self, p):
+        from nineml.abstraction_layer.component.parse import NineMLMathParseError
         if p:
             raise NineMLMathParseError, "Syntax error at '%s'" % p.value
         else:

@@ -5,5 +5,5 @@ clean:
 
 coverage:
 	coverage run  --source=nineml functional/round_trip_xml_testing/test_components.py
-	nosetests --cover-package=nineml --with-coverage unit/nineml_test/
+	nosetests --with-coverage --cover-package=nineml  unit/nineml_test/
 	coverage html -i -d coverage_htmlout --include="*nineml*"

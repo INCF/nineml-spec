@@ -5,7 +5,7 @@ from collections import defaultdict
 from base import ComponentValidatorPerNamespace
 import nineml
 
-#from nineml.exceptions import NineMLRuntimeError
+from nineml.exceptions import NineMLRuntimeError
 #from nineml.abstraction_layer.component.namespaceaddress import NamespaceAddress
 #from nineml.abstraction_layer import math_namespace
 #from nineml.utility import assert_no_duplicates
@@ -200,6 +200,19 @@ class ComponentValidatorPortConnections(ComponentValidatorPerNamespace):
         
         connected_recv_ports = set()
         
+
+        # Check for duplicate connections in the 
+        # portconnections. This can only really happen in the 
+        # case of connecting 'send to reduce ports' more than once.
+        seen_port_connections = set()
+        for pc in self.portconnections:
+            if pc in seen_port_connections:
+                err = 'Duplicate Port Connection: %s -> %s'%(pc[0], pc[1])
+                raise NineMLRuntimeError(err)
+            seen_port_connections.add(pc)
+
+
+
         # Check each source and sink exist,
         # and that each recv port is connected at max once.
         for src, sink in self.portconnections:

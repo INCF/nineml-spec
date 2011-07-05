@@ -44,6 +44,7 @@ class Expression(object):
     # If we assign to rhs, then we need to update the 
     # cached names and funcs:
     def _set_rhs(self, rhs):
+        rhs = rhs.strip()
         self._rhs = rhs
         self._rhs_names, self._rhs_funcs = self._parse_rhs(rhs)
         for name in self._rhs_names: 
@@ -66,6 +67,11 @@ class Expression(object):
 
     @property
     def rhs_atoms (self):
+        """Returns an iterator over all the variable names and mathematical
+        functions on the rhs function. This does not include defined
+        mathematical symbols such as ``pi`` and ``e``, but does include
+        functions such as ``sin`` and ``log`` """
+
         return itertools.chain(self.rhs_names, self.rhs_funcs)
 
     def rhs_as_python_func(self, namespace=None):
@@ -87,18 +93,13 @@ class Expression(object):
 
         
 
-    #def substitute_alias(self, alias):
-    #    """Substitute an alias into the rhs"""
-    #    assert False, 'Deprecated' 
-    #    "Use expr.rhs_name_transform_inplace({alias.lhs:'(%s)'%alias.rhs})"
-    #    sub = "(%s)" % alias.rhs,
-    #    self.rhs = util.MathUtil.str_expr_replacement(alias.lhs, sub, self.rhs)
         
 
     @property
     def rhs_missing_functions(self):
         """ yield names of functions in the rhs which are not in the math
         namespace"""
+        raise NineMLRuntimeError()
         from nineml.maths import is_builtin_math_function
         for func in self.rhs_funcs:
             if not is_builtin_math_function(func):
@@ -145,6 +146,7 @@ class ExpressionWithLHS(Equation):
 
     @property
     def atoms(self):
+        """ Returns a list of the atoms in the LHS and RHS of this expression"""
         return itertools.chain(self.rhs_atoms, self.lhs_atoms )
     
     def lhs_name_transform_inplace(self, name_map):
@@ -162,6 +164,9 @@ class ExpressionWithLHS(Equation):
         
         
 class ExpressionWithSimpleLHS(ExpressionWithLHS):
+    """Represents a an equation with a simple left-hand-side.
+    That is, a single symbol, for example 's = t+1'
+    """
 
     def __init__(self, lhs, rhs):
         ExpressionWithLHS.__init__(self, rhs)
@@ -378,6 +383,11 @@ class TimeDerivative(ODE):
             Then this would be constructed as::
 
                 TimeDerivative( dependent_variable='g', rhs='g/gtau' )
+
+            Note that although initially the time variable
+            (independent_variable) is ``t``, this can be changed using the
+            methods: ``td.lhs_name_transform_inplace({'t':'T'} )`` for example. 
+
 
             
             """

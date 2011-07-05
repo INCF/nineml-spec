@@ -50,7 +50,8 @@ Abstraction Layer
 User Layer
     In order to simulate a network, we need to take the ``parameterised`` models from
     the ``Abstraction Layer``, fill in the parameters, and specify the
-    connectivity between the components. 
+    connectivity between the components. For example, we might specify for our
+    neurons that ``V_Threshold`` was -45mV and ``V_Reset`` was -60mV.
 
 
 The flow for a simulation using NineML would look like:
@@ -65,15 +66,11 @@ are making our simulation much more complex - For a single, relatively simple si
 seems worth the effort!
 
 
-
 But imagine we are modelling a (relatively simple) network of neurons, which 
 contains 5 different types of neurons. The neurons synapse onto each other,
 and there are 3 different classes of synapses, with different models for 
 thier dynamics. If we were to implement this naively, we could potentially
 copy and paste tge 
-
-
-
 
 
 Reducing Duplication: Changing Parameters
@@ -106,78 +103,78 @@ Composing Components:
 
 
 
-
-Workflow Example
-----------------
-
-
-To make this a bit more concrete, we use an example from, Eugene Izhikevich, in
-which 1000 point neurons are connected together and simulated. 
-The simulation is given in Matlab:
-
-http://www.izhikevich.org/publications/net.m
-
-
-.. code-block:: matlab
-
-
-    % Created by Eugene M. Izhikevich, February 25, 2003
-    % Excitatory neurons    Inhibitory neurons
-    Ne=800;                 Ni=200;
-    re=rand(Ne,1);          ri=rand(Ni,1);
-    a=[0.02*ones(Ne,1);     0.02+0.08*ri];
-    b=[0.2*ones(Ne,1);      0.25-0.05*ri];
-    c=[-65+15*re.^2;        -65*ones(Ni,1)];
-    d=[8-6*re.^2;           2*ones(Ni,1)];
-    S=[0.5*rand(Ne+Ni,Ne),  -rand(Ne+Ni,Ni)];
-
-    v=-65*ones(Ne+Ni,1);    % Initial values of v
-    u=b.*v;                 % Initial values of u
-    firings=[];             % spike timings
-
-    for t=1:1000            % simulation of 1000 ms
-      I=[5*randn(Ne,1);2*randn(Ni,1)]; % thalamic input
-      fired=find(v>=30);    % indices of spikes
-      firings=[firings; t+0*fired,fired];
-      v(fired)=c(fired);
-      u(fired)=u(fired)+d(fired);
-      I=I+sum(S(:,fired),2);
-      v=v+0.5*(0.04*v.^2+5*v+140-u+I); % step 0.5 ms
-      v=v+0.5*(0.04*v.^2+5*v+140-u+I); % for numerical
-      u=u+a.*(b.*v-u);                 % stability
-    end;
-    plot(firings(:,1),firings(:,2),'.');
-
-
-
-Using NineML, we would first define a parameterised Izhikevich neuron component in the
-`Abstraction Layer` as:
-
-.. code-block:: python 
-
-
-    comp= ComponentClass(   name = "Izhikevich", 
-                            regimes = [
-                                Regime(
-                                    "dV/dt = 0.04*V*V + 5*V + 140.0 - U + Isyn",
-                                    "dU/dt = a*(b*V - U)",
-
-                                    transitions = On("V > theta",
-                                                     do =["V = c", 
-                                                          "U = U + d", 
-                                                          OutputEvent('spike') ] )       
-                                    )],
-                            analog_ports = [ 
-                                SendPort("V"),
-                                ReducePort("Isyn",reduce_op="+") ],
-
-                            parameters = ['a','b','c','d','theta']
-                                )
-
-Now; we are able to 
-
-[In this case we have used the NineML-Python API, but we could have equivalent
-used the Scheme or XML specifications]
+..
+    Workflow Example
+    ----------------
+    
+    
+    To make this a bit more concrete, we use an example from, Eugene Izhikevich, in
+    which 1000 point neurons are connected together and simulated. 
+    The simulation is given in Matlab:
+    
+    http://www.izhikevich.org/publications/net.m
+    
+    
+    .. code-block:: matlab
+    
+    
+        % Created by Eugene M. Izhikevich, February 25, 2003
+        % Excitatory neurons    Inhibitory neurons
+        Ne=800;                 Ni=200;
+        re=rand(Ne,1);          ri=rand(Ni,1);
+        a=[0.02*ones(Ne,1);     0.02+0.08*ri];
+        b=[0.2*ones(Ne,1);      0.25-0.05*ri];
+        c=[-65+15*re.^2;        -65*ones(Ni,1)];
+        d=[8-6*re.^2;           2*ones(Ni,1)];
+        S=[0.5*rand(Ne+Ni,Ne),  -rand(Ne+Ni,Ni)];
+    
+        v=-65*ones(Ne+Ni,1);    % Initial values of v
+        u=b.*v;                 % Initial values of u
+        firings=[];             % spike timings
+    
+        for t=1:1000            % simulation of 1000 ms
+          I=[5*randn(Ne,1);2*randn(Ni,1)]; % thalamic input
+          fired=find(v>=30);    % indices of spikes
+          firings=[firings; t+0*fired,fired];
+          v(fired)=c(fired);
+          u(fired)=u(fired)+d(fired);
+          I=I+sum(S(:,fired),2);
+          v=v+0.5*(0.04*v.^2+5*v+140-u+I); % step 0.5 ms
+          v=v+0.5*(0.04*v.^2+5*v+140-u+I); % for numerical
+          u=u+a.*(b.*v-u);                 % stability
+        end;
+        plot(firings(:,1),firings(:,2),'.');
+    
+    
+    
+    Using NineML, we would first define a parameterised Izhikevich neuron component in the
+    `Abstraction Layer` as:
+    
+    .. code-block:: python 
+    
+    
+        comp= ComponentClass(   name = "Izhikevich", 
+                                regimes = [
+                                    Regime(
+                                        "dV/dt = 0.04*V*V + 5*V + 140.0 - U + Isyn",
+                                        "dU/dt = a*(b*V - U)",
+    
+                                        transitions = On("V > theta",
+                                                         do =["V = c", 
+                                                              "U = U + d", 
+                                                              OutputEvent('spike') ] )       
+                                        )],
+                                analog_ports = [ 
+                                    SendPort("V"),
+                                    ReducePort("Isyn",reduce_op="+") ],
+    
+                                parameters = ['a','b','c','d','theta']
+                                    )
+    
+    Now; we are able to 
+    
+    [In this case we have used the NineML-Python API, but we could have equivalent
+    used the Scheme or XML specifications]
 
 
 

@@ -14,28 +14,6 @@ import nineml
 
 # Testing Skeleton for class: Alias
 
-class Alias_test(unittest.TestCase):
-    
-
-
-    def test_accept_visitor(self):
-        # Signature: name(self, visitor, **kwargs)
-		# |VISITATION| 
-        from nineml.abstraction_layer.component import  Alias
-        class TestVisitor(object):
-            def visit(self, obj, **kwargs):
-                return obj.accept_visitor(self, **kwargs)
-            def visit_alias(self, component, **kwargs):
-                return kwargs
-        
-        c = Alias(lhs='V', rhs='0')
-        v = TestVisitor()
-        
-        self.assertEqual(
-            v.visit(c, kwarg1='Hello', kwarg2='Hello2'),
-            {'kwarg1':'Hello', 'kwarg2':'Hello2'}
-            )
-
 
 
 
@@ -123,44 +101,50 @@ class Expression_test(unittest.TestCase):
         e.rhs_name_transform_inplace({'V':'VNEW'})
         self.assertEquals( e.rhs, "VNEW/(1 + mg_conc*eta*exp(-1*gamma*VNEW*VNEW)) * sin(VNEW)" )
 
+        # Don't Change builtin function names:
+        e.rhs_name_transform_inplace({'sin':'SIN'})
+        self.assertEquals( e.rhs, "VNEW/(1 + mg_conc*eta*exp(-1*gamma*VNEW*VNEW)) * sin(VNEW)" )
+        e.rhs_name_transform_inplace({'exp':'EXP'})
+        self.assertEquals( e.rhs, "VNEW/(1 + mg_conc*eta*exp(-1*gamma*VNEW*VNEW)) * sin(VNEW)" )
+
+        
+        # Check the attributes:
+        self.assertEquals( set( e.rhs_atoms ), set( ['VNEW', 'mg_conc', 'eta', 'gamma','exp','sin'] ))
+        self.assertEquals( set( e.rhs_funcs ), set( ['exp','sin'] ))
 
 
 
 
 
-
-
-
-
-# Testing Skeleton for class: ExpressionWithLHS
-
-class ExpressionWithLHS_test(unittest.TestCase):
-    
-
-    def test_atoms(self):
-        # Signature: name
-		# No Docstring
-        #from nineml.abstraction_layer.component.expressions import ExpressionWithLHS
-        warnings.warn('Tests not implemented')
-        # raise NotImplementedError()
-
-    def test_lhs_name_transform_inplace(self):
-        # Signature: name(self, name_map)
-		# No Docstring
-        #from nineml.abstraction_layer.component.expressions import ExpressionWithLHS
-        warnings.warn('Tests not implemented')
-        # raise NotImplementedError()
-
-    def test_name_transform_inplace(self):
-        # Signature: name(self, name_map)
-		# No Docstring
-        #from nineml.abstraction_layer.component.expressions import ExpressionWithLHS
-        warnings.warn('Tests not implemented')
-        # raise NotImplementedError()
-
-
-    def test_lhs_atoms(self):
-        warnings.warn('Tests not implemented')
+## Testing Skeleton for class: ExpressionWithLHS
+#
+#class ExpressionWithLHS_test(unittest.TestCase):
+#    
+#
+#    def test_atoms(self):
+#        # Signature: name
+#		# No Docstring
+#        #from nineml.abstraction_layer.component.expressions import ExpressionWithLHS
+#        warnings.warn('Tests not implemented')
+#        # raise NotImplementedError()
+#
+#    def test_lhs_name_transform_inplace(self):
+#        # Signature: name(self, name_map)
+#		# No Docstring
+#        #from nineml.abstraction_layer.component.expressions import ExpressionWithLHS
+#        warnings.warn('Tests not implemented')
+#        # raise NotImplementedError()
+#
+#    def test_name_transform_inplace(self):
+#        # Signature: name(self, name_map)
+#		# No Docstring
+#        #from nineml.abstraction_layer.component.expressions import ExpressionWithLHS
+#        warnings.warn('Tests not implemented')
+#        # raise NotImplementedError()
+#
+#
+#    def test_lhs_atoms(self):
+#        warnings.warn('Tests not implemented')
 
 
 
@@ -169,52 +153,68 @@ class ExpressionWithLHS_test(unittest.TestCase):
 
 
 # Testing Skeleton for class: ExpressionWithSimpleLHS
-
 class ExpressionWithSimpleLHS_test(unittest.TestCase):
     
     def test_lhs(self):
-        # Signature: name
-		# No Docstring
-        #from nineml.abstraction_layer.component.expressions import ExpressionWithSimpleLHS
-        warnings.warn('Tests not implemented')
-        # raise NotImplementedError()
+        from nineml.abstraction_layer.component import ExpressionWithSimpleLHS
+
+        e = ExpressionWithSimpleLHS('a','t+t+3 + e + sin(t*pi) +q')
+
+        self.assertEqual( list(e.lhs), ['a'])
+        self.assertEqual( list(e.lhs_atoms), ['a'])
+        self.assertEqual( sorted( list(e.rhs_atoms)), sorted( ['t','sin','q'] ) )
+        self.assertEqual( sorted( list(e.atoms)), sorted( ['a', 't','sin','q'] ) )
 
 
-    def test_lhs_atoms(self):
-        # Signature: name
-		# No Docstring
-        #from nineml.abstraction_layer.component.expressions import ExpressionWithSimpleLHS
-        warnings.warn('Tests not implemented')
-        # raise NotImplementedError()
+        # RHS transform not affecting LHS:
+        e.rhs_name_transform_inplace({'a':'b'})
+        self.assertEqual( sorted( list(e.atoms)), sorted( ['a', 't','sin','q'] ) )
+
+        # LHS transform not affecting RHS:
+        e.lhs_name_transform_inplace({'t':'T'})
+        self.assertEqual( sorted( list(e.atoms)), sorted( ['a', 't','sin','q'] ) )
 
 
-    def test_lhs_name_transform_inplace(self):
-        # Signature: name(self, name_map)
-		# No Docstring
-        #from nineml.abstraction_layer.component.expressions import ExpressionWithSimpleLHS
-        warnings.warn('Tests not implemented')
-        # raise NotImplementedError()
-
-
-    def test_name_transform_inplace(self):
-        # Signature: name(self, name_map)
-		# No Docstring
-        #from nineml.abstraction_layer.component.expressions import ExpressionWithSimpleLHS
-        warnings.warn('Tests not implemented')
-        # raise NotImplementedError()
-
-
-
+        # name_transform affecting LHS & RHS:
+        e.name_transform_inplace({'t':'T'})
+        self.assertEqual( sorted( list(e.atoms)), sorted( ['a', 'T','sin','q'] ) )
+        self.assertEqual( sorted( list(e.rhs_atoms)), sorted( ['T','sin','q'] ) )
+        self.assertEqual( sorted( list(e.lhs_atoms)), sorted( ['a'] ) )
+        
+        e.name_transform_inplace({'a':'A'})
+        self.assertEqual( sorted( list(e.atoms)), sorted( ['A', 'T','sin','q'] ) )
+        self.assertEqual( sorted( list(e.rhs_atoms)), sorted( ['T','sin','q'] ) )
+        self.assertEqual( sorted( list(e.lhs_atoms)), sorted( ['A'] ) )
 
 
 
 
 
-# Testing Skeleton for class: StateAssignment
+
+
+
+class Alias_test(unittest.TestCase):
+
+    def test_accept_visitor(self):
+        # Signature: name(self, visitor, **kwargs)
+		# |VISITATION| 
+        from nineml.abstraction_layer.component import  Alias
+        class TestVisitor(object):
+            def visit(self, obj, **kwargs):
+                return obj.accept_visitor(self, **kwargs)
+            def visit_alias(self, component, **kwargs):
+                return kwargs
+        
+        c = Alias(lhs='V', rhs='0')
+        v = TestVisitor()
+        
+        self.assertEqual(
+            v.visit(c, kwarg1='Hello', kwarg2='Hello2'),
+            {'kwarg1':'Hello', 'kwarg2':'Hello2'}
+            )
+
 
 class StateAssignment_test(unittest.TestCase):
-    
-
 
     def test_accept_visitor(self):
         # Signature: name(self, visitor, **kwargs)
@@ -234,9 +234,6 @@ class StateAssignment_test(unittest.TestCase):
             {'kwarg1':'Hello', 'kwarg2':'Hello2'}
             )
 
-
-    def test_lhs(self):
-        warnings.warn('Tests not implemented')
         
 
 
@@ -272,55 +269,43 @@ class TimeDerivative_test(unittest.TestCase):
 
 
     def test_atoms(self):
-        # Signature: name
-		# No Docstring
-        #from nineml.abstraction_layer.component.expressions import TimeDerivative
-        warnings.warn('Tests not implemented')
-        # raise NotImplementedError()
+
+        from nineml.abstraction_layer.component.expressions import TimeDerivative
+        td = TimeDerivative( dependent_variable='X', rhs=' y*f - sin(q*q) + 4*a*exp(Y)' )
+        self.assertEquals( sorted(td.atoms), sorted(['X','y','f','sin','exp','q','a','Y','t'])  )  
+        self.assertEquals( sorted(td.lhs_atoms), sorted(['X','t'])  )  
+        self.assertEquals( sorted(td.rhs_atoms), sorted(['y','f','sin','exp','q','a','Y'])  )  
 
 
-    def test_dependent_variable(self):
-        # Signature: name
-		# Return the dependent variable
-        #from nineml.abstraction_layer.component.expressions import TimeDerivative
-        warnings.warn('Tests not implemented')
-        # raise NotImplementedError()
 
 
+
+#   def test_dependent_variable(self):
     def test_independent_variable(self):
-        # Signature: name
-		# Return the independent variable
-        #from nineml.abstraction_layer.component.expressions import TimeDerivative
-        warnings.warn('Tests not implemented')
-        # raise NotImplementedError()
+        from nineml.abstraction_layer.component.expressions import TimeDerivative
+        td = TimeDerivative( dependent_variable='X', rhs=' y*f - sin(q*q) + 4*a*exp(Y)' )
+        self.assertEquals( td.independent_variable, 't')
+        self.assertEquals( td.dependent_variable, 'X')
+
+        # Check substitutions to the LHS:
+        td.lhs_name_transform_inplace({'X':'x'} )
+        self.assertEquals( td.dependent_variable, 'x')
+
+        # Since this is always time, we should not be changing the 
+        # independent_variable (dt)
+        td.lhs_name_transform_inplace({'t':'T'} )
+        self.assertEquals( td.independent_variable, 'T')
 
 
+        # Aand change them again using 'name_transform_inplace'
+        # Check substitutions to the LHS:
+        td.name_transform_inplace({'x':'X1'})
+        self.assertEquals( td.dependent_variable, 'X1')
 
-
-    def test_lhs_atoms(self):
-        # Signature: name
-		# No Docstring
-        #from nineml.abstraction_layer.component.expressions import TimeDerivative
-        warnings.warn('Tests not implemented')
-        # raise NotImplementedError()
-
-
-    def test_lhs_name_transform_inplace(self):
-        # Signature: name(self, name_map)
-		# Replace atoms on the LHS with mapping in name_map 
-        #from nineml.abstraction_layer.component.expressions import TimeDerivative
-        warnings.warn('Tests not implemented')
-        # raise NotImplementedError()
-
-
-    def test_name_transform_inplace(self):
-        # Signature: name(self, name_map)
-		# No Docstring
-        #from nineml.abstraction_layer.component.expressions import TimeDerivative
-        warnings.warn('Tests not implemented')
-        # raise NotImplementedError()
-
-
+        # Since this is always time, we should not be changing the 
+        # independent_variable (dt)
+        td.lhs_name_transform_inplace({'T':'time'} )
+        self.assertEquals( td.independent_variable, 'time')
 
 
 

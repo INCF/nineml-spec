@@ -7,24 +7,6 @@ import numpy
 
 
 
-#reserved_symbols = set(['t'])
-
-
-
-#namespace = {
-#    "exp":numpy.exp,
-#    "sqrt":numpy.sqrt,
-#    "sin":numpy.sin,
-#    "cos":numpy.cos,
-#    "atan2":numpy.arctan2,
-#    "log":numpy.log,
-#    "pi":numpy.pi,
-#    "e":numpy.e
-#    }
-# TODO complete this list
-
-
-
 
 
 _constants = set(['pi','e'])

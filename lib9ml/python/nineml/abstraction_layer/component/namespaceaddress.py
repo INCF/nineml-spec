@@ -1,6 +1,6 @@
 
 import nineml.utility
-
+import nineml
 class NamespaceAddress(object):
 
     @classmethod
@@ -71,6 +71,10 @@ class NamespaceAddress(object):
         return "NameSpaceAddress: '" + "/" + "/".join( self.loctuple) + "/'"
 
 
+    def is_root_namespace(self):
+        return len( self.loctuple) == 0
+
+
     def get_subns_addr(self, component_name):
         """Returns the address of a subcomponent at this address.
 
@@ -94,7 +98,10 @@ class NamespaceAddress(object):
 
         """
 
-        assert len(self.loctuple) > 0
+        if self.is_root_namespace():
+            err = "Can't call get_parent_addr() on root namespace"
+            raise nineml.exceptions.NineMLRuntimeError(err)
+
         return NamespaceAddress( loc = tuple(self.loctuple[:-1]) )
 
 
@@ -102,7 +109,10 @@ class NamespaceAddress(object):
         """ Returns the local reference; i.e. the last field in the 
         address, as a ``string``
         """
-        assert len(self.loctuple) > 0
+
+        if self.is_root_namespace():
+            err = "Can't call get_local_name() on root namespace"
+            raise nineml.exceptions.NineMLRuntimeError(err)
         return self.loctuple[-1]
 
 

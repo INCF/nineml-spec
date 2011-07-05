@@ -4,6 +4,7 @@
 
 import re
 from nineml.exceptions import NineMLRuntimeError
+import nineml
 
 # Wrapper for writing XML:
 def parse(filename):
@@ -71,6 +72,9 @@ class MathUtil(object):
         'to' can be an arbitrary string so this function can also be used for
         argument substitution.
 
+        This function *will* substitute standard builtin symbols, for example
+        ``e`` and ``sin``.
+
         Returns the resulting string. """
 
 
@@ -101,7 +105,9 @@ class MathUtil(object):
 
     @classmethod 
     def get_prefixed_rhs_string(cls, expr_obj, prefix="", exclude=None ):
-        #import math_namespace
+        """Prefixes variable names in a string. This will not toouch
+        math-builtins such as ``pi`` and ``sin``, (i.e. neither standard constants
+        not variables)"""
         
         expr = expr_obj.rhs
         for name in expr_obj.rhs_names:
