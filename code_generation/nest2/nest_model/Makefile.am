@@ -26,7 +26,8 @@ lib_LTLIBRARIES=      mymodule.la libmymodule.la
 
 mymodule_la_CXXFLAGS= @AM_CXXFLAGS@
 mymodule_la_SOURCES=  mymodule.cpp      mymodule.h      \
-                      nest_9ml_neuron.cpp nest_9ml_neuron.h
+                      nest_9ml_neuron.cpp nest_9ml_neuron.h \
+                      nest_9ml_stdp_connection.h
 mymodule_la_LDFLAGS=  -module
 
 libmymodule_la_CXXFLAGS= $(mymodule_la_CXXFLAGS) -DLINKED_MODULE

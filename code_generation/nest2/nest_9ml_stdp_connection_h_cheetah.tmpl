@@ -1,0 +1,451 @@
+#*
+This is a Cheetah template (http://www.cheetahtemplate.org)
+
+python lib9ml fills this template to yield a NEST plastic synapse model
+
+Author: Abigail Morrison & Susanne Kunkel, 2011
+
+Copyright (C) 2011 Morrison & Kunkel. All Rights Reserved.
+
+    Redistribution and use in source and binary forms, with or without
+    modification, are permitted provided that the following conditions
+    are met:
+
+    1. Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimer.
+
+    2. Redistributions in binary form must reproduce the above
+    copyright notice, this list of conditions and the following
+    disclaimer in the documentation and/or other materials provided
+    with the distribution.
+
+    3. The name of the authors or the INCF may not be used to endorse or promote
+    products derived from this software without specific prior written
+    permission.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+    CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+    INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+    MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+    DISCLAIMED. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT,
+    INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+    (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+    SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+    HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+    CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+    OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+    EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*#
+
+#ifndef ${model.nest_classname.upper}_H
+#define ${model.nest_classname.upper}_H
+
+/*
+ *  ${model.nest_classname}.h
+ *
+ *  This C++ code is automatically generated from nest_model_template.h
+ *  using python lib9ml (www.nineml.org) a NineML (www.nineml.org)
+ *  specification.
+ *
+ *  python lib9ml-based code generation for NEST2 was implemented by
+ *  Abigail Morrison & Susanne Kunkel on the basis of Eilif Muller's
+ *  nest_9ml_neuron_cpp/h_cheetah in the context of the INCF Task Force on
+ *  Multi-scale Modelling.
+ *
+ */
+
+\#include "network.h"
+\#include "dictdatum.h"
+\#include "connector_model.h"
+\#include "common_synapse_properties.h"
+\#include "event.h"
+\#include "connection.h"
+\#include "archiving_node.h"
+\#include "generic_connector.h"
+\#include <cmath>
+
+// User defined names from 9ml model definition have no mapping to NEST
+// standard names, so we define our own names
+namespace nest_nineml
+{
+  namespace ${model.nest_classname}_names
+  {
+## parameters
+#for $p in $model.parameters
+    const Name ${p.symbol}("$p.symbol");
+#end for
+## state_vars
+#for $p in $model.state_vars
+    const Name ${p.symbol}("$p.symbol");
+#end for
+## bindings/variables
+#for $p in $model.binds
+    const Name ${p.symbol}("$p.symbol");
+#end for
+  }
+
+  /* BeginDocumentation
+Name: $model.nest_classname - $model.short_description
+
+Parameters:
+#for $p in $model.parameters
+  $p.symbol    unit=$p.unit, Ctype=$p.Ctype - $p.notes
+#end for
+
+Description:
+  $model.long_description
+  */
+  class $model.nest_classname : public nest::Connection
+  {
+
+   public:
+
+    /**
+     * Default Constructor.
+     * Sets default values for all parameters. Needed by GenericConnectorModel.
+     */
+    ${model.nest_classname}();
+
+    /**
+     * Copy constructor.
+     * Needs to be defined properly in order for GenericConnector to work.
+     */
+    ${model.nest_classname}(const $model.nest_classname &);
+
+    /**
+     * Default Destructor.
+     */
+    ~${model.nest_classname}() {}
+
+    void check_connection(nest::Node & s, nest::Node & r, nest::port receptor_type, nest::double_t t_lastspike);
+
+    /**
+     * Get all properties of this connection and put them into a dictionary.
+     */
+    void get_status(DictionaryDatum & d) const;
+
+    /**
+     * Set properties of this connection from the values given in dictionary.
+     */
+    void set_status(const DictionaryDatum & d, nest::ConnectorModel & cm);
+
+    /**
+     * Set properties of this connection from position p in the properties
+     * array given in dictionary.
+     */
+    void set_status(const DictionaryDatum & d, nest::index p, nest::ConnectorModel & cm);
+
+    /**
+     * Return the delay of the connection
+     */
+    nest::double_t get_delay() const;
+
+    /**
+     * Set the delay of the connection
+     */
+    void set_delay(const nest::double_t);
+    
+    /**
+     * Set the weight of the connection
+     */
+    void set_weight(const nest::double_t);
+
+    /**
+     * Create new empty arrays for the properties of this connection in the given
+     * dictionary. It is assumed that they are not existing before.
+     */
+    void initialize_property_arrays(DictionaryDatum & d) const;
+
+    /**
+     * Append properties of this connection to the given dictionary. If the
+     * dictionary is empty, new arrays are created first.
+     */
+    void append_properties(DictionaryDatum & d) const;
+
+    /**
+     * Calibrate the delay of this connection to the desired resolution.
+     */
+    void calibrate(const nest::TimeConverter &);
+
+    /**
+     * Send an event to the receiver of this connection.
+     * \param e the event to send
+     * \param t_lastspike point in time of last spike sent
+     * \param cp common properties of all synapses (empty)
+     */
+    void send(nest::Event & e, nest::double_t t_lastspike, const nest::CommonSynapseProperties & cp);
+
+    // overloaded for all supported event types
+    using Connection::check_event;
+    void check_event(nest::SpikeEvent &) {}
+
+  private:
+
+    /**
+     * Free parameters of the synapse.
+     */
+    struct Parameters_
+    {
+#for $p in $model.parameters
+      $p.Ctype $p.symbol; //!< $p.notes
+#end for
+
+      nest::long_t delay;
+
+      //! Initialize parameters to their default values.
+      Parameters_();
+
+      //! Store parameter values in dictionary.
+      void get(DictionaryDatum &) const;
+
+      //! Set parameter values from dictionary.
+      void set(const DictionaryDatum &);
+    };
+
+    /**
+     * Dynamic state of the synapse.
+     */
+    struct State_
+    {
+#for $sv in $model.state_vars
+      $sv.Ctype $sv.symbol; //!< $sv.notes
+#end for
+
+      /**
+       * Construct new default State_ instance based on values in Parameters_.
+       */
+      State_(const Parameters_ &);
+
+      /** Store state values in dictionary. */
+      void get(DictionaryDatum &) const;
+
+      /**
+       * Set state variables from dictionary.
+       */
+      void set(const DictionaryDatum &, const Parameters_ &);
+    };
+
+    Parameters_ P_;  //!< Free parameters.
+    State_      S_;  //!< Dynamic state.
+  };
+
+  /* ----------------------------------------------------------------
+   * Default constructors defining default parameters and state
+   * ---------------------------------------------------------------- */
+
+  ${model.nest_classname}::Parameters_::Parameters_() :
+#set $com = ','
+#for $p in $model.parameters
+  ${p.symbol}(${p.default_value}), // $p.unit
+#end for
+  delay(1.0)
+  {}
+
+  ${model.nest_classname}::State_::State_(const Parameters_ & p) :
+#set $com = ','
+#for $p in $model.state_vars
+  #if $p==$model.state_vars[-1]
+    #set $com = ''
+  #end if
+  ${p.symbol}(${p.initial_value})$com // $p.unit
+#end for
+  {}
+
+  ${model.nest_classname}::${model.nest_classname}() :
+  Connection(),
+  P_(),
+  S_(P_)
+  {}
+
+  ${model.nest_classname}::${model.nest_classname}(const ${model.nest_classname} & rhs) :
+  Connection(rhs),
+  P_(rhs.P_),
+  S_(rhs.S_)
+  {}
+
+  /* ----------------------------------------------------------------
+   * Parameter and state extractions and manipulation functions
+   * ---------------------------------------------------------------- */
+
+  inline
+  void ${model.nest_classname}::Parameters_::get(DictionaryDatum & d) const
+  {
+#for $p in $model.parameters
+    (*d)[${model.nest_classname}_names::$p.symbol] = $p.symbol;
+#end for
+    (*d)[nest::names::delay] = delay;
+  }
+
+  inline
+  void ${model.nest_classname}::Parameters_::set(const DictionaryDatum & d)
+  {
+#for $p in $model.parameters
+    updateValue<double>(d, ${model.nest_classname}_names::$p.symbol, $p.symbol);
+#end for
+    // TODO handle 9ml parameter restrictions
+
+    updateValue<double_t>(d, nest::names::delay, delay);
+  }
+
+  inline
+  void ${model.nest_classname}::State_::get(DictionaryDatum & d) const
+  {
+#for $p in $model.state_vars
+    def<nest::double_t>(d, ${model.nest_classname}_names::$p.symbol, $p.symbol);
+#end for
+  }
+
+  inline
+  void ${model.nest_classname}::State_::set(const DictionaryDatum & d, const Parameters_ & p)
+  {
+#for $p in $model.state_vars
+    updateValue<double>(d, ${model.nest_classname}_names::$p.symbol, $p.symbol);
+#end for
+    // TODO handle 9ml state_var restrictions
+    // TODO set regime?
+  }
+
+  inline
+  void ${model.nest_classname}::get_status(DictionaryDatum & d) const
+  {
+    Connection::get_status(d);
+    P_.get(d);
+    S_.get(d);
+  }
+
+  inline
+  void ${model.nest_classname}::set_status(const DictionaryDatum & d, nest::ConnectorModel & cm)
+  {
+    Parameters_ ptmp = P_;  // temporary copy in case of errors
+    ptmp.set(d);            // throws BadProperty
+    State_      stmp = S_;  // temporary copy in case of errors
+    stmp.set(d, ptmp);      // throws BadProperty
+
+    // if we get here, temporaries contain consistent set of properties
+    P_ = ptmp;
+    S_ = stmp;
+  }
+
+  inline
+  void ${model.nest_classname}::set_status(const DictionaryDatum & d, nest::index p, nest::ConnectorModel & cm)
+  {
+    Parameters_ ptmp = P_;  // temporary copy in case of errors
+    ptmp.set(d);            // throws BadProperty
+    State_      stmp = S_;  // temporary copy in case of errors
+    stmp.set(d, ptmp);      // throws BadProperty
+
+    // if we get here, temporaries contain consistent set of properties
+    P_ = ptmp;
+    S_ = stmp;
+  }
+
+  inline
+  double_t ${model.nest_classname}::get_delay() const
+  {
+    return nest::Time(nest::Time::step(P_.delay)).get_ms();
+  }
+
+  inline
+  void ${model.nest_classname}::set_delay(const nest::double_t delay)
+  {
+    P_.delay = nest::Time(nest::Time::ms(delay)).get_steps();
+  }
+
+  inline
+  void ${model.nest_classname}::set_weight(const nest::double_t weight)
+  {
+    // TODO set weight
+  }
+
+  /* ----------------------------------------------------------------
+   * Check and update functions
+   * ---------------------------------------------------------------- */
+
+  inline
+  void ${model.nest_classname}::calibrate(const nest::TimeConverter & tc)
+  {
+    nest::Time t = tc.from_old_steps(P_.delay);
+
+    P_.delay = t.get_steps();    
+    if ( P_.delay == 0 )
+      P_.delay = 1;
+  }
+
+  inline
+  void ${model.nest_classname}::check_connection(nest::Node & s, nest::Node & r, nest::port receptor_type, nest::double_t t_lastspike)
+  {
+    Connection::check_connection(s, r, receptor_type, t_lastspike);
+    r.register_stdp_connection(t_lastspike - nest::Time(nest::Time::step(P_.delay)).get_ms());
+  }
+
+  /**
+   * Send an event to the receiver of this connection.
+   * \param e The event to send
+   * \param p The port under which this connection is stored in the Connector.
+   * \param t_lastspike Time point of last spike emitted
+   */
+  inline
+  void ${model.nest_classname}::send(nest::Event & e, nest::double_t t_lastspike, const nest::CommonSynapseProperties &)
+  {
+    // simulation resolution
+    const nest::double_t h  = nest::Time::get_resolution().get_ms();
+
+    // synapse STDP depressing/facilitation dynamics
+    nest::double_t t_spike = e.get_stamp().get_ms();
+
+    // get spike history in relevant range (t1, t2] from post-synaptic neuron
+    std::deque<nest::histentry>::iterator start;
+    std::deque<nest::histentry>::iterator finish;
+
+    target_->get_history(t_lastspike, t_spike, &start, &finish);
+
+    // facilitation due to post-synaptic spikes since last pre-synaptic spike
+    nest::double_t t_last_post = t_lastspike;
+    while (start != finish)
+    {
+      nest::double_t dt = start->t_ - t_last_post;
+
+      t_last_post = start->t_;
+      start++;
+      if (dt == 0)
+        continue;
+
+      for ( nest::index i = 0; i < nest::Time(nest::Time::ms(dt)).get_steps(); i++ )
+      {
+#for $ode in $model.regimes[0].odes
+	$ode.CODE
+#end for $ode
+      }
+
+      // weight_ = facilitate_(weight_, Kplus_ * std::exp(minus_dt / tau_plus_));
+      // evaluate assignments for pre spikes
+#for $a in $model.regimes[0].transitions[0].nodes
+      $a.CODE
+#end for $a
+    }
+
+    // Kplus_ = Kplus_ * std::exp((t_lastspike - t_spike) / tau_plus_) + 1.0;
+    for ( nest::index i = 0; i < nest::Time(nest::Time::ms(t_spike - t_last_post)).get_steps(); i++ )
+    {
+#for $ode in $model.regimes[0].odes
+      $ode.CODE
+#end for $ode
+    }
+
+    // weight_ = depress_(weight_, target_->get_K_value(t_spike - dendritic_delay));
+    // evaluate assignments for post spikes
+#for $a in $model.regimes[0].transitions[1].nodes
+    $a.CODE
+#end for $a
+
+    // TODO e.set_weight(S_.W);
+
+    e.set_receiver(*target_);
+    e.set_delay(P_.delay);
+    e.set_rport(rport_);
+    e();
+  }
+
+}  // namespace nest_nineml
+
+#endif /* #ifndef ${model.nest_classname.upper}_H */
