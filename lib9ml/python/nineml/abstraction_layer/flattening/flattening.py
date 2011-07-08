@@ -93,9 +93,6 @@ class ComponentFlattener(object):
         target_regime_tuple = tuple(target_regime_tuple)
         
         new_regime =  self.newRegimeLookupMap[target_regime_tuple]
-#        print new_regime
-#        import sys
-#        sys.exit(0)
         return new_regime
 
 
@@ -291,7 +288,6 @@ class ComponentFlattener(object):
 
         # Remap Ports:
         def globalRemapPort(originalname,targetname):
-            #print 'Global-Remap [%s -> %s]'%(originalname,targetname)
             from nineml.abstraction_layer.visitors import ExpandPortDefinition
             transform = ExpandPortDefinition( originalname=originalname, targetname=targetname)
 

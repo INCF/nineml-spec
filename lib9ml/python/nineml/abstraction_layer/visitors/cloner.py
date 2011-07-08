@@ -7,7 +7,6 @@ from itertools import chain
 
 
 import nineml.abstraction_layer 
-#from nineml.abstraction_layer.component import math_namespace
 from nineml.abstraction_layer.component.namespaceaddress import NamespaceAddress
 
 
@@ -21,16 +20,17 @@ class ExpandPortDefinition(ActionVisitor):
         
         self.originalname = originalname
         self.targetname = targetname
+        self.namemap = {originalname: targetname}
 
 
     def action_assignment(self, assignment, **kwargs):
-        assignment.name_transform_inplace( {self.originalname:self.targetname} )
+        assignment.name_transform_inplace( self.namemap ) 
     def action_alias(self, alias, **kwargs):
-        alias.name_transform_inplace( {self.originalname:self.targetname} )
-    def action_timederivative(self,time_derivative, **kwargs):
-        time_derivative.name_transform_inplace( {self.originalname:self.targetname} )
+        alias.name_transform_inplace( self.namemap ) 
+    def action_timederivative(self, time_derivative, **kwargs):
+        time_derivative.name_transform_inplace( self.namemap ) 
     def action_condition(self, condition, **kwargs):
-        condition.rhs_name_transform_inplace( {self.originalname:self.targetname} )
+        condition.rhs_name_transform_inplace( self.namemap ) 
 
 
 
@@ -45,16 +45,17 @@ class ExpandAliasDefinition(ActionVisitor):
         
         self.originalname = originalname
         self.targetname = targetname
+        self.namemap = {originalname: targetname}
 
 
     def action_assignment(self, assignment, **kwargs):
-        assignment.name_transform_inplace( {self.originalname:self.targetname} )
+        assignment.name_transform_inplace( self.namemap ) 
     def action_alias(self, alias, **kwargs):
-        alias.rhs_name_transform_inplace( {self.originalname:self.targetname} )
-    def action_timederivative(self,time_derivative, **kwargs):
-        time_derivative.name_transform_inplace( {self.originalname:self.targetname} )
+        alias.rhs_name_transform_inplace( self.namemap ) 
+    def action_timederivative(self, time_derivative, **kwargs):
+        time_derivative.name_transform_inplace( self.namemap ) 
     def action_condition(self, condition, **kwargs):
-        condition.rhs_name_transform_inplace( {self.originalname:self.targetname} )
+        condition.rhs_name_transform_inplace( self.namemap ) 
 
 
 
@@ -78,17 +79,6 @@ class RenameSymbol(ActionVisitor):
 
         self.visit(component)
         component._validate_self()
-
-        print 'LHS Changes:'
-        print self.lhs_changes
-
-        print 'RHS Changes:'
-        print self.rhs_changes
-
-        print 'Port Changes:'
-        print self.port_changes
-
-        #assert False
 
 
     def note_lhs_changed(self, what):
@@ -149,7 +139,7 @@ class RenameSymbol(ActionVisitor):
             self.note_rhs_changed( alias )
             alias.name_transform_inplace( self.namemap  )
         
-    def action_timederivative(self,timederivative, **kwargs):
+    def action_timederivative(self, timederivative, **kwargs):
         if timederivative.dependent_variable == self.old_symbol_name:
             self.note_lhs_changed( timederivative )
             timederivative.name_transform_inplace( self.namemap  )
@@ -163,6 +153,7 @@ class RenameSymbol(ActionVisitor):
             condition.rhs_name_transform_inplace( self.namemap  )
 
     def action_oncondition(self, on_condition, **kwargs):
+        """ Handled in action_condition """
         pass
 
     def action_onevent(self, on_event, **kwargs):
@@ -188,8 +179,8 @@ class ClonerVisitor(ComponentVisitor):
 
 
     def prefix_variable(self, variable, **kwargs):
-        prefix = kwargs.get('prefix','')
-        prefix_excludes = kwargs.get('prefix_excludes',[])
+        prefix = kwargs.get('prefix', '')
+        prefix_excludes = kwargs.get('prefix_excludes', [])
         if variable in prefix_excludes:
             return variable
 
@@ -202,11 +193,11 @@ class ClonerVisitor(ComponentVisitor):
 
     def visit_componentclass(self, component, **kwargs ):
         ccn =  nineml.abstraction_layer.ComponentClass( name = component.name,
-                               parameters  = [ p.accept_visitor(self,**kwargs) for p in component.parameters  ],
-                               analog_ports= [ p.accept_visitor(self,**kwargs) for p in component.analog_ports],
-                               event_ports = [ p.accept_visitor(self,**kwargs) for p in component.event_ports ],
-                               dynamics    = component.dynamics.accept_visitor(self,**kwargs) if component.dynamics else None,
-                               subnodes = dict( [ (k, v.accept_visitor(self,**kwargs)) for (k,v) in component.subnodes.iteritems() ] ),
+                               parameters  = [ p.accept_visitor(self, **kwargs) for p in component.parameters  ],
+                               analog_ports= [ p.accept_visitor(self, **kwargs) for p in component.analog_ports],
+                               event_ports = [ p.accept_visitor(self, **kwargs) for p in component.event_ports ],
+                               dynamics    = component.dynamics.accept_visitor(self, **kwargs) if component.dynamics else None,
+                               subnodes = dict( [ (k, v.accept_visitor(self, **kwargs)) for (k, v) in component.subnodes.iteritems() ] ),
                                portconnections = component.portconnections[:] )
         return ccn
 
@@ -214,51 +205,50 @@ class ClonerVisitor(ComponentVisitor):
                                
 
     def visit_dynamics(self, dynamics, **kwargs):
-        return nineml.abstraction_layer.Dynamics( regimes =       [ r.accept_visitor(self,**kwargs) for r in dynamics.regimes ],
-                         aliases =          [ a.accept_visitor(self,**kwargs) for a in dynamics.aliases ],
-                         state_variables =  [ s.accept_visitor(self,**kwargs) for s in dynamics.state_variables ] )
+        return nineml.abstraction_layer.Dynamics( 
+                         regimes =       [ r.accept_visitor(self, **kwargs) for r in dynamics.regimes ],
+                         aliases =          [ a.accept_visitor(self, **kwargs) for a in dynamics.aliases ],
+                         state_variables =  [ s.accept_visitor(self, **kwargs) for s in dynamics.state_variables ] )
         
-    def visit_regime(self,regime,**kwargs):
-        return nineml.abstraction_layer.Regime(  name = regime.name,
-                        time_derivatives =  [t.accept_visitor(self,**kwargs) for t in regime.time_derivatives],
-                        transitions =         [t.accept_visitor(self,**kwargs) for t in regime.transitions], )
-                        #on_conditions =     [t.accept_visitor(self,**kwargs) for t in regime.on_conditions],
-                        #)
-        #return nineml.abstraction_layer.Regime(  name = regime.name,
-        #                time_derivatives =  [t.accept_visitor(self,**kwargs) for t in regime.time_derivatives],
-        #                on_events =         [t.accept_visitor(self,**kwargs) for t in regime.on_events],
-        #                on_conditions =     [t.accept_visitor(self,**kwargs) for t in regime.on_conditions],
-        #                )
+    def visit_regime(self, regime, **kwargs):
+        return nineml.abstraction_layer.Regime(  
+                        name = regime.name,
+                        time_derivatives =  [t.accept_visitor(self, **kwargs) for t in regime.time_derivatives],
+                        transitions =         [t.accept_visitor(self, **kwargs) for t in regime.transitions] )
 
         
 
-    def visit_statevariable(self, state_variable,**kwargs):
+    def visit_statevariable(self, state_variable, **kwargs):
         return nineml.abstraction_layer.StateVariable(name =
-                self.prefix_variable( state_variable.name,**kwargs) )
+                self.prefix_variable( state_variable.name, **kwargs) )
 
         
     def visit_parameter(self, parameter, **kwargs):
-        return nineml.abstraction_layer.Parameter(name = self.prefix_variable( parameter.name,**kwargs) )
+        return nineml.abstraction_layer.Parameter(
+                name = self.prefix_variable( parameter.name, **kwargs) )
 
     def visit_analogport(self, port, **kwargs):
-        p =nineml.abstraction_layer.AnalogPort( name=
-                self.prefix_variable(port.name,**kwargs) , mode=port.mode,
+        return nineml.abstraction_layer.AnalogPort( 
+                name=self.prefix_variable(port.name, **kwargs) , 
+                mode=port.mode,
                 reduce_op=port.reduce_op )
-        return p
 
     def visit_eventport(self, port, **kwargs):
-        return nineml.abstraction_layer.EventPort( name = self.prefix_variable(port.name,**kwargs), mode=port.mode, reduce_op=port.reduce_op )
+        return nineml.abstraction_layer.EventPort( 
+                name=self.prefix_variable(port.name, **kwargs), 
+                mode=port.mode, 
+                reduce_op=port.reduce_op )
 
 
     def visit_outputevent(self, output_event, **kwargs):
-        return nineml.abstraction_layer.OutputEvent( port_name =
-                self.prefix_variable( output_event.port_name, **kwargs) )
+        return nineml.abstraction_layer.OutputEvent( 
+                port_name = self.prefix_variable( output_event.port_name, **kwargs) )
 
 
     def visit_assignment(self, assignment, **kwargs):
         from nineml.abstraction_layer.component import MathUtil
-        prefix = kwargs.get( 'prefix','')
-        prefix_excludes = kwargs.get('prefix_excludes',[] )
+        prefix = kwargs.get( 'prefix', '')
+        prefix_excludes = kwargs.get('prefix_excludes', [] )
 
         lhs = self.prefix_variable( assignment.lhs, **kwargs )
         rhs = MathUtil.get_prefixed_rhs_string( expr_obj=assignment, prefix=prefix, exclude=prefix_excludes )
@@ -268,20 +258,20 @@ class ClonerVisitor(ComponentVisitor):
 
     def visit_alias(self, alias, **kwargs):
         from nineml.abstraction_layer.component import MathUtil
-        prefix = kwargs.get( 'prefix','')
-        prefix_excludes = kwargs.get('prefix_excludes',[] )
+        prefix = kwargs.get( 'prefix', '')
+        prefix_excludes = kwargs.get('prefix_excludes', [] )
 
 
         new_alias = nineml.abstraction_layer.Alias( lhs = alias.lhs, rhs = alias.rhs )
-        name_map = dict( [ (a, self.prefix_variable(a,**kwargs) ) for a in new_alias.atoms ])
+        name_map = dict( [ (a, self.prefix_variable(a, **kwargs) ) for a in new_alias.atoms ])
         new_alias.name_transform_inplace( name_map = name_map )
         return new_alias
 
 
-    def visit_timederivative(self,time_derivative,**kwargs):
+    def visit_timederivative(self, time_derivative, **kwargs):
         from nineml.abstraction_layer.component import MathUtil
-        prefix = kwargs.get( 'prefix','')
-        prefix_excludes = kwargs.get('prefix_excludes',[] )
+        prefix = kwargs.get( 'prefix', '')
+        prefix_excludes = kwargs.get('prefix_excludes', [] )
 
         dep = self.prefix_variable(time_derivative.dependent_variable, **kwargs)
 
@@ -289,27 +279,27 @@ class ClonerVisitor(ComponentVisitor):
         return nineml.abstraction_layer.TimeDerivative( dependent_variable = dep, rhs =rhs)
 
 
-    def visit_condition(self, condition,**kwargs):
+    def visit_condition(self, condition, **kwargs):
         from nineml.abstraction_layer.component import MathUtil
-        prefix = kwargs.get( 'prefix','')
-        prefix_excludes = kwargs.get('prefix_excludes',[] )
+        prefix = kwargs.get( 'prefix', '')
+        prefix_excludes = kwargs.get('prefix_excludes', [] )
         rhs = MathUtil.get_prefixed_rhs_string( expr_obj=condition, prefix=prefix, exclude=prefix_excludes )
         return nineml.abstraction_layer.Condition( rhs =rhs)
 
 
-    def visit_oncondition(self, on_condition,**kwargs):
+    def visit_oncondition(self, on_condition, **kwargs):
         return nineml.abstraction_layer.OnCondition(
-                trigger = on_condition.trigger.accept_visitor(self,**kwargs),
-                event_outputs = [ e.accept_visitor(self,**kwargs) for e in on_condition.event_outputs ],
-                state_assignments = [ s.accept_visitor(self,**kwargs) for s in on_condition.state_assignments],
+                trigger = on_condition.trigger.accept_visitor(self, **kwargs),
+                event_outputs = [ e.accept_visitor(self, **kwargs) for e in on_condition.event_outputs ],
+                state_assignments = [ s.accept_visitor(self, **kwargs) for s in on_condition.state_assignments],
                 target_regime_name = on_condition.target_regime_name 
                 )
 
     def visit_onevent(self, on_event, **kwargs):
         return nineml.abstraction_layer.OnEvent(
-                src_port_name = self.prefix_variable(on_event.src_port_name,**kwargs),
-                event_outputs = [ e.accept_visitor(self,**kwargs) for e in on_event.event_outputs ],
-                state_assignments = [ s.accept_visitor(self,**kwargs) for s in on_event.state_assignments],
+                src_port_name = self.prefix_variable(on_event.src_port_name, **kwargs),
+                event_outputs = [ e.accept_visitor(self, **kwargs) for e in on_event.event_outputs ],
+                state_assignments = [ s.accept_visitor(self, **kwargs) for s in on_event.state_assignments],
                 target_regime_name = on_event.target_regime_name
                 )
 
@@ -330,20 +320,20 @@ class ClonerVisitorPrefixNamespace(ClonerVisitor):
 
         
         port_connections = []
-        for src,sink in component.portconnections:
+        for src, sink in component.portconnections:
             # To calculate the new address of the ports, we take of the 'local' port
             # address, i.e. the parent address, then add the prefixed string:
             src_new = NamespaceAddress.concat( src.get_parent_addr(), src.getstr() )  
             sink_new = NamespaceAddress.concat( sink.get_parent_addr(), sink.getstr() )  
-            port_connections.append ( (src_new,sink_new) )
+            port_connections.append ( (src_new, sink_new) )
             
 
         return nineml.abstraction_layer.ComponentClass( name = component.name,
-                               parameters  = [ p.accept_visitor(self,**kwargs) for p in component.parameters  ],
-                               analog_ports= [ p.accept_visitor(self,**kwargs) for p in component.analog_ports],
-                               event_ports = [ p.accept_visitor(self,**kwargs) for p in component.event_ports ],
-                               dynamics    = component.dynamics.accept_visitor(self,**kwargs) if component.dynamics else None,
-                               subnodes = dict( [ (k, v.accept_visitor(self,**kwargs)) for (k,v) in component.subnodes.iteritems() ] ),
+                               parameters  = [ p.accept_visitor(self, **kwargs) for p in component.parameters  ],
+                               analog_ports= [ p.accept_visitor(self, **kwargs) for p in component.analog_ports],
+                               event_ports = [ p.accept_visitor(self, **kwargs) for p in component.event_ports ],
+                               dynamics    = component.dynamics.accept_visitor(self, **kwargs) if component.dynamics else None,
+                               subnodes = dict( [ (k, v.accept_visitor(self, **kwargs)) for (k, v) in component.subnodes.iteritems() ] ),
                                portconnections  = port_connections
                                )
 
