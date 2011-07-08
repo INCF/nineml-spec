@@ -70,6 +70,18 @@ There is more about the NineML design and specification :doc:`here</src_rst/over
 
 
 
+NineML Abstraction Layer & XML
+-------------------------------
+
+:doc:`NineML Implementation and XML</nineml_al_implementation_and_xml>` 
+
+.. toctree::
+    :maxdepth: 2 
+    
+    nineml_al_implementation_and_xml
+    xml_spec
+
+
 Python NineML
 --------------
 
@@ -80,16 +92,13 @@ Python-NineML is the python implementation of the NineML specification.
     Status of the python NineML Libraries
 
 
+.. toctree::
+    :maxdepth: 2
+
+    python_nineml
+    src_rst/developers/developer
+
+
 * To start using Python NineML, we recommend you start with :doc:`The Python-NineML User Documentation</python_nineml>` 
 
 * For Python NineML developers, see the :doc:`Python-NineML Developer Documentation</src_rst/developers/developer>` 
-
-
-
-
-NineML Abstraction Layer & XML
--------------------------------
-
-:doc:`NineML Implementation and XML</nineml_al_implementation_and_xml>` 
-
-

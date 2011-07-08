@@ -1,6 +1,6 @@
-==============
-Python NineML
-==============
+=================================
+Python NineML User Documentation
+=================================
 
 
 Welcome to the documentation for Python NineML.

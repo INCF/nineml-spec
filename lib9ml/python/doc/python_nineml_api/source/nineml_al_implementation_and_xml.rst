@@ -8,9 +8,6 @@ external *interface*.
 
 
 
-
-
-
 Dynamics
 --------
 
@@ -26,9 +23,6 @@ The dynamics of a component are specified in terms of the following:
 * Events
 
 
-Conceptually
-~~~~~~~~~~~~
-
 
 StateVariables & Regime Graphs
 ###############################
@@ -41,7 +35,7 @@ to state variables happen in two ways:
 
     * through ``StateAssignments``, which make discrete changes to a
       StateVariable's value, for example :math:`X = X + 1`
-
+      
 
 A component contains a `Regime-graph`; a graph consisting of `Regimes` at the
 vertices, and `Transitions` at the edges. At any given time, a component will be
@@ -149,8 +143,8 @@ potentials firing for example.
 
 
 
-The Interface
---------------
+Interface
+----------
 The interface is the *external* view of the component; what inputs and outputs the component exposes
 to other components and the parameters that can be set for the component.
 
@@ -158,7 +152,7 @@ The interface consists of *Ports* and *Parameters*.
 
 
 Parameters
-============
+##########
 Parameters allow us to define the dynamics of a component once, then adjust the
 behaviours by using different parameters. For example, if we are building an
 integrate-and-fire neuron, we can specify that the Reset-Voltage and the
@@ -169,7 +163,7 @@ throughout.
 
 
 Ports
-======
+######
 
 Ports allow components to communicate between each other during a simulation. 
 There are 2 types of ports *Analog* and *Event* ports, and each can have
@@ -223,337 +217,31 @@ Event Ports:
 
 
 
-In XML
-~~~~~~~~~~~~
+Advanced Topics
+----------------
 
-When writing models in XML, they are 
-
-
-An example model of an Izhikevich model is given:
-
-.. code-block:: xml
-
-    <?xml version='1.0' encoding='UTF-8'?>
-    <NineML xmlns="http://nineml.org/9ML/0.1"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://nineml.org/9ML/0.1 NineML_v0.2.xsd">
-
-      <ComponentClass name="izhikevichCellNew">
-
-        <Parameter name="a" dimension='none'/>
-        <Parameter name="c" dimension='none'/>
-        <Parameter name="b" dimension='none'/>
-        <Parameter name="d" dimension='none'/>
-        <Parameter name="theta" dimension='voltage'/>
-
-        <AnalogPort name="iSyn" mode='reduce' reduce_op='+' dimension='current'/>
-        <AnalogPort name="U" mode="send" dimension='none'/>
-        <AnalogPort name="V" mode="send" dimension='voltage'/>
-        <EventPort name="spikeOutput" mode="send"/>
-        
-
-        <Dynamics>
-            
-            <StateVariable name="V" dimension="voltage"/>
-            <StateVariable name="U" dimension="none"/> 
-              
-            <Alias name='rv' dimension='none'>
-                <MathInline>V*U</MathInline>
-            </Alias>
-
-            <Regime name="subthresholdRegime">
-                  
-              <TimeDerivative variable="U">
-                <MathInline>a*(b*V - U)</MathInline>
-              </TimeDerivative>
-
-              <TimeDerivative variable="V">
-                <MathInline>0.04*V*V + 5*V + 140.0 - U + iSyn</MathInline>
-              </TimeDerivative>
-
-              
-              <OnCondition>
-                <Trigger>
-                  <MathInline>V &gt; theta </MathInline>
-                </Trigger>
-
-                <StateAssignment variable="V" >
-                  <MathInline>c</MathInline>
-                </StateAssignment>
-                
-                <StateAssignment variable="U" >
-                  <MathInline>U+d</MathInline>
-                </StateAssignment>
-                
-                <EventOut port="spikeOutput" />
-                
-              </OnCondition>
-
-            </Regime>
-        </Dynamics>
-
-      </ComponentClass>
-    </NineML>
-
-
-
-Tag Details:
-=============
-
-.. highlight:: xml
-
-
-
-
-
-
-
-
-
-
-::
-
-    <NineML>
-
-This is the root namespace tag for a NineML file. It can contain
-`<ComponentClass>` elements.
+Transition Resolution Order
+############################
 
 .. todo::
-    
-    XML namespaces.
 
+    This
 
 
+Techniques, tips and tricks:
+-----------------------------
 
-
-
-::
-
-<ComponentClass name="">
-
-This tag starts an abstraction layer component definition. 
-
-Attributes:
-
-* name [Required]
-
-Child Elements:
-
-* <Parameter> [0+]
-* <AnalogPort>[0+]
-* <EventPort> [0+]
-* <Dynamics>  [1]
-  
-
-
-
-
-
-
-
-::
-    
-    <Parameter name="" dimension="">
-
-This tag specifies a parameter in the interface of the component
-
-Attributes:
-
-* name [Required]
-* dimension [Required]
-
-Child Elements: ``None``
-
-
-
-
-
-
-    
-::
-    
-    <AnalogPort name="" mode="" reduce_op="" dimension="" >
-
-This tag specifies an AnalogPort in the interface of the component
-
-Attributes:
-
-* name [Required]
-* mode [Required: 'send','recv' or 'reduce']
-* reduce_op [Required if mode=='reduce']
-* dimension [Required]
-
-Child Elements: ``None``
-
-
-
-
-
-
-
-::
-    
-    <EventPort name="" mode="">
-
-This tag specifies an EventPort in the interface of the component
-
-Attributes:
-
-* name [Required]
-* mode [Required: 'send','recv']
-* dimension [Required]
-
-Child Elements: ``None``
-
-
-
-
-
-::
-    
-    <Dynamics>
-
-This tag specifies the dynamics of the component
-
-Attributes: ``None``
-
-Child Elements: 
-
-* <StateVariable> [0+]
-* <Alias> [0+]
-* <Regime> [1+]
-
-
-
-
-
-::
-    
-    <StateVariable name='' dimension=''>
-
-This tag declares a state-variable in the component
-
-Attributes: 
-
-* name [Required] (The variable name)
-* dimension [Required] 
-
-Child Elements: ``None``
-
-
-
-
-::
-    
-    <Alias name=''>
-
-This tag declares an alias in the component
-
-Attributes: 
-
-* name [Required] (The alias name)
-* dimension [Required] 
-
-Child Elements: 
-
-* <MathInline> [Required] (The equation on the right-hand-side of the alias)
-
-
-
-
-
-::
-    
-    <Regime>
-
-This tag declares an regime in the component. There must be exactly on
-TimeDerivative block for each StateVariable block declared in the enclosing
-<Dynamics> block, even if it has a rhs of zero.
-
-Attributes: 
-
-* name [Required] (The regime name)
-
-Child Elements: 
-
-* <TimeDerivative> [0+] 
-* <OnCondition> [0+] (The transitions from this regime, triggered by conditions)
-* <OnEvent> [0+] (The transitions from this regime, triggered by events)
-
-
-
-::
-    
-    <TimeDerivative>
-
-This tag defines the differential equation controlling the evolution of a StateVariable while
-in this regime.
-
-Attributes: 
-
-* variable [Required] (The name of the state variable)
-
-Child Elements: 
-
-* <MathInline> [1] (The right-hand-side of the differential equation)
-
-
-::    
-
-    <OnCondition>
-
-Blah
-
-
-::    
-
-    <OnEvent>
-
-Blah
-
-
-
-::    
-
-    <Trigger>
-
-Blah
-
-
-
-::    
-
-    <StateAssignment>
-
-Blah
-
-::    
-
-    <EventOut>
-
-Blah
-
-
-::    
-
-    <MathInline>
-
-Blah
-
-
-
-
-
-
-
-.. highlight:: python
-
-Some tips and tricks:
----------------------
 Conductance Based synapses
+##########################
+
+.. todo::
+    This
+
 
 
 Example Transition Graphs of simple components:
 -----------------------------------------------
 
 
+.. todo::
+    This

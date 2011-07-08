@@ -1,23 +1,21 @@
 
 
-For Developers:
---------------------
+Abstraction Layer
+-------------------
 
+
+Introduction
+#############
 
 .. toctree::
    :maxdepth: 3
-
-   src_rst/reference/visitors
-   src_rst/reference/xmlschema
-   src_rst/reference/resolution_transitions
+    
+   /src_rst/developers/al/visitors
 
 
-Module Reference:
------------------
 
-
-Overview
-~~~~~~~~~
+Subpackages Overview
+####################
 
 .. autosummary::
     
@@ -29,42 +27,33 @@ Overview
     validators
 
 
-Details [Users]
-~~~~~~~~~~~~~~~~~
+Module Reference [Common Classes]
+##################################
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    
-   src_rst/reference/component
-   src_rst/reference/readers
-   src_rst/reference/writers
-   src_rst/reference/visitors
+   /src_rst/reference/component
+   /src_rst/reference/readers
+   /src_rst/reference/writers
+   /src_rst/reference/visitors
 
+   /src_rst/reference/component_modifiers
+   /src_rst/reference/validators
 
-Details [Developers]
-~~~~~~~~~~~~~~~~~~~~
 
 .. toctree::
    :maxdepth: 2
 
-   src_rst/reference/utility_function
-   src_rst/reference/component_modifiers
-   src_rst/reference/validators
 
 
 
 Module Reference: [Internal]
------------------------------
+#############################
 
 .. toctree::
    :maxdepth: 2
 
-   src_rst/reference/component_internal
+   /src_rst/reference/component_internal
 
 
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
