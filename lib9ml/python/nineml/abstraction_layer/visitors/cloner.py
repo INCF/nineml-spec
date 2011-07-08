@@ -333,8 +333,8 @@ class ClonerVisitorPrefixNamespace(ClonerVisitor):
             
             #self.prefix_variable(sink.get_local_name(), **kwargs) )  
             
-            print 'Mapping Ports:', src, '->', src_new, '(%s)'%src.get_local_name(), prefix
-            print 'Mapping Ports:', sink, '->', sink_new
+            #print 'Mapping Ports:', src, '->', src_new, '(%s)'%src.get_local_name(), prefix
+            #print 'Mapping Ports:', sink, '->', sink_new
             #src_new = NamespaceAddress.concat( src.get_parent_addr(), src.getstr() )  
             #sink_new = NamespaceAddress.concat( sink.get_parent_addr(), sink.getstr() )  
             port_connections.append ( (src_new, sink_new) )

@@ -305,6 +305,7 @@ class ComponentFlattener(object):
         portconnections = [model.portconnections for model in self.all_components]
         portconnections = list( itertools.chain(* portconnections ) )
         
+        print 'new_analog_ports', new_analog_ports.keys()
 
         # A. Handle Recieve Ports:
         for srcAddr,dstAddr in portconnections[:]:
