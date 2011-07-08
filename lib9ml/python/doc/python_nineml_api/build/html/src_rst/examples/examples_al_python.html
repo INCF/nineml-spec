@@ -1,0 +1,819 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Abstraction Layer &mdash; NineML Python API Alpha documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     'Alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="NineML Python API Alpha documentation" href="../../index.html" />
+    <link rel="up" title="Python NineML User Documentation" href="../../python_nineml.html" />
+    <link rel="next" title="Python NineML Developer Documentation" href="../developers/developer.html" />
+    <link rel="prev" title="Simulating" href="../tutorials/al/interfacing_pynn.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../developers/developer.html" title="Python NineML Developer Documentation"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../tutorials/al/interfacing_pynn.html" title="Simulating"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">NineML Python API Alpha documentation</a> &raquo;</li>
+          <li><a href="../../python_nineml.html" accesskey="U">Python NineML User Documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="abstraction-layer">
+<h1>Abstraction Layer<a class="headerlink" href="#abstraction-layer" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="example-aeif">
+<h2>Example - aeIF<a class="headerlink" href="#example-aeif" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><div class="highlight"><pre><span class="sd">&#39;&#39;&#39;</span>
+
+<span class="sd">Adaptive exponential integrate-and-fire neuron as described in</span>
+<span class="sd">A. Destexhe, J COmput Neurosci 27: 493--506 (2009)</span>
+
+<span class="sd">Author B. Kriener (Jan 2011)</span>
+
+<span class="sd">## neuron model: aeIF</span>
+
+<span class="sd">## variables:</span>
+<span class="sd">## V: membrane potential</span>
+<span class="sd">## w: adaptation variable</span>
+
+<span class="sd">## parameters:</span>
+<span class="sd">## C_m     # specific membrane capacitance [muF/cm**2] </span>
+<span class="sd">## g_L     # leak conductance [mS/cm**2]</span>
+<span class="sd">## E_L     # resting potential [mV]</span>
+<span class="sd">## Delta   # steepness of exponential approach to threshold [mV]</span>
+<span class="sd">## V_T     # spike threshold [mV]</span>
+<span class="sd">## S       # membrane area [mum**2]</span>
+<span class="sd">## tau_ref # refractory time [ms]</span>
+<span class="sd">## tau_w   # adaptation time constant</span>
+<span class="sd">## a, b    # adaptation parameters [muS, nA]</span>
+
+<span class="sd">&#39;&#39;&#39;</span>
+
+<span class="kn">import</span> <span class="nn">nineml.abstraction_layer</span> <span class="kn">as</span> <span class="nn">al</span>
+
+
+<span class="k">def</span> <span class="nf">get_component</span><span class="p">():</span>
+
+    <span class="n">parameters</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;C_m&#39;</span><span class="p">,</span><span class="s">&#39;g_L&#39;</span><span class="p">,</span><span class="s">&#39;E_L&#39;</span><span class="p">,</span> <span class="s">&#39;Delta&#39;</span><span class="p">,</span> <span class="s">&#39;V_T&#39;</span><span class="p">,</span> <span class="s">&#39;S&#39;</span><span class="p">,</span> <span class="s">&#39;tau_ref&#39;</span><span class="p">,</span> <span class="s">&#39;tau_w&#39;</span><span class="p">,</span> <span class="s">&#39;a&#39;</span><span class="p">,</span> <span class="s">&#39;b&#39;</span><span class="p">]</span>
+
+    <span class="n">aeIF</span> <span class="o">=</span> <span class="n">al</span><span class="o">.</span><span class="n">ComponentClass</span><span class="p">(</span><span class="s">&quot;aeIF&quot;</span><span class="p">,</span> 
+                     <span class="n">regimes</span><span class="o">=</span><span class="p">[</span>                    
+                         <span class="n">al</span><span class="o">.</span><span class="n">Regime</span><span class="p">(</span>                              
+                                <span class="n">name</span><span class="o">=</span><span class="s">&quot;subthresholdregime&quot;</span><span class="p">,</span>
+                                <span class="n">time_derivatives</span> <span class="o">=</span> <span class="p">[</span>
+                                    <span class="s">&quot;dV/dt = -g_L*(V-E_L)/C_m + g_L*Delta*exp((V-V_T)/Delta-w/S)/C_m+ Isyn/C_m&quot;</span><span class="p">,</span>
+                                    <span class="s">&quot;dw/dt = (a*(V-E_L)-w)/tau_w&quot;</span><span class="p">,</span> <span class="p">],</span>
+                                <span class="n">transitions</span><span class="o">=</span><span class="n">al</span><span class="o">.</span><span class="n">On</span><span class="p">(</span><span class="s">&quot;V &gt; V_T&quot;</span><span class="p">,</span>
+                                               <span class="n">do</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;V = E_L&quot;</span><span class="p">,</span>
+                                                   <span class="s">&quot;w = w + b&quot;</span><span class="p">,</span>
+                                                   <span class="n">al</span><span class="o">.</span><span class="n">OutputEvent</span><span class="p">(</span><span class="s">&#39;spikeoutput&#39;</span><span class="p">)],</span>
+                                               <span class="n">to</span><span class="o">=</span><span class="s">&quot;refractoryregime&quot;</span><span class="p">),</span>
+                                <span class="p">),</span>  
+
+                         <span class="n">al</span><span class="o">.</span><span class="n">Regime</span><span class="p">(</span>                              
+                                <span class="n">name</span><span class="o">=</span><span class="s">&quot;refractoryregime&quot;</span><span class="p">,</span>
+                                <span class="n">transitions</span><span class="o">=</span><span class="n">al</span><span class="o">.</span><span class="n">On</span><span class="p">(</span><span class="s">&quot;t&gt;=tspike+trefractory&quot;</span><span class="p">,</span>
+                                               <span class="n">to</span><span class="o">=</span><span class="s">&quot;subthresholdregime&quot;</span><span class="p">),</span>
+                                <span class="p">)</span>    
+                               <span class="p">],</span>                
+                         <span class="n">analog_ports</span><span class="o">=</span><span class="p">[</span><span class="n">al</span><span class="o">.</span><span class="n">ReducePort</span><span class="p">(</span><span class="s">&quot;Isyn&quot;</span><span class="p">,</span> <span class="n">reduce_op</span><span class="o">=</span><span class="s">&quot;+&quot;</span><span class="p">)]</span>
+                     <span class="p">)</span>        
+
+    <span class="k">return</span> <span class="n">aeIF</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="example-coba-synapse">
+<h2>Example - Coba Synapse<a class="headerlink" href="#example-coba-synapse" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">nineml.abstraction_layer</span> <span class="kn">as</span> <span class="nn">al</span>
+
+<span class="k">def</span> <span class="nf">get_component</span><span class="p">():</span>
+    <span class="n">coba</span> <span class="o">=</span> <span class="n">al</span><span class="o">.</span><span class="n">ComponentClass</span><span class="p">(</span> 
+            <span class="n">name</span> <span class="o">=</span> <span class="s">&quot;CobaSyn&quot;</span><span class="p">,</span>
+            <span class="n">aliases</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;I:=g*(vrev-V)&quot;</span><span class="p">,</span> <span class="p">],</span>
+            <span class="n">regimes</span> <span class="o">=</span> <span class="p">[</span> 
+                <span class="n">al</span><span class="o">.</span><span class="n">Regime</span><span class="p">(</span>
+                 <span class="n">name</span> <span class="o">=</span> <span class="s">&quot;cobadefaultregime&quot;</span><span class="p">,</span>
+                 <span class="n">time_derivatives</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;dg/dt = -g/tau&quot;</span><span class="p">,],</span>
+                 <span class="n">transitions</span> <span class="o">=</span> <span class="n">al</span><span class="o">.</span><span class="n">On</span><span class="p">(</span><span class="s">&#39;spikeinput&#39;</span><span class="p">,</span> <span class="n">do</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;g=g+q&quot;</span><span class="p">]),</span>
+                    <span class="p">)</span>
+                <span class="p">],</span>
+            <span class="n">state_variables</span> <span class="o">=</span> <span class="p">[</span> <span class="n">al</span><span class="o">.</span><span class="n">StateVariable</span><span class="p">(</span><span class="s">&#39;g&#39;</span><span class="p">)</span> <span class="p">],</span>
+            <span class="n">analog_ports</span> <span class="o">=</span> <span class="p">[</span> <span class="n">al</span><span class="o">.</span><span class="n">RecvPort</span><span class="p">(</span><span class="s">&quot;V&quot;</span><span class="p">),</span> <span class="n">al</span><span class="o">.</span><span class="n">SendPort</span><span class="p">(</span><span class="s">&quot;I&quot;</span><span class="p">),</span> <span class="p">],</span>
+            <span class="n">parameters</span> <span class="o">=</span> <span class="p">[</span> <span class="s">&#39;tau&#39;</span><span class="p">,</span><span class="s">&#39;q&#39;</span><span class="p">,</span><span class="s">&#39;vrev&#39;</span><span class="p">]</span>  
+                             <span class="p">)</span>
+    <span class="k">return</span> <span class="n">coba</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="example-destexhe-synapse">
+<h2>Example - Destexhe Synapse<a class="headerlink" href="#example-destexhe-synapse" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># A 9ml version of:</span>
+<span class="c"># nrn/share/examples/nrniv/netcon/ampa.mod</span>
+<span class="c"># r473 from the main repository (http://www.neuron.yale.edu/hg/neuron/nrn) pasted here:</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">TITLE simple AMPA receptors</span>
+
+<span class="sd">COMMENT</span>
+<span class="sd">-----------------------------------------------------------------------------</span>
+
+<span class="sd">	Simple model for glutamate AMPA receptors</span>
+<span class="sd">	=========================================</span>
+
+<span class="sd">  - FIRST-ORDER KINETICS, FIT TO WHOLE-CELL RECORDINGS</span>
+
+<span class="sd">    Whole-cell recorded postsynaptic currents mediated by AMPA/Kainate</span>
+<span class="sd">    receptors (Xiang et al., J. Neurophysiol. 71: 2552-2556, 1994) were used</span>
+<span class="sd">    to estimate the parameters of the present model; the fit was performed</span>
+<span class="sd">    using a simplex algorithm (see Destexhe et al., J. Computational Neurosci.</span>
+<span class="sd">    1: 195-230, 1994).</span>
+
+<span class="sd">  - SHORT PULSES OF TRANSMITTER (0.3 ms, 0.5 mM)</span>
+
+<span class="sd">    The simplified model was obtained from a detailed synaptic model that </span>
+<span class="sd">    included the release of transmitter in adjacent terminals, its lateral </span>
+<span class="sd">    diffusion and uptake, and its binding on postsynaptic receptors (Destexhe</span>
+<span class="sd">    and Sejnowski, 1995).  Short pulses of transmitter with first-order</span>
+<span class="sd">    kinetics were found to be the best fast alternative to represent the more</span>
+<span class="sd">    detailed models.</span>
+
+<span class="sd">  - ANALYTIC EXPRESSION</span>
+
+<span class="sd">    The first-order model can be solved analytically, leading to a very fast</span>
+<span class="sd">    mechanism for simulating synapses, since no differential equation must be</span>
+<span class="sd">    solved (see references below).</span>
+
+
+
+<span class="sd">References</span>
+
+<span class="sd">   Destexhe, A., Mainen, Z.F. and Sejnowski, T.J.  An efficient method for</span>
+<span class="sd">   computing synaptic conductances based on a kinetic model of receptor binding</span>
+<span class="sd">   Neural Computation 6: 10-14, 1994.  </span>
+
+<span class="sd">   Destexhe, A., Mainen, Z.F. and Sejnowski, T.J. Synthesis of models for</span>
+<span class="sd">   excitable membranes, synaptic transmission and neuromodulation using a </span>
+<span class="sd">   common kinetic formalism, Journal of Computational Neuroscience 1: </span>
+<span class="sd">   195-230, 1994.</span>
+
+<span class="sd">-----------------------------------------------------------------------------</span>
+<span class="sd">ENDCOMMENT</span>
+
+
+
+<span class="sd">NEURON {</span>
+<span class="sd">	POINT_PROCESS AMPA_S</span>
+<span class="sd">	RANGE R, g</span>
+<span class="sd">	NONSPECIFIC_CURRENT i</span>
+<span class="sd">	GLOBAL Cdur, Alpha, Beta, Erev, Rinf, Rtau</span>
+<span class="sd">}</span>
+<span class="sd">UNITS {</span>
+<span class="sd">	(nA) = (nanoamp)</span>
+<span class="sd">	(mV) = (millivolt)</span>
+<span class="sd">	(umho) = (micromho)</span>
+<span class="sd">	(mM) = (milli/liter)</span>
+<span class="sd">}</span>
+
+<span class="sd">PARAMETER {</span>
+
+<span class="sd">	Cdur	= 0.3	(ms)		: transmitter duration (rising phase)</span>
+<span class="sd">	Alpha	= 0.94	(/ms)	: forward (binding) rate</span>
+<span class="sd">	Beta	= 0.18	(/ms)		: backward (unbinding) rate</span>
+<span class="sd">	Erev	= 0	(mV)		: reversal potential</span>
+<span class="sd">}</span>
+
+
+<span class="sd">ASSIGNED {</span>
+<span class="sd">	v		(mV)		: postsynaptic voltage</span>
+<span class="sd">	i 		(nA)		: current = g*(v - Erev)</span>
+<span class="sd">	g 		(umho)		: conductance</span>
+<span class="sd">	Rinf				: steady state channels open</span>
+<span class="sd">	Rtau		(ms)		: time constant of channel binding</span>
+<span class="sd">	synon</span>
+<span class="sd">}</span>
+
+<span class="sd">STATE {Ron Roff}</span>
+
+<span class="sd">INITIAL {</span>
+<span class="sd">	Rinf = Alpha / (Alpha + Beta)</span>
+<span class="sd">	Rtau = 1 / (Alpha + Beta)</span>
+<span class="sd">	synon = 0</span>
+<span class="sd">}</span>
+
+<span class="sd">BREAKPOINT {</span>
+<span class="sd">	SOLVE release METHOD cnexp</span>
+<span class="sd">	g = (Ron + Roff)*1(umho)</span>
+<span class="sd">	i = g*(v - Erev)</span>
+<span class="sd">}</span>
+
+<span class="sd">DERIVATIVE release {</span>
+<span class="sd">	Ron&#39; = (synon*Rinf - Ron)/Rtau</span>
+<span class="sd">	Roff&#39; = -Beta*Roff</span>
+<span class="sd">}</span>
+
+<span class="sd">: following supanalog_analog_ports both saturation from single input and</span>
+<span class="sd">: summation from multiple inputs</span>
+<span class="sd">: if spike occurs during CDur then new off time is t + CDur</span>
+<span class="sd">: ie. transmitter concatenates but does not summate</span>
+<span class="sd">: Note: automatic initialization of all reference args to 0 except first</span>
+
+<span class="sd">NET_RECEIVE(weight, on, nspike, r0, t0 (ms)) {</span>
+<span class="sd">	: flag is an implicit argument of NET_RECEIVE and  normally 0</span>
+<span class="sd">        if (flag == 0) { : a spike, so turn on if not already in a Cdur pulse</span>
+<span class="sd">		nspike = nspike + 1</span>
+<span class="sd">		if (!on) {</span>
+<span class="sd">			r0 = r0*exp(-Beta*(t - t0))</span>
+<span class="sd">			t0 = t</span>
+<span class="sd">			on = 1</span>
+<span class="sd">			synon = synon + weight</span>
+<span class="sd">			state_discontinuity(Ron, Ron + r0)</span>
+<span class="sd">			state_discontinuity(Roff, Roff - r0)</span>
+<span class="sd">		}</span>
+<span class="sd">		: come again in Cdur with flag = current value of nspike</span>
+<span class="sd">		net_send(Cdur, nspike)</span>
+<span class="sd">        }</span>
+<span class="sd">	if (flag == nspike) { : if this associated with last spike then turn off</span>
+<span class="sd">		r0 = weight*Rinf + (r0 - weight*Rinf)*exp(-(t - t0)/Rtau)</span>
+<span class="sd">		t0 = t</span>
+<span class="sd">		synon = synon - weight</span>
+<span class="sd">		state_discontinuity(Ron, Ron - r0)</span>
+<span class="sd">		state_discontinuity(Roff, Roff + r0)</span>
+<span class="sd">		on = 0</span>
+<span class="sd">	}</span>
+<span class="sd">}</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c"># Author: Eilif Muller, Mike Hull</span>
+<span class="c"># This code has not yet been verified.</span>
+
+<span class="c"># Attention units have not yet been checked.</span>
+<span class="c"># g = (Ron + Roff)*1(umho)</span>
+
+<span class="c"># Erev -&gt; E, i -&gt; Isyn, v-&gt;V</span>
+<span class="c"># synon could be removed, using the concept of Regimes</span>
+<span class="c"># All the nspike business could be removed due to Regimes and Transitions</span>
+
+<span class="kn">from</span> <span class="nn">nineml.abstraction_layer</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="k">def</span> <span class="nf">get_component</span><span class="p">():</span>
+    <span class="n">off_regime</span> <span class="o">=</span> <span class="n">Regime</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s">&quot;off_regime&quot;</span><span class="p">,</span>
+        <span class="n">time_derivatives</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s">&quot;dRon/dt =  -Ron/Rtau&quot;</span><span class="p">,</span>
+        <span class="s">&quot;dRoff/dt = -Beta*Roff&quot;</span><span class="p">,</span>
+        <span class="p">],</span>
+        <span class="n">transitions</span><span class="o">=</span><span class="n">On</span><span class="p">(</span><span class="s">&#39;spikeoutput&#39;</span><span class="p">,</span>
+                        <span class="n">do</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;t_off = t+Cdur&quot;</span><span class="p">,</span>
+                            <span class="s">&quot;r0 = r0*exp(-Beta*(t - t0))&quot;</span><span class="p">,</span>
+                            <span class="s">&quot;t0 = t&quot;</span><span class="p">,</span>
+                            <span class="s">&quot;Ron = Ron +r0&quot;</span><span class="p">,</span>
+                            <span class="s">&quot;Roff = Roff - r0&quot;</span>
+                            <span class="p">],</span>
+                        <span class="n">to</span><span class="o">=</span><span class="s">&quot;on_regime&quot;</span>
+                  <span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="n">on_regime</span> <span class="o">=</span> <span class="n">Regime</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s">&quot;on_regime&quot;</span><span class="p">,</span>
+        <span class="n">time_derivatives</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s">&quot;dRon/dt = (weight*Rinf - Ron)/Rtau&quot;</span><span class="p">,</span>
+        <span class="s">&quot;dRoff/dt = -Beta*Roff&quot;</span><span class="p">,</span>
+        <span class="p">],</span>
+        <span class="n">transitions</span><span class="o">=</span><span class="p">[</span><span class="n">On</span><span class="p">(</span><span class="s">&#39;spikeoutput&#39;</span><span class="p">,</span><span class="n">do</span><span class="o">=</span><span class="s">&quot;t_off = t+Cdur&quot;</span><span class="p">),</span>     <span class="c"># Extend duration if input spike arrives while on</span>
+                     <span class="n">On</span><span class="p">(</span><span class="s">&quot;t_off&gt;t&quot;</span><span class="p">,</span>                              <span class="c"># What to do when its time to turn off </span>
+                        <span class="n">do</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;r0 = weight*Rinf + (r0 - weight*Rinf)*exp(-(t - t0)/Rtau)&quot;</span><span class="p">,</span>
+                       <span class="s">&quot;t0 = t&quot;</span><span class="p">,</span>
+                       <span class="s">&quot;Ron = Ron - r0&quot;</span><span class="p">,</span>
+                       <span class="s">&quot;Roff = Roff - r0&quot;</span>
+                       <span class="p">],</span>
+                        <span class="n">to</span><span class="o">=</span><span class="s">&#39;off_regime&#39;</span>
+                   <span class="p">)</span>
+                <span class="p">]</span>
+        <span class="p">)</span>
+
+    <span class="n">analog_ports</span> <span class="o">=</span> <span class="p">[</span><span class="n">RecvPort</span><span class="p">(</span><span class="s">&quot;weight&quot;</span><span class="p">),</span>
+             <span class="n">RecvPort</span><span class="p">(</span><span class="s">&quot;V&quot;</span><span class="p">),</span>
+             <span class="n">SendPort</span><span class="p">(</span><span class="s">&quot;Isyn&quot;</span><span class="p">),</span> 
+             <span class="n">SendPort</span><span class="p">(</span><span class="s">&quot;gsyn&quot;</span><span class="p">)]</span>
+
+    <span class="n">c1</span> <span class="o">=</span> <span class="n">ComponentClass</span><span class="p">(</span><span class="s">&quot;AMPA&quot;</span><span class="p">,</span> 
+                             <span class="n">regimes</span><span class="o">=</span><span class="p">[</span><span class="n">off_regime</span><span class="p">,</span> <span class="n">on_regime</span><span class="p">],</span> 
+                             <span class="n">analog_ports</span> <span class="o">=</span> <span class="n">analog_ports</span><span class="p">,</span>
+                             <span class="n">aliases</span> <span class="o">=</span> <span class="p">[</span>
+                                 <span class="s">&quot;g := (on + off)&quot;</span><span class="p">,</span>
+                                 <span class="s">&quot;Isyn := g*(E-V)&quot;</span><span class="p">,</span> 
+                                 <span class="s">&quot;gsyn := g&quot;</span>
+                                 <span class="p">]</span>
+                             <span class="p">)</span>
+    <span class="k">return</span> <span class="n">c1</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="example-hh">
+<h2>Example - HH<a class="headerlink" href="#example-hh" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><div class="highlight"><pre><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Script for generating a single-compartment Hodgkin-Huxley cell in NineML XML format.</span>
+
+<span class="sd">Andrew Davison, 2010</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">nineml.abstraction_layer</span> <span class="kn">as</span> <span class="nn">al</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="k">def</span> <span class="nf">get_component</span><span class="p">():</span>
+    <span class="n">aliases</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s">&quot;q10 := 3.0**((celsius - 6.3)/10.0)&quot;</span><span class="p">,</span>  <span class="c"># temperature correction factor</span>
+        <span class="s">&quot;alpha_m := -0.1*(V+40.0)/(exp(-(V+40.0)/10.0) - 1.0)&quot;</span><span class="p">,</span>  <span class="c"># m</span>
+        <span class="s">&quot;beta_m := 4.0*exp(-(V+65.0)/18.0)&quot;</span><span class="p">,</span>
+        <span class="s">&quot;mtau := 1/(q10*(alpha_m + beta_m))&quot;</span><span class="p">,</span>
+        <span class="s">&quot;minf := alpha_m/(alpha_m + beta_m)&quot;</span><span class="p">,</span>
+        <span class="s">&quot;alpha_h := 0.07*exp(-(V+65.0)/20.0)&quot;</span><span class="p">,</span>               <span class="c"># h</span>
+        <span class="s">&quot;beta_h := 1.0/(exp(-(V+35)/10.0) + 1.0)&quot;</span><span class="p">,</span>
+        <span class="s">&quot;htau := 1.0/(q10*(alpha_h + beta_h))&quot;</span><span class="p">,</span>
+        <span class="s">&quot;hinf := alpha_h/(alpha_h + beta_h)&quot;</span><span class="p">,</span>
+        <span class="s">&quot;alpha_n := -0.01*(V+55.0)/(exp(-(V+55.0)/10.0) - 1.0)&quot;</span><span class="p">,</span> <span class="c"># n</span>
+        <span class="s">&quot;beta_n := 0.125*exp(-(V+65.0)/80.0)&quot;</span><span class="p">,</span>
+        <span class="s">&quot;ntau := 1.0/(q10*(alpha_n + beta_n))&quot;</span><span class="p">,</span>
+        <span class="s">&quot;ninf := alpha_n/(alpha_n + beta_n)&quot;</span><span class="p">,</span>
+        <span class="s">&quot;gna := gnabar*m*m*m*h&quot;</span><span class="p">,</span>                       <span class="c"># </span>
+        <span class="s">&quot;gk := gkbar*n*n*n*n&quot;</span><span class="p">,</span>
+        <span class="s">&quot;ina := gna*(ena - V)&quot;</span><span class="p">,</span>                 <span class="c"># currents</span>
+        <span class="s">&quot;ik := gk*(ek - V)&quot;</span><span class="p">,</span>
+        <span class="s">&quot;il := gl*(el - V )&quot;</span><span class="p">]</span>
+
+    <span class="n">hh_regime</span> <span class="o">=</span> <span class="n">al</span><span class="o">.</span><span class="n">Regime</span><span class="p">(</span>
+        <span class="s">&quot;dn/dt = (ninf-n)/ntau&quot;</span><span class="p">,</span>
+        <span class="s">&quot;dm/dt = (minf-m)/mtau&quot;</span><span class="p">,</span>
+        <span class="s">&quot;dh/dt = (hinf-h)/htau&quot;</span><span class="p">,</span>
+        <span class="s">&quot;dV/dt = (ina + ik + il + Isyn)/C&quot;</span><span class="p">,</span>
+        <span class="n">transitions</span><span class="o">=</span><span class="n">al</span><span class="o">.</span><span class="n">On</span><span class="p">(</span><span class="s">&quot;V &gt; theta&quot;</span><span class="p">,</span><span class="n">do</span><span class="o">=</span><span class="n">al</span><span class="o">.</span><span class="n">SpikeOutputEvent</span><span class="p">()</span> <span class="p">)</span>
+    <span class="p">)</span>
+
+<span class="c"># the rest are not &quot;parameters&quot; but aliases, assigned vars, state vars, indep vars, analog_analog_ports, etc.</span>
+    <span class="n">parameters</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;el&#39;</span><span class="p">,</span> <span class="s">&#39;C&#39;</span><span class="p">,</span> <span class="s">&#39;ek&#39;</span><span class="p">,</span> <span class="s">&#39;ena&#39;</span><span class="p">,</span> <span class="s">&#39;gkbar&#39;</span><span class="p">,</span> <span class="s">&#39;gnabar&#39;</span><span class="p">,</span> <span class="s">&#39;theta&#39;</span><span class="p">,</span> <span class="s">&#39;gl&#39;</span><span class="p">,</span><span class="s">&#39;celsius&#39;</span><span class="p">,</span> <span class="p">]</span>
+
+    <span class="n">analog_ports</span> <span class="o">=</span> <span class="p">[</span><span class="n">al</span><span class="o">.</span><span class="n">SendPort</span><span class="p">(</span><span class="s">&quot;V&quot;</span><span class="p">),</span> <span class="n">al</span><span class="o">.</span><span class="n">ReducePort</span><span class="p">(</span><span class="s">&quot;Isyn&quot;</span><span class="p">,</span><span class="n">reduce_op</span><span class="o">=</span><span class="s">&quot;+&quot;</span><span class="p">)]</span>
+
+    <span class="n">c1</span> <span class="o">=</span> <span class="n">al</span><span class="o">.</span><span class="n">ComponentClass</span><span class="p">(</span><span class="s">&quot;HodgkinHuxley&quot;</span><span class="p">,</span> 
+                          <span class="n">parameters</span><span class="o">=</span><span class="n">parameters</span><span class="p">,</span>
+                          <span class="n">regimes</span><span class="o">=</span><span class="p">(</span><span class="n">hh_regime</span><span class="p">,),</span>
+                          <span class="n">aliases</span><span class="o">=</span><span class="n">aliases</span><span class="p">,</span> 
+                          <span class="n">analog_ports</span><span class="o">=</span><span class="n">analog_ports</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">c1</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="example-iaf-sfa-relref">
+<h2>Example - IAF SFA RelRef<a class="headerlink" href="#example-iaf-sfa-relref" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><div class="highlight"><pre><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This model implements the iaf_sfa_rr aspects of iaf_cond_exp_sfa_rr in</span>
+<span class="sd">nest, that is contrary to the nest model, it does not include the &quot;cond_exp&quot; synapse model,</span>
+
+<span class="sd">This model was used in:</span>
+
+<span class="sd">Muller, E., Buesing, L., Schemmel, J., &amp; Meier, K. (2007).</span>
+<span class="sd">Spike-frequency adapting neural ensembles: Beyond mean adaptation and</span>
+<span class="sd">renewal theories. Neural Computation, 19, 2958-3010.</span>
+
+<span class="sd">Documentation from NEST:</span>
+
+<span class="sd">/* BeginDocumentation</span>
+<span class="sd">Name: iaf_cond_exp_sfa_rr - Simple conductance based leaky integrate-and-fire neuron model.</span>
+
+<span class="sd">Description:</span>
+<span class="sd">iaf_cond_exp_sfa_rr is an iaf_cond_exp_sfa_rr i.e. an implementation of a</span>
+<span class="sd">spiking neuron using IAF dynamics with conductance-based synapses,</span>
+<span class="sd">with additional spike-frequency adaptation and relative refractory</span>
+<span class="sd">mechanisms as described in Dayan+Abbott, 2001, page 166.</span>
+
+<span class="sd">As for the iaf_cond_exp_sfa_rr, Incoming spike events induce a post-synaptic</span>
+<span class="sd">change  of  conductance  modelled  by an  exponential  function.  The</span>
+<span class="sd">exponential function is  normalised such that an event  of weight 1.0</span>
+<span class="sd">results in a peak current of 1 nS.</span>
+
+<span class="sd">Outgoing spike events induce a change of the adaptation and relative</span>
+<span class="sd">refractory conductances by q_sfa and q_rr, respectively.  Otherwise</span>
+<span class="sd">these conductances decay exponentially with time constants tau_sfa</span>
+<span class="sd">and tau_rr, respectively.</span>
+
+<span class="sd">Parameters: </span>
+<span class="sd">The following parameters can be set in the status dictionary.</span>
+
+<span class="sd">V        double - Membrane potential in mV </span>
+<span class="sd">E_L        double - Leak reversal potential in mV.</span>
+<span class="sd">C_m        double - Capacity of the membrane in pF</span>
+<span class="sd">t_ref      double - Duration of refractory period in ms. </span>
+<span class="sd">V_th       double - Spike threshold in mV.</span>
+<span class="sd">V_reset    double - Reset potential of the membrane in mV.</span>
+<span class="sd">E_ex       double - Excitatory reversal potential in mV.</span>
+<span class="sd">E_in       double - Inhibitory reversal potential in mV.</span>
+<span class="sd">g_L        double - Leak conductance in nS;</span>
+<span class="sd">tau_ex     double - Time constant of the excitatory synaptic exponential function in ms.</span>
+<span class="sd">tau_in     double - Time constant of the inhibitory synaptic exponential function in ms.</span>
+<span class="sd">q_sfa      double - Outgoing spike activated quantal spike-frequency adaptation conductance increase in nS.</span>
+<span class="sd">q_rr       double - Outgoing spike activated quantal relative refractory conductance increase in nS.</span>
+<span class="sd">tau_sfa    double - Time constant of spike-frequency adaptation in ms.</span>
+<span class="sd">tau_rr     double - Time constant of the relative refractory mechanism in ms.</span>
+<span class="sd">E_sfa      double - spike-frequency adaptation conductance reversal potential in mV.</span>
+<span class="sd">E_rr       double - relative refractory mechanism conductance reversal potential in mV.</span>
+<span class="sd">I_e        double - an external stimulus current in pA.</span>
+
+<span class="sd">Sends: SpikeEvent</span>
+
+<span class="sd">Receives: SpikeEvent, CurrentEvent, DataLoggingRequest</span>
+
+<span class="sd">Author: Sven Schrader, Eilif Muller</span>
+
+<span class="sd">SeeAlso: iaf_cond_exp_sfa_rr, aeif_cond_alpha, iaf_psc_delta, iaf_psc_exp, iaf_cond_alpha</span>
+<span class="sd">*/</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">nineml.abstraction_layer</span> <span class="kn">as</span> <span class="nn">al</span>
+
+<span class="k">def</span> <span class="nf">get_component</span><span class="p">():</span>
+    <span class="n">subthreshold_regime</span> <span class="o">=</span> <span class="n">al</span><span class="o">.</span><span class="n">Regime</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s">&quot;subthreshold_regime&quot;</span><span class="p">,</span>
+        <span class="n">time_derivatives</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s">&quot;dV/dt = (g_L*(E_L-V) + g_sfa*(E_sfa-V) + g_rr*(E_rr-V) + Isyn)/C&quot;</span><span class="p">,</span>
+            <span class="s">&quot;dg_sfa/dt = -g_sfa/tau_sfa&quot;</span><span class="p">,</span>
+            <span class="s">&quot;dg_rr/dt = -g_rr/tau_rr&quot;</span><span class="p">,</span>
+        <span class="p">],</span>
+        <span class="n">transitions</span> <span class="o">=</span> <span class="n">al</span><span class="o">.</span><span class="n">On</span><span class="p">(</span><span class="s">&quot;V&gt; theta&quot;</span><span class="p">,</span>
+                                <span class="n">do</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;g_sfa =g_sfa +  q_sfa&quot;</span><span class="p">,</span> <span class="s">&quot;g_rr =g_rr + q_rr&quot;</span><span class="p">,</span> <span class="s">&quot;t_spike = t&quot;</span><span class="p">,</span>
+                                    <span class="n">al</span><span class="o">.</span><span class="n">OutputEvent</span><span class="p">(</span><span class="s">&#39;spikeoutput&#39;</span><span class="p">)],</span>
+                                <span class="n">to</span><span class="o">=</span><span class="s">&quot;refractory_regime&quot;</span><span class="p">),</span>
+        <span class="p">)</span>
+
+    <span class="n">refractory_regime</span> <span class="o">=</span> <span class="n">al</span><span class="o">.</span><span class="n">Regime</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s">&quot;refractory_regime&quot;</span><span class="p">,</span>
+        <span class="n">transitions</span> <span class="o">=</span> <span class="n">al</span><span class="o">.</span><span class="n">On</span><span class="p">(</span><span class="s">&quot;t &gt;= t_spike + t_ref&quot;</span><span class="p">,</span>
+                                <span class="n">to</span><span class="o">=</span><span class="s">&#39;subthreshold_regime&#39;</span><span class="p">),</span>
+        <span class="p">)</span>
+
+    <span class="n">analog_ports</span> <span class="o">=</span> <span class="p">[</span><span class="n">al</span><span class="o">.</span><span class="n">SendPort</span><span class="p">(</span><span class="s">&quot;V&quot;</span><span class="p">),</span>
+                    <span class="n">al</span><span class="o">.</span><span class="n">ReducePort</span><span class="p">(</span><span class="s">&quot;Isyn&quot;</span><span class="p">,</span><span class="n">reduce_op</span><span class="o">=</span><span class="s">&quot;+&quot;</span><span class="p">)]</span>
+
+    <span class="n">c1</span> <span class="o">=</span> <span class="n">al</span><span class="o">.</span><span class="n">ComponentClass</span><span class="p">(</span><span class="s">&quot;iaf_sfa_relref&quot;</span><span class="p">,</span> 
+                            <span class="n">regimes</span> <span class="o">=</span> <span class="p">[</span><span class="n">subthreshold_regime</span><span class="p">,</span> <span class="n">refractory_regime</span><span class="p">],</span>
+                            <span class="n">analog_ports</span> <span class="o">=</span> <span class="n">analog_ports</span><span class="p">,</span>
+                            <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">c1</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="example-if-cond-exp">
+<h2>Example - IF Cond Exp<a class="headerlink" href="#example-if-cond-exp" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><div class="highlight"><pre><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">A composite leaky integrate-and-fire with conductance-based, exponential</span>
+<span class="sd">synapses, like the IF_cond_exp standard cell model in PyNN</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">nineml.abstraction_layer</span> <span class="kn">as</span> <span class="nn">al</span>
+
+
+<span class="c">#class ComponentMetaData(object):</span>
+<span class="c">#    parameters = {</span>
+<span class="c">#            &#39;iaf_vthresh&#39;:-57.0, </span>
+<span class="c">#            &#39;iaf_vreset&#39;: -70.0, </span>
+<span class="c">#            &#39;iaf_taurefrac&#39;: 20.0, </span>
+<span class="c">#            &#39;iaf_gl&#39;:28.95,</span>
+<span class="c">#            &#39;iaf_cm&#39;:289.5, </span>
+<span class="c">#            &#39;iaf_vrest&#39; : -70.0, </span>
+<span class="c">#            &#39;cobaExcit_vrev&#39;: 0.0, </span>
+<span class="c">#            &#39;cobaInhib_vrev&#39;: -75.0, </span>
+<span class="c">#            &#39;cobaExcit_tau&#39;:1.5,</span>
+<span class="c">#            &#39;cobaInhib_tau&#39;: 10.0}</span>
+<span class="c">#</span>
+<span class="c">#    synapse_components = [</span>
+<span class="c">#        (&#39;cobaInhib&#39;, &#39;q&#39; ),</span>
+<span class="c">#        (&#39;cobaExcit&#39;, &#39;q&#39; )</span>
+<span class="c">#            ]</span>
+<span class="c">#    </span>
+<span class="c">#</span>
+<span class="c">#</span>
+
+
+
+<span class="k">def</span> <span class="nf">get_component</span><span class="p">():</span>
+    <span class="n">regimes</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">al</span><span class="o">.</span><span class="n">Regime</span><span class="p">(</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="s">&quot;sub_threshold_regime&quot;</span><span class="p">,</span>
+            <span class="n">time_derivatives</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="s">&quot;dV/dt = (v_rest - V)/tau_m + (gE*(e_rev_E - V) + gI*(e_rev_I - V) + i_offset)/cm&quot;</span><span class="p">,</span>
+                <span class="s">&quot;dgE/dt = -gE/tau_syn_E&quot;</span><span class="p">,</span>
+                <span class="s">&quot;dgI/dt = -gI/tau_syn_I&quot;</span><span class="p">,],</span>
+            <span class="n">transitions</span> <span class="o">=</span> <span class="p">(</span><span class="n">al</span><span class="o">.</span><span class="n">On</span><span class="p">(</span><span class="s">&quot;V &gt; v_thresh&quot;</span><span class="p">,</span>
+                                     <span class="n">do</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;t_spike = t&quot;</span><span class="p">,</span>
+                                         <span class="s">&quot;V = v_reset&quot;</span><span class="p">,</span>
+                                         <span class="n">al</span><span class="o">.</span><span class="n">OutputEvent</span><span class="p">(</span><span class="s">&#39;spikeoutput&#39;</span><span class="p">)],</span>
+                                     <span class="n">to</span><span class="o">=</span><span class="s">&quot;refractory_regime&quot;</span><span class="p">),</span>
+                           <span class="n">al</span><span class="o">.</span><span class="n">On</span><span class="p">(</span><span class="s">&#39;excitatory&#39;</span><span class="p">,</span> <span class="n">do</span><span class="o">=</span><span class="s">&quot;gE=gE+q&quot;</span><span class="p">),</span>
+                           <span class="n">al</span><span class="o">.</span><span class="n">On</span><span class="p">(</span><span class="s">&#39;inhibitory&#39;</span><span class="p">,</span> <span class="n">do</span><span class="o">=</span><span class="s">&quot;gI=gI+q&quot;</span><span class="p">),</span>
+                          <span class="p">),</span>
+        <span class="p">),</span>
+        <span class="n">al</span><span class="o">.</span><span class="n">Regime</span><span class="p">(</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="s">&quot;refractory_regime&quot;</span><span class="p">,</span>
+            <span class="n">time_derivatives</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="s">&quot;dgE/dt = -gE/tau_syn_E&quot;</span><span class="p">,</span>
+                <span class="s">&quot;dgI/dt = -gI/tau_syn_I&quot;</span><span class="p">,],</span>
+            <span class="n">transitions</span> <span class="o">=</span> <span class="p">(</span><span class="n">al</span><span class="o">.</span><span class="n">On</span><span class="p">(</span><span class="s">&quot;t &gt;= t_spike + tau_refrac&quot;</span><span class="p">,</span> <span class="n">to</span><span class="o">=</span><span class="s">&quot;sub_threshold_regime&quot;</span><span class="p">),</span>
+                           <span class="n">al</span><span class="o">.</span><span class="n">On</span><span class="p">(</span><span class="s">&#39;excitatoryspike&#39;</span><span class="p">,</span> <span class="n">do</span><span class="o">=</span><span class="s">&quot;gE=gE+q&quot;</span><span class="p">),</span>
+                           <span class="n">al</span><span class="o">.</span><span class="n">On</span><span class="p">(</span><span class="s">&#39;inhibitoryspike&#39;</span><span class="p">,</span> <span class="n">do</span><span class="o">=</span><span class="s">&quot;gI=gI+q&quot;</span><span class="p">),</span>
+                           <span class="p">),</span>
+        <span class="p">)]</span>
+
+
+    <span class="n">analog_ports</span> <span class="o">=</span> <span class="p">[</span><span class="n">al</span><span class="o">.</span><span class="n">SendPort</span><span class="p">(</span><span class="s">&quot;V&quot;</span><span class="p">),</span> <span class="n">al</span><span class="o">.</span><span class="n">SendPort</span><span class="p">(</span><span class="s">&quot;gE&quot;</span><span class="p">),</span> <span class="n">al</span><span class="o">.</span><span class="n">SendPort</span><span class="p">(</span><span class="s">&quot;gI&quot;</span><span class="p">),</span>
+             <span class="n">al</span><span class="o">.</span><span class="n">RecvPort</span><span class="p">(</span><span class="s">&quot;q&quot;</span><span class="p">)]</span>
+
+    <span class="n">c1</span> <span class="o">=</span> <span class="n">al</span><span class="o">.</span><span class="n">ComponentClass</span><span class="p">(</span><span class="s">&quot;IF_cond_exp&quot;</span><span class="p">,</span> <span class="n">regimes</span><span class="o">=</span><span class="n">regimes</span><span class="p">,</span> <span class="n">analog_ports</span><span class="o">=</span><span class="n">analog_ports</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">c1</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="example-iz1">
+<h2>Example - Iz1<a class="headerlink" href="#example-iz1" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">nineml.abstraction_layer</span> <span class="kn">as</span> <span class="nn">al</span>
+
+
+<span class="c">#parameters = [&quot;Isyn&quot;,&quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;d&quot;, &quot;theta&quot;]</span>
+
+<span class="k">def</span> <span class="nf">get_component</span><span class="p">():</span>
+    <span class="n">regimes</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">al</span><span class="o">.</span><span class="n">Regime</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s">&quot;subthreshold_regime&quot;</span><span class="p">,</span>
+            <span class="n">time_derivatives</span> <span class="o">=</span><span class="p">[</span>
+            <span class="s">&quot;dV/dt = 0.04*V*V + 5*V + 140.0 - U + Isyn&quot;</span><span class="p">,</span>
+            <span class="s">&quot;dU/dt = a*(b*V - U)&quot;</span><span class="p">],</span>
+            <span class="n">transitions</span> <span class="o">=</span> <span class="p">[</span><span class="n">al</span><span class="o">.</span><span class="n">On</span><span class="p">(</span><span class="s">&quot;V &gt; theta&quot;</span><span class="p">,</span>
+                                <span class="n">do</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;V = c&quot;</span><span class="p">,</span>
+                                    <span class="s">&quot;U = U + d&quot;</span><span class="p">,</span>
+                                    <span class="n">al</span><span class="o">.</span><span class="n">OutputEvent</span><span class="p">(</span><span class="s">&#39;spikeoutput&#39;</span><span class="p">)])],</span>
+            
+        <span class="p">)]</span>
+
+
+    <span class="n">analog_ports</span> <span class="o">=</span> <span class="p">[</span><span class="n">al</span><span class="o">.</span><span class="n">SendPort</span><span class="p">(</span><span class="s">&quot;V&quot;</span><span class="p">),</span>
+                    <span class="n">al</span><span class="o">.</span><span class="n">ReducePort</span><span class="p">(</span><span class="s">&quot;Isyn&quot;</span><span class="p">,</span><span class="n">reduce_op</span><span class="o">=</span><span class="s">&quot;+&quot;</span><span class="p">)]</span>
+
+
+    <span class="n">c1</span> <span class="o">=</span> <span class="n">al</span><span class="o">.</span><span class="n">ComponentClass</span><span class="p">(</span><span class="s">&quot;Izhikevich&quot;</span><span class="p">,</span> 
+                            <span class="n">regimes</span> <span class="o">=</span> <span class="n">regimes</span><span class="p">,</span>
+                            <span class="n">analog_ports</span><span class="o">=</span><span class="n">analog_ports</span> <span class="p">)</span>
+    <span class="k">return</span> <span class="n">c1</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="example-iz2">
+<h2>Example - Iz2<a class="headerlink" href="#example-iz2" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">nineml.abstraction_layer</span> <span class="kn">as</span> <span class="nn">al</span>
+
+
+<span class="k">def</span> <span class="nf">get_component</span><span class="p">():</span>
+    <span class="n">subthreshold_regime</span> <span class="o">=</span> <span class="n">al</span><span class="o">.</span><span class="n">Regime</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s">&quot;subthreshold_regime&quot;</span><span class="p">,</span>
+            <span class="n">time_derivatives</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="s">&quot;dV/dt = 0.04*V*V + 5*V + 140.0 - U + Isyn&quot;</span><span class="p">,</span>
+                <span class="s">&quot;dU/dt = a*(b*V - U)&quot;</span><span class="p">,],</span>
+
+            <span class="n">transitions</span> <span class="o">=</span> <span class="p">[</span><span class="n">al</span><span class="o">.</span><span class="n">On</span><span class="p">(</span><span class="s">&quot;V &gt; theta&quot;</span><span class="p">,</span>
+                              <span class="n">do</span> <span class="o">=</span><span class="p">[</span> <span class="s">&quot;V = c&quot;</span><span class="p">,</span> 
+                                    <span class="s">&quot;U =  U+ d&quot;</span><span class="p">,</span> 
+                                    <span class="n">al</span><span class="o">.</span><span class="n">OutputEvent</span><span class="p">(</span><span class="s">&#39;spike&#39;</span><span class="p">),],</span>
+                              <span class="n">to</span><span class="o">=</span><span class="s">&#39;subthreshold_regime&#39;</span><span class="p">)]</span>
+                <span class="p">)</span>
+
+    <span class="n">ports</span> <span class="o">=</span> <span class="p">[</span><span class="n">al</span><span class="o">.</span><span class="n">SendPort</span><span class="p">(</span><span class="s">&quot;V&quot;</span><span class="p">),</span>
+             <span class="n">al</span><span class="o">.</span><span class="n">ReducePort</span><span class="p">(</span><span class="s">&quot;Isyn&quot;</span><span class="p">,</span><span class="n">reduce_op</span><span class="o">=</span><span class="s">&quot;+&quot;</span><span class="p">)]</span>
+
+    <span class="n">c1</span> <span class="o">=</span> <span class="n">al</span><span class="o">.</span><span class="n">ComponentClass</span><span class="p">(</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="s">&quot;Izhikevich&quot;</span><span class="p">,</span> 
+            <span class="n">regimes</span> <span class="o">=</span> <span class="p">[</span><span class="n">subthreshold_regime</span><span class="p">],</span>
+            <span class="n">analog_ports</span> <span class="o">=</span> <span class="n">ports</span>
+
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">c1</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="example-leaky-iaf">
+<h2>Example - Leaky Iaf<a class="headerlink" href="#example-leaky-iaf" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">nineml.abstraction_layer</span> <span class="kn">as</span> <span class="nn">al</span>
+
+<span class="k">def</span> <span class="nf">get_component</span><span class="p">():</span>
+    <span class="n">subthreshold_regime</span> <span class="o">=</span> <span class="n">al</span><span class="o">.</span><span class="n">Regime</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s">&quot;subthreshold_regime&quot;</span><span class="p">,</span>
+        <span class="n">time_derivatives</span> <span class="o">=</span><span class="p">[</span> <span class="s">&quot;dV/dt = (-gL*(V-vL) + Isyn)/C&quot;</span><span class="p">,],</span>
+        <span class="n">transitions</span> <span class="o">=</span> <span class="p">[</span><span class="n">al</span><span class="o">.</span><span class="n">On</span><span class="p">(</span><span class="s">&quot;V&gt; theta&quot;</span><span class="p">,</span>
+                                <span class="n">do</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;t_spike = t&quot;</span><span class="p">,</span> <span class="s">&quot;V = V_reset&quot;</span><span class="p">,</span>
+                                    <span class="n">al</span><span class="o">.</span><span class="n">OutputEvent</span><span class="p">(</span><span class="s">&#39;spikeoutput&#39;</span><span class="p">)],</span>
+                                <span class="n">to</span><span class="o">=</span><span class="s">&quot;refractory_regime&quot;</span><span class="p">)</span> <span class="p">],</span>
+        <span class="p">)</span>
+
+    <span class="n">refractory_regime</span> <span class="o">=</span> <span class="n">al</span><span class="o">.</span><span class="n">Regime</span><span class="p">(</span>
+        <span class="n">transitions</span> <span class="o">=</span> <span class="p">[</span><span class="n">al</span><span class="o">.</span><span class="n">On</span><span class="p">(</span><span class="s">&quot;t &gt;= t_spike + t_ref&quot;</span><span class="p">,</span>
+                                <span class="n">to</span><span class="o">=</span><span class="s">&#39;subthreshold_regime&#39;</span><span class="p">)],</span>
+        <span class="n">name</span><span class="o">=</span><span class="s">&quot;refractory_regime&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">analog_ports</span> <span class="o">=</span> <span class="p">[</span><span class="n">al</span><span class="o">.</span><span class="n">SendPort</span><span class="p">(</span><span class="s">&quot;V&quot;</span><span class="p">),</span>
+             <span class="n">al</span><span class="o">.</span><span class="n">ReducePort</span><span class="p">(</span><span class="s">&quot;Isyn&quot;</span><span class="p">,</span><span class="n">reduce_op</span><span class="o">=</span><span class="s">&quot;+&quot;</span><span class="p">)]</span>
+
+    <span class="n">c1</span> <span class="o">=</span> <span class="n">al</span><span class="o">.</span><span class="n">ComponentClass</span><span class="p">(</span><span class="s">&quot;LeakyIAF&quot;</span><span class="p">,</span> <span class="n">regimes</span> <span class="o">=</span> <span class="p">[</span><span class="n">subthreshold_regime</span><span class="p">,</span> <span class="n">refractory_regime</span><span class="p">],</span> <span class="n">analog_ports</span><span class="o">=</span><span class="n">analog_ports</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">c1</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="example-morris-lecar">
+<h2>Example - Morris Lecar<a class="headerlink" href="#example-morris-lecar" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><div class="highlight"><pre><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">The Morris-Lecar Model</span>
+
+<span class="sd">Authors:</span>
+<span class="sd">- G4 (A. Davison, Y. Le Franc, E. Muller, I. Raikov</span>
+<span class="sd">- Gif-sur-Yvette, CNRS-UNIC Salle de Vie, Dec 3rd, 2010.</span>
+
+<span class="sd">Modified:</span>
+<span class="sd">- Mike Hull June/2011 EPFL</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+
+<span class="k">class</span> <span class="nc">ComponentMetadata</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+
+
+
+<span class="kn">import</span> <span class="nn">nineml.abstraction_layer</span> <span class="kn">as</span> <span class="nn">al</span>
+
+<span class="k">def</span> <span class="nf">get_component</span><span class="p">():</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">al</span><span class="o">.</span><span class="n">Regime</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="s">&quot;subthreshold_regime&quot;</span><span class="p">,</span>
+            <span class="n">transitions</span> <span class="o">=</span> <span class="p">[</span><span class="n">al</span><span class="o">.</span><span class="n">On</span><span class="p">(</span><span class="s">&quot;V &gt; theta&quot;</span><span class="p">,</span> <span class="n">do</span><span class="o">=</span><span class="n">al</span><span class="o">.</span><span class="n">OutputEvent</span><span class="p">(</span><span class="s">&#39;spikeoutput&#39;</span><span class="p">))</span> <span class="p">],</span>
+            <span class="n">time_derivatives</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="s">&quot;dV/dt = (g_l*(V_l - V) + I_ca + I_k + Isyn)/C&quot;</span><span class="p">,</span>
+                <span class="s">&quot;dW/dt = lambda_W*(W_inf - W)&quot;</span><span class="p">,</span>
+                <span class="p">],</span>
+            <span class="p">)</span>
+
+
+    <span class="n">ports</span> <span class="o">=</span> <span class="p">[</span><span class="n">al</span><span class="o">.</span><span class="n">SendPort</span><span class="p">(</span><span class="s">&quot;V&quot;</span><span class="p">),</span>
+             <span class="n">al</span><span class="o">.</span><span class="n">ReducePort</span><span class="p">(</span><span class="s">&quot;Isyn&quot;</span><span class="p">,</span><span class="n">reduce_op</span><span class="o">=</span><span class="s">&quot;+&quot;</span><span class="p">)]</span>
+
+
+    <span class="n">c1</span> <span class="o">=</span> <span class="n">al</span><span class="o">.</span><span class="n">ComponentClass</span><span class="p">(</span><span class="s">&quot;MorrisLecar&quot;</span><span class="p">,</span> 
+                            <span class="n">dynamics</span> <span class="o">=</span> <span class="n">al</span><span class="o">.</span><span class="n">Dynamics</span><span class="p">(</span>
+                                        <span class="n">regimes</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span><span class="p">],</span>
+                           
+                                        <span class="n">aliases</span> <span class="o">=</span> <span class="p">[</span>
+                                           <span class="s">&quot;M_inf := 0.5*(1.0+tanh((V-V1)/V2))&quot;</span><span class="p">,</span>
+                                           <span class="s">&quot;W_inf := 0.5*(1.0+tanh((V-V3)/V4))&quot;</span><span class="p">,</span>
+                                           <span class="s">&quot;lambda_W := phi*cosh((V-V3)/(2.0*V4))&quot;</span><span class="p">,</span>
+                                           <span class="s">&quot;I_ca := g_ca*M_inf*(V_ca-V)&quot;</span><span class="p">,</span>
+                                           <span class="s">&quot;I_k := g_k*W*(V_k-V)&quot;</span><span class="p">,</span>
+                                               <span class="p">]</span>
+                                        <span class="p">)</span>
+                           <span class="p">)</span>
+    <span class="k">return</span> <span class="n">c1</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="example-nmda">
+<h2>Example - NMDA<a class="headerlink" href="#example-nmda" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">nineml.abstraction_layer</span> <span class="kn">as</span> <span class="nn">al</span>
+
+
+<span class="k">def</span> <span class="nf">get_component</span><span class="p">():</span>
+    <span class="n">inter_event_regime</span> <span class="o">=</span> <span class="n">al</span><span class="o">.</span><span class="n">Regime</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s">&quot;intereventregime&quot;</span><span class="p">,</span>
+        <span class="n">time_derivatives</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;dA/dt = -A/taur&quot;</span><span class="p">,</span> <span class="s">&quot;dB/dt = -B/taud&quot;</span> <span class="p">],</span>
+        <span class="n">transitions</span><span class="o">=</span><span class="p">[</span><span class="n">al</span><span class="o">.</span><span class="n">On</span><span class="p">(</span><span class="s">&#39;spikeinput&#39;</span><span class="p">,</span>
+                              <span class="n">do</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;A = A + weight*factor&quot;</span><span class="p">,</span>
+                                  <span class="s">&quot;B = B + weight*factor&quot;</span><span class="p">])]</span> 
+        <span class="p">)</span>
+
+    <span class="n">dynamics</span> <span class="o">=</span> <span class="n">al</span><span class="o">.</span><span class="n">Dynamics</span><span class="p">(</span>
+                    <span class="n">aliases</span> <span class="o">=</span> <span class="p">[</span>
+                                <span class="s">&quot;taupeak := taur*taud/(taud - taur)*log(taud/taur)&quot;</span><span class="p">,</span>
+                                <span class="s">&quot;factor := 1/(exp(-taupeak/taud) - exp(-taupeak/taur))&quot;</span><span class="p">,</span>
+                                <span class="s">&quot;gB := 1/(1 + mgconc*exp(-1*gamma*V)/beta)&quot;</span><span class="p">,</span>
+                                <span class="s">&quot;g := gB*gmax*(B-A)&quot;</span><span class="p">,</span>
+                                <span class="s">&quot;I := g * df&quot;</span><span class="p">,</span>
+                                <span class="s">&quot;df := (E-V)&quot;</span><span class="p">,</span>
+                              <span class="p">],</span>
+                    <span class="n">state_variables</span> <span class="o">=</span> <span class="p">[</span><span class="n">al</span><span class="o">.</span><span class="n">StateVariable</span><span class="p">(</span><span class="n">o</span><span class="p">)</span> <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="p">(</span><span class="s">&#39;A&#39;</span><span class="p">,</span><span class="s">&#39;B&#39;</span><span class="p">)</span> <span class="p">]</span> <span class="p">,</span> 
+                    <span class="n">regimes</span> <span class="o">=</span> <span class="p">[</span><span class="n">inter_event_regime</span><span class="p">],</span>
+                          <span class="p">)</span> 
+
+    <span class="n">nmda</span> <span class="o">=</span> <span class="n">al</span><span class="o">.</span><span class="n">ComponentClass</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&quot;NMDAPSR&quot;</span><span class="p">,</span>
+                     <span class="n">dynamics</span> <span class="o">=</span> <span class="n">dynamics</span><span class="p">,</span>
+                     <span class="n">analog_ports</span> <span class="o">=</span> <span class="p">[</span><span class="n">al</span><span class="o">.</span><span class="n">RecvPort</span><span class="p">(</span><span class="s">&quot;V&quot;</span><span class="p">),</span> <span class="n">al</span><span class="o">.</span><span class="n">SendPort</span><span class="p">(</span><span class="s">&quot;I&quot;</span><span class="p">),</span> <span class="p">],</span>
+                     <span class="n">event_ports</span> <span class="o">=</span>  <span class="p">[</span><span class="n">al</span><span class="o">.</span><span class="n">RecvEventPort</span><span class="p">(</span><span class="s">&#39;spikeinput&#39;</span><span class="p">)</span> <span class="p">],</span>
+                     <span class="n">parameters</span> <span class="o">=</span>   <span class="p">[</span><span class="s">&#39;taur&#39;</span><span class="p">,</span><span class="s">&#39;taud&#39;</span><span class="p">,</span><span class="s">&#39;gmax&#39;</span><span class="p">,</span><span class="s">&#39;mgconc&#39;</span><span class="p">,</span><span class="s">&#39;gamma&#39;</span><span class="p">,</span><span class="s">&#39;beta&#39;</span><span class="p">,</span><span class="s">&#39;E&#39;</span><span class="p">,</span><span class="s">&#39;weight&#39;</span><span class="p">]</span>  
+                     <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">nmda</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Abstraction Layer</a><ul>
+<li><a class="reference internal" href="#example-aeif">Example - aeIF</a></li>
+<li><a class="reference internal" href="#example-coba-synapse">Example - Coba Synapse</a></li>
+<li><a class="reference internal" href="#example-destexhe-synapse">Example - Destexhe Synapse</a></li>
+<li><a class="reference internal" href="#example-hh">Example - HH</a></li>
+<li><a class="reference internal" href="#example-iaf-sfa-relref">Example - IAF SFA RelRef</a></li>
+<li><a class="reference internal" href="#example-if-cond-exp">Example - IF Cond Exp</a></li>
+<li><a class="reference internal" href="#example-iz1">Example - Iz1</a></li>
+<li><a class="reference internal" href="#example-iz2">Example - Iz2</a></li>
+<li><a class="reference internal" href="#example-leaky-iaf">Example - Leaky Iaf</a></li>
+<li><a class="reference internal" href="#example-morris-lecar">Example - Morris Lecar</a></li>
+<li><a class="reference internal" href="#example-nmda">Example - NMDA</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../tutorials/al/interfacing_pynn.html"
+                        title="previous chapter">Simulating</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../developers/developer.html"
+                        title="next chapter">Python NineML Developer Documentation</a></p>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../developers/developer.html" title="Python NineML Developer Documentation"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../tutorials/al/interfacing_pynn.html" title="Simulating"
+             >previous</a> |</li>
+        <li><a href="../../index.html">NineML Python API Alpha documentation</a> &raquo;</li>
+          <li><a href="../../python_nineml.html" >Python NineML User Documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Mike Hull, Eilif Muller, Andrew Davison.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1pre.
+    </div>
+  </body>
+</html>

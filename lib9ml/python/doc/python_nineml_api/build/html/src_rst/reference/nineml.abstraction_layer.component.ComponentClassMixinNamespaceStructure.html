@@ -1,0 +1,202 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>nineml.abstraction_layer.component.ComponentClassMixinNamespaceStructure &mdash; NineML Python API Alpha documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     'Alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="NineML Python API Alpha documentation" href="../../index.html" />
+    <link rel="up" title="nineml.abstraction_layer.component [Internal-General]" href="component_internal.html" />
+    <link rel="prev" title="nineml.abstraction_layer.component.ComponentClassMixinFlatStructure" href="nineml.abstraction_layer.component.ComponentClassMixinFlatStructure.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="nineml.abstraction_layer.component.ComponentClassMixinFlatStructure.html" title="nineml.abstraction_layer.component.ComponentClassMixinFlatStructure"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">NineML Python API Alpha documentation</a> &raquo;</li>
+          <li><a href="../developers/developer.html" >Python NineML Developer Documentation</a> &raquo;</li>
+          <li><a href="../developers/al/developer.html" >Abstraction Layer</a> &raquo;</li>
+          <li><a href="component_internal.html" accesskey="U">nineml.abstraction_layer.component [Internal-General]</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="nineml-abstraction-layer-component-componentclassmixinnamespacestructure">
+<h1>nineml.abstraction_layer.component.ComponentClassMixinNamespaceStructure<a class="headerlink" href="#nineml-abstraction-layer-component-componentclassmixinnamespacestructure" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="nineml.abstraction_layer.component.ComponentClassMixinNamespaceStructure">
+<em class="property">class </em><tt class="descclassname">nineml.abstraction_layer.component.</tt><tt class="descname">ComponentClassMixinNamespaceStructure</tt><big>(</big><em>subnodes=None</em>, <em>portconnections=None</em><big>)</big><a class="headerlink" href="#nineml.abstraction_layer.component.ComponentClassMixinNamespaceStructure" title="Permalink to this definition">¶</a></dt>
+<dd><p>A mixin class that provides the hierarchical structure for
+components.</p>
+<dl class="method">
+<dt id="nineml.abstraction_layer.component.ComponentClassMixinNamespaceStructure.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>subnodes=None</em>, <em>portconnections=None</em><big>)</big><a class="headerlink" href="#nineml.abstraction_layer.component.ComponentClassMixinNamespaceStructure.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructor - For parameter descriptions, see the
+ComponentClass.__init__() method</p>
+</dd></dl>
+
+<p class="rubric">Methods</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#nineml.abstraction_layer.component.ComponentClassMixinNamespaceStructure.__init__" title="nineml.abstraction_layer.component.ComponentClassMixinNamespaceStructure.__init__"><tt class="xref py py-obj docutils literal"><span class="pre">__init__</span></tt></a>([subnodes,&nbsp;portconnections])</td>
+<td>Constructor - For parameter descriptions, see the</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#nineml.abstraction_layer.component.ComponentClassMixinNamespaceStructure.connect_ports" title="nineml.abstraction_layer.component.ComponentClassMixinNamespaceStructure.connect_ports"><tt class="xref py py-obj docutils literal"><span class="pre">connect_ports</span></tt></a>(src,&nbsp;sink)</td>
+<td>Connects the ports of 2 subcomponents.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#nineml.abstraction_layer.component.ComponentClassMixinNamespaceStructure.get_node_addr" title="nineml.abstraction_layer.component.ComponentClassMixinNamespaceStructure.get_node_addr"><tt class="xref py py-obj docutils literal"><span class="pre">get_node_addr</span></tt></a>()</td>
+<td>Get the namespace address of this component</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#nineml.abstraction_layer.component.ComponentClassMixinNamespaceStructure.get_subnode" title="nineml.abstraction_layer.component.ComponentClassMixinNamespaceStructure.get_subnode"><tt class="xref py py-obj docutils literal"><span class="pre">get_subnode</span></tt></a>(addr)</td>
+<td>Gets a subnode from this component recursively.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#nineml.abstraction_layer.component.ComponentClassMixinNamespaceStructure.insert_subnode" title="nineml.abstraction_layer.component.ComponentClassMixinNamespaceStructure.insert_subnode"><tt class="xref py py-obj docutils literal"><span class="pre">insert_subnode</span></tt></a>(namespace,&nbsp;subnode)</td>
+<td>Insert a subnode into this component</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="nineml.abstraction_layer.component.ComponentClassMixinNamespaceStructure.connect_ports">
+<tt class="descname">connect_ports</tt><big>(</big><em>src</em>, <em>sink</em><big>)</big><a class="headerlink" href="#nineml.abstraction_layer.component.ComponentClassMixinNamespaceStructure.connect_ports" title="Permalink to this definition">¶</a></dt>
+<dd><p>Connects the ports of 2 subcomponents.</p>
+<p>The ports can be specified as <tt class="docutils literal"><span class="pre">string</span></tt> s or <a class="reference internal" href="nineml.abstraction_layer.component.NamespaceAddress.html#nineml.abstraction_layer.component.NamespaceAddress" title="nineml.abstraction_layer.component.NamespaceAddress"><tt class="xref py py-class docutils literal"><span class="pre">NamespaceAddresses</span></tt></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>src</strong> &#8211; The source port of one sub-component; this should either an
+<a class="reference internal" href="nineml.abstraction_layer.component.EventPort.html#nineml.abstraction_layer.component.EventPort" title="nineml.abstraction_layer.component.EventPort"><tt class="xref py py-class docutils literal"><span class="pre">EventPort</span></tt></a> or <a class="reference internal" href="nineml.abstraction_layer.component.AnalogPort.html#nineml.abstraction_layer.component.AnalogPort" title="nineml.abstraction_layer.component.AnalogPort"><tt class="xref py py-class docutils literal"><span class="pre">AnalogPort</span></tt></a>, but it <em>must</em> be a send port.</li>
+<li><strong>sink</strong> &#8211; The sink port of one sub-component; this should either an
+<a class="reference internal" href="nineml.abstraction_layer.component.EventPort.html#nineml.abstraction_layer.component.EventPort" title="nineml.abstraction_layer.component.EventPort"><tt class="xref py py-class docutils literal"><span class="pre">EventPort</span></tt></a> or <a class="reference internal" href="nineml.abstraction_layer.component.AnalogPort.html#nineml.abstraction_layer.component.AnalogPort" title="nineml.abstraction_layer.component.AnalogPort"><tt class="xref py py-class docutils literal"><span class="pre">AnalogPort</span></tt></a>, but it <em>must</em> be either a &#8216;recv&#8217; or a
+&#8216;reduce&#8217; port.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="nineml.abstraction_layer.component.ComponentClassMixinNamespaceStructure.get_node_addr">
+<tt class="descname">get_node_addr</tt><big>(</big><big>)</big><a class="headerlink" href="#nineml.abstraction_layer.component.ComponentClassMixinNamespaceStructure.get_node_addr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the namespace address of this component</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="nineml.abstraction_layer.component.ComponentClassMixinNamespaceStructure.get_parent_model">
+<tt class="descname">get_parent_model</tt><big>(</big><big>)</big><a class="headerlink" href="#nineml.abstraction_layer.component.ComponentClassMixinNamespaceStructure.get_parent_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the parent component for this component</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="nineml.abstraction_layer.component.ComponentClassMixinNamespaceStructure.get_subnode">
+<tt class="descname">get_subnode</tt><big>(</big><em>addr</em><big>)</big><a class="headerlink" href="#nineml.abstraction_layer.component.ComponentClassMixinNamespaceStructure.get_subnode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets a subnode from this component recursively.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="nineml.abstraction_layer.component.ComponentClassMixinNamespaceStructure.insert_subnode">
+<tt class="descname">insert_subnode</tt><big>(</big><em>namespace</em>, <em>subnode</em><big>)</big><a class="headerlink" href="#nineml.abstraction_layer.component.ComponentClassMixinNamespaceStructure.insert_subnode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Insert a subnode into this component</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>subnode</strong> &#8211; An object of type <tt class="docutils literal"><span class="pre">ComponentClass</span></tt>.</li>
+<li><strong>namespace</strong> &#8211; A <cite>string</cite> specifying the name of the component in
+this components namespace.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises :</th><td class="field-body"><p class="first last"><tt class="docutils literal"><span class="pre">NineMLRuntimeException</span></tt> if there is already a subcomponent at
+the same namespace location</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This method will clone the subnode.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="nineml.abstraction_layer.component.ComponentClassMixinNamespaceStructure.set_parent_model">
+<tt class="descname">set_parent_model</tt><big>(</big><em>parentmodel</em><big>)</big><a class="headerlink" href="#nineml.abstraction_layer.component.ComponentClassMixinNamespaceStructure.set_parent_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the parent component for this component</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="nineml.abstraction_layer.component.ComponentClassMixinFlatStructure.html"
+                        title="previous chapter">nineml.abstraction_layer.component.ComponentClassMixinFlatStructure</a></p>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="nineml.abstraction_layer.component.ComponentClassMixinFlatStructure.html" title="nineml.abstraction_layer.component.ComponentClassMixinFlatStructure"
+             >previous</a> |</li>
+        <li><a href="../../index.html">NineML Python API Alpha documentation</a> &raquo;</li>
+          <li><a href="../developers/developer.html" >Python NineML Developer Documentation</a> &raquo;</li>
+          <li><a href="../developers/al/developer.html" >Abstraction Layer</a> &raquo;</li>
+          <li><a href="component_internal.html" >nineml.abstraction_layer.component [Internal-General]</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Mike Hull, Eilif Muller, Andrew Davison.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1pre.
+    </div>
+  </body>
+</html>

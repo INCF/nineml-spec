@@ -1,0 +1,277 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>nineml.abstraction_layer.component.ComponentClassMixinFlatStructure &mdash; NineML Python API Alpha documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     'Alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="NineML Python API Alpha documentation" href="../../index.html" />
+    <link rel="up" title="nineml.abstraction_layer.component [Internal-General]" href="component_internal.html" />
+    <link rel="next" title="nineml.abstraction_layer.component.ComponentClassMixinNamespaceStructure" href="nineml.abstraction_layer.component.ComponentClassMixinNamespaceStructure.html" />
+    <link rel="prev" title="nineml.abstraction_layer.component.NineMLMathParseError" href="nineml.abstraction_layer.component.NineMLMathParseError.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="nineml.abstraction_layer.component.ComponentClassMixinNamespaceStructure.html" title="nineml.abstraction_layer.component.ComponentClassMixinNamespaceStructure"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="nineml.abstraction_layer.component.NineMLMathParseError.html" title="nineml.abstraction_layer.component.NineMLMathParseError"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">NineML Python API Alpha documentation</a> &raquo;</li>
+          <li><a href="../developers/developer.html" >Python NineML Developer Documentation</a> &raquo;</li>
+          <li><a href="../developers/al/developer.html" >Abstraction Layer</a> &raquo;</li>
+          <li><a href="component_internal.html" accesskey="U">nineml.abstraction_layer.component [Internal-General]</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="nineml-abstraction-layer-component-componentclassmixinflatstructure">
+<h1>nineml.abstraction_layer.component.ComponentClassMixinFlatStructure<a class="headerlink" href="#nineml-abstraction-layer-component-componentclassmixinflatstructure" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="nineml.abstraction_layer.component.ComponentClassMixinFlatStructure">
+<em class="property">class </em><tt class="descclassname">nineml.abstraction_layer.component.</tt><tt class="descname">ComponentClassMixinFlatStructure</tt><big>(</big><em>name</em>, <em>parameters=None</em>, <em>analog_ports=None</em>, <em>event_ports=None</em>, <em>dynamics=None</em><big>)</big><a class="headerlink" href="#nineml.abstraction_layer.component.ComponentClassMixinFlatStructure" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mixin Class that provides the infrastructure for <em>local</em> component
+definitions - i.e. the interface and the dynamics</p>
+<dl class="method">
+<dt id="nineml.abstraction_layer.component.ComponentClassMixinFlatStructure.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>name</em>, <em>parameters=None</em>, <em>analog_ports=None</em>, <em>event_ports=None</em>, <em>dynamics=None</em><big>)</big><a class="headerlink" href="#nineml.abstraction_layer.component.ComponentClassMixinFlatStructure.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructor - For parameter descriptions, see the
+ComponentClass.__init__() method</p>
+</dd></dl>
+
+<p class="rubric">Methods</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#nineml.abstraction_layer.component.ComponentClassMixinFlatStructure.__init__" title="nineml.abstraction_layer.component.ComponentClassMixinFlatStructure.__init__"><tt class="xref py py-obj docutils literal"><span class="pre">__init__</span></tt></a>(name[,&nbsp;parameters,&nbsp;analog_ports,&nbsp;...])</td>
+<td>Constructor - For parameter descriptions, see the</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#nineml.abstraction_layer.component.ComponentClassMixinFlatStructure.backsub_all" title="nineml.abstraction_layer.component.ComponentClassMixinFlatStructure.backsub_all"><tt class="xref py py-obj docutils literal"><span class="pre">backsub_all</span></tt></a>()</td>
+<td>Expand all alias definitions in local equations.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#nineml.abstraction_layer.component.ComponentClassMixinFlatStructure.write" title="nineml.abstraction_layer.component.ComponentClassMixinFlatStructure.write"><tt class="xref py py-obj docutils literal"><span class="pre">write</span></tt></a>(file[,&nbsp;flatten])</td>
+<td>Export this model to an XML file.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#nineml.abstraction_layer.component.ComponentClassMixinFlatStructure.aliases" title="nineml.abstraction_layer.component.ComponentClassMixinFlatStructure.aliases"><tt class="xref py py-obj docutils literal"><span class="pre">aliases</span></tt></a></td>
+<td>Forwarding function to self.dynamics.aliases</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#nineml.abstraction_layer.component.ComponentClassMixinFlatStructure.aliases_map" title="nineml.abstraction_layer.component.ComponentClassMixinFlatStructure.aliases_map"><tt class="xref py py-obj docutils literal"><span class="pre">aliases_map</span></tt></a></td>
+<td>Forwarding function to self.dynamics.alias_map</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#nineml.abstraction_layer.component.ComponentClassMixinFlatStructure.analog_ports" title="nineml.abstraction_layer.component.ComponentClassMixinFlatStructure.analog_ports"><tt class="xref py py-obj docutils literal"><span class="pre">analog_ports</span></tt></a></td>
+<td>Returns an iterator over the local <a class="reference internal" href="nineml.abstraction_layer.component.AnalogPort.html#nineml.abstraction_layer.component.AnalogPort" title="nineml.abstraction_layer.component.AnalogPort"><tt class="xref py py-class docutils literal"><span class="pre">AnalogPort</span></tt></a> objects</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#nineml.abstraction_layer.component.ComponentClassMixinFlatStructure.dynamics" title="nineml.abstraction_layer.component.ComponentClassMixinFlatStructure.dynamics"><tt class="xref py py-obj docutils literal"><span class="pre">dynamics</span></tt></a></td>
+<td>Returns the local <a class="reference internal" href="nineml.abstraction_layer.component.Dynamics.html#nineml.abstraction_layer.component.Dynamics" title="nineml.abstraction_layer.component.Dynamics"><tt class="xref py py-class docutils literal"><span class="pre">Dynamics</span></tt></a> object</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#nineml.abstraction_layer.component.ComponentClassMixinFlatStructure.event_ports" title="nineml.abstraction_layer.component.ComponentClassMixinFlatStructure.event_ports"><tt class="xref py py-obj docutils literal"><span class="pre">event_ports</span></tt></a></td>
+<td>Returns an iterator over the local <a class="reference internal" href="nineml.abstraction_layer.component.EventPort.html#nineml.abstraction_layer.component.EventPort" title="nineml.abstraction_layer.component.EventPort"><tt class="xref py py-class docutils literal"><span class="pre">EventPort</span></tt></a> objects</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#nineml.abstraction_layer.component.ComponentClassMixinFlatStructure.name" title="nineml.abstraction_layer.component.ComponentClassMixinFlatStructure.name"><tt class="xref py py-obj docutils literal"><span class="pre">name</span></tt></a></td>
+<td>Returns the name of the component</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#nineml.abstraction_layer.component.ComponentClassMixinFlatStructure.parameters" title="nineml.abstraction_layer.component.ComponentClassMixinFlatStructure.parameters"><tt class="xref py py-obj docutils literal"><span class="pre">parameters</span></tt></a></td>
+<td>Returns an iterator over the local <a class="reference internal" href="nineml.abstraction_layer.component.Parameter.html#nineml.abstraction_layer.component.Parameter" title="nineml.abstraction_layer.component.Parameter"><tt class="xref py py-class docutils literal"><span class="pre">Parameter</span></tt></a> objects</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#nineml.abstraction_layer.component.ComponentClassMixinFlatStructure.regimes" title="nineml.abstraction_layer.component.ComponentClassMixinFlatStructure.regimes"><tt class="xref py py-obj docutils literal"><span class="pre">regimes</span></tt></a></td>
+<td>Forwarding function to self.dynamics.regimes</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#nineml.abstraction_layer.component.ComponentClassMixinFlatStructure.regimes_map" title="nineml.abstraction_layer.component.ComponentClassMixinFlatStructure.regimes_map"><tt class="xref py py-obj docutils literal"><span class="pre">regimes_map</span></tt></a></td>
+<td>Forwarding function to self.dynamics.regimes_map</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#nineml.abstraction_layer.component.ComponentClassMixinFlatStructure.state_variables" title="nineml.abstraction_layer.component.ComponentClassMixinFlatStructure.state_variables"><tt class="xref py py-obj docutils literal"><span class="pre">state_variables</span></tt></a></td>
+<td>Forwarding function to self.dynamics.state_variables</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#nineml.abstraction_layer.component.ComponentClassMixinFlatStructure.state_variables_map" title="nineml.abstraction_layer.component.ComponentClassMixinFlatStructure.state_variables_map"><tt class="xref py py-obj docutils literal"><span class="pre">state_variables_map</span></tt></a></td>
+<td>Forwarding function to self.dynamics.state_variables_map</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#nineml.abstraction_layer.component.ComponentClassMixinFlatStructure.transitions" title="nineml.abstraction_layer.component.ComponentClassMixinFlatStructure.transitions"><tt class="xref py py-obj docutils literal"><span class="pre">transitions</span></tt></a></td>
+<td>Forwarding function to self.dynamics.transitions</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="nineml.abstraction_layer.component.ComponentClassMixinFlatStructure.backsub_all">
+<tt class="descname">backsub_all</tt><big>(</big><big>)</big><a class="headerlink" href="#nineml.abstraction_layer.component.ComponentClassMixinFlatStructure.backsub_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Expand all alias definitions in local equations.</p>
+<p>This function finds <a class="reference internal" href="nineml.abstraction_layer.component.Alias.html#nineml.abstraction_layer.component.Alias" title="nineml.abstraction_layer.component.Alias"><tt class="xref py py-class docutils literal"><span class="pre">Aliases</span></tt></a>, <a class="reference internal" href="nineml.abstraction_layer.component.TimeDerivative.html#nineml.abstraction_layer.component.TimeDerivative" title="nineml.abstraction_layer.component.TimeDerivative"><tt class="xref py py-class docutils literal"><span class="pre">TimeDerivatives</span></tt></a>, <em>send</em> <a class="reference internal" href="nineml.abstraction_layer.component.AnalogPort.html#nineml.abstraction_layer.component.AnalogPort" title="nineml.abstraction_layer.component.AnalogPort"><tt class="xref py py-class docutils literal"><span class="pre">AnalogPorts</span></tt></a>,
+<a class="reference internal" href="nineml.abstraction_layer.component.StateAssignment.html#nineml.abstraction_layer.component.StateAssignment" title="nineml.abstraction_layer.component.StateAssignment"><tt class="xref py py-class docutils literal"><span class="pre">StateAssignments</span></tt></a> and <a class="reference internal" href="nineml.abstraction_layer.component.Condition.html#nineml.abstraction_layer.component.Condition" title="nineml.abstraction_layer.component.Condition"><tt class="xref py py-class docutils literal"><span class="pre">Conditions</span></tt></a> which are defined in terms of other
+<a class="reference internal" href="nineml.abstraction_layer.component.Alias.html#nineml.abstraction_layer.component.Alias" title="nineml.abstraction_layer.component.Alias"><tt class="xref py py-class docutils literal"><span class="pre">Aliases</span></tt></a>, and expands them, such that each only has <a class="reference internal" href="nineml.abstraction_layer.component.Parameter.html#nineml.abstraction_layer.component.Parameter" title="nineml.abstraction_layer.component.Parameter"><tt class="xref py py-class docutils literal"><span class="pre">Parameters</span></tt></a>,
+<a class="reference internal" href="nineml.abstraction_layer.component.StateVariable.html#nineml.abstraction_layer.component.StateVariable" title="nineml.abstraction_layer.component.StateVariable"><tt class="xref py py-class docutils literal"><span class="pre">StateVariables</span></tt></a> and recv/reduce <a class="reference internal" href="nineml.abstraction_layer.component.AnalogPort.html#nineml.abstraction_layer.component.AnalogPort" title="nineml.abstraction_layer.component.AnalogPort"><tt class="xref py py-class docutils literal"><span class="pre">AnalogPorts</span></tt></a> on the RHS.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="nineml.abstraction_layer.component.ComponentClassMixinFlatStructure.write">
+<tt class="descname">write</tt><big>(</big><em>file</em>, <em>flatten=True</em><big>)</big><a class="headerlink" href="#nineml.abstraction_layer.component.ComponentClassMixinFlatStructure.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Export this model to an XML file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Params file:</th><td class="field-body">A filename or fileobject</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Params flatten:</th><td class="field-body">Boolean specifying whether the component should be
+flattened before saving</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nineml.abstraction_layer.component.ComponentClassMixinFlatStructure.aliases">
+<tt class="descname">aliases</tt><a class="headerlink" href="#nineml.abstraction_layer.component.ComponentClassMixinFlatStructure.aliases" title="Permalink to this definition">¶</a></dt>
+<dd><p>Forwarding function to self.dynamics.aliases</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nineml.abstraction_layer.component.ComponentClassMixinFlatStructure.aliases_map">
+<tt class="descname">aliases_map</tt><a class="headerlink" href="#nineml.abstraction_layer.component.ComponentClassMixinFlatStructure.aliases_map" title="Permalink to this definition">¶</a></dt>
+<dd><p>Forwarding function to self.dynamics.alias_map</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nineml.abstraction_layer.component.ComponentClassMixinFlatStructure.analog_ports">
+<tt class="descname">analog_ports</tt><a class="headerlink" href="#nineml.abstraction_layer.component.ComponentClassMixinFlatStructure.analog_ports" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an iterator over the local <a class="reference internal" href="nineml.abstraction_layer.component.AnalogPort.html#nineml.abstraction_layer.component.AnalogPort" title="nineml.abstraction_layer.component.AnalogPort"><tt class="xref py py-class docutils literal"><span class="pre">AnalogPort</span></tt></a> objects</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nineml.abstraction_layer.component.ComponentClassMixinFlatStructure.dynamics">
+<tt class="descname">dynamics</tt><a class="headerlink" href="#nineml.abstraction_layer.component.ComponentClassMixinFlatStructure.dynamics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the local <a class="reference internal" href="nineml.abstraction_layer.component.Dynamics.html#nineml.abstraction_layer.component.Dynamics" title="nineml.abstraction_layer.component.Dynamics"><tt class="xref py py-class docutils literal"><span class="pre">Dynamics</span></tt></a> object</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nineml.abstraction_layer.component.ComponentClassMixinFlatStructure.event_ports">
+<tt class="descname">event_ports</tt><a class="headerlink" href="#nineml.abstraction_layer.component.ComponentClassMixinFlatStructure.event_ports" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an iterator over the local <a class="reference internal" href="nineml.abstraction_layer.component.EventPort.html#nineml.abstraction_layer.component.EventPort" title="nineml.abstraction_layer.component.EventPort"><tt class="xref py py-class docutils literal"><span class="pre">EventPort</span></tt></a> objects</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nineml.abstraction_layer.component.ComponentClassMixinFlatStructure.name">
+<tt class="descname">name</tt><a class="headerlink" href="#nineml.abstraction_layer.component.ComponentClassMixinFlatStructure.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the name of the component</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nineml.abstraction_layer.component.ComponentClassMixinFlatStructure.parameters">
+<tt class="descname">parameters</tt><a class="headerlink" href="#nineml.abstraction_layer.component.ComponentClassMixinFlatStructure.parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an iterator over the local <a class="reference internal" href="nineml.abstraction_layer.component.Parameter.html#nineml.abstraction_layer.component.Parameter" title="nineml.abstraction_layer.component.Parameter"><tt class="xref py py-class docutils literal"><span class="pre">Parameter</span></tt></a> objects</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nineml.abstraction_layer.component.ComponentClassMixinFlatStructure.regimes">
+<tt class="descname">regimes</tt><a class="headerlink" href="#nineml.abstraction_layer.component.ComponentClassMixinFlatStructure.regimes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Forwarding function to self.dynamics.regimes</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nineml.abstraction_layer.component.ComponentClassMixinFlatStructure.regimes_map">
+<tt class="descname">regimes_map</tt><a class="headerlink" href="#nineml.abstraction_layer.component.ComponentClassMixinFlatStructure.regimes_map" title="Permalink to this definition">¶</a></dt>
+<dd><p>Forwarding function to self.dynamics.regimes_map</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nineml.abstraction_layer.component.ComponentClassMixinFlatStructure.state_variables">
+<tt class="descname">state_variables</tt><a class="headerlink" href="#nineml.abstraction_layer.component.ComponentClassMixinFlatStructure.state_variables" title="Permalink to this definition">¶</a></dt>
+<dd><p>Forwarding function to self.dynamics.state_variables</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nineml.abstraction_layer.component.ComponentClassMixinFlatStructure.state_variables_map">
+<tt class="descname">state_variables_map</tt><a class="headerlink" href="#nineml.abstraction_layer.component.ComponentClassMixinFlatStructure.state_variables_map" title="Permalink to this definition">¶</a></dt>
+<dd><p>Forwarding function to self.dynamics.state_variables_map</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nineml.abstraction_layer.component.ComponentClassMixinFlatStructure.transitions">
+<tt class="descname">transitions</tt><a class="headerlink" href="#nineml.abstraction_layer.component.ComponentClassMixinFlatStructure.transitions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Forwarding function to self.dynamics.transitions</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="nineml.abstraction_layer.component.NineMLMathParseError.html"
+                        title="previous chapter">nineml.abstraction_layer.component.NineMLMathParseError</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="nineml.abstraction_layer.component.ComponentClassMixinNamespaceStructure.html"
+                        title="next chapter">nineml.abstraction_layer.component.ComponentClassMixinNamespaceStructure</a></p>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="nineml.abstraction_layer.component.ComponentClassMixinNamespaceStructure.html" title="nineml.abstraction_layer.component.ComponentClassMixinNamespaceStructure"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="nineml.abstraction_layer.component.NineMLMathParseError.html" title="nineml.abstraction_layer.component.NineMLMathParseError"
+             >previous</a> |</li>
+        <li><a href="../../index.html">NineML Python API Alpha documentation</a> &raquo;</li>
+          <li><a href="../developers/developer.html" >Python NineML Developer Documentation</a> &raquo;</li>
+          <li><a href="../developers/al/developer.html" >Abstraction Layer</a> &raquo;</li>
+          <li><a href="component_internal.html" >nineml.abstraction_layer.component [Internal-General]</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Mike Hull, Eilif Muller, Andrew Davison.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1pre.
+    </div>
+  </body>
+</html>

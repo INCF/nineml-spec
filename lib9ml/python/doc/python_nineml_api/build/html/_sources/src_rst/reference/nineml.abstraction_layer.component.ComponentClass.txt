@@ -1,0 +1,51 @@
+nineml.abstraction_layer.component.ComponentClass
+=================================================
+
+.. currentmodule:: nineml.abstraction_layer.component
+
+.. autoclass:: ComponentClass
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~ComponentClass.__init__
+      ~ComponentClass.accept_visitor
+      ~ComponentClass.backsub_all
+      ~ComponentClass.connect_ports
+      ~ComponentClass.get_node_addr
+      ~ComponentClass.get_subnode
+      ~ComponentClass.insert_subnode
+      ~ComponentClass.is_flat
+      ~ComponentClass.set_flattener
+      ~ComponentClass.was_flattened
+      ~ComponentClass.write
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~ComponentClass.aliases
+      ~ComponentClass.aliases_map
+      ~ComponentClass.analog_ports
+      ~ComponentClass.dynamics
+      ~ComponentClass.event_ports
+      ~ComponentClass.flattener
+      ~ComponentClass.name
+      ~ComponentClass.parameters
+      ~ComponentClass.query
+      ~ComponentClass.regimes
+      ~ComponentClass.regimes_map
+      ~ComponentClass.state_variables
+      ~ComponentClass.state_variables_map
+      ~ComponentClass.transitions
+   
+   

@@ -1,0 +1,134 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>nineml.utility [Utility Functions] &mdash; NineML Python API Alpha documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     'Alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="NineML Python API Alpha documentation" href="../../index.html" />
+    <link rel="up" title="Utility Functions" href="../developers/utility/developer.html" />
+    <link rel="next" title="nineml.utility.expect_single" href="nineml.utility.expect_single.html" />
+    <link rel="prev" title="Utility Functions" href="../developers/utility/developer.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="nineml.utility.expect_single.html" title="nineml.utility.expect_single"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../developers/utility/developer.html" title="Utility Functions"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">NineML Python API Alpha documentation</a> &raquo;</li>
+          <li><a href="../developers/developer.html" >Python NineML Developer Documentation</a> &raquo;</li>
+          <li><a href="../developers/utility/developer.html" accesskey="U">Utility Functions</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="nineml-utility-utility-functions">
+<h1>nineml.utility [Utility Functions]<a class="headerlink" href="#nineml-utility-utility-functions" title="Permalink to this headline">¶</a></h1>
+<table border="1" class="docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="nineml.utility.expect_single.html#nineml.utility.expect_single" title="nineml.utility.expect_single"><tt class="xref py py-obj docutils literal"><span class="pre">utility.expect_single</span></tt></a>(lst[,&nbsp;error_func])</td>
+<td>Retrieve a single element from an iterable.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="nineml.utility.filter_expect_single.html#nineml.utility.filter_expect_single" title="nineml.utility.filter_expect_single"><tt class="xref py py-obj docutils literal"><span class="pre">utility.filter_expect_single</span></tt></a>(lst[,&nbsp;func,&nbsp;...])</td>
+<td>Find a single element matching a predicate in a list.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="nineml.utility.filter_by_type.html#nineml.utility.filter_by_type" title="nineml.utility.filter_by_type"><tt class="xref py py-obj docutils literal"><span class="pre">utility.filter_by_type</span></tt></a>(lst,&nbsp;acceptedtype)</td>
+<td>Find all the objects of a certain type in a list</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="nineml.utility.filter_discrete_types.html#nineml.utility.filter_discrete_types" title="nineml.utility.filter_discrete_types"><tt class="xref py py-obj docutils literal"><span class="pre">utility.filter_discrete_types</span></tt></a>(lst,&nbsp;acceptedtypes)</td>
+<td>Creates a dictionary mapping types to objects of that type.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="nineml.utility.assert_no_duplicates.html#nineml.utility.assert_no_duplicates" title="nineml.utility.assert_no_duplicates"><tt class="xref py py-obj docutils literal"><span class="pre">utility.assert_no_duplicates</span></tt></a>(lst[,&nbsp;error_func])</td>
+<td>Check for duplicates in a sequence.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="nineml.utility.invert_dictionary.html#nineml.utility.invert_dictionary" title="nineml.utility.invert_dictionary"><tt class="xref py py-obj docutils literal"><span class="pre">utility.invert_dictionary</span></tt></a>(dct)</td>
+<td>Takes a dictionary mapping (keys =&gt; values) and returns a  new dictionry mapping (values =&gt; keys).</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="nineml.utility.flatten_first_level.html#nineml.utility.flatten_first_level" title="nineml.utility.flatten_first_level"><tt class="xref py py-obj docutils literal"><span class="pre">utility.flatten_first_level</span></tt></a>(nested_list)</td>
+<td>Flattens the first level of an iterable, ie</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="nineml.utility.safe_dictionary_merge.html#nineml.utility.safe_dictionary_merge" title="nineml.utility.safe_dictionary_merge"><tt class="xref py py-obj docutils literal"><span class="pre">utility.safe_dictionary_merge</span></tt></a>(dictionaries)</td>
+<td>Safely merge multiple dictionaries into one</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="nineml.utility.LocationMgr.html#nineml.utility.LocationMgr" title="nineml.utility.LocationMgr"><tt class="xref py py-obj docutils literal"><span class="pre">utility.LocationMgr</span></tt></a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../developers/utility/developer.html"
+                        title="previous chapter">Utility Functions</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="nineml.utility.expect_single.html"
+                        title="next chapter">nineml.utility.expect_single</a></p>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="nineml.utility.expect_single.html" title="nineml.utility.expect_single"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../developers/utility/developer.html" title="Utility Functions"
+             >previous</a> |</li>
+        <li><a href="../../index.html">NineML Python API Alpha documentation</a> &raquo;</li>
+          <li><a href="../developers/developer.html" >Python NineML Developer Documentation</a> &raquo;</li>
+          <li><a href="../developers/utility/developer.html" >Utility Functions</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Mike Hull, Eilif Muller, Andrew Davison.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1pre.
+    </div>
+  </body>
+</html>

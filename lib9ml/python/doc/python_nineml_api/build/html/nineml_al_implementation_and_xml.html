@@ -1,0 +1,329 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>The Building Blocks of the NineML Abstraction Layer &mdash; NineML Python API Alpha documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     'Alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="NineML Python API Alpha documentation" href="index.html" />
+    <link rel="next" title="XML Format" href="xml_spec.html" />
+    <link rel="prev" title="NineML Python API" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="xml_spec.html" title="XML Format"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="NineML Python API"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">NineML Python API Alpha documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="the-building-blocks-of-the-nineml-abstraction-layer">
+<h1>The Building Blocks of the NineML Abstraction Layer<a class="headerlink" href="#the-building-blocks-of-the-nineml-abstraction-layer" title="Permalink to this headline">¶</a></h1>
+<p>A NineML component can be considered in 2 parts: the internal <em>dynamics</em> and the
+external <em>interface</em>.</p>
+</div>
+<div class="section" id="dynamics">
+<h1>Dynamics<a class="headerlink" href="#dynamics" title="Permalink to this headline">¶</a></h1>
+<p>The dynamics are the <em>internal</em> mechanisms governing the behaviour of the component.
+The dynamics of a component are specified in terms of the following:</p>
+<ul class="simple">
+<li>StateVariables</li>
+<li>Regimes</li>
+<li>Transitions</li>
+<li>Aliases</li>
+<li>Events</li>
+</ul>
+<div class="section" id="statevariables-regime-graphs">
+<h2>StateVariables &amp; Regime Graphs<a class="headerlink" href="#statevariables-regime-graphs" title="Permalink to this headline">¶</a></h2>
+<p>The dynamics of a component is defined by a set of <em>state-variables</em>; variables that can
+change either continuously or discontinuously as a function of time. The changes
+to state variables happen in two ways:</p>
+<blockquote>
+<div><ul class="simple">
+<li>through <tt class="docutils literal"><span class="pre">TimeDerivatives</span></tt>  , which define the state variables
+evolution over time, for example <img class="math" src="_images/math/0224c9a91b3d3b8135b6d8fc906b8eceee626b18.png" alt="dX/dt=1-X"/></li>
+<li>through <tt class="docutils literal"><span class="pre">StateAssignments</span></tt>, which make discrete changes to a
+StateVariable&#8217;s value, for example <img class="math" src="_images/math/c37d4da5358c40852d5e580d5dce6f98a81f4347.png" alt="X = X + 1"/></li>
+</ul>
+</div></blockquote>
+<p>A component contains a <cite>Regime-graph</cite>; a graph consisting of <cite>Regimes</cite> at the
+vertices, and <cite>Transitions</cite> at the edges. At any given time, a component will be
+in a single <cite>Regime</cite>. A regime contains a set of TimeDerivatives, one for each
+StateVariable of the component, which define how the StateVariables evolve over
+time.</p>
+<p>This diagram shows the dynamics block for an imaginary component.</p>
+<img alt="_images/SimpleRegimeGraph14.png" src="_images/SimpleRegimeGraph14.png" />
+<p>This dynamics has 3 state variables, <em>X,Y &amp; Z</em>, and a state graph with 3
+regimes, <em>regime1</em>, <em>regime2</em> &amp; <em>regime3</em>. At any time, a component will be in one of these regimes, and the state variables will evolve accordingly.</p>
+<p>Components can move between Regimes via transitions. There are 2 ways of
+triggering a transition:</p>
+<ul class="simple">
+<li>By a condition of the state variables, for example <img class="math" src="_images/math/03241e201ba30e5fd10b31077bb00da682cb0bdb.png" alt="X&gt;Y"/>.</li>
+<li>By an <cite>InputEvent</cite> on a port. (Discussed further in XX).</li>
+</ul>
+<p>When a transition is triggered; three things can happen:</p>
+<ul class="simple">
+<li>The component can change regime. For example, in the example above, if the
+component is in <em>regime3</em>, and the trigger for <em>t3</em> is satisfied, then the
+component will move into <em>regime1</em>.</li>
+<li><cite>StateAssignments</cite> can take place, for example, <img class="math" src="_images/math/e12632f5d3a2206ddc2a79aa17cdbbdb5f97dbd6.png" alt="X=0"/></li>
+<li>The component can send <cite>OutputEvents</cite> (Discussed further in XX)</li>
+</ul>
+<p>During a transition, multiple StateAssignments and <cite>OutputEvents</cite> can occur.
+(For more on the resolution of Transition&#8217;s, see XX)</p>
+<p>Notes:</p>
+<ul class="simple">
+<li>The Regime-graph for a component must not contain an islands - regimes which
+can not be reached from each other.</li>
+<li>If a TimeDerivative for a state variable is not defined in a regime, it is
+assumed to be zero.</li>
+<li>A Transition does not need to lead to a change of regime. It can cause
+StateAssignments and OutputEvents, and leave the component in the original
+regime. (For example <em>t5</em> in the diagram)</li>
+</ul>
+</div>
+<div class="section" id="aliases">
+<h2>Aliases<a class="headerlink" href="#aliases" title="Permalink to this headline">¶</a></h2>
+<p>Aliases are motivated from two problems;</p>
+<ul>
+<li><p class="first">Rather than writing long expressions for functions of state-variables, we can
+define an alias once.
+For example, we can define chains of aliases:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">m_alpha</span> <span class="o">=</span> <span class="p">(</span><span class="n">alphaA</span> <span class="o">+</span> <span class="n">alphaB</span><span class="o">*</span><span class="n">V</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span> <span class="n">alphaC</span> <span class="o">+</span> <span class="n">exp</span><span class="p">((</span><span class="n">alphaD</span><span class="o">+</span><span class="n">V</span><span class="o">/</span><span class="n">alphaE</span><span class="p">))</span> <span class="p">)</span>
+<span class="n">m_beta</span> <span class="o">=</span>  <span class="p">(</span><span class="n">betaA</span> <span class="o">+</span> <span class="n">betaB</span><span class="o">*</span><span class="n">V</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span> <span class="n">betaC</span> <span class="o">+</span> <span class="n">exp</span><span class="p">((</span><span class="n">betaD</span><span class="o">+</span><span class="n">V</span><span class="o">/</span><span class="n">betaE</span><span class="p">))</span> <span class="p">)</span>
+<span class="n">minf</span> <span class="o">=</span> <span class="n">m_alpha</span> <span class="o">/</span> <span class="p">(</span><span class="n">m_alpha</span> <span class="o">+</span> <span class="n">m_beta</span><span class="p">)</span>
+<span class="n">mtau</span> <span class="o">=</span> <span class="mf">1.</span><span class="o">/</span><span class="p">(</span><span class="n">m_alpha</span><span class="o">+</span><span class="n">m_beta</span><span class="p">)</span>
+<span class="n">dm</span><span class="o">/</span><span class="n">dt</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">C</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">minf</span><span class="o">-</span><span class="n">m</span><span class="p">)</span><span class="o">/</span><span class="n">mtau</span>
+</pre></div>
+</div>
+<p>In this case, <em>m_alpha</em>, <em>m_beta</em>, <em>minf</em> and <em>mtau</em> are all alias
+definitions. There is no reason we couldn&#8217;t expand our <img class="math" src="_images/math/0eac9b4996a306136094a494b3e1c197e02ceff5.png" alt="dm/dt"/>
+description out to eliminate the these intermediate aliases, but the expression
+would be very long and difficult to read.</p>
+</li>
+<li><p class="first">If we would like to communicate a value other than a simple state variable to
+to another component. For example, if we have a component representing a
+neuron, which has an internal StateVariable, &#8216;V&#8217;, we may be interested in
+transmitting a current, for example <img class="math" src="_images/math/2aa482ac698dc2e508a30d5f33cf38ad3e3c98fa.png" alt="i=g*(E-V)"/></p>
+</li>
+</ul>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Aliases are defined in the Dynamics, <em>not</em> in the Regime. This means that
+aliases are the same across all regimes.</p>
+</div>
+</div>
+<div class="section" id="events">
+<h2>Events<a class="headerlink" href="#events" title="Permalink to this headline">¶</a></h2>
+<p>As well as being able to communicate continuous values, components are also able
+to emit and receive <cite>Event</cite> s. Events are discrete notifications that are transmitted
+over EventPorts (Discussed in section XX). Since EventPorts have names, saying
+that we transmit a &#8216;event1&#8217; for example would mean transmitting an event on
+the EventPort called &#8216;event1&#8217;. Events can be used to signal action
+potentials firing for example.</p>
+</div>
+</div>
+<div class="section" id="interface">
+<h1>Interface<a class="headerlink" href="#interface" title="Permalink to this headline">¶</a></h1>
+<p>The interface is the <em>external</em> view of the component; what inputs and outputs the component exposes
+to other components and the parameters that can be set for the component.</p>
+<p>The interface consists of <em>Ports</em> and <em>Parameters</em>.</p>
+<div class="section" id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<p>Parameters allow us to define the dynamics of a component once, then adjust the
+behaviours by using different parameters. For example, if we are building an
+integrate-and-fire neuron, we can specify that the Reset-Voltage and the
+Firing-Threshold are parameters, write our dynamics in terms of these
+parameters, then use the <em>User Layer</em> to provide parameters to create different
+neurons. Parameters are set at the start of the simulation, and remain constant
+throughout.</p>
+</div>
+<div class="section" id="ports">
+<h2>Ports<a class="headerlink" href="#ports" title="Permalink to this headline">¶</a></h2>
+<p>Ports allow components to communicate between each other during a simulation.
+There are 2 types, <em>AnalogPorts</em> and <em>EventPorts</em>, and each can have
+different modes.</p>
+<dl class="docutils">
+<dt>AnalogPorts:</dt>
+<dd><p class="first">AnalogPorts transmit and receive continuous values, <cite>Alias</cite> es and
+<cite>StateVariables</cite>. AnalogPorts can have 3 modes:</p>
+<blockquote class="last">
+<div><ul>
+<li><p class="first"><tt class="docutils literal"><span class="pre">SendPort</span></tt> - transmit data originating in this component which can be read by
+other components</p>
+</li>
+<li><dl class="first docutils">
+<dt><tt class="docutils literal"><span class="pre">RecvPort</span></tt> - receive data from another components <tt class="docutils literal"><span class="pre">SendPort</span></tt> port.</dt>
+<dd><p class="first last">Each recv port can be connected to <em>one</em> <tt class="docutils literal"><span class="pre">SendPort</span></tt>.</p>
+</dd>
+</dl>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">ReducePort</span></tt> - receive data from multiple <tt class="docutils literal"><span class="pre">SendPort</span></tt> . These
+differ from <tt class="docutils literal"><span class="pre">RecvPorts</span></tt> in that they can be connected to multiple
+<tt class="docutils literal"><span class="pre">SendPort</span></tt> . <tt class="docutils literal"><span class="pre">ReducePorts</span></tt> take an additional operator,
+<tt class="docutils literal"><span class="pre">reduce_op</span></tt>, which specifies how the data from multiple <tt class="docutils literal"><span class="pre">Send</span></tt>
+ports should be combined to produce a single value. Currently, the
+only supported operations is <cite>+</cite>, which sums the inputs. The
+motivation for <tt class="docutils literal"><span class="pre">ReducePorts</span></tt> is that it allows us to make our
+component definitions more general. For example, if we are defining a
+neuron, would define a <tt class="docutils literal"><span class="pre">ReducePort</span></tt> called, <tt class="docutils literal"><span class="pre">InjectedCurrents</span></tt>.
+This allows us to write the membrane equation for that neuron as:</p>
+<div class="math">
+<p><img src="_images/math/834034dd4ea814566f5d023f3f2786d756385417.png" alt="dV/dt = (1/C) * InjectedCurrents"/></p>
+</div><p>Then, when we connect this neuron to synapses, current-clamps, etc, we
+simply need to connect the SendPorts containing the currents of these components onto
+the <tt class="docutils literal"><span class="pre">InjectedCurrents</span></tt> reduce-port, within having to change our
+original component definitions.</p>
+</li>
+</ul>
+</div></blockquote>
+</dd>
+<dt>EventPorts:</dt>
+<dd><p class="first">Event ports transmit discrete events. They are useful for example in
+simulation of integrate-and-fire neurons to notify components about neuron&#8217;s
+spiking. Event ports only have 2 modes:</p>
+<blockquote>
+<div><ul>
+<li><p class="first"><tt class="docutils literal"><span class="pre">SendPort</span></tt> - transmit events originating in this component which can be read by
+other components</p>
+</li>
+<li><dl class="first docutils">
+<dt><tt class="docutils literal"><span class="pre">RecvPort</span></tt> - receive events from another components <tt class="docutils literal"><span class="pre">SendPort</span></tt> port.</dt>
+<dd><p class="first last">Each recv port can be connected to <em>multiple</em> <tt class="docutils literal"><span class="pre">SendPort</span></tt>.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+<p class="last">For example, a synapse component may have a <tt class="docutils literal"><span class="pre">RecvPort</span></tt> connected to the
+presynaptic neurons <tt class="docutils literal"><span class="pre">SendPort</span></tt> port. When the presynaptic neuron fires;
+it delivers an event to the synapse, which could cause it to produce current
+flow in a post-synaptic neuron.</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="section" id="advanced-topics">
+<h1>Advanced Topics<a class="headerlink" href="#advanced-topics" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="transition-resolution-order">
+<h2>Transition Resolution Order<a class="headerlink" href="#transition-resolution-order" title="Permalink to this headline">¶</a></h2>
+<div class="admonition-todo admonition " id="index-0">
+<p class="first admonition-title">Todo</p>
+<p class="last">This</p>
+</div>
+</div>
+</div>
+<div class="section" id="techniques-tips-and-tricks">
+<h1>Techniques, tips and tricks:<a class="headerlink" href="#techniques-tips-and-tricks" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="conductance-based-synapses">
+<h2>Conductance Based synapses<a class="headerlink" href="#conductance-based-synapses" title="Permalink to this headline">¶</a></h2>
+<div class="admonition-todo admonition " id="index-1">
+<p class="first admonition-title">Todo</p>
+<p class="last">This</p>
+</div>
+</div>
+</div>
+<div class="section" id="example-transition-graphs-of-simple-components">
+<h1>Example Transition Graphs of simple components:<a class="headerlink" href="#example-transition-graphs-of-simple-components" title="Permalink to this headline">¶</a></h1>
+<div class="admonition-todo admonition " id="index-2">
+<p class="first admonition-title">Todo</p>
+<p class="last">This</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">The Building Blocks of the NineML Abstraction Layer</a></li>
+<li><a class="reference internal" href="#dynamics">Dynamics</a><ul>
+<li><a class="reference internal" href="#statevariables-regime-graphs">StateVariables &amp; Regime Graphs</a></li>
+<li><a class="reference internal" href="#aliases">Aliases</a></li>
+<li><a class="reference internal" href="#events">Events</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#interface">Interface</a><ul>
+<li><a class="reference internal" href="#parameters">Parameters</a></li>
+<li><a class="reference internal" href="#ports">Ports</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#advanced-topics">Advanced Topics</a><ul>
+<li><a class="reference internal" href="#transition-resolution-order">Transition Resolution Order</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#techniques-tips-and-tricks">Techniques, tips and tricks:</a><ul>
+<li><a class="reference internal" href="#conductance-based-synapses">Conductance Based synapses</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#example-transition-graphs-of-simple-components">Example Transition Graphs of simple components:</a></li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">NineML Python API</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="xml_spec.html"
+                        title="next chapter">XML Format</a></p>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="xml_spec.html" title="XML Format"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="NineML Python API"
+             >previous</a> |</li>
+        <li><a href="index.html">NineML Python API Alpha documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Mike Hull, Eilif Muller, Andrew Davison.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1pre.
+    </div>
+  </body>
+</html>

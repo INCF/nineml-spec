@@ -1,0 +1,6 @@
+nineml.abstraction_layer.component.NineMLMathParseError
+=======================================================
+
+.. currentmodule:: nineml.abstraction_layer.component
+
+.. autoexception:: NineMLMathParseError

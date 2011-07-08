@@ -1,0 +1,238 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>nineml.abstraction_layer.component.NamespaceAddress &mdash; NineML Python API Alpha documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     'Alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="NineML Python API Alpha documentation" href="../../index.html" />
+    <link rel="up" title="nineml.abstraction_layer.component [Components]" href="component.html" />
+    <link rel="next" title="nineml.abstraction_layer.component.ComponentQueryer" href="nineml.abstraction_layer.component.ComponentQueryer.html" />
+    <link rel="prev" title="nineml.abstraction_layer.component.ComponentClass" href="nineml.abstraction_layer.component.ComponentClass.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="nineml.abstraction_layer.component.ComponentQueryer.html" title="nineml.abstraction_layer.component.ComponentQueryer"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="nineml.abstraction_layer.component.ComponentClass.html" title="nineml.abstraction_layer.component.ComponentClass"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">NineML Python API Alpha documentation</a> &raquo;</li>
+          <li><a href="../developers/developer.html" >Python NineML Developer Documentation</a> &raquo;</li>
+          <li><a href="../developers/al/developer.html" >Abstraction Layer</a> &raquo;</li>
+          <li><a href="component.html" accesskey="U">nineml.abstraction_layer.component [Components]</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="nineml-abstraction-layer-component-namespaceaddress">
+<h1>nineml.abstraction_layer.component.NamespaceAddress<a class="headerlink" href="#nineml-abstraction-layer-component-namespaceaddress" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="nineml.abstraction_layer.component.NamespaceAddress">
+<em class="property">class </em><tt class="descclassname">nineml.abstraction_layer.component.</tt><tt class="descname">NamespaceAddress</tt><big>(</big><em>loc</em><big>)</big><a class="headerlink" href="#nineml.abstraction_layer.component.NamespaceAddress" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="nineml.abstraction_layer.component.NamespaceAddress.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>loc</em><big>)</big><a class="headerlink" href="#nineml.abstraction_layer.component.NamespaceAddress.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p class="rubric">Methods</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#nineml.abstraction_layer.component.NamespaceAddress.__init__" title="nineml.abstraction_layer.component.NamespaceAddress.__init__"><tt class="xref py py-obj docutils literal"><span class="pre">__init__</span></tt></a>(loc)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#nineml.abstraction_layer.component.NamespaceAddress.concat" title="nineml.abstraction_layer.component.NamespaceAddress.concat"><tt class="xref py py-obj docutils literal"><span class="pre">concat</span></tt></a>(*args)</td>
+<td>Concatenates all the Namespace Addresses.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#nineml.abstraction_layer.component.NamespaceAddress.create_root" title="nineml.abstraction_layer.component.NamespaceAddress.create_root"><tt class="xref py py-obj docutils literal"><span class="pre">create_root</span></tt></a>()</td>
+<td>Returns a empty (root) namespace address</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#nineml.abstraction_layer.component.NamespaceAddress.get_local_name" title="nineml.abstraction_layer.component.NamespaceAddress.get_local_name"><tt class="xref py py-obj docutils literal"><span class="pre">get_local_name</span></tt></a>()</td>
+<td>Returns the local reference; i.e.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#nineml.abstraction_layer.component.NamespaceAddress.get_parent_addr" title="nineml.abstraction_layer.component.NamespaceAddress.get_parent_addr"><tt class="xref py py-obj docutils literal"><span class="pre">get_parent_addr</span></tt></a>()</td>
+<td>Return the address of an namespace higher</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#nineml.abstraction_layer.component.NamespaceAddress.get_str_prefix" title="nineml.abstraction_layer.component.NamespaceAddress.get_str_prefix"><tt class="xref py py-obj docutils literal"><span class="pre">get_str_prefix</span></tt></a>([join_char])</td>
+<td>Returns the same as <tt class="docutils literal"><span class="pre">getstr</span></tt>, but prepends the <tt class="docutils literal"><span class="pre">join_char</span></tt> to the end of the string, so that the string can be used to prefix variables.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#nineml.abstraction_layer.component.NamespaceAddress.get_subns_addr" title="nineml.abstraction_layer.component.NamespaceAddress.get_subns_addr"><tt class="xref py py-obj docutils literal"><span class="pre">get_subns_addr</span></tt></a>(component_name)</td>
+<td>Returns the address of a subcomponent at this address.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#nineml.abstraction_layer.component.NamespaceAddress.getstr" title="nineml.abstraction_layer.component.NamespaceAddress.getstr"><tt class="xref py py-obj docutils literal"><span class="pre">getstr</span></tt></a>([join_char])</td>
+<td>Returns the namespace address as a string.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#nineml.abstraction_layer.component.NamespaceAddress.is_root_namespace" title="nineml.abstraction_layer.component.NamespaceAddress.is_root_namespace"><tt class="xref py py-obj docutils literal"><span class="pre">is_root_namespace</span></tt></a>()</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="classmethod">
+<dt id="nineml.abstraction_layer.component.NamespaceAddress.concat">
+<em class="property">classmethod </em><tt class="descname">concat</tt><big>(</big><em>*args</em><big>)</big><a class="headerlink" href="#nineml.abstraction_layer.component.NamespaceAddress.concat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Concatenates all the Namespace Addresses.</p>
+<p>This method take all the arguments supplied, converts each one into a
+namespace object, then, produces a new namespace object which is the
+concatenation of all the arguments&#8217; namespaces.</p>
+<p>For example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">NamespaceAddress</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="s">&#39;first.second&#39;</span><span class="p">,</span><span class="s">&#39;third.forth&#39;</span><span class="p">,</span><span class="s">&#39;fifth.sixth&#39;</span><span class="p">)</span>
+<span class="go">    NameSpaceAddress: &#39;/first/second/third/forth/fifth/sixth&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="nineml.abstraction_layer.component.NamespaceAddress.create_root">
+<em class="property">classmethod </em><tt class="descname">create_root</tt><big>(</big><big>)</big><a class="headerlink" href="#nineml.abstraction_layer.component.NamespaceAddress.create_root" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a empty (root) namespace address</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nineml</span><span class="o">.</span><span class="n">abstraction_layer</span><span class="o">.</span><span class="n">NamespaceAddress</span><span class="o">.</span><span class="n">create_root</span><span class="p">()</span>
+<span class="go">NameSpaceAddress: &#39;//&#39;    </span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="nineml.abstraction_layer.component.NamespaceAddress.get_local_name">
+<tt class="descname">get_local_name</tt><big>(</big><big>)</big><a class="headerlink" href="#nineml.abstraction_layer.component.NamespaceAddress.get_local_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the local reference; i.e. the last field in the 
+address, as a <tt class="docutils literal"><span class="pre">string</span></tt></p>
+</dd></dl>
+
+<dl class="method">
+<dt id="nineml.abstraction_layer.component.NamespaceAddress.get_parent_addr">
+<tt class="descname">get_parent_addr</tt><big>(</big><big>)</big><a class="headerlink" href="#nineml.abstraction_layer.component.NamespaceAddress.get_parent_addr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the address of an namespace higher</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">NamespaceAddress</span><span class="p">(</span><span class="s">&#39;level1.level2.level3&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span>
+<span class="go">NameSpaceAddress: &#39;/level1/level2/level3/&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">get_parent_addr</span><span class="p">()</span>
+<span class="go">NameSpaceAddress: &#39;/level1/level2/&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="nineml.abstraction_layer.component.NamespaceAddress.get_str_prefix">
+<tt class="descname">get_str_prefix</tt><big>(</big><em>join_char='_'</em><big>)</big><a class="headerlink" href="#nineml.abstraction_layer.component.NamespaceAddress.get_str_prefix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the same as <tt class="docutils literal"><span class="pre">getstr</span></tt>, but prepends the <tt class="docutils literal"><span class="pre">join_char</span></tt> to
+the end of the string, so that the string can be used to prefix
+variables.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>join_char</strong> &#8211; The character used to join the levels in the address.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="nineml.abstraction_layer.component.NamespaceAddress.get_subns_addr">
+<tt class="descname">get_subns_addr</tt><big>(</big><em>component_name</em><big>)</big><a class="headerlink" href="#nineml.abstraction_layer.component.NamespaceAddress.get_subns_addr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the address of a subcomponent at this address.</p>
+<p>For example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">NamespaceAddress</span><span class="p">(</span><span class="s">&#39;level1.level2.level3&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">get_subns_addr</span><span class="p">(</span><span class="s">&#39;subcomponent&#39;</span><span class="p">)</span>
+<span class="go">NameSpaceAddress: &#39;/level1/level2/level3/subcomponent/&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="nineml.abstraction_layer.component.NamespaceAddress.getstr">
+<tt class="descname">getstr</tt><big>(</big><em>join_char='_'</em><big>)</big><a class="headerlink" href="#nineml.abstraction_layer.component.NamespaceAddress.getstr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the namespace address as a string.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>join_char</strong> &#8211; The character used to join the levels in the address.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="nineml.abstraction_layer.component.NamespaceAddress.is_root_namespace">
+<tt class="descname">is_root_namespace</tt><big>(</big><big>)</big><a class="headerlink" href="#nineml.abstraction_layer.component.NamespaceAddress.is_root_namespace" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="nineml.abstraction_layer.component.ComponentClass.html"
+                        title="previous chapter">nineml.abstraction_layer.component.ComponentClass</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="nineml.abstraction_layer.component.ComponentQueryer.html"
+                        title="next chapter">nineml.abstraction_layer.component.ComponentQueryer</a></p>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="nineml.abstraction_layer.component.ComponentQueryer.html" title="nineml.abstraction_layer.component.ComponentQueryer"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="nineml.abstraction_layer.component.ComponentClass.html" title="nineml.abstraction_layer.component.ComponentClass"
+             >previous</a> |</li>
+        <li><a href="../../index.html">NineML Python API Alpha documentation</a> &raquo;</li>
+          <li><a href="../developers/developer.html" >Python NineML Developer Documentation</a> &raquo;</li>
+          <li><a href="../developers/al/developer.html" >Abstraction Layer</a> &raquo;</li>
+          <li><a href="component.html" >nineml.abstraction_layer.component [Components]</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Mike Hull, Eilif Muller, Andrew Davison.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1pre.
+    </div>
+  </body>
+</html>

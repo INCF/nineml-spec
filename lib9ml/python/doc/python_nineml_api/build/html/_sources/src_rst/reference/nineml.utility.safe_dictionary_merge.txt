@@ -1,0 +1,6 @@
+nineml.utility.safe_dictionary_merge
+====================================
+
+.. currentmodule:: nineml
+
+.. automethod:: utility.safe_dictionary_merge

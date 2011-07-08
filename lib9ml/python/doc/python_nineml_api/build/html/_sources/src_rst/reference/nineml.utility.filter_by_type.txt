@@ -1,0 +1,6 @@
+nineml.utility.filter_by_type
+=============================
+
+.. currentmodule:: nineml
+
+.. automethod:: utility.filter_by_type

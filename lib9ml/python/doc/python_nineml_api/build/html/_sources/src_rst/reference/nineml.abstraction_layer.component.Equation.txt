@@ -1,0 +1,35 @@
+nineml.abstraction_layer.component.Equation
+===========================================
+
+.. currentmodule:: nineml.abstraction_layer.component
+
+.. autoclass:: Equation
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~Equation.__init__
+      ~Equation.rhs_as_python_func
+      ~Equation.rhs_has_missing_functions
+      ~Equation.rhs_name_transform_inplace
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Equation.rhs
+      ~Equation.rhs_atoms
+      ~Equation.rhs_funcs
+      ~Equation.rhs_missing_functions
+      ~Equation.rhs_names
+   
+   

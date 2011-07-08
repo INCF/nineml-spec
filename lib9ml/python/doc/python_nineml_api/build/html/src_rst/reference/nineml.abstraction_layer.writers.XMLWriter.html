@@ -1,0 +1,249 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>nineml.abstraction_layer.writers.XMLWriter &mdash; NineML Python API Alpha documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     'Alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="NineML Python API Alpha documentation" href="../../index.html" />
+    <link rel="up" title="nineml.abstraction_layer.writers" href="writers.html" />
+    <link rel="next" title="nineml.abstraction_layer.writers.DotWriter" href="nineml.abstraction_layer.writers.DotWriter.html" />
+    <link rel="prev" title="nineml.abstraction_layer.writers.TextWriter" href="nineml.abstraction_layer.writers.TextWriter.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="nineml.abstraction_layer.writers.DotWriter.html" title="nineml.abstraction_layer.writers.DotWriter"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="nineml.abstraction_layer.writers.TextWriter.html" title="nineml.abstraction_layer.writers.TextWriter"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">NineML Python API Alpha documentation</a> &raquo;</li>
+          <li><a href="../developers/developer.html" >Python NineML Developer Documentation</a> &raquo;</li>
+          <li><a href="../developers/al/developer.html" >Abstraction Layer</a> &raquo;</li>
+          <li><a href="writers.html" accesskey="U">nineml.abstraction_layer.writers</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="nineml-abstraction-layer-writers-xmlwriter">
+<h1>nineml.abstraction_layer.writers.XMLWriter<a class="headerlink" href="#nineml-abstraction-layer-writers-xmlwriter" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="nineml.abstraction_layer.writers.XMLWriter">
+<em class="property">class </em><tt class="descclassname">nineml.abstraction_layer.writers.</tt><tt class="descname">XMLWriter</tt><a class="headerlink" href="#nineml.abstraction_layer.writers.XMLWriter" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="nineml.abstraction_layer.writers.XMLWriter.__init__">
+<tt class="descname">__init__</tt><big>(</big><big>)</big><a class="headerlink" href="#nineml.abstraction_layer.writers.XMLWriter.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>x.__init__(...) initializes x; see x.__class__.__doc__ for signature</p>
+</dd></dl>
+
+<p class="rubric">Methods</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#nineml.abstraction_layer.writers.XMLWriter.visit" title="nineml.abstraction_layer.writers.XMLWriter.visit"><tt class="xref py py-obj docutils literal"><span class="pre">visit</span></tt></a>(obj,&nbsp;**kwargs)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#nineml.abstraction_layer.writers.XMLWriter.visit_alias" title="nineml.abstraction_layer.writers.XMLWriter.visit_alias"><tt class="xref py py-obj docutils literal"><span class="pre">visit_alias</span></tt></a>(alias,&nbsp;**kwargs)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#nineml.abstraction_layer.writers.XMLWriter.visit_analogport" title="nineml.abstraction_layer.writers.XMLWriter.visit_analogport"><tt class="xref py py-obj docutils literal"><span class="pre">visit_analogport</span></tt></a>(port,&nbsp;**kwargs)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#nineml.abstraction_layer.writers.XMLWriter.visit_assignment" title="nineml.abstraction_layer.writers.XMLWriter.visit_assignment"><tt class="xref py py-obj docutils literal"><span class="pre">visit_assignment</span></tt></a>(assignment,&nbsp;**kwargs)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#nineml.abstraction_layer.writers.XMLWriter.visit_componentclass" title="nineml.abstraction_layer.writers.XMLWriter.visit_componentclass"><tt class="xref py py-obj docutils literal"><span class="pre">visit_componentclass</span></tt></a>(component)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#nineml.abstraction_layer.writers.XMLWriter.visit_condition" title="nineml.abstraction_layer.writers.XMLWriter.visit_condition"><tt class="xref py py-obj docutils literal"><span class="pre">visit_condition</span></tt></a>(condition)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#nineml.abstraction_layer.writers.XMLWriter.visit_dynamics" title="nineml.abstraction_layer.writers.XMLWriter.visit_dynamics"><tt class="xref py py-obj docutils literal"><span class="pre">visit_dynamics</span></tt></a>(dynamics)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#nineml.abstraction_layer.writers.XMLWriter.visit_eventport" title="nineml.abstraction_layer.writers.XMLWriter.visit_eventport"><tt class="xref py py-obj docutils literal"><span class="pre">visit_eventport</span></tt></a>(port,&nbsp;**kwargs)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#nineml.abstraction_layer.writers.XMLWriter.visit_oncondition" title="nineml.abstraction_layer.writers.XMLWriter.visit_oncondition"><tt class="xref py py-obj docutils literal"><span class="pre">visit_oncondition</span></tt></a>(on_condition)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#nineml.abstraction_layer.writers.XMLWriter.visit_onevent" title="nineml.abstraction_layer.writers.XMLWriter.visit_onevent"><tt class="xref py py-obj docutils literal"><span class="pre">visit_onevent</span></tt></a>(on_event,&nbsp;**kwargs)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#nineml.abstraction_layer.writers.XMLWriter.visit_outputevent" title="nineml.abstraction_layer.writers.XMLWriter.visit_outputevent"><tt class="xref py py-obj docutils literal"><span class="pre">visit_outputevent</span></tt></a>(output_event,&nbsp;**kwargs)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#nineml.abstraction_layer.writers.XMLWriter.visit_parameter" title="nineml.abstraction_layer.writers.XMLWriter.visit_parameter"><tt class="xref py py-obj docutils literal"><span class="pre">visit_parameter</span></tt></a>(parameter)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#nineml.abstraction_layer.writers.XMLWriter.visit_regime" title="nineml.abstraction_layer.writers.XMLWriter.visit_regime"><tt class="xref py py-obj docutils literal"><span class="pre">visit_regime</span></tt></a>(regime)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#nineml.abstraction_layer.writers.XMLWriter.visit_statevariable" title="nineml.abstraction_layer.writers.XMLWriter.visit_statevariable"><tt class="xref py py-obj docutils literal"><span class="pre">visit_statevariable</span></tt></a>(state_variable)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#nineml.abstraction_layer.writers.XMLWriter.visit_timederivative" title="nineml.abstraction_layer.writers.XMLWriter.visit_timederivative"><tt class="xref py py-obj docutils literal"><span class="pre">visit_timederivative</span></tt></a>(time_derivative,&nbsp;**kwargs)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#nineml.abstraction_layer.writers.XMLWriter.write" title="nineml.abstraction_layer.writers.XMLWriter.write"><tt class="xref py py-obj docutils literal"><span class="pre">write</span></tt></a>(component,&nbsp;file[,&nbsp;flatten])</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="nineml.abstraction_layer.writers.XMLWriter.visit">
+<tt class="descname">visit</tt><big>(</big><em>obj</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#nineml.abstraction_layer.writers.XMLWriter.visit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="nineml.abstraction_layer.writers.XMLWriter.visit_alias">
+<tt class="descname">visit_alias</tt><big>(</big><em>alias</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#nineml.abstraction_layer.writers.XMLWriter.visit_alias" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="nineml.abstraction_layer.writers.XMLWriter.visit_analogport">
+<tt class="descname">visit_analogport</tt><big>(</big><em>port</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#nineml.abstraction_layer.writers.XMLWriter.visit_analogport" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="nineml.abstraction_layer.writers.XMLWriter.visit_assignment">
+<tt class="descname">visit_assignment</tt><big>(</big><em>assignment</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#nineml.abstraction_layer.writers.XMLWriter.visit_assignment" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="nineml.abstraction_layer.writers.XMLWriter.visit_componentclass">
+<tt class="descname">visit_componentclass</tt><big>(</big><em>component</em><big>)</big><a class="headerlink" href="#nineml.abstraction_layer.writers.XMLWriter.visit_componentclass" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="nineml.abstraction_layer.writers.XMLWriter.visit_condition">
+<tt class="descname">visit_condition</tt><big>(</big><em>condition</em><big>)</big><a class="headerlink" href="#nineml.abstraction_layer.writers.XMLWriter.visit_condition" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="nineml.abstraction_layer.writers.XMLWriter.visit_dynamics">
+<tt class="descname">visit_dynamics</tt><big>(</big><em>dynamics</em><big>)</big><a class="headerlink" href="#nineml.abstraction_layer.writers.XMLWriter.visit_dynamics" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="nineml.abstraction_layer.writers.XMLWriter.visit_eventport">
+<tt class="descname">visit_eventport</tt><big>(</big><em>port</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#nineml.abstraction_layer.writers.XMLWriter.visit_eventport" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="nineml.abstraction_layer.writers.XMLWriter.visit_oncondition">
+<tt class="descname">visit_oncondition</tt><big>(</big><em>on_condition</em><big>)</big><a class="headerlink" href="#nineml.abstraction_layer.writers.XMLWriter.visit_oncondition" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="nineml.abstraction_layer.writers.XMLWriter.visit_onevent">
+<tt class="descname">visit_onevent</tt><big>(</big><em>on_event</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#nineml.abstraction_layer.writers.XMLWriter.visit_onevent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="nineml.abstraction_layer.writers.XMLWriter.visit_outputevent">
+<tt class="descname">visit_outputevent</tt><big>(</big><em>output_event</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#nineml.abstraction_layer.writers.XMLWriter.visit_outputevent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="nineml.abstraction_layer.writers.XMLWriter.visit_parameter">
+<tt class="descname">visit_parameter</tt><big>(</big><em>parameter</em><big>)</big><a class="headerlink" href="#nineml.abstraction_layer.writers.XMLWriter.visit_parameter" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="nineml.abstraction_layer.writers.XMLWriter.visit_regime">
+<tt class="descname">visit_regime</tt><big>(</big><em>regime</em><big>)</big><a class="headerlink" href="#nineml.abstraction_layer.writers.XMLWriter.visit_regime" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="nineml.abstraction_layer.writers.XMLWriter.visit_statevariable">
+<tt class="descname">visit_statevariable</tt><big>(</big><em>state_variable</em><big>)</big><a class="headerlink" href="#nineml.abstraction_layer.writers.XMLWriter.visit_statevariable" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="nineml.abstraction_layer.writers.XMLWriter.visit_timederivative">
+<tt class="descname">visit_timederivative</tt><big>(</big><em>time_derivative</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#nineml.abstraction_layer.writers.XMLWriter.visit_timederivative" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="classmethod">
+<dt id="nineml.abstraction_layer.writers.XMLWriter.write">
+<em class="property">classmethod </em><tt class="descname">write</tt><big>(</big><em>component</em>, <em>file</em>, <em>flatten=True</em><big>)</big><a class="headerlink" href="#nineml.abstraction_layer.writers.XMLWriter.write" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="nineml.abstraction_layer.writers.TextWriter.html"
+                        title="previous chapter">nineml.abstraction_layer.writers.TextWriter</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="nineml.abstraction_layer.writers.DotWriter.html"
+                        title="next chapter">nineml.abstraction_layer.writers.DotWriter</a></p>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="nineml.abstraction_layer.writers.DotWriter.html" title="nineml.abstraction_layer.writers.DotWriter"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="nineml.abstraction_layer.writers.TextWriter.html" title="nineml.abstraction_layer.writers.TextWriter"
+             >previous</a> |</li>
+        <li><a href="../../index.html">NineML Python API Alpha documentation</a> &raquo;</li>
+          <li><a href="../developers/developer.html" >Python NineML Developer Documentation</a> &raquo;</li>
+          <li><a href="../developers/al/developer.html" >Abstraction Layer</a> &raquo;</li>
+          <li><a href="writers.html" >nineml.abstraction_layer.writers</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Mike Hull, Eilif Muller, Andrew Davison.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1pre.
+    </div>
+  </body>
+</html>

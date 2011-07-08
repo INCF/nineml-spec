@@ -1,0 +1,252 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>nineml.abstraction_layer.component.OnCondition &mdash; NineML Python API Alpha documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     'Alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="NineML Python API Alpha documentation" href="../../index.html" />
+    <link rel="up" title="nineml.abstraction_layer.component [Components]" href="component.html" />
+    <link rel="next" title="nineml.abstraction_layer.component.StateVariable" href="nineml.abstraction_layer.component.StateVariable.html" />
+    <link rel="prev" title="nineml.abstraction_layer.component.OnEvent" href="nineml.abstraction_layer.component.OnEvent.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="nineml.abstraction_layer.component.StateVariable.html" title="nineml.abstraction_layer.component.StateVariable"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="nineml.abstraction_layer.component.OnEvent.html" title="nineml.abstraction_layer.component.OnEvent"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">NineML Python API Alpha documentation</a> &raquo;</li>
+          <li><a href="../developers/developer.html" >Python NineML Developer Documentation</a> &raquo;</li>
+          <li><a href="../developers/al/developer.html" >Abstraction Layer</a> &raquo;</li>
+          <li><a href="component.html" accesskey="U">nineml.abstraction_layer.component [Components]</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="nineml-abstraction-layer-component-oncondition">
+<h1>nineml.abstraction_layer.component.OnCondition<a class="headerlink" href="#nineml-abstraction-layer-component-oncondition" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="nineml.abstraction_layer.component.OnCondition">
+<em class="property">class </em><tt class="descclassname">nineml.abstraction_layer.component.</tt><tt class="descname">OnCondition</tt><big>(</big><em>trigger</em>, <em>state_assignments=None</em>, <em>event_outputs=None</em>, <em>target_regime_name=None</em><big>)</big><a class="headerlink" href="#nineml.abstraction_layer.component.OnCondition" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="nineml.abstraction_layer.component.OnCondition.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>trigger</em>, <em>state_assignments=None</em>, <em>event_outputs=None</em>, <em>target_regime_name=None</em><big>)</big><a class="headerlink" href="#nineml.abstraction_layer.component.OnCondition.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructor for <tt class="docutils literal"><span class="pre">OnEvent</span></tt></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>trigger</strong> &#8211; Either a <a class="reference internal" href="nineml.abstraction_layer.component.Condition.html#nineml.abstraction_layer.component.Condition" title="nineml.abstraction_layer.component.Condition"><tt class="xref py py-class docutils literal"><span class="pre">Condition</span></tt></a> object or a <tt class="docutils literal"><span class="pre">string</span></tt> object
+specifying the conditions under which this transition should
+occur.</td>
+</tr>
+</tbody>
+</table>
+<p>See <tt class="docutils literal"><span class="pre">Transition.__init__</span></tt> for the definitions of the remaining
+parameters.</p>
+</dd></dl>
+
+<p class="rubric">Methods</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#nineml.abstraction_layer.component.OnCondition.__init__" title="nineml.abstraction_layer.component.OnCondition.__init__"><tt class="xref py py-obj docutils literal"><span class="pre">__init__</span></tt></a>(trigger[,&nbsp;state_assignments,&nbsp;...])</td>
+<td>Constructor for <tt class="docutils literal"><span class="pre">OnEvent</span></tt></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#nineml.abstraction_layer.component.OnCondition.accept_visitor" title="nineml.abstraction_layer.component.OnCondition.accept_visitor"><tt class="xref py py-obj docutils literal"><span class="pre">accept_visitor</span></tt></a>(visitor,&nbsp;**kwargs)</td>
+<td>link to something about visitation.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#nineml.abstraction_layer.component.OnCondition.set_source_regime" title="nineml.abstraction_layer.component.OnCondition.set_source_regime"><tt class="xref py py-obj docutils literal"><span class="pre">set_source_regime</span></tt></a>(source_regime)</td>
+<td>Internal method, used during component construction.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#nineml.abstraction_layer.component.OnCondition.set_target_regime" title="nineml.abstraction_layer.component.OnCondition.set_target_regime"><tt class="xref py py-obj docutils literal"><span class="pre">set_target_regime</span></tt></a>(target_regime)</td>
+<td>Internal method, used during component construction.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#nineml.abstraction_layer.component.OnCondition.event_outputs" title="nineml.abstraction_layer.component.OnCondition.event_outputs"><tt class="xref py py-obj docutils literal"><span class="pre">event_outputs</span></tt></a></td>
+<td><a href="#id1"><span class="problematic" id="id2">|Events|</span></a> that happen when this transitions occurs</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#nineml.abstraction_layer.component.OnCondition.source_regime" title="nineml.abstraction_layer.component.OnCondition.source_regime"><tt class="xref py py-obj docutils literal"><span class="pre">source_regime</span></tt></a></td>
+<td>Returns the source regime of this transition.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#nineml.abstraction_layer.component.OnCondition.source_regime_name" title="nineml.abstraction_layer.component.OnCondition.source_regime_name"><tt class="xref py py-obj docutils literal"><span class="pre">source_regime_name</span></tt></a></td>
+<td>DO NOT USE: Internal function. Use <cite>source_regime.name</cite> instead.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#nineml.abstraction_layer.component.OnCondition.state_assignments" title="nineml.abstraction_layer.component.OnCondition.state_assignments"><tt class="xref py py-obj docutils literal"><span class="pre">state_assignments</span></tt></a></td>
+<td>An ordered list of <a class="reference internal" href="nineml.abstraction_layer.component.StateAssignment.html#nineml.abstraction_layer.component.StateAssignment" title="nineml.abstraction_layer.component.StateAssignment"><tt class="xref py py-class docutils literal"><span class="pre">StateAssignments</span></tt></a> that happen when this</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#nineml.abstraction_layer.component.OnCondition.target_regime" title="nineml.abstraction_layer.component.OnCondition.target_regime"><tt class="xref py py-obj docutils literal"><span class="pre">target_regime</span></tt></a></td>
+<td>Returns the target regime of this transition.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#nineml.abstraction_layer.component.OnCondition.target_regime_name" title="nineml.abstraction_layer.component.OnCondition.target_regime_name"><tt class="xref py py-obj docutils literal"><span class="pre">target_regime_name</span></tt></a></td>
+<td>DO NOT USE: Internal function. Use <cite>target_regime.name</cite> instead.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#nineml.abstraction_layer.component.OnCondition.trigger" title="nineml.abstraction_layer.component.OnCondition.trigger"><tt class="xref py py-obj docutils literal"><span class="pre">trigger</span></tt></a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="nineml.abstraction_layer.component.OnCondition.accept_visitor">
+<tt class="descname">accept_visitor</tt><big>(</big><em>visitor</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#nineml.abstraction_layer.component.OnCondition.accept_visitor" title="Permalink to this definition">¶</a></dt>
+<dd><p>link to something about visitation.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="nineml.abstraction_layer.component.OnCondition.set_source_regime">
+<tt class="descname">set_source_regime</tt><big>(</big><em>source_regime</em><big>)</big><a class="headerlink" href="#nineml.abstraction_layer.component.OnCondition.set_source_regime" title="Permalink to this definition">¶</a></dt>
+<dd><p>Internal method, used during component construction.</p>
+<p>Used internally by the ComponentClass objects after all objects
+have be constructed, in the <tt class="docutils literal"><span class="pre">_ResolveTransitionRegimeNames()</span></tt> method.
+This is because when we build Transitions, the Regimes that they refer
+to generally are not build yet, so are referred to by strings. This
+method is used to set the source <tt class="docutils literal"><span class="pre">Regime</span></tt> object. We check that the name
+of the object set is the same as that previously expected.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="nineml.abstraction_layer.component.OnCondition.set_target_regime">
+<tt class="descname">set_target_regime</tt><big>(</big><em>target_regime</em><big>)</big><a class="headerlink" href="#nineml.abstraction_layer.component.OnCondition.set_target_regime" title="Permalink to this definition">¶</a></dt>
+<dd><p>Internal method, used during component construction.</p>
+<p>See <tt class="docutils literal"><span class="pre">set_source_regime</span></tt></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nineml.abstraction_layer.component.OnCondition.event_outputs">
+<tt class="descname">event_outputs</tt><a class="headerlink" href="#nineml.abstraction_layer.component.OnCondition.event_outputs" title="Permalink to this definition">¶</a></dt>
+<dd><p><a href="#id3"><span class="problematic" id="id4">|Events|</span></a> that happen when this transitions occurs</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nineml.abstraction_layer.component.OnCondition.source_regime">
+<tt class="descname">source_regime</tt><a class="headerlink" href="#nineml.abstraction_layer.component.OnCondition.source_regime" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the source regime of this transition.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This method will only be available after the <a class="reference internal" href="nineml.abstraction_layer.component.ComponentClass.html#nineml.abstraction_layer.component.ComponentClass" title="nineml.abstraction_layer.component.ComponentClass"><tt class="xref py py-class docutils literal"><span class="pre">ComponentClass</span></tt></a>
+containing this transition has been built. See <tt class="docutils literal"><span class="pre">set_source_regime</span></tt></p>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nineml.abstraction_layer.component.OnCondition.source_regime_name">
+<tt class="descname">source_regime_name</tt><a class="headerlink" href="#nineml.abstraction_layer.component.OnCondition.source_regime_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>DO NOT USE: Internal function. Use <cite>source_regime.name</cite> instead.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nineml.abstraction_layer.component.OnCondition.state_assignments">
+<tt class="descname">state_assignments</tt><a class="headerlink" href="#nineml.abstraction_layer.component.OnCondition.state_assignments" title="Permalink to this definition">¶</a></dt>
+<dd><p>An ordered list of <a class="reference internal" href="nineml.abstraction_layer.component.StateAssignment.html#nineml.abstraction_layer.component.StateAssignment" title="nineml.abstraction_layer.component.StateAssignment"><tt class="xref py py-class docutils literal"><span class="pre">StateAssignments</span></tt></a> that happen when this
+transitions occurs</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nineml.abstraction_layer.component.OnCondition.target_regime">
+<tt class="descname">target_regime</tt><a class="headerlink" href="#nineml.abstraction_layer.component.OnCondition.target_regime" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the target regime of this transition.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This method will only be available after the ComponentClass
+containing this transition has been built. See <tt class="docutils literal"><span class="pre">set_source_regime</span></tt></p>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nineml.abstraction_layer.component.OnCondition.target_regime_name">
+<tt class="descname">target_regime_name</tt><a class="headerlink" href="#nineml.abstraction_layer.component.OnCondition.target_regime_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>DO NOT USE: Internal function. Use <cite>target_regime.name</cite> instead.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nineml.abstraction_layer.component.OnCondition.trigger">
+<tt class="descname">trigger</tt><a class="headerlink" href="#nineml.abstraction_layer.component.OnCondition.trigger" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="nineml.abstraction_layer.component.OnEvent.html"
+                        title="previous chapter">nineml.abstraction_layer.component.OnEvent</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="nineml.abstraction_layer.component.StateVariable.html"
+                        title="next chapter">nineml.abstraction_layer.component.StateVariable</a></p>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="nineml.abstraction_layer.component.StateVariable.html" title="nineml.abstraction_layer.component.StateVariable"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="nineml.abstraction_layer.component.OnEvent.html" title="nineml.abstraction_layer.component.OnEvent"
+             >previous</a> |</li>
+        <li><a href="../../index.html">NineML Python API Alpha documentation</a> &raquo;</li>
+          <li><a href="../developers/developer.html" >Python NineML Developer Documentation</a> &raquo;</li>
+          <li><a href="../developers/al/developer.html" >Abstraction Layer</a> &raquo;</li>
+          <li><a href="component.html" >nineml.abstraction_layer.component [Components]</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Mike Hull, Eilif Muller, Andrew Davison.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1pre.
+    </div>
+  </body>
+</html>

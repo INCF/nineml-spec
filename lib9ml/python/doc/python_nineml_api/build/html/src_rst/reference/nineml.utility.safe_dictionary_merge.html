@@ -1,0 +1,117 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>nineml.utility.safe_dictionary_merge &mdash; NineML Python API Alpha documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     'Alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="NineML Python API Alpha documentation" href="../../index.html" />
+    <link rel="up" title="nineml.utility [Utility Functions]" href="utility_function.html" />
+    <link rel="next" title="nineml.utility.LocationMgr" href="nineml.utility.LocationMgr.html" />
+    <link rel="prev" title="nineml.utility.flatten_first_level" href="nineml.utility.flatten_first_level.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="nineml.utility.LocationMgr.html" title="nineml.utility.LocationMgr"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="nineml.utility.flatten_first_level.html" title="nineml.utility.flatten_first_level"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">NineML Python API Alpha documentation</a> &raquo;</li>
+          <li><a href="../developers/developer.html" >Python NineML Developer Documentation</a> &raquo;</li>
+          <li><a href="../developers/utility/developer.html" >Utility Functions</a> &raquo;</li>
+          <li><a href="utility_function.html" accesskey="U">nineml.utility [Utility Functions]</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="nineml-utility-safe-dictionary-merge">
+<h1>nineml.utility.safe_dictionary_merge<a class="headerlink" href="#nineml-utility-safe-dictionary-merge" title="Permalink to this headline">¶</a></h1>
+<dl class="staticmethod">
+<dt id="nineml.utility.safe_dictionary_merge">
+<em class="property">static </em><tt class="descclassname">utility.</tt><tt class="descname">safe_dictionary_merge</tt><big>(</big><em>dictionaries</em><big>)</big><a class="headerlink" href="#nineml.utility.safe_dictionary_merge" title="Permalink to this definition">¶</a></dt>
+<dd><p>Safely merge multiple dictionaries into one</p>
+<p>Merges an iterable of dictionaries into a new single dictionary,
+checking that there are no key collisions</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">safe_dictionary_merge</span><span class="p">(</span> <span class="p">[</span> <span class="p">{</span><span class="mi">1</span><span class="p">:</span><span class="s">&#39;One&#39;</span><span class="p">,</span><span class="mi">2</span><span class="p">:</span><span class="s">&#39;Two&#39;</span><span class="p">},{</span><span class="mi">3</span><span class="p">:</span><span class="s">&#39;Three&#39;</span><span class="p">}</span> <span class="p">]</span> <span class="p">)</span> 
+<span class="go">{1: &#39;One&#39;, 2: &#39;Two&#39;, 3: &#39;Three&#39;} </span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">safe_dictionary_merge</span><span class="p">(</span> <span class="p">[</span> <span class="p">{</span><span class="mi">1</span><span class="p">:</span><span class="s">&#39;One&#39;</span><span class="p">,</span><span class="mi">2</span><span class="p">:</span><span class="s">&#39;Two&#39;</span><span class="p">},{</span><span class="mi">3</span><span class="p">:</span><span class="s">&#39;Three&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="s">&#39;One&#39;</span><span class="p">}</span> <span class="p">]</span> <span class="p">)</span> 
+<span class="go">NineMLRuntimeError: Key Collision while merging dictionarys</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="nineml.utility.flatten_first_level.html"
+                        title="previous chapter">nineml.utility.flatten_first_level</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="nineml.utility.LocationMgr.html"
+                        title="next chapter">nineml.utility.LocationMgr</a></p>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="nineml.utility.LocationMgr.html" title="nineml.utility.LocationMgr"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="nineml.utility.flatten_first_level.html" title="nineml.utility.flatten_first_level"
+             >previous</a> |</li>
+        <li><a href="../../index.html">NineML Python API Alpha documentation</a> &raquo;</li>
+          <li><a href="../developers/developer.html" >Python NineML Developer Documentation</a> &raquo;</li>
+          <li><a href="../developers/utility/developer.html" >Utility Functions</a> &raquo;</li>
+          <li><a href="utility_function.html" >nineml.utility [Utility Functions]</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Mike Hull, Eilif Muller, Andrew Davison.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1pre.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,6 @@
+nineml.utility.invert_dictionary
+================================
+
+.. currentmodule:: nineml
+
+.. automethod:: utility.invert_dictionary

@@ -1,0 +1,26 @@
+nineml.abstraction_layer.component.ComponentClassMixinNamespaceStructure
+========================================================================
+
+.. currentmodule:: nineml.abstraction_layer.component
+
+.. autoclass:: ComponentClassMixinNamespaceStructure
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~ComponentClassMixinNamespaceStructure.__init__
+      ~ComponentClassMixinNamespaceStructure.connect_ports
+      ~ComponentClassMixinNamespaceStructure.get_node_addr
+      ~ComponentClassMixinNamespaceStructure.get_subnode
+      ~ComponentClassMixinNamespaceStructure.insert_subnode
+   
+   
+
+   
+   
+   

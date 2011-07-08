@@ -1,0 +1,33 @@
+nineml.utility.LocationMgr
+==========================
+
+.. currentmodule:: nineml.utility
+
+.. autoclass:: LocationMgr
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~LocationMgr.StdAppendToPath
+      ~LocationMgr.getCatalogDir
+      ~LocationMgr.getComponentDir
+      ~LocationMgr.getRootDir
+      ~LocationMgr.getTmpDir
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~LocationMgr.std_append_to_path_called
+      ~LocationMgr.temp_dir
+   
+   

@@ -1,0 +1,218 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>nineml.abstraction_layer.component.Dynamics &mdash; NineML Python API Alpha documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     'Alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="NineML Python API Alpha documentation" href="../../index.html" />
+    <link rel="up" title="nineml.abstraction_layer.component [Components]" href="component.html" />
+    <link rel="next" title="nineml.abstraction_layer.component.Regime" href="nineml.abstraction_layer.component.Regime.html" />
+    <link rel="prev" title="nineml.abstraction_layer.component.ComponentQueryer" href="nineml.abstraction_layer.component.ComponentQueryer.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="nineml.abstraction_layer.component.Regime.html" title="nineml.abstraction_layer.component.Regime"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="nineml.abstraction_layer.component.ComponentQueryer.html" title="nineml.abstraction_layer.component.ComponentQueryer"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">NineML Python API Alpha documentation</a> &raquo;</li>
+          <li><a href="../developers/developer.html" >Python NineML Developer Documentation</a> &raquo;</li>
+          <li><a href="../developers/al/developer.html" >Abstraction Layer</a> &raquo;</li>
+          <li><a href="component.html" accesskey="U">nineml.abstraction_layer.component [Components]</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="nineml-abstraction-layer-component-dynamics">
+<h1>nineml.abstraction_layer.component.Dynamics<a class="headerlink" href="#nineml-abstraction-layer-component-dynamics" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="nineml.abstraction_layer.component.Dynamics">
+<em class="property">class </em><tt class="descclassname">nineml.abstraction_layer.component.</tt><tt class="descname">Dynamics</tt><big>(</big><em>regimes=None</em>, <em>aliases=None</em>, <em>state_variables=None</em><big>)</big><a class="headerlink" href="#nineml.abstraction_layer.component.Dynamics" title="Permalink to this definition">¶</a></dt>
+<dd><p>A container class, which encapsulates a component&#8217;s regimes, transitions,
+and state variables</p>
+<dl class="method">
+<dt id="nineml.abstraction_layer.component.Dynamics.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>regimes=None</em>, <em>aliases=None</em>, <em>state_variables=None</em><big>)</big><a class="headerlink" href="#nineml.abstraction_layer.component.Dynamics.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dynamics object constructor</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>aliases</strong> &#8211; A list of aliases, which must be either <a class="reference internal" href="nineml.abstraction_layer.component.Alias.html#nineml.abstraction_layer.component.Alias" title="nineml.abstraction_layer.component.Alias"><tt class="xref py py-class docutils literal"><span class="pre">Alias</span></tt></a>
+objects or <a href="#id1"><span class="problematic" id="id2">``</span></a>string``s.</li>
+<li><strong>regimes</strong> &#8211; A list containing at least one <a href="#id3"><span class="problematic" id="id4">|Regime|</span></a> object.</li>
+<li><strong>state_variables</strong> &#8211; An optional list of the state variables,
+which can either be <a class="reference internal" href="nineml.abstraction_layer.component.StateVariable.html#nineml.abstraction_layer.component.StateVariable" title="nineml.abstraction_layer.component.StateVariable"><tt class="xref py py-class docutils literal"><span class="pre">StateVariable</span></tt></a> objects or <cite>string</cite> s. If
+provided, it must match the inferred state-variables from the
+regimes; if it is not provided it will be inferred
+automatically.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<p class="rubric">Methods</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#nineml.abstraction_layer.component.Dynamics.__init__" title="nineml.abstraction_layer.component.Dynamics.__init__"><tt class="xref py py-obj docutils literal"><span class="pre">__init__</span></tt></a>([regimes,&nbsp;aliases,&nbsp;state_variables])</td>
+<td>Dynamics object constructor</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#nineml.abstraction_layer.component.Dynamics.accept_visitor" title="nineml.abstraction_layer.component.Dynamics.accept_visitor"><tt class="xref py py-obj docutils literal"><span class="pre">accept_visitor</span></tt></a>(visitor,&nbsp;**kwargs)</td>
+<td>link to something about visitation.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#nineml.abstraction_layer.component.Dynamics.aliases" title="nineml.abstraction_layer.component.Dynamics.aliases"><tt class="xref py py-obj docutils literal"><span class="pre">aliases</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#nineml.abstraction_layer.component.Dynamics.aliases_map" title="nineml.abstraction_layer.component.Dynamics.aliases_map"><tt class="xref py py-obj docutils literal"><span class="pre">aliases_map</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#nineml.abstraction_layer.component.Dynamics.regimes" title="nineml.abstraction_layer.component.Dynamics.regimes"><tt class="xref py py-obj docutils literal"><span class="pre">regimes</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#nineml.abstraction_layer.component.Dynamics.regimes_map" title="nineml.abstraction_layer.component.Dynamics.regimes_map"><tt class="xref py py-obj docutils literal"><span class="pre">regimes_map</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#nineml.abstraction_layer.component.Dynamics.state_variables" title="nineml.abstraction_layer.component.Dynamics.state_variables"><tt class="xref py py-obj docutils literal"><span class="pre">state_variables</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#nineml.abstraction_layer.component.Dynamics.state_variables_map" title="nineml.abstraction_layer.component.Dynamics.state_variables_map"><tt class="xref py py-obj docutils literal"><span class="pre">state_variables_map</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#nineml.abstraction_layer.component.Dynamics.transitions" title="nineml.abstraction_layer.component.Dynamics.transitions"><tt class="xref py py-obj docutils literal"><span class="pre">transitions</span></tt></a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="nineml.abstraction_layer.component.Dynamics.accept_visitor">
+<tt class="descname">accept_visitor</tt><big>(</big><em>visitor</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#nineml.abstraction_layer.component.Dynamics.accept_visitor" title="Permalink to this definition">¶</a></dt>
+<dd><p>link to something about visitation.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nineml.abstraction_layer.component.Dynamics.aliases">
+<tt class="descname">aliases</tt><a class="headerlink" href="#nineml.abstraction_layer.component.Dynamics.aliases" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="nineml.abstraction_layer.component.Dynamics.aliases_map">
+<tt class="descname">aliases_map</tt><a class="headerlink" href="#nineml.abstraction_layer.component.Dynamics.aliases_map" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="nineml.abstraction_layer.component.Dynamics.regimes">
+<tt class="descname">regimes</tt><a class="headerlink" href="#nineml.abstraction_layer.component.Dynamics.regimes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="nineml.abstraction_layer.component.Dynamics.regimes_map">
+<tt class="descname">regimes_map</tt><a class="headerlink" href="#nineml.abstraction_layer.component.Dynamics.regimes_map" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="nineml.abstraction_layer.component.Dynamics.state_variables">
+<tt class="descname">state_variables</tt><a class="headerlink" href="#nineml.abstraction_layer.component.Dynamics.state_variables" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="nineml.abstraction_layer.component.Dynamics.state_variables_map">
+<tt class="descname">state_variables_map</tt><a class="headerlink" href="#nineml.abstraction_layer.component.Dynamics.state_variables_map" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="nineml.abstraction_layer.component.Dynamics.transitions">
+<tt class="descname">transitions</tt><a class="headerlink" href="#nineml.abstraction_layer.component.Dynamics.transitions" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="nineml.abstraction_layer.component.ComponentQueryer.html"
+                        title="previous chapter">nineml.abstraction_layer.component.ComponentQueryer</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="nineml.abstraction_layer.component.Regime.html"
+                        title="next chapter">nineml.abstraction_layer.component.Regime</a></p>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="nineml.abstraction_layer.component.Regime.html" title="nineml.abstraction_layer.component.Regime"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="nineml.abstraction_layer.component.ComponentQueryer.html" title="nineml.abstraction_layer.component.ComponentQueryer"
+             >previous</a> |</li>
+        <li><a href="../../index.html">NineML Python API Alpha documentation</a> &raquo;</li>
+          <li><a href="../developers/developer.html" >Python NineML Developer Documentation</a> &raquo;</li>
+          <li><a href="../developers/al/developer.html" >Abstraction Layer</a> &raquo;</li>
+          <li><a href="component.html" >nineml.abstraction_layer.component [Components]</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Mike Hull, Eilif Muller, Andrew Davison.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1pre.
+    </div>
+  </body>
+</html>

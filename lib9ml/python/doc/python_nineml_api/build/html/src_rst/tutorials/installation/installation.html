@@ -1,0 +1,140 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Installing Python &mdash; NineML Python API Alpha documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     'Alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="NineML Python API Alpha documentation" href="../../../index.html" />
+    <link rel="up" title="Python NineML User Documentation" href="../../../python_nineml.html" />
+    <link rel="next" title="&lt;no title&gt;" href="../al/al.html" />
+    <link rel="prev" title="Python NineML User Documentation" href="../../../python_nineml.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../al/al.html" title="&lt;no title&gt;"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../../../python_nineml.html" title="Python NineML User Documentation"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../../index.html">NineML Python API Alpha documentation</a> &raquo;</li>
+          <li><a href="../../../python_nineml.html" accesskey="U">Python NineML User Documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <p>Use of the Python 9ML API requires that you have Python (version 2.5, 2.6 or 2.7) and the <cite>lxml</cite> package installed. The abstraction layer API also requires the <cite>PLY</cite> package.</p>
+<div class="section" id="installing-python">
+<h1>Installing Python<a class="headerlink" href="#installing-python" title="Permalink to this headline">¶</a></h1>
+<p>If you are using Linux, Python is available via your package management system. For Mac OS X or Windows, you can download the Python installer from <a class="reference external" href="http://www.python.org">http://www.python.org</a>, or install an all-in-one package for scientific computing with Python from Enthought (<a class="reference external" href="http://www.enthought.com/products/epd.php">http://www.enthought.com/products/epd.php</a>; free academic licence) or Python(x,y) (<a class="reference external" href="http://www.pythonxy.com/">http://www.pythonxy.com/</a>; free).</p>
+</div>
+<div class="section" id="installing-lxml">
+<h1>Installing lxml<a class="headerlink" href="#installing-lxml" title="Permalink to this headline">¶</a></h1>
+<p>See <a class="reference external" href="http://codespeak.net/lxml/installation.html">http://codespeak.net/lxml/installation.html</a></p>
+</div>
+<div class="section" id="installing-ply">
+<h1>Installing PLY<a class="headerlink" href="#installing-ply" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-python"><pre>$ easy_install ply</pre>
+</div>
+<p>or download from <a class="reference external" href="http://pypi.python.org/pypi/ply/">http://pypi.python.org/pypi/ply/</a> or install from your packaging system.</p>
+</div>
+<div class="section" id="installing-the-nineml-package">
+<h1>Installing the nineml package<a class="headerlink" href="#installing-the-nineml-package" title="Permalink to this headline">¶</a></h1>
+<p>Start by checking out the 9ML source code from the Subversion repository (see <a class="reference external" href="http://subversion.apache.org/packages.html">http://subversion.apache.org/packages.html</a> if you need to install Subversion):</p>
+<div class="highlight-python"><pre>$ svn checkout http://svn.incf.org/svn/nineml/trunk nineml_trunk
+$ cd nineml_trunk/lib9ml/python
+$ python setup.py install</pre>
+</div>
+<p>This will install it to your python <tt class="docutils literal"><span class="pre">site-packages</span></tt> directory, and may require root privileges. If you wish to install it elsewhere use the <tt class="docutils literal"><span class="pre">--prefix</span></tt> or <tt class="docutils literal"><span class="pre">--home</span></tt> option, and set the <tt class="docutils literal"><span class="pre">PYTHONPATH</span></tt> environment variable accordingly.</p>
+<p>Now run the tests:</p>
+<div class="highlight-python"><pre>$ cd test
+$ python tester.py all</pre>
+</div>
+</div>
+<div class="section" id="updating-the-nineml-package">
+<h1>Updating the nineml package<a class="headerlink" href="#updating-the-nineml-package" title="Permalink to this headline">¶</a></h1>
+<p>To update your  <tt class="docutils literal"><span class="pre">nineml</span></tt> installation to the latest version:</p>
+<div class="highlight-python"><pre>$ cd /path/to/nineml_trunk
+$ svn update
+$ cd lib9ml/python
+$ python setup.py install</pre>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Installing Python</a></li>
+<li><a class="reference internal" href="#installing-lxml">Installing lxml</a></li>
+<li><a class="reference internal" href="#installing-ply">Installing PLY</a></li>
+<li><a class="reference internal" href="#installing-the-nineml-package">Installing the nineml package</a></li>
+<li><a class="reference internal" href="#updating-the-nineml-package">Updating the nineml package</a></li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../../../python_nineml.html"
+                        title="previous chapter">Python NineML User Documentation</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../al/al.html"
+                        title="next chapter">&lt;no title&gt;</a></p>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../al/al.html" title="&lt;no title&gt;"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../../../python_nineml.html" title="Python NineML User Documentation"
+             >previous</a> |</li>
+        <li><a href="../../../index.html">NineML Python API Alpha documentation</a> &raquo;</li>
+          <li><a href="../../../python_nineml.html" >Python NineML User Documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Mike Hull, Eilif Muller, Andrew Davison.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1pre.
+    </div>
+  </body>
+</html>

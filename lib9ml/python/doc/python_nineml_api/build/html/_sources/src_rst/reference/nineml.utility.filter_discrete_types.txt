@@ -1,0 +1,6 @@
+nineml.utility.filter_discrete_types
+====================================
+
+.. currentmodule:: nineml
+
+.. automethod:: utility.filter_discrete_types

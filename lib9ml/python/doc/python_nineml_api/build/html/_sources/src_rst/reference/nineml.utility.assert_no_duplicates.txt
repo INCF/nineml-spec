@@ -1,0 +1,6 @@
+nineml.utility.assert_no_duplicates
+===================================
+
+.. currentmodule:: nineml
+
+.. automethod:: utility.assert_no_duplicates

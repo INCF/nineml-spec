@@ -1,0 +1,115 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>nineml.utility.flatten_first_level &mdash; NineML Python API Alpha documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     'Alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="NineML Python API Alpha documentation" href="../../index.html" />
+    <link rel="up" title="nineml.utility [Utility Functions]" href="utility_function.html" />
+    <link rel="next" title="nineml.utility.safe_dictionary_merge" href="nineml.utility.safe_dictionary_merge.html" />
+    <link rel="prev" title="nineml.utility.invert_dictionary" href="nineml.utility.invert_dictionary.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="nineml.utility.safe_dictionary_merge.html" title="nineml.utility.safe_dictionary_merge"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="nineml.utility.invert_dictionary.html" title="nineml.utility.invert_dictionary"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">NineML Python API Alpha documentation</a> &raquo;</li>
+          <li><a href="../developers/developer.html" >Python NineML Developer Documentation</a> &raquo;</li>
+          <li><a href="../developers/utility/developer.html" >Utility Functions</a> &raquo;</li>
+          <li><a href="utility_function.html" accesskey="U">nineml.utility [Utility Functions]</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="nineml-utility-flatten-first-level">
+<h1>nineml.utility.flatten_first_level<a class="headerlink" href="#nineml-utility-flatten-first-level" title="Permalink to this headline">¶</a></h1>
+<dl class="staticmethod">
+<dt id="nineml.utility.flatten_first_level">
+<em class="property">static </em><tt class="descclassname">utility.</tt><tt class="descname">flatten_first_level</tt><big>(</big><em>nested_list</em><big>)</big><a class="headerlink" href="#nineml.utility.flatten_first_level" title="Permalink to this definition">¶</a></dt>
+<dd><p>Flattens the first level of an iterable, i.e.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">flatten_first_level</span><span class="p">(</span> <span class="p">[</span> <span class="p">[</span><span class="s">&#39;This&#39;</span><span class="p">,</span><span class="s">&#39;is&#39;</span><span class="p">],[</span><span class="s">&#39;a&#39;</span><span class="p">,</span><span class="s">&#39;short&#39;</span><span class="p">],[</span><span class="s">&#39;phrase&#39;</span><span class="p">]</span> <span class="p">]</span> <span class="p">)</span> 
+<span class="go">[&#39;This&#39;, &#39;is&#39;, &#39;a&#39;, &#39;short&#39;, &#39;phrase&#39;] </span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">flatten_first_level</span><span class="p">(</span> <span class="p">[</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">],[</span><span class="mi">6</span><span class="p">]</span> <span class="p">]</span> <span class="p">)</span> 
+<span class="go">[1,2,3,4,5,6] </span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="nineml.utility.invert_dictionary.html"
+                        title="previous chapter">nineml.utility.invert_dictionary</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="nineml.utility.safe_dictionary_merge.html"
+                        title="next chapter">nineml.utility.safe_dictionary_merge</a></p>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="nineml.utility.safe_dictionary_merge.html" title="nineml.utility.safe_dictionary_merge"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="nineml.utility.invert_dictionary.html" title="nineml.utility.invert_dictionary"
+             >previous</a> |</li>
+        <li><a href="../../index.html">NineML Python API Alpha documentation</a> &raquo;</li>
+          <li><a href="../developers/developer.html" >Python NineML Developer Documentation</a> &raquo;</li>
+          <li><a href="../developers/utility/developer.html" >Utility Functions</a> &raquo;</li>
+          <li><a href="utility_function.html" >nineml.utility [Utility Functions]</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Mike Hull, Eilif Muller, Andrew Davison.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1pre.
+    </div>
+  </body>
+</html>

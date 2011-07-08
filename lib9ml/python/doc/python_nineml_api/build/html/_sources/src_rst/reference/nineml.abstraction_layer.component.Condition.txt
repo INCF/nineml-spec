@@ -1,0 +1,36 @@
+nineml.abstraction_layer.component.Condition
+============================================
+
+.. currentmodule:: nineml.abstraction_layer.component
+
+.. autoclass:: Condition
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~Condition.__init__
+      ~Condition.accept_visitor
+      ~Condition.rhs_as_python_func
+      ~Condition.rhs_has_missing_functions
+      ~Condition.rhs_name_transform_inplace
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Condition.rhs
+      ~Condition.rhs_atoms
+      ~Condition.rhs_funcs
+      ~Condition.rhs_missing_functions
+      ~Condition.rhs_names
+   
+   

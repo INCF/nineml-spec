@@ -1,0 +1,196 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>nineml.abstraction_layer.readers.XMLReader &mdash; NineML Python API Alpha documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     'Alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="NineML Python API Alpha documentation" href="../../index.html" />
+    <link rel="up" title="nineml.abstraction_layer.readers" href="readers.html" />
+    <link rel="next" title="nineml.abstraction_layer.writers" href="writers.html" />
+    <link rel="prev" title="nineml.abstraction_layer.readers.XMLReader" href="" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="writers.html" title="nineml.abstraction_layer.writers"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="#" title="nineml.abstraction_layer.readers.XMLReader"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">NineML Python API Alpha documentation</a> &raquo;</li>
+          <li><a href="../developers/developer.html" >Python NineML Developer Documentation</a> &raquo;</li>
+          <li><a href="../developers/al/developer.html" >Abstraction Layer</a> &raquo;</li>
+          <li><a href="readers.html" accesskey="U">nineml.abstraction_layer.readers</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="nineml-abstraction-layer-readers-xmlreader">
+<h1>nineml.abstraction_layer.readers.XMLReader<a class="headerlink" href="#nineml-abstraction-layer-readers-xmlreader" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="nineml.abstraction_layer.readers.XMLReader">
+<em class="property">class </em><tt class="descclassname">nineml.abstraction_layer.readers.</tt><tt class="descname">XMLReader</tt><a class="headerlink" href="#nineml.abstraction_layer.readers.XMLReader" title="Permalink to this definition">¶</a></dt>
+<dd><p>A class that can read <a class="reference internal" href="nineml.abstraction_layer.component.ComponentClass.html#nineml.abstraction_layer.component.ComponentClass" title="nineml.abstraction_layer.component.ComponentClass"><tt class="xref py py-class docutils literal"><span class="pre">ComponentClass</span></tt></a> objects from a NineML XML file.</p>
+<dl class="method">
+<dt id="nineml.abstraction_layer.readers.XMLReader.__init__">
+<tt class="descname">__init__</tt><big>(</big><big>)</big><a class="headerlink" href="#nineml.abstraction_layer.readers.XMLReader.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>x.__init__(...) initializes x; see x.__class__.__doc__ for signature</p>
+</dd></dl>
+
+<p class="rubric">Methods</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#nineml.abstraction_layer.readers.XMLReader.read" title="nineml.abstraction_layer.readers.XMLReader.read"><tt class="xref py py-obj docutils literal"><span class="pre">read</span></tt></a>(filename[,&nbsp;component_name])</td>
+<td>Reads a single <a class="reference internal" href="nineml.abstraction_layer.component.ComponentClass.html#nineml.abstraction_layer.component.ComponentClass" title="nineml.abstraction_layer.component.ComponentClass"><tt class="xref py py-class docutils literal"><span class="pre">ComponentClass</span></tt></a> object from a filename.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#nineml.abstraction_layer.readers.XMLReader.read_component" title="nineml.abstraction_layer.readers.XMLReader.read_component"><tt class="xref py py-obj docutils literal"><span class="pre">read_component</span></tt></a>(filename[,&nbsp;component_name])</td>
+<td>Reads a single <a class="reference internal" href="nineml.abstraction_layer.component.ComponentClass.html#nineml.abstraction_layer.component.ComponentClass" title="nineml.abstraction_layer.component.ComponentClass"><tt class="xref py py-class docutils literal"><span class="pre">ComponentClass</span></tt></a> object from a filename.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#nineml.abstraction_layer.readers.XMLReader.read_components" title="nineml.abstraction_layer.readers.XMLReader.read_components"><tt class="xref py py-obj docutils literal"><span class="pre">read_components</span></tt></a>(filename)</td>
+<td>Reads a several <a class="reference internal" href="nineml.abstraction_layer.component.ComponentClass.html#nineml.abstraction_layer.component.ComponentClass" title="nineml.abstraction_layer.component.ComponentClass"><tt class="xref py py-class docutils literal"><span class="pre">ComponentClass</span></tt></a> object from a filename.</td>
+</tr>
+</tbody>
+</table>
+<dl class="classmethod">
+<dt id="nineml.abstraction_layer.readers.XMLReader.read">
+<em class="property">classmethod </em><tt class="descname">read</tt><big>(</big><em>filename</em>, <em>component_name=None</em><big>)</big><a class="headerlink" href="#nineml.abstraction_layer.readers.XMLReader.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads a single <a class="reference internal" href="nineml.abstraction_layer.component.ComponentClass.html#nineml.abstraction_layer.component.ComponentClass" title="nineml.abstraction_layer.component.ComponentClass"><tt class="xref py py-class docutils literal"><span class="pre">ComponentClass</span></tt></a> object from a filename.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>filename</strong> &#8211; The name of the file.</li>
+<li><strong>component_name</strong> &#8211; If the file contains more than one ComponentClass
+definition, this parameter must be provided as a <tt class="docutils literal"><span class="pre">string</span></tt>
+specifying which component to return, otherwise a
+NineMLRuntimeException will be raised.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">Returns a <a class="reference internal" href="nineml.abstraction_layer.component.ComponentClass.html#nineml.abstraction_layer.component.ComponentClass" title="nineml.abstraction_layer.component.ComponentClass"><tt class="xref py py-class docutils literal"><span class="pre">ComponentClass</span></tt></a> object.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="nineml.abstraction_layer.readers.XMLReader.read_component">
+<em class="property">classmethod </em><tt class="descname">read_component</tt><big>(</big><em>filename</em>, <em>component_name=None</em><big>)</big><a class="headerlink" href="#nineml.abstraction_layer.readers.XMLReader.read_component" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads a single <a class="reference internal" href="nineml.abstraction_layer.component.ComponentClass.html#nineml.abstraction_layer.component.ComponentClass" title="nineml.abstraction_layer.component.ComponentClass"><tt class="xref py py-class docutils literal"><span class="pre">ComponentClass</span></tt></a> object from a filename.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>filename</strong> &#8211; The name of the file.</li>
+<li><strong>component_name</strong> &#8211; If the file contains more than one ComponentClass
+definition, this parameter must be provided as a <tt class="docutils literal"><span class="pre">string</span></tt>
+specifying which component to return, otherwise a
+NineMLRuntimeException will be raised.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">Returns a <a class="reference internal" href="nineml.abstraction_layer.component.ComponentClass.html#nineml.abstraction_layer.component.ComponentClass" title="nineml.abstraction_layer.component.ComponentClass"><tt class="xref py py-class docutils literal"><span class="pre">ComponentClass</span></tt></a> object.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="nineml.abstraction_layer.readers.XMLReader.read_components">
+<em class="property">classmethod </em><tt class="descname">read_components</tt><big>(</big><em>filename</em><big>)</big><a class="headerlink" href="#nineml.abstraction_layer.readers.XMLReader.read_components" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads a several <a class="reference internal" href="nineml.abstraction_layer.component.ComponentClass.html#nineml.abstraction_layer.component.ComponentClass" title="nineml.abstraction_layer.component.ComponentClass"><tt class="xref py py-class docutils literal"><span class="pre">ComponentClass</span></tt></a> object from a filename.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename</strong> &#8211; The name of the file.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">Returns a list of <a class="reference internal" href="nineml.abstraction_layer.component.ComponentClass.html#nineml.abstraction_layer.component.ComponentClass" title="nineml.abstraction_layer.component.ComponentClass"><tt class="xref py py-class docutils literal"><span class="pre">ComponentClass</span></tt></a> objects, for each
+&lt;ComponentClass&gt; node in the XML tree.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href=""
+                        title="previous chapter">nineml.abstraction_layer.readers.XMLReader</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="writers.html"
+                        title="next chapter">nineml.abstraction_layer.writers</a></p>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="writers.html" title="nineml.abstraction_layer.writers"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="#" title="nineml.abstraction_layer.readers.XMLReader"
+             >previous</a> |</li>
+        <li><a href="../../index.html">NineML Python API Alpha documentation</a> &raquo;</li>
+          <li><a href="../developers/developer.html" >Python NineML Developer Documentation</a> &raquo;</li>
+          <li><a href="../developers/al/developer.html" >Abstraction Layer</a> &raquo;</li>
+          <li><a href="readers.html" >nineml.abstraction_layer.readers</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Mike Hull, Eilif Muller, Andrew Davison.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1pre.
+    </div>
+  </body>
+</html>

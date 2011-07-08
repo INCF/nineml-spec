@@ -1,0 +1,16 @@
+nineml.abstraction_layer.component.RegimeElement
+================================================
+
+.. currentmodule:: nineml.abstraction_layer.component
+
+.. autoclass:: RegimeElement
+
+   
+   .. automethod:: __init__
+
+   
+   
+
+   
+   
+   

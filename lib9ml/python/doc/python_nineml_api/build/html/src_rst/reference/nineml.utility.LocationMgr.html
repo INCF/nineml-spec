@@ -1,0 +1,186 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>nineml.utility.LocationMgr &mdash; NineML Python API Alpha documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     'Alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="NineML Python API Alpha documentation" href="../../index.html" />
+    <link rel="up" title="nineml.utility [Utility Functions]" href="utility_function.html" />
+    <link rel="next" title="Abstraction Layer" href="../developers/al/developer.html" />
+    <link rel="prev" title="nineml.utility.safe_dictionary_merge" href="nineml.utility.safe_dictionary_merge.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../developers/al/developer.html" title="Abstraction Layer"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="nineml.utility.safe_dictionary_merge.html" title="nineml.utility.safe_dictionary_merge"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">NineML Python API Alpha documentation</a> &raquo;</li>
+          <li><a href="../developers/developer.html" >Python NineML Developer Documentation</a> &raquo;</li>
+          <li><a href="../developers/utility/developer.html" >Utility Functions</a> &raquo;</li>
+          <li><a href="utility_function.html" accesskey="U">nineml.utility [Utility Functions]</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="nineml-utility-locationmgr">
+<h1>nineml.utility.LocationMgr<a class="headerlink" href="#nineml-utility-locationmgr" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="nineml.utility.LocationMgr">
+<em class="property">class </em><tt class="descclassname">nineml.utility.</tt><tt class="descname">LocationMgr</tt><a class="reference internal" href="../../_modules/nineml/utility.html#LocationMgr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nineml.utility.LocationMgr" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="nineml.utility.LocationMgr.__init__">
+<tt class="descname">__init__</tt><big>(</big><big>)</big><a class="headerlink" href="#nineml.utility.LocationMgr.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>x.__init__(...) initializes x; see x.__class__.__doc__ for signature</p>
+</dd></dl>
+
+<p class="rubric">Methods</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#nineml.utility.LocationMgr.StdAppendToPath" title="nineml.utility.LocationMgr.StdAppendToPath"><tt class="xref py py-obj docutils literal"><span class="pre">StdAppendToPath</span></tt></a>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#nineml.utility.LocationMgr.getCatalogDir" title="nineml.utility.LocationMgr.getCatalogDir"><tt class="xref py py-obj docutils literal"><span class="pre">getCatalogDir</span></tt></a>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#nineml.utility.LocationMgr.getComponentDir" title="nineml.utility.LocationMgr.getComponentDir"><tt class="xref py py-obj docutils literal"><span class="pre">getComponentDir</span></tt></a>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#nineml.utility.LocationMgr.getRootDir" title="nineml.utility.LocationMgr.getRootDir"><tt class="xref py py-obj docutils literal"><span class="pre">getRootDir</span></tt></a>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#nineml.utility.LocationMgr.getTmpDir" title="nineml.utility.LocationMgr.getTmpDir"><tt class="xref py py-obj docutils literal"><span class="pre">getTmpDir</span></tt></a>()</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#nineml.utility.LocationMgr.std_append_to_path_called" title="nineml.utility.LocationMgr.std_append_to_path_called"><tt class="xref py py-obj docutils literal"><span class="pre">std_append_to_path_called</span></tt></a></td>
+<td>bool(x) -&gt; bool</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#nineml.utility.LocationMgr.temp_dir" title="nineml.utility.LocationMgr.temp_dir"><tt class="xref py py-obj docutils literal"><span class="pre">temp_dir</span></tt></a></td>
+<td>str(object) -&gt; string</td>
+</tr>
+</tbody>
+</table>
+<dl class="classmethod">
+<dt id="nineml.utility.LocationMgr.StdAppendToPath">
+<em class="property">classmethod </em><tt class="descname">StdAppendToPath</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/nineml/utility.html#LocationMgr.StdAppendToPath"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nineml.utility.LocationMgr.StdAppendToPath" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="classmethod">
+<dt id="nineml.utility.LocationMgr.getCatalogDir">
+<em class="property">classmethod </em><tt class="descname">getCatalogDir</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/nineml/utility.html#LocationMgr.getCatalogDir"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nineml.utility.LocationMgr.getCatalogDir" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="classmethod">
+<dt id="nineml.utility.LocationMgr.getComponentDir">
+<em class="property">classmethod </em><tt class="descname">getComponentDir</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/nineml/utility.html#LocationMgr.getComponentDir"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nineml.utility.LocationMgr.getComponentDir" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="classmethod">
+<dt id="nineml.utility.LocationMgr.getRootDir">
+<em class="property">classmethod </em><tt class="descname">getRootDir</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/nineml/utility.html#LocationMgr.getRootDir"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nineml.utility.LocationMgr.getRootDir" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="classmethod">
+<dt id="nineml.utility.LocationMgr.getTmpDir">
+<em class="property">classmethod </em><tt class="descname">getTmpDir</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/nineml/utility.html#LocationMgr.getTmpDir"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nineml.utility.LocationMgr.getTmpDir" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="nineml.utility.LocationMgr.std_append_to_path_called">
+<tt class="descname">std_append_to_path_called</tt><em class="property"> = False</em><a class="headerlink" href="#nineml.utility.LocationMgr.std_append_to_path_called" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="nineml.utility.LocationMgr.temp_dir">
+<tt class="descname">temp_dir</tt><em class="property"> = '/tmp/'</em><a class="headerlink" href="#nineml.utility.LocationMgr.temp_dir" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="nineml.utility.safe_dictionary_merge.html"
+                        title="previous chapter">nineml.utility.safe_dictionary_merge</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../developers/al/developer.html"
+                        title="next chapter">Abstraction Layer</a></p>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../developers/al/developer.html" title="Abstraction Layer"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="nineml.utility.safe_dictionary_merge.html" title="nineml.utility.safe_dictionary_merge"
+             >previous</a> |</li>
+        <li><a href="../../index.html">NineML Python API Alpha documentation</a> &raquo;</li>
+          <li><a href="../developers/developer.html" >Python NineML Developer Documentation</a> &raquo;</li>
+          <li><a href="../developers/utility/developer.html" >Utility Functions</a> &raquo;</li>
+          <li><a href="utility_function.html" >nineml.utility [Utility Functions]</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Mike Hull, Eilif Muller, Andrew Davison.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1pre.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,201 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Python NineML User Documentation &mdash; NineML Python API Alpha documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     'Alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="NineML Python API Alpha documentation" href="index.html" />
+    <link rel="next" title="Installing Python" href="src_rst/tutorials/installation/installation.html" />
+    <link rel="prev" title="XML Format" href="xml_spec.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="src_rst/tutorials/installation/installation.html" title="Installing Python"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="xml_spec.html" title="XML Format"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">NineML Python API Alpha documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="python-nineml-user-documentation">
+<h1>Python NineML User Documentation<a class="headerlink" href="#python-nineml-user-documentation" title="Permalink to this headline">¶</a></h1>
+<p>Welcome to the documentation for Python NineML.
+This page describes:</p>
+<ul class="simple">
+<li>the process for installing Python NineML.</li>
+<li>an introduction to building and simulating Python NineML components.</li>
+<li>some examples of components written in Python NineML.</li>
+</ul>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="src_rst/tutorials/installation/installation.html">Installing Python</a></li>
+<li class="toctree-l1"><a class="reference internal" href="src_rst/tutorials/installation/installation.html#installing-lxml">Installing lxml</a></li>
+<li class="toctree-l1"><a class="reference internal" href="src_rst/tutorials/installation/installation.html#installing-ply">Installing PLY</a></li>
+<li class="toctree-l1"><a class="reference internal" href="src_rst/tutorials/installation/installation.html#installing-the-nineml-package">Installing the nineml package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="src_rst/tutorials/installation/installation.html#updating-the-nineml-package">Updating the nineml package</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="abstraction-layer-quickstart">
+<h2>Abstraction Layer Quickstart<a class="headerlink" href="#abstraction-layer-quickstart" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="src_rst/tutorials/al/class_overview.html">Basic Structure of NineML Abstraction Layer</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="src_rst/tutorials/al/class_overview.html#interfaces-parameters-and-ports">Interfaces: Parameters and Ports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src_rst/tutorials/al/class_overview.html#dynamics-regimes-statevariables">Dynamics: Regimes &amp; StateVariables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src_rst/tutorials/al/class_overview.html#transitions-events-conditions-assignments">Transitions: Events, Conditions &amp; Assignments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src_rst/tutorials/al/class_overview.html#multiple-regimes-transitions">Multiple Regimes &amp; Transitions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="src_rst/tutorials/al/class_overview.html#further-classes">Further Classes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="src_rst/tutorials/al/class_overview.html#aliases">Aliases</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src_rst/tutorials/al/class_overview.html#reduce-ports">Reduce Ports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src_rst/tutorials/al/class_overview.html#specifying-mathematical-strings">Specifying Mathematical Strings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src_rst/tutorials/al/class_overview.html#shorthands-for-construction">Shorthands for Construction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src_rst/tutorials/al/class_overview.html#pseudo-code-for-simulation">Pseudo Code for Simulation:</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="src_rst/tutorials/al/importing_exporting.html">Importing and Exporting</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="src_rst/tutorials/al/importing_exporting.html#exporting">Exporting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src_rst/tutorials/al/importing_exporting.html#importing">Importing</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="src_rst/tutorials/al/hierarchical_components.html">Hierchical Components</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="src_rst/tutorials/al/hierarchical_components.html#subcomponents">Subcomponents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src_rst/tutorials/al/hierarchical_components.html#namespaces-port-connections">Namespaces &amp; Port Connections:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src_rst/tutorials/al/hierarchical_components.html#flattening-components">Flattening Components</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="src_rst/tutorials/al/interfacing_pynn.html">Simulating</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="src_rst/tutorials/al/interfacing_pynn.html#interfacing-directly-to-neuron">Interfacing directly to NEURON</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src_rst/tutorials/al/interfacing_pynn.html#interfacing-to-pynn-nest-neuron">Interfacing to PyNN (NEST &amp; NEURON)</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="user-layer-quickstart">
+<h2>User Layer Quickstart<a class="headerlink" href="#user-layer-quickstart" title="Permalink to this headline">¶</a></h2>
+<div class="admonition-todo admonition " id="index-0">
+<p class="first admonition-title">Todo</p>
+<p class="last">Information about the User-Layer</p>
+</div>
+</div>
+<div class="section" id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="src_rst/examples/examples_al_python.html">Abstraction Layer</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="src_rst/examples/examples_al_python.html#example-aeif">Example - aeIF</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src_rst/examples/examples_al_python.html#example-coba-synapse">Example - Coba Synapse</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src_rst/examples/examples_al_python.html#example-destexhe-synapse">Example - Destexhe Synapse</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src_rst/examples/examples_al_python.html#example-hh">Example - HH</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src_rst/examples/examples_al_python.html#example-iaf-sfa-relref">Example - IAF SFA RelRef</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src_rst/examples/examples_al_python.html#example-if-cond-exp">Example - IF Cond Exp</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src_rst/examples/examples_al_python.html#example-iz1">Example - Iz1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src_rst/examples/examples_al_python.html#example-iz2">Example - Iz2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src_rst/examples/examples_al_python.html#example-leaky-iaf">Example - Leaky Iaf</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src_rst/examples/examples_al_python.html#example-morris-lecar">Example - Morris Lecar</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src_rst/examples/examples_al_python.html#example-nmda">Example - NMDA</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="futher-information">
+<h2>Futher Information<a class="headerlink" href="#futher-information" title="Permalink to this headline">¶</a></h2>
+<p>More information for <a class="reference internal" href="src_rst/developers/developer.html"><em>developers</em></a></p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Python NineML User Documentation</a><ul>
+<li><a class="reference internal" href="#installation">Installation</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#abstraction-layer-quickstart">Abstraction Layer Quickstart</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#user-layer-quickstart">User Layer Quickstart</a></li>
+<li><a class="reference internal" href="#examples">Examples</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#futher-information">Futher Information</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="xml_spec.html"
+                        title="previous chapter">XML Format</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="src_rst/tutorials/installation/installation.html"
+                        title="next chapter">Installing Python</a></p>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="src_rst/tutorials/installation/installation.html" title="Installing Python"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="xml_spec.html" title="XML Format"
+             >previous</a> |</li>
+        <li><a href="index.html">NineML Python API Alpha documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Mike Hull, Eilif Muller, Andrew Davison.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1pre.
+    </div>
+  </body>
+</html>

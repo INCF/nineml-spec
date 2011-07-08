@@ -1,0 +1,41 @@
+nineml.abstraction_layer.component.Alias
+========================================
+
+.. currentmodule:: nineml.abstraction_layer.component
+
+.. autoclass:: Alias
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~Alias.__init__
+      ~Alias.accept_visitor
+      ~Alias.lhs_name_transform_inplace
+      ~Alias.name_transform_inplace
+      ~Alias.rhs_as_python_func
+      ~Alias.rhs_has_missing_functions
+      ~Alias.rhs_name_transform_inplace
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Alias.atoms
+      ~Alias.lhs
+      ~Alias.lhs_atoms
+      ~Alias.rhs
+      ~Alias.rhs_atoms
+      ~Alias.rhs_funcs
+      ~Alias.rhs_missing_functions
+      ~Alias.rhs_names
+   
+   

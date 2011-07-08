@@ -1,0 +1,29 @@
+nineml.abstraction_layer.component.Parameter
+============================================
+
+.. currentmodule:: nineml.abstraction_layer.component
+
+.. autoclass:: Parameter
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~Parameter.__init__
+      ~Parameter.accept_visitor
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Parameter.name
+   
+   

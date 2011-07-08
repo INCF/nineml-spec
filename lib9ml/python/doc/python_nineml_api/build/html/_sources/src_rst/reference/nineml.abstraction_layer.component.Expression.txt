@@ -1,0 +1,35 @@
+nineml.abstraction_layer.component.Expression
+=============================================
+
+.. currentmodule:: nineml.abstraction_layer.component
+
+.. autoclass:: Expression
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~Expression.__init__
+      ~Expression.rhs_as_python_func
+      ~Expression.rhs_has_missing_functions
+      ~Expression.rhs_name_transform_inplace
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Expression.rhs
+      ~Expression.rhs_atoms
+      ~Expression.rhs_funcs
+      ~Expression.rhs_missing_functions
+      ~Expression.rhs_names
+   
+   

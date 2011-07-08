@@ -1,0 +1,465 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>nineml.abstraction_layer.component.ComponentClass &mdash; NineML Python API Alpha documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     'Alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="NineML Python API Alpha documentation" href="../../index.html" />
+    <link rel="up" title="nineml.abstraction_layer.component [Components]" href="component.html" />
+    <link rel="next" title="nineml.abstraction_layer.component.NamespaceAddress" href="nineml.abstraction_layer.component.NamespaceAddress.html" />
+    <link rel="prev" title="nineml.abstraction_layer.component.OutputEvent" href="nineml.abstraction_layer.component.OutputEvent.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="nineml.abstraction_layer.component.NamespaceAddress.html" title="nineml.abstraction_layer.component.NamespaceAddress"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="nineml.abstraction_layer.component.OutputEvent.html" title="nineml.abstraction_layer.component.OutputEvent"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">NineML Python API Alpha documentation</a> &raquo;</li>
+          <li><a href="../developers/developer.html" >Python NineML Developer Documentation</a> &raquo;</li>
+          <li><a href="../developers/al/developer.html" >Abstraction Layer</a> &raquo;</li>
+          <li><a href="component.html" accesskey="U">nineml.abstraction_layer.component [Components]</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="nineml-abstraction-layer-component-componentclass">
+<h1>nineml.abstraction_layer.component.ComponentClass<a class="headerlink" href="#nineml-abstraction-layer-component-componentclass" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="nineml.abstraction_layer.component.ComponentClass">
+<em class="property">class </em><tt class="descclassname">nineml.abstraction_layer.component.</tt><tt class="descname">ComponentClass</tt><big>(</big><em>name</em>, <em>parameters=None</em>, <em>analog_ports=None</em>, <em>event_ports=None</em>, <em>dynamics=None</em>, <em>subnodes=None</em>, <em>portconnections=None</em>, <em>regimes=None</em>, <em>aliases=None</em>, <em>state_variables=None</em><big>)</big><a class="headerlink" href="#nineml.abstraction_layer.component.ComponentClass" title="Permalink to this definition">¶</a></dt>
+<dd><p>A ComponentClass object represents a <em>component</em> in NineML.</p>
+<div class="admonition-todo admonition " id="index-0">
+<p class="first admonition-title">Todo</p>
+<p class="last">For more information, see</p>
+</div>
+<dl class="method">
+<dt id="nineml.abstraction_layer.component.ComponentClass.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>name</em>, <em>parameters=None</em>, <em>analog_ports=None</em>, <em>event_ports=None</em>, <em>dynamics=None</em>, <em>subnodes=None</em>, <em>portconnections=None</em>, <em>regimes=None</em>, <em>aliases=None</em>, <em>state_variables=None</em><big>)</big><a class="headerlink" href="#nineml.abstraction_layer.component.ComponentClass.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructs a ComponentClass</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> &#8211; The name of the component.</li>
+<li><strong>parameters</strong> &#8211; A list containing either <a class="reference internal" href="nineml.abstraction_layer.component.Parameter.html#nineml.abstraction_layer.component.Parameter" title="nineml.abstraction_layer.component.Parameter"><tt class="xref py py-class docutils literal"><span class="pre">Parameter</span></tt></a> objects 
+or strings representing the parameter names. If <tt class="docutils literal"><span class="pre">None</span></tt>, then the
+parameters are automatically inferred from the <a class="reference internal" href="nineml.abstraction_layer.component.Dynamics.html#nineml.abstraction_layer.component.Dynamics" title="nineml.abstraction_layer.component.Dynamics"><tt class="xref py py-class docutils literal"><span class="pre">Dynamics</span></tt></a> block.</li>
+<li><strong>analog_ports</strong> &#8211; A list of <a class="reference internal" href="nineml.abstraction_layer.component.AnalogPort.html#nineml.abstraction_layer.component.AnalogPort" title="nineml.abstraction_layer.component.AnalogPort"><tt class="xref py py-class docutils literal"><span class="pre">AnalogPorts</span></tt></a>, which will be the
+local <a class="reference internal" href="nineml.abstraction_layer.component.AnalogPort.html#nineml.abstraction_layer.component.AnalogPort" title="nineml.abstraction_layer.component.AnalogPort"><tt class="xref py py-class docutils literal"><span class="pre">AnalogPorts</span></tt></a> for this object.</li>
+<li><strong>event_ports</strong> &#8211; A list of <a class="reference internal" href="nineml.abstraction_layer.component.EventPort.html#nineml.abstraction_layer.component.EventPort" title="nineml.abstraction_layer.component.EventPort"><tt class="xref py py-class docutils literal"><span class="pre">EventPorts</span></tt></a> objects, which will be the
+local event-ports for this object. If this is <tt class="docutils literal"><span class="pre">None</span></tt>, then they
+will be automatically inferred from the dynamics block.</li>
+<li><strong>dynamics</strong> &#8211; A <a class="reference internal" href="nineml.abstraction_layer.component.Dynamics.html#nineml.abstraction_layer.component.Dynamics" title="nineml.abstraction_layer.component.Dynamics"><tt class="xref py py-class docutils literal"><span class="pre">Dynamics</span></tt></a> object, defining the local dynamics of the
+component.</li>
+<li><strong>subnodes</strong> &#8211; A dictionary mapping namespace-names to sub-component.
+[Type: <tt class="docutils literal"><span class="pre">{string:|ComponentClass|,</span> <span class="pre">string:|ComponentClass|,</span>
+<span class="pre">string:|ComponentClass|}</span></tt> ] describing the namespace of subcomponents 
+for this component.</li>
+<li><strong>portconnections</strong> &#8211; A list of pairs, specifying the connections
+between the ports of the subcomponents in this component. These can
+be <cite>(|NamespaceAddress|, |NamespaceAddress|)&#8217; or ``(string, string)`</cite>.</li>
+<li><strong>interface</strong> &#8211; A shorthand way of specifying the <strong>interface</strong> for
+this component; <a class="reference internal" href="nineml.abstraction_layer.component.Parameter.html#nineml.abstraction_layer.component.Parameter" title="nineml.abstraction_layer.component.Parameter"><tt class="xref py py-class docutils literal"><span class="pre">Parameters</span></tt></a>, <a class="reference internal" href="nineml.abstraction_layer.component.AnalogPort.html#nineml.abstraction_layer.component.AnalogPort" title="nineml.abstraction_layer.component.AnalogPort"><tt class="xref py py-class docutils literal"><span class="pre">AnalogPorts</span></tt></a> and <a class="reference internal" href="nineml.abstraction_layer.component.EventPort.html#nineml.abstraction_layer.component.EventPort" title="nineml.abstraction_layer.component.EventPort"><tt class="xref py py-class docutils literal"><span class="pre">EventPorts</span></tt></a>.
+<tt class="docutils literal"><span class="pre">interface</span></tt> takes a list of these objects, and automatically
+resolves them by type into the correct types.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Examples:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">ComponentClass</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;MyComponent1&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition-todo admonition " id="index-1">
+<p class="first admonition-title">Todo</p>
+<p class="last">Point this towards and example of constructing ComponentClasses.
+This can&#8217;t be here, because we also need to know about dynamics.
+For examples</p>
+</div>
+</dd></dl>
+
+<p class="rubric">Methods</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#nineml.abstraction_layer.component.ComponentClass.__init__" title="nineml.abstraction_layer.component.ComponentClass.__init__"><tt class="xref py py-obj docutils literal"><span class="pre">__init__</span></tt></a>(name[,&nbsp;parameters,&nbsp;analog_ports,&nbsp;...])</td>
+<td>Constructs a ComponentClass</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#nineml.abstraction_layer.component.ComponentClass.accept_visitor" title="nineml.abstraction_layer.component.ComponentClass.accept_visitor"><tt class="xref py py-obj docutils literal"><span class="pre">accept_visitor</span></tt></a>(visitor,&nbsp;**kwargs)</td>
+<td>link to something about visitation.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#nineml.abstraction_layer.component.ComponentClass.backsub_all" title="nineml.abstraction_layer.component.ComponentClass.backsub_all"><tt class="xref py py-obj docutils literal"><span class="pre">backsub_all</span></tt></a>()</td>
+<td>Expand all alias definitions in local equations.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#nineml.abstraction_layer.component.ComponentClass.connect_ports" title="nineml.abstraction_layer.component.ComponentClass.connect_ports"><tt class="xref py py-obj docutils literal"><span class="pre">connect_ports</span></tt></a>(src,&nbsp;sink)</td>
+<td>Connects the ports of 2 subcomponents.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#nineml.abstraction_layer.component.ComponentClass.get_node_addr" title="nineml.abstraction_layer.component.ComponentClass.get_node_addr"><tt class="xref py py-obj docutils literal"><span class="pre">get_node_addr</span></tt></a>()</td>
+<td>Get the namespace address of this component</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#nineml.abstraction_layer.component.ComponentClass.get_subnode" title="nineml.abstraction_layer.component.ComponentClass.get_subnode"><tt class="xref py py-obj docutils literal"><span class="pre">get_subnode</span></tt></a>(addr)</td>
+<td>Gets a subnode from this component recursively.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#nineml.abstraction_layer.component.ComponentClass.insert_subnode" title="nineml.abstraction_layer.component.ComponentClass.insert_subnode"><tt class="xref py py-obj docutils literal"><span class="pre">insert_subnode</span></tt></a>(namespace,&nbsp;subnode)</td>
+<td>Insert a subnode into this component</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#nineml.abstraction_layer.component.ComponentClass.is_flat" title="nineml.abstraction_layer.component.ComponentClass.is_flat"><tt class="xref py py-obj docutils literal"><span class="pre">is_flat</span></tt></a>()</td>
+<td>Is this component flat or does it have subcomponents?</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#nineml.abstraction_layer.component.ComponentClass.set_flattener" title="nineml.abstraction_layer.component.ComponentClass.set_flattener"><tt class="xref py py-obj docutils literal"><span class="pre">set_flattener</span></tt></a>(flattener)</td>
+<td>Specifies the flattening object used to create this component, if</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#nineml.abstraction_layer.component.ComponentClass.was_flattened" title="nineml.abstraction_layer.component.ComponentClass.was_flattened"><tt class="xref py py-obj docutils literal"><span class="pre">was_flattened</span></tt></a>()</td>
+<td>Returns <tt class="docutils literal"><span class="pre">True</span></tt> if this component was created by flattening another</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#nineml.abstraction_layer.component.ComponentClass.write" title="nineml.abstraction_layer.component.ComponentClass.write"><tt class="xref py py-obj docutils literal"><span class="pre">write</span></tt></a>(file[,&nbsp;flatten])</td>
+<td>Export this model to an XML file.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#nineml.abstraction_layer.component.ComponentClass.aliases" title="nineml.abstraction_layer.component.ComponentClass.aliases"><tt class="xref py py-obj docutils literal"><span class="pre">aliases</span></tt></a></td>
+<td>Forwarding function to self.dynamics.aliases</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#nineml.abstraction_layer.component.ComponentClass.aliases_map" title="nineml.abstraction_layer.component.ComponentClass.aliases_map"><tt class="xref py py-obj docutils literal"><span class="pre">aliases_map</span></tt></a></td>
+<td>Forwarding function to self.dynamics.alias_map</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#nineml.abstraction_layer.component.ComponentClass.analog_ports" title="nineml.abstraction_layer.component.ComponentClass.analog_ports"><tt class="xref py py-obj docutils literal"><span class="pre">analog_ports</span></tt></a></td>
+<td>Returns an iterator over the local <a class="reference internal" href="nineml.abstraction_layer.component.AnalogPort.html#nineml.abstraction_layer.component.AnalogPort" title="nineml.abstraction_layer.component.AnalogPort"><tt class="xref py py-class docutils literal"><span class="pre">AnalogPort</span></tt></a> objects</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#nineml.abstraction_layer.component.ComponentClass.dynamics" title="nineml.abstraction_layer.component.ComponentClass.dynamics"><tt class="xref py py-obj docutils literal"><span class="pre">dynamics</span></tt></a></td>
+<td>Returns the local <a class="reference internal" href="nineml.abstraction_layer.component.Dynamics.html#nineml.abstraction_layer.component.Dynamics" title="nineml.abstraction_layer.component.Dynamics"><tt class="xref py py-class docutils literal"><span class="pre">Dynamics</span></tt></a> object</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#nineml.abstraction_layer.component.ComponentClass.event_ports" title="nineml.abstraction_layer.component.ComponentClass.event_ports"><tt class="xref py py-obj docutils literal"><span class="pre">event_ports</span></tt></a></td>
+<td>Returns an iterator over the local <a class="reference internal" href="nineml.abstraction_layer.component.EventPort.html#nineml.abstraction_layer.component.EventPort" title="nineml.abstraction_layer.component.EventPort"><tt class="xref py py-class docutils literal"><span class="pre">EventPort</span></tt></a> objects</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#nineml.abstraction_layer.component.ComponentClass.flattener" title="nineml.abstraction_layer.component.ComponentClass.flattener"><tt class="xref py py-obj docutils literal"><span class="pre">flattener</span></tt></a></td>
+<td>If this component was made by flattening other components, return the</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#nineml.abstraction_layer.component.ComponentClass.name" title="nineml.abstraction_layer.component.ComponentClass.name"><tt class="xref py py-obj docutils literal"><span class="pre">name</span></tt></a></td>
+<td>Returns the name of the component</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#nineml.abstraction_layer.component.ComponentClass.parameters" title="nineml.abstraction_layer.component.ComponentClass.parameters"><tt class="xref py py-obj docutils literal"><span class="pre">parameters</span></tt></a></td>
+<td>Returns an iterator over the local <a class="reference internal" href="nineml.abstraction_layer.component.Parameter.html#nineml.abstraction_layer.component.Parameter" title="nineml.abstraction_layer.component.Parameter"><tt class="xref py py-class docutils literal"><span class="pre">Parameter</span></tt></a> objects</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#nineml.abstraction_layer.component.ComponentClass.query" title="nineml.abstraction_layer.component.ComponentClass.query"><tt class="xref py py-obj docutils literal"><span class="pre">query</span></tt></a></td>
+<td>Returns the <tt class="docutils literal"><span class="pre">ComponentQuery</span></tt> object associated with this class</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#nineml.abstraction_layer.component.ComponentClass.regimes" title="nineml.abstraction_layer.component.ComponentClass.regimes"><tt class="xref py py-obj docutils literal"><span class="pre">regimes</span></tt></a></td>
+<td>Forwarding function to self.dynamics.regimes</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#nineml.abstraction_layer.component.ComponentClass.regimes_map" title="nineml.abstraction_layer.component.ComponentClass.regimes_map"><tt class="xref py py-obj docutils literal"><span class="pre">regimes_map</span></tt></a></td>
+<td>Forwarding function to self.dynamics.regimes_map</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#nineml.abstraction_layer.component.ComponentClass.state_variables" title="nineml.abstraction_layer.component.ComponentClass.state_variables"><tt class="xref py py-obj docutils literal"><span class="pre">state_variables</span></tt></a></td>
+<td>Forwarding function to self.dynamics.state_variables</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#nineml.abstraction_layer.component.ComponentClass.state_variables_map" title="nineml.abstraction_layer.component.ComponentClass.state_variables_map"><tt class="xref py py-obj docutils literal"><span class="pre">state_variables_map</span></tt></a></td>
+<td>Forwarding function to self.dynamics.state_variables_map</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#nineml.abstraction_layer.component.ComponentClass.transitions" title="nineml.abstraction_layer.component.ComponentClass.transitions"><tt class="xref py py-obj docutils literal"><span class="pre">transitions</span></tt></a></td>
+<td>Forwarding function to self.dynamics.transitions</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="nineml.abstraction_layer.component.ComponentClass.accept_visitor">
+<tt class="descname">accept_visitor</tt><big>(</big><em>visitor</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#nineml.abstraction_layer.component.ComponentClass.accept_visitor" title="Permalink to this definition">¶</a></dt>
+<dd><p>link to something about visitation.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="nineml.abstraction_layer.component.ComponentClass.backsub_all">
+<tt class="descname">backsub_all</tt><big>(</big><big>)</big><a class="headerlink" href="#nineml.abstraction_layer.component.ComponentClass.backsub_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Expand all alias definitions in local equations.</p>
+<p>This function finds <a class="reference internal" href="nineml.abstraction_layer.component.Alias.html#nineml.abstraction_layer.component.Alias" title="nineml.abstraction_layer.component.Alias"><tt class="xref py py-class docutils literal"><span class="pre">Aliases</span></tt></a>, <a class="reference internal" href="nineml.abstraction_layer.component.TimeDerivative.html#nineml.abstraction_layer.component.TimeDerivative" title="nineml.abstraction_layer.component.TimeDerivative"><tt class="xref py py-class docutils literal"><span class="pre">TimeDerivatives</span></tt></a>, <em>send</em> <a class="reference internal" href="nineml.abstraction_layer.component.AnalogPort.html#nineml.abstraction_layer.component.AnalogPort" title="nineml.abstraction_layer.component.AnalogPort"><tt class="xref py py-class docutils literal"><span class="pre">AnalogPorts</span></tt></a>,
+<a class="reference internal" href="nineml.abstraction_layer.component.StateAssignment.html#nineml.abstraction_layer.component.StateAssignment" title="nineml.abstraction_layer.component.StateAssignment"><tt class="xref py py-class docutils literal"><span class="pre">StateAssignments</span></tt></a> and <a class="reference internal" href="nineml.abstraction_layer.component.Condition.html#nineml.abstraction_layer.component.Condition" title="nineml.abstraction_layer.component.Condition"><tt class="xref py py-class docutils literal"><span class="pre">Conditions</span></tt></a> which are defined in terms of other
+<a class="reference internal" href="nineml.abstraction_layer.component.Alias.html#nineml.abstraction_layer.component.Alias" title="nineml.abstraction_layer.component.Alias"><tt class="xref py py-class docutils literal"><span class="pre">Aliases</span></tt></a>, and expands them, such that each only has <a class="reference internal" href="nineml.abstraction_layer.component.Parameter.html#nineml.abstraction_layer.component.Parameter" title="nineml.abstraction_layer.component.Parameter"><tt class="xref py py-class docutils literal"><span class="pre">Parameters</span></tt></a>,
+<a class="reference internal" href="nineml.abstraction_layer.component.StateVariable.html#nineml.abstraction_layer.component.StateVariable" title="nineml.abstraction_layer.component.StateVariable"><tt class="xref py py-class docutils literal"><span class="pre">StateVariables</span></tt></a> and recv/reduce <a class="reference internal" href="nineml.abstraction_layer.component.AnalogPort.html#nineml.abstraction_layer.component.AnalogPort" title="nineml.abstraction_layer.component.AnalogPort"><tt class="xref py py-class docutils literal"><span class="pre">AnalogPorts</span></tt></a> on the RHS.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="nineml.abstraction_layer.component.ComponentClass.connect_ports">
+<tt class="descname">connect_ports</tt><big>(</big><em>src</em>, <em>sink</em><big>)</big><a class="headerlink" href="#nineml.abstraction_layer.component.ComponentClass.connect_ports" title="Permalink to this definition">¶</a></dt>
+<dd><p>Connects the ports of 2 subcomponents.</p>
+<p>The ports can be specified as <tt class="docutils literal"><span class="pre">string</span></tt> s or <a class="reference internal" href="nineml.abstraction_layer.component.NamespaceAddress.html#nineml.abstraction_layer.component.NamespaceAddress" title="nineml.abstraction_layer.component.NamespaceAddress"><tt class="xref py py-class docutils literal"><span class="pre">NamespaceAddresses</span></tt></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>src</strong> &#8211; The source port of one sub-component; this should either an
+<a class="reference internal" href="nineml.abstraction_layer.component.EventPort.html#nineml.abstraction_layer.component.EventPort" title="nineml.abstraction_layer.component.EventPort"><tt class="xref py py-class docutils literal"><span class="pre">EventPort</span></tt></a> or <a class="reference internal" href="nineml.abstraction_layer.component.AnalogPort.html#nineml.abstraction_layer.component.AnalogPort" title="nineml.abstraction_layer.component.AnalogPort"><tt class="xref py py-class docutils literal"><span class="pre">AnalogPort</span></tt></a>, but it <em>must</em> be a send port.</li>
+<li><strong>sink</strong> &#8211; The sink port of one sub-component; this should either an
+<a class="reference internal" href="nineml.abstraction_layer.component.EventPort.html#nineml.abstraction_layer.component.EventPort" title="nineml.abstraction_layer.component.EventPort"><tt class="xref py py-class docutils literal"><span class="pre">EventPort</span></tt></a> or <a class="reference internal" href="nineml.abstraction_layer.component.AnalogPort.html#nineml.abstraction_layer.component.AnalogPort" title="nineml.abstraction_layer.component.AnalogPort"><tt class="xref py py-class docutils literal"><span class="pre">AnalogPort</span></tt></a>, but it <em>must</em> be either a &#8216;recv&#8217; or a
+&#8216;reduce&#8217; port.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="nineml.abstraction_layer.component.ComponentClass.get_node_addr">
+<tt class="descname">get_node_addr</tt><big>(</big><big>)</big><a class="headerlink" href="#nineml.abstraction_layer.component.ComponentClass.get_node_addr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the namespace address of this component</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="nineml.abstraction_layer.component.ComponentClass.get_parent_model">
+<tt class="descname">get_parent_model</tt><big>(</big><big>)</big><a class="headerlink" href="#nineml.abstraction_layer.component.ComponentClass.get_parent_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the parent component for this component</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="nineml.abstraction_layer.component.ComponentClass.get_subnode">
+<tt class="descname">get_subnode</tt><big>(</big><em>addr</em><big>)</big><a class="headerlink" href="#nineml.abstraction_layer.component.ComponentClass.get_subnode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets a subnode from this component recursively.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="nineml.abstraction_layer.component.ComponentClass.insert_subnode">
+<tt class="descname">insert_subnode</tt><big>(</big><em>namespace</em>, <em>subnode</em><big>)</big><a class="headerlink" href="#nineml.abstraction_layer.component.ComponentClass.insert_subnode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Insert a subnode into this component</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>subnode</strong> &#8211; An object of type <tt class="docutils literal"><span class="pre">ComponentClass</span></tt>.</li>
+<li><strong>namespace</strong> &#8211; A <cite>string</cite> specifying the name of the component in
+this components namespace.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises :</th><td class="field-body"><p class="first last"><tt class="docutils literal"><span class="pre">NineMLRuntimeException</span></tt> if there is already a subcomponent at
+the same namespace location</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This method will clone the subnode.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="nineml.abstraction_layer.component.ComponentClass.is_flat">
+<tt class="descname">is_flat</tt><big>(</big><big>)</big><a class="headerlink" href="#nineml.abstraction_layer.component.ComponentClass.is_flat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Is this component flat or does it have subcomponents?</p>
+<p>Returns a <tt class="docutils literal"><span class="pre">Boolean</span></tt> specifying whether this component is flat; i.e.
+has no subcomponent</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="nineml.abstraction_layer.component.ComponentClass.set_flattener">
+<tt class="descname">set_flattener</tt><big>(</big><em>flattener</em><big>)</big><a class="headerlink" href="#nineml.abstraction_layer.component.ComponentClass.set_flattener" title="Permalink to this definition">¶</a></dt>
+<dd><p>Specifies the flattening object used to create this component, if
+this component was flattened from a hierarchical component</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="nineml.abstraction_layer.component.ComponentClass.set_parent_model">
+<tt class="descname">set_parent_model</tt><big>(</big><em>parentmodel</em><big>)</big><a class="headerlink" href="#nineml.abstraction_layer.component.ComponentClass.set_parent_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the parent component for this component</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="nineml.abstraction_layer.component.ComponentClass.was_flattened">
+<tt class="descname">was_flattened</tt><big>(</big><big>)</big><a class="headerlink" href="#nineml.abstraction_layer.component.ComponentClass.was_flattened" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns <tt class="docutils literal"><span class="pre">True</span></tt> if this component was created by flattening another
+component</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="nineml.abstraction_layer.component.ComponentClass.write">
+<tt class="descname">write</tt><big>(</big><em>file</em>, <em>flatten=True</em><big>)</big><a class="headerlink" href="#nineml.abstraction_layer.component.ComponentClass.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Export this model to an XML file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Params file:</th><td class="field-body">A filename or fileobject</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Params flatten:</th><td class="field-body">Boolean specifying whether the component should be
+flattened before saving</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nineml.abstraction_layer.component.ComponentClass.aliases">
+<tt class="descname">aliases</tt><a class="headerlink" href="#nineml.abstraction_layer.component.ComponentClass.aliases" title="Permalink to this definition">¶</a></dt>
+<dd><p>Forwarding function to self.dynamics.aliases</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nineml.abstraction_layer.component.ComponentClass.aliases_map">
+<tt class="descname">aliases_map</tt><a class="headerlink" href="#nineml.abstraction_layer.component.ComponentClass.aliases_map" title="Permalink to this definition">¶</a></dt>
+<dd><p>Forwarding function to self.dynamics.alias_map</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nineml.abstraction_layer.component.ComponentClass.analog_ports">
+<tt class="descname">analog_ports</tt><a class="headerlink" href="#nineml.abstraction_layer.component.ComponentClass.analog_ports" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an iterator over the local <a class="reference internal" href="nineml.abstraction_layer.component.AnalogPort.html#nineml.abstraction_layer.component.AnalogPort" title="nineml.abstraction_layer.component.AnalogPort"><tt class="xref py py-class docutils literal"><span class="pre">AnalogPort</span></tt></a> objects</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nineml.abstraction_layer.component.ComponentClass.dynamics">
+<tt class="descname">dynamics</tt><a class="headerlink" href="#nineml.abstraction_layer.component.ComponentClass.dynamics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the local <a class="reference internal" href="nineml.abstraction_layer.component.Dynamics.html#nineml.abstraction_layer.component.Dynamics" title="nineml.abstraction_layer.component.Dynamics"><tt class="xref py py-class docutils literal"><span class="pre">Dynamics</span></tt></a> object</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nineml.abstraction_layer.component.ComponentClass.event_ports">
+<tt class="descname">event_ports</tt><a class="headerlink" href="#nineml.abstraction_layer.component.ComponentClass.event_ports" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an iterator over the local <a class="reference internal" href="nineml.abstraction_layer.component.EventPort.html#nineml.abstraction_layer.component.EventPort" title="nineml.abstraction_layer.component.EventPort"><tt class="xref py py-class docutils literal"><span class="pre">EventPort</span></tt></a> objects</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nineml.abstraction_layer.component.ComponentClass.flattener">
+<tt class="descname">flattener</tt><a class="headerlink" href="#nineml.abstraction_layer.component.ComponentClass.flattener" title="Permalink to this definition">¶</a></dt>
+<dd><p>If this component was made by flattening other components, return the
+<tt class="xref py py-class docutils literal"><span class="pre">ComponentFlattener</span></tt> object. This is useful for finding initial-regimes</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nineml.abstraction_layer.component.ComponentClass.name">
+<tt class="descname">name</tt><a class="headerlink" href="#nineml.abstraction_layer.component.ComponentClass.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the name of the component</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nineml.abstraction_layer.component.ComponentClass.parameters">
+<tt class="descname">parameters</tt><a class="headerlink" href="#nineml.abstraction_layer.component.ComponentClass.parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an iterator over the local <a class="reference internal" href="nineml.abstraction_layer.component.Parameter.html#nineml.abstraction_layer.component.Parameter" title="nineml.abstraction_layer.component.Parameter"><tt class="xref py py-class docutils literal"><span class="pre">Parameter</span></tt></a> objects</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nineml.abstraction_layer.component.ComponentClass.query">
+<tt class="descname">query</tt><a class="headerlink" href="#nineml.abstraction_layer.component.ComponentClass.query" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the <tt class="docutils literal"><span class="pre">ComponentQuery</span></tt> object associated with this class</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nineml.abstraction_layer.component.ComponentClass.regimes">
+<tt class="descname">regimes</tt><a class="headerlink" href="#nineml.abstraction_layer.component.ComponentClass.regimes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Forwarding function to self.dynamics.regimes</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nineml.abstraction_layer.component.ComponentClass.regimes_map">
+<tt class="descname">regimes_map</tt><a class="headerlink" href="#nineml.abstraction_layer.component.ComponentClass.regimes_map" title="Permalink to this definition">¶</a></dt>
+<dd><p>Forwarding function to self.dynamics.regimes_map</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nineml.abstraction_layer.component.ComponentClass.state_variables">
+<tt class="descname">state_variables</tt><a class="headerlink" href="#nineml.abstraction_layer.component.ComponentClass.state_variables" title="Permalink to this definition">¶</a></dt>
+<dd><p>Forwarding function to self.dynamics.state_variables</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nineml.abstraction_layer.component.ComponentClass.state_variables_map">
+<tt class="descname">state_variables_map</tt><a class="headerlink" href="#nineml.abstraction_layer.component.ComponentClass.state_variables_map" title="Permalink to this definition">¶</a></dt>
+<dd><p>Forwarding function to self.dynamics.state_variables_map</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nineml.abstraction_layer.component.ComponentClass.transitions">
+<tt class="descname">transitions</tt><a class="headerlink" href="#nineml.abstraction_layer.component.ComponentClass.transitions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Forwarding function to self.dynamics.transitions</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="nineml.abstraction_layer.component.OutputEvent.html"
+                        title="previous chapter">nineml.abstraction_layer.component.OutputEvent</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="nineml.abstraction_layer.component.NamespaceAddress.html"
+                        title="next chapter">nineml.abstraction_layer.component.NamespaceAddress</a></p>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="nineml.abstraction_layer.component.NamespaceAddress.html" title="nineml.abstraction_layer.component.NamespaceAddress"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="nineml.abstraction_layer.component.OutputEvent.html" title="nineml.abstraction_layer.component.OutputEvent"
+             >previous</a> |</li>
+        <li><a href="../../index.html">NineML Python API Alpha documentation</a> &raquo;</li>
+          <li><a href="../developers/developer.html" >Python NineML Developer Documentation</a> &raquo;</li>
+          <li><a href="../developers/al/developer.html" >Abstraction Layer</a> &raquo;</li>
+          <li><a href="component.html" >nineml.abstraction_layer.component [Components]</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Mike Hull, Eilif Muller, Andrew Davison.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1pre.
+    </div>
+  </body>
+</html>

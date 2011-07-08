@@ -1,0 +1,111 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>nineml.utility.assert_no_duplicates &mdash; NineML Python API Alpha documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     'Alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="NineML Python API Alpha documentation" href="../../index.html" />
+    <link rel="up" title="nineml.utility [Utility Functions]" href="utility_function.html" />
+    <link rel="next" title="nineml.utility.invert_dictionary" href="nineml.utility.invert_dictionary.html" />
+    <link rel="prev" title="nineml.utility.filter_discrete_types" href="nineml.utility.filter_discrete_types.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="nineml.utility.invert_dictionary.html" title="nineml.utility.invert_dictionary"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="nineml.utility.filter_discrete_types.html" title="nineml.utility.filter_discrete_types"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">NineML Python API Alpha documentation</a> &raquo;</li>
+          <li><a href="../developers/developer.html" >Python NineML Developer Documentation</a> &raquo;</li>
+          <li><a href="../developers/utility/developer.html" >Utility Functions</a> &raquo;</li>
+          <li><a href="utility_function.html" accesskey="U">nineml.utility [Utility Functions]</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="nineml-utility-assert-no-duplicates">
+<h1>nineml.utility.assert_no_duplicates<a class="headerlink" href="#nineml-utility-assert-no-duplicates" title="Permalink to this headline">¶</a></h1>
+<dl class="staticmethod">
+<dt id="nineml.utility.assert_no_duplicates">
+<em class="property">static </em><tt class="descclassname">utility.</tt><tt class="descname">assert_no_duplicates</tt><big>(</big><em>lst</em>, <em>error_func=None</em><big>)</big><a class="headerlink" href="#nineml.utility.assert_no_duplicates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check for duplicates in a sequence.</p>
+<p>This function checks that a list contains no duplicates, by casting the list
+to a set and comparing the lengths. (This means that we cannot compare
+sequences containing unhashable types, like dictionaries and lists).</p>
+<p>It raises an <cite>NineMLRuntimeError</cite> if the lengths are not equal.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="nineml.utility.filter_discrete_types.html"
+                        title="previous chapter">nineml.utility.filter_discrete_types</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="nineml.utility.invert_dictionary.html"
+                        title="next chapter">nineml.utility.invert_dictionary</a></p>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="nineml.utility.invert_dictionary.html" title="nineml.utility.invert_dictionary"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="nineml.utility.filter_discrete_types.html" title="nineml.utility.filter_discrete_types"
+             >previous</a> |</li>
+        <li><a href="../../index.html">NineML Python API Alpha documentation</a> &raquo;</li>
+          <li><a href="../developers/developer.html" >Python NineML Developer Documentation</a> &raquo;</li>
+          <li><a href="../developers/utility/developer.html" >Utility Functions</a> &raquo;</li>
+          <li><a href="utility_function.html" >nineml.utility [Utility Functions]</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Mike Hull, Eilif Muller, Andrew Davison.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1pre.
+    </div>
+  </body>
+</html>

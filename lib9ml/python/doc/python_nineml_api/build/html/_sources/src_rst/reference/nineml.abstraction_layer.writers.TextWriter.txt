@@ -1,0 +1,22 @@
+nineml.abstraction_layer.writers.TextWriter
+===========================================
+
+.. currentmodule:: nineml.abstraction_layer.writers
+
+.. autoclass:: TextWriter
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~TextWriter.write
+   
+   
+
+   
+   
+   

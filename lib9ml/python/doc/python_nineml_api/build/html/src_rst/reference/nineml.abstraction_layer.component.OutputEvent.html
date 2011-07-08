@@ -1,0 +1,166 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>nineml.abstraction_layer.component.OutputEvent &mdash; NineML Python API Alpha documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     'Alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="NineML Python API Alpha documentation" href="../../index.html" />
+    <link rel="up" title="nineml.abstraction_layer.component [Components]" href="component.html" />
+    <link rel="next" title="nineml.abstraction_layer.readers" href="readers.html" />
+    <link rel="prev" title="nineml.abstraction_layer.component.EventPort" href="nineml.abstraction_layer.component.EventPort.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="readers.html" title="nineml.abstraction_layer.readers"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="nineml.abstraction_layer.component.EventPort.html" title="nineml.abstraction_layer.component.EventPort"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">NineML Python API Alpha documentation</a> &raquo;</li>
+          <li><a href="../developers/developer.html" >Python NineML Developer Documentation</a> &raquo;</li>
+          <li><a href="../developers/al/developer.html" >Abstraction Layer</a> &raquo;</li>
+          <li><a href="component.html" accesskey="U">nineml.abstraction_layer.component [Components]</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="nineml-abstraction-layer-component-outputevent">
+<h1>nineml.abstraction_layer.component.OutputEvent<a class="headerlink" href="#nineml-abstraction-layer-component-outputevent" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="nineml.abstraction_layer.component.OutputEvent">
+<em class="property">class </em><tt class="descclassname">nineml.abstraction_layer.component.</tt><tt class="descname">OutputEvent</tt><big>(</big><em>port_name</em><big>)</big><a class="headerlink" href="#nineml.abstraction_layer.component.OutputEvent" title="Permalink to this definition">¶</a></dt>
+<dd><p>OutputEvent</p>
+<p>OutputEvents can occur during transitions, and correspond to 
+an event being generated on the relevant EventPort port in 
+the component.</p>
+<dl class="method">
+<dt id="nineml.abstraction_layer.component.OutputEvent.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>port_name</em><big>)</big><a class="headerlink" href="#nineml.abstraction_layer.component.OutputEvent.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>OutputEvent Constructor</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>port</strong> &#8211; The name of the output EventPort that should 
+transmit an event. An <cite>EventPort</cite> with a mode of &#8216;send&#8217; must exist
+with a corresponding name in the component, otherwise a 
+<tt class="docutils literal"><span class="pre">NineMLRuntimeException</span></tt> will be raised.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<p class="rubric">Methods</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#nineml.abstraction_layer.component.OutputEvent.__init__" title="nineml.abstraction_layer.component.OutputEvent.__init__"><tt class="xref py py-obj docutils literal"><span class="pre">__init__</span></tt></a>(port_name)</td>
+<td>OutputEvent Constructor</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#nineml.abstraction_layer.component.OutputEvent.accept_visitor" title="nineml.abstraction_layer.component.OutputEvent.accept_visitor"><tt class="xref py py-obj docutils literal"><span class="pre">accept_visitor</span></tt></a>(visitor,&nbsp;**kwargs)</td>
+<td>link to something about visitation.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#nineml.abstraction_layer.component.OutputEvent.port_name" title="nineml.abstraction_layer.component.OutputEvent.port_name"><tt class="xref py py-obj docutils literal"><span class="pre">port_name</span></tt></a></td>
+<td>Returns the name of the port</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="nineml.abstraction_layer.component.OutputEvent.accept_visitor">
+<tt class="descname">accept_visitor</tt><big>(</big><em>visitor</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#nineml.abstraction_layer.component.OutputEvent.accept_visitor" title="Permalink to this definition">¶</a></dt>
+<dd><p>link to something about visitation.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nineml.abstraction_layer.component.OutputEvent.port_name">
+<tt class="descname">port_name</tt><a class="headerlink" href="#nineml.abstraction_layer.component.OutputEvent.port_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the name of the port</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="nineml.abstraction_layer.component.EventPort.html"
+                        title="previous chapter">nineml.abstraction_layer.component.EventPort</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="readers.html"
+                        title="next chapter">nineml.abstraction_layer.readers</a></p>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="readers.html" title="nineml.abstraction_layer.readers"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="nineml.abstraction_layer.component.EventPort.html" title="nineml.abstraction_layer.component.EventPort"
+             >previous</a> |</li>
+        <li><a href="../../index.html">NineML Python API Alpha documentation</a> &raquo;</li>
+          <li><a href="../developers/developer.html" >Python NineML Developer Documentation</a> &raquo;</li>
+          <li><a href="../developers/al/developer.html" >Abstraction Layer</a> &raquo;</li>
+          <li><a href="component.html" >nineml.abstraction_layer.component [Components]</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Mike Hull, Eilif Muller, Andrew Davison.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1pre.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,36 @@
+nineml.abstraction_layer.component.ComponentQueryer
+===================================================
+
+.. currentmodule:: nineml.abstraction_layer.component
+
+.. autoclass:: ComponentQueryer
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~ComponentQueryer.__init__
+      ~ComponentQueryer.get_fully_qualified_port_connections
+      ~ComponentQueryer.regime
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~ComponentQueryer.analog_recv_ports
+      ~ComponentQueryer.analog_reduce_ports
+      ~ComponentQueryer.analog_send_ports
+      ~ComponentQueryer.event_recv_ports
+      ~ComponentQueryer.event_send_ports
+      ~ComponentQueryer.ports
+      ~ComponentQueryer.recurse_all_components
+   
+   

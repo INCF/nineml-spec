@@ -1,0 +1,123 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>nineml.utility.filter_expect_single &mdash; NineML Python API Alpha documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     'Alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="NineML Python API Alpha documentation" href="../../index.html" />
+    <link rel="up" title="nineml.utility [Utility Functions]" href="utility_function.html" />
+    <link rel="next" title="nineml.utility.filter_by_type" href="nineml.utility.filter_by_type.html" />
+    <link rel="prev" title="nineml.utility.expect_single" href="nineml.utility.expect_single.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="nineml.utility.filter_by_type.html" title="nineml.utility.filter_by_type"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="nineml.utility.expect_single.html" title="nineml.utility.expect_single"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">NineML Python API Alpha documentation</a> &raquo;</li>
+          <li><a href="../developers/developer.html" >Python NineML Developer Documentation</a> &raquo;</li>
+          <li><a href="../developers/utility/developer.html" >Utility Functions</a> &raquo;</li>
+          <li><a href="utility_function.html" accesskey="U">nineml.utility [Utility Functions]</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="nineml-utility-filter-expect-single">
+<h1>nineml.utility.filter_expect_single<a class="headerlink" href="#nineml-utility-filter-expect-single" title="Permalink to this headline">¶</a></h1>
+<dl class="staticmethod">
+<dt id="nineml.utility.filter_expect_single">
+<em class="property">static </em><tt class="descclassname">utility.</tt><tt class="descname">filter_expect_single</tt><big>(</big><em>lst</em>, <em>func=None</em>, <em>error_func=None</em><big>)</big><a class="headerlink" href="#nineml.utility.filter_expect_single" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find a single element matching a predicate in a list.</p>
+<p>This is a syntactic-sugar function <tt class="docutils literal"><span class="pre">_filter</span></tt> and <tt class="docutils literal"><span class="pre">expect_single</span></tt>
+in a single call.</p>
+<blockquote>
+<div><p>Returns:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">expect_single</span><span class="p">(</span> <span class="n">_filter</span><span class="p">(</span><span class="n">lst</span><span class="p">,</span> <span class="n">func</span><span class="p">),</span> <span class="n">error_func</span> <span class="p">)</span>
+</pre></div>
+</div>
+<p>This is useful when we want to find an item in a sequence with a certain 
+property, and expect there to be only one.</p>
+<p>Examples:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">find_smith</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;Smith&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">filter_expect_single</span><span class="p">(</span> <span class="p">[</span><span class="s">&#39;John Smith&#39;</span><span class="p">,</span><span class="s">&#39;Tim Jones&#39;</span><span class="p">],</span> <span class="n">func</span><span class="o">=</span><span class="n">find_smith</span> <span class="p">)</span>  
+<span class="go">&#39;John Smith&#39;</span>
+</pre></div>
+</div>
+</div></blockquote>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="nineml.utility.expect_single.html"
+                        title="previous chapter">nineml.utility.expect_single</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="nineml.utility.filter_by_type.html"
+                        title="next chapter">nineml.utility.filter_by_type</a></p>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="nineml.utility.filter_by_type.html" title="nineml.utility.filter_by_type"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="nineml.utility.expect_single.html" title="nineml.utility.expect_single"
+             >previous</a> |</li>
+        <li><a href="../../index.html">NineML Python API Alpha documentation</a> &raquo;</li>
+          <li><a href="../developers/developer.html" >Python NineML Developer Documentation</a> &raquo;</li>
+          <li><a href="../developers/utility/developer.html" >Utility Functions</a> &raquo;</li>
+          <li><a href="utility_function.html" >nineml.utility [Utility Functions]</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Mike Hull, Eilif Muller, Andrew Davison.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1pre.
+    </div>
+  </body>
+</html>
