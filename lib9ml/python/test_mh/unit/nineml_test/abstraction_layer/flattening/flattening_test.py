@@ -443,7 +443,7 @@ class ComponentFlattener_test(unittest.TestCase):
 
         d = ComponentClass(
                 name='D',
-                aliases=['D1:=dp1', 'D2 := dIn1', 'D3 := SV1'],
+                aliases=['D1:=dp1', 'D2 := dIn1 + dp2', 'D3 := SV1'],
                 regimes = [
                     Regime(
                         'dSV1/dt = -SV1/dp2',
@@ -468,12 +468,10 @@ class ComponentFlattener_test(unittest.TestCase):
 
         a = ComponentClass( name='A',
                 subnodes = {'b':b, 'c':c},
-                portconnections = [ ('b.c1.C1','b.c1.cIn2'),('b.c1.C1','b.c2.cIn1'),('b.c1.C2','b.d.dIn2') ]
+                portconnections = [ ('b.c1.C1','b.c1.cIn2'),('b.c1.C1','b.c2.cIn1'),('b.c1.C2','b.d.dIn1') ]
                 )
 
         a_flat = nineml.al.flattening.flatten(a)
-        print 'Flattened'
-        print
 
         # Name
         self.assertEqual( a_flat.name, 'A')
@@ -594,7 +592,7 @@ class ComponentFlattener_test(unittest.TestCase):
                 set(a_flat.query.analog_ports_map.keys()),
                 set(['b_c1_C1','b_c1_C2',
                      'b_c2_C1','b_c2_C2',
-                     'b_d_dIn1','b_d_D1','b_d_D2',
+                     'b_d_dIn2','b_d_D1','b_d_D2',
                      'c_cIn1','c_cIn2','c_C1','c_C2']))
 
         self.assertEqual( 
@@ -625,7 +623,7 @@ class ComponentFlattener_test(unittest.TestCase):
                 set( ['b_c1_cp1'] ) )
 
         self.assertEqual( 
-                set( a_flat.aliases_map['b_c2_C2'].rhs_atoms ),
+                set( a_flat.aliases_map['b_c1_C2'].rhs_atoms ),
                 set( ['b_c2_cp1'] ) )
 
         self.assertEqual( 
@@ -639,6 +637,6 @@ class ComponentFlattener_test(unittest.TestCase):
 
         self.assertEqual( 
                 set( a_flat.aliases_map['b_d_D2'].rhs_atoms ),
-                set( ['b_c2_cp1'] ) )
+                set( ['b_c2_cp1','b_d_dp2'] ) )
 
 
