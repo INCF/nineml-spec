@@ -34,7 +34,8 @@ class ComponentFlattener(object):
         # Is our component already flat??
         if model.is_flat():
             self.reducedcomponent = ClonerVisitor().visit( model )
-            self.reducedcomponent.set_flattener( model.flattener )
+            if model.flattener:
+                self.reducedcomponent.set_flattener( model.flattener )
             return
 
         # New components name
@@ -62,7 +63,7 @@ class ComponentFlattener(object):
     def get_new_regime(self, old_regime_string ):
         """ 
         for example:
-        old_regime_string = /iaf:subthresholdregime /cobaInhib:cobadefaultregime /cobaExcit:cobadefaultregime'
+        old_regime_string = iaf:subthresholdregime cobaInhib:cobadefaultregime cobaExcit:cobadefaultregime'
         """
 
         # Lets create a dictionary that maps 'NamespaceAddress' to regime name
@@ -77,15 +78,17 @@ class ComponentFlattener(object):
         for c in self.componentswithregimes:
             comp_ns = c.get_node_addr()
             if not comp_ns in ns_regimename:
-                err = 'Looking for a regime in namespace: %s, but not found.' %str(comp_ns)
-                err = '\nSpecified String: %s'% old_regime_string
+                err =  'Looking for a regime in namespace: %s, but not found.' %str(comp_ns)
+                err += '\nNamespaces: %s'% ','.join([str(ns) for ns in  ns_regimename.keys()])
+                err += '\nSpecified String: %s'% old_regime_string
+                raise nineml.exceptions.NineMLRuntimeError(err)
             target_regime_name = ns_regimename[comp_ns]
             
             regime_map = dict( [ (r.name,r) for r in c.regimes] )
             if not target_regime_name in regime_map:
                 err =  'Namespace has no regime named: %s'
                 err += '\nRegimes: %s'%(str(regime_map.keys()))
-                raise NineMLRuntimeError(err)
+                raise nineml.exceptions.NineMLRuntimeError(err)
 
             target_regime_tuple.append( regime_map[target_regime_name] )
 

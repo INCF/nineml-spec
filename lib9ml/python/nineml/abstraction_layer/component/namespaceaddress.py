@@ -45,7 +45,10 @@ class NamespaceAddress(object):
 
     def __init__(self, loc):
         if isinstance(loc, basestring):
-            self.loctuple = tuple( loc.split('.') )
+            if '.' in loc:
+                self.loctuple = tuple( loc.split('.') )
+            else:
+                self.loctuple = (loc), 
         elif isinstance(loc, tuple):
             self.loctuple = loc
         elif isinstance(loc, NamespaceAddress):
@@ -67,8 +70,9 @@ class NamespaceAddress(object):
         return self.loctuple == rhs.loctuple
 
 
-    def __repr__(self):
-        return "NameSpaceAddress: '" + "/" + "/".join( self.loctuple) + "/'"
+    def __str__(self):
+        print self.loctuple
+        return "<NameSpaceAddress: '" + "/" + "/".join( self.loctuple) + "/'>"
 
 
     def is_root_namespace(self):
