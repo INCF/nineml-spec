@@ -7,6 +7,8 @@ from itertools import chain
 from nineml.utility import filter_expect_single
 
 
+
+
 __all__ = ['ComponentQueryer']
 
 class ComponentQueryer(object):
@@ -80,7 +82,7 @@ class ComponentQueryer(object):
     def get_fully_qualified_port_connections(self):
         """Used by the flattening code.
         
-        This method returns a d list of tuples of the 
+        This method returns a list of tuples of the 
         the fully-qualified port connections.
         For example,
         [("a.b.C","d.e.F"),("g.h.I","j.k.L"), ..., ("u.W","x.y.Z") ]

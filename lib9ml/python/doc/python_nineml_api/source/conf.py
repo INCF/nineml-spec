@@ -301,6 +301,33 @@ rst_prolog = """
 
 
 .. |COMPONENTCLASS| replace:: :class:`~nineml.abstraction_layer.component.ComponentClass`
+.. |Alias| replace:: :class:`~nineml.abstraction_layer.component.Alias`
+.. |TimeDerivative| replace:: :class:`~nineml.abstraction_layer.component.TimeDerivative`
+.. |AnalogPort| replace:: :class:`~nineml.abstraction_layer.component.AnalogPort`
+.. |StateAssignment| replace:: :class:`~nineml.abstraction_layer.component.StateAssignment`
+.. |Condition| replace:: :class:`~nineml.abstraction_layer.component.Condition`
+.. |StateVariable| replace:: :class:`~nineml.abstraction_layer.component.StateVariable`
+.. |EventPort| replace:: :class:`~nineml.abstraction_layer.component.EventPort`
+.. |Parameter| replace:: :class:`~nineml.abstraction_layer.component.Parameter`
+.. |NamespaceAddress| replace:: :class:`~nineml.abstraction_layer.component.NamespaceAddress`
+.. |Dynamics| replace:: :class:`~nineml.abstraction_layer.component.Dynamics`
+
+
+.. |ComponentFlattener| replace:: :class:`~nineml.abstraction_layer.flattening.ComponentFlattener`
+
+
+.. |Aliases| replace:: :class:`Aliases <nineml.abstraction_layer.component.Alias>`
+.. |TimeDerivatives| replace:: :class:`TimeDerivatives <nineml.abstraction_layer.component.TimeDerivative>`
+.. |AnalogPorts| replace:: :class:`AnalogPorts <nineml.abstraction_layer.component.AnalogPort>`
+.. |StateAssignments| replace:: :class:`StateAssignments <nineml.abstraction_layer.component.StateAssignment>`
+.. |Conditions| replace:: :class:`Conditions <nineml.abstraction_layer.component.Condition>`
+.. |StateVariables| replace:: :class:`StateVariables <nineml.abstraction_layer.component.StateVariable>`
+.. |EventPorts| replace:: :class:`EventPorts <nineml.abstraction_layer.component.EventPort>`
+.. |Parameters| replace:: :class:`Parameters <nineml.abstraction_layer.component.Parameter>`
+.. |NamespaceAddresses| replace:: :class:`NamespaceAddresses <nineml.abstraction_layer.component.NamespaceAddress>`
+
+
+
 """
 
 

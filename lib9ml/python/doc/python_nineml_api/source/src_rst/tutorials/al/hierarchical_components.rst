@@ -22,8 +22,8 @@ connectivity.
 
 Building larger components out of smaller components has several advantages:
     
-    * We can define components in a reuseable way. I.e., we can write the iaf
-        subcomponent once, then reuse it accross multiple components.
+    * We can define components in a reusable way. I.e., we can write the iaf
+        subcomponent once, then reuse it across multiple components.
     * We can isolated unrelated variables; reducing the chance of a typo
         producing a bug or variable collisions.
 
@@ -101,13 +101,13 @@ we create the component, we specify the *namespace* of each subcomponent, which
 allows us to reference them in the future.
 
 We also need to specify that the voltage send port from the iaf needs to be
-connected to the voltage recieve ports of the synapse. Similarly we need to
+connected to the voltage receive ports of the synapse. Similarly we need to
 connect the current port from the synapses into the current reduce port on the
 iaf neuron. These connections are shown in red on the diagram, and correspond to
 the ``connect_port`` method calls in the code.
 
 
-Diagramatically:
+In a diagram:
 
 .. image:: /_static/images/build/iaf_coba2_component_im.png
 
@@ -137,7 +137,7 @@ Flattening Components
 
 
 Provided the number of regimes and subcomponents is relatively low; it is
-possible to take a hierachical component, and flatten it into a single component
+possible to take a hierarchical component, and flatten it into a single component
 with no subcomponents. This can be done using the methods in the  ``ComponentFlattener`` class,
 or the wrapper function ``flatten``. This flattening takes the cross product of
 all the regimes in all the subcomponents, then works out the relevant

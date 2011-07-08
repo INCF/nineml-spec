@@ -24,7 +24,7 @@ class Expression(object):
 
     """ This is a base class for Expressions and Conditionals which provides
     the basic interface for parsing, yielding of python functions,
-    C equivalents, alias and name substitution """
+    C equivalents, name substitution """
 
     def __init__(self, rhs):
         self._rhs = None
@@ -68,7 +68,7 @@ class Expression(object):
     @property
     def rhs_atoms (self):
         """Returns an iterator over all the variable names and mathematical
-        functions on the rhs function. This does not include defined
+        functions on the RHS function. This does not include defined
         mathematical symbols such as ``pi`` and ``e``, but does include
         functions such as ``sin`` and ``log`` """
 
@@ -97,7 +97,7 @@ class Expression(object):
 
     @property
     def rhs_missing_functions(self):
-        """ yield names of functions in the rhs which are not in the math
+        """ yield names of functions in the RHS which are not in the math
         namespace"""
         raise NineMLRuntimeError()
         from nineml.maths import is_builtin_math_function
@@ -110,7 +110,7 @@ class Expression(object):
 
     
     def rhs_has_missing_functions(self):
-        """ returns True if at least 1 function on the rhs is not in the math
+        """ returns True if at least 1 function on the RHS is not in the math
         namespace"""
         from nineml.maths import is_builtin_math_function
         for func in self.rhs_funcs:
@@ -228,9 +228,9 @@ class Alias(ExpressionWithSimpleLHS, RegimeElement):
 
     During code generation, we typically call ``ComponentClass.backsub_all()``.
     This method first expands each alias in terms of other aliases, such that
-    each alias depends only on parameters, statevariables and input analogport.
-    Next, it expands any alias definitions within time-derivatives,
-    state-assignments, conditionals and output analog-ports.
+    each alias depends only on Parameters, StateVariables and *incoming* AnalogPort.
+    Next, it expands any alias definitions within TimeDerivatives,
+    StateAssignments, Conditions and output AnalogPorts.
 
     
 
@@ -239,15 +239,15 @@ class Alias(ExpressionWithSimpleLHS, RegimeElement):
     def __init__(self, lhs=None, rhs=None):
         """ Constructor for an Alias 
 
-        :param lhs: A `string` specifying the left-hand-side, i.e. the alias
+        :param lhs: A `string` specifying the left-hand-side, i.e. the Alias
             name. This should be a single `symbol`.
         :param rhs: A `string` specifying the right-hand-side. This should be a
-            mathematical expression, expressed in terms of other aliases,
-            state-variables, parameters and input-analogports local to the
-            component.
+            mathematical expression, expressed in terms of other Aliases,
+            StateVariables, Parameters and *incoming* AnalogPorts local to the
+            Component.
         
         """
-
+        RegimeElement.__init__(self)
         ExpressionWithSimpleLHS.__init__(self, lhs, rhs)
 
     def __repr__(self):
@@ -288,6 +288,7 @@ class StateAssignment(ExpressionWithSimpleLHS, RegimeElement):
             this assignment.
         
         """
+        RegimeElement.__init__(self)
         ExpressionWithSimpleLHS.__init__(self, lhs=lhs, rhs=rhs)
 
     def accept_visitor(self, visitor, **kwargs):
@@ -317,7 +318,7 @@ class ODE(ExpressionWithLHS, RegimeElement):
     """
 
     def __init__(self, dependent_variable, independent_variable, rhs): 
-
+        RegimeElement.__init__(self)
         ExpressionWithLHS.__init__(self, rhs)
 
         self._dependent_variable = dependent_variable

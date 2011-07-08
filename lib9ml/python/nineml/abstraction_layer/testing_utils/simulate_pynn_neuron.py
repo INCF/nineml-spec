@@ -5,7 +5,7 @@ from os.path import abspath, realpath, join
 
 
 def std_pynn_simulation( test_component, parameters, initial_values,
-        synapse_components, records):
+        synapse_components, records, plot=True):
 
     import nineml
     nineml.utility.LocationMgr.StdAppendToPath()
@@ -39,31 +39,29 @@ def std_pynn_simulation( test_component, parameters, initial_values,
 
     cells = sim.Population(1, celltype_cls, parameters)
 
-# Set Initial Values:
+    # Set Initial Values:
     for state, state_initial_value in initial_values.iteritems():
         cells.initialize( state, state_initial_value )
 
 
-# For each synapse type, create a spike source:
-    input = sim.Population(len(synapse_components), sim.SpikeSourcePoisson, {'rate': 100})
+    # For each synapse type, create a spike source:
+    if synapse_components:
+        input = sim.Population(len(synapse_components), sim.SpikeSourcePoisson, {'rate': 100})
+        connector = sim.OneToOneConnector(weights=1.0, delays=0.5)
 
-    connector = sim.OneToOneConnector(weights=1.0, delays=0.5)
+        conn = []
+        for i,(ns, weight_connector) in enumerate(synapse_components):
+            proj = sim.Projection(input[i:i+1], cells, connector, target=ns),
+            conn.append( proj )
 
 
-
-
-    conn = []
-    for i,(ns, weight_connector) in enumerate(synapse_components):
-        proj = sim.Projection(input[i:i+1], cells, connector, target=ns),
-        conn.append( proj )
-
-# Setup the Records:
+    # Setup the Records:
     for record in records:
         cells._record(record.what)
 
     cells.record()
 
-#Run the simulation:
+    #Run the simulation:
     sim.run(100.0)
 
 
@@ -71,11 +69,11 @@ def std_pynn_simulation( test_component, parameters, initial_values,
         assert False
 
 
-# Write the Results to a file:
+    # Write the Results to a file:
     for record in records:
         cells.recorders[record.what].write("Results/nineml_%s"%record.what, filter=[cells[0]])
 
-# Plot the values:
+    # Plot the values:
 
     t = cells.recorders[ records[0].what ].get()[:,1]
 
@@ -83,33 +81,35 @@ def std_pynn_simulation( test_component, parameters, initial_values,
     for record in records:
         result_traces[ record.what ] = cells.recorders[ record.what ].get()[:,2]
 
-# Create a list of the tags:
+    # Create a list of the tags:
     tags = []
     for record in records:
         if not record.tag in tags:
             tags.append( record.tag )
 
-# Plot the graphs:
-    import pylab
-    nGraphs = len(tags)
-    for graphIndex, tag in enumerate(tags):
-        pylab.subplot(nGraphs,1, graphIndex+1)
-        
-        for r in records:
-            if r.tag != tag:
-                continue
-            pylab.plot(t, result_traces[r.what], label=r.label)
-        
-        pylab.ylabel(tag)
-        pylab.legend()
+    # Plot the graphs:
+    if plot:
+        import pylab
+        nGraphs = len(tags)
+        for graphIndex, tag in enumerate(tags):
+            pylab.subplot(nGraphs,1, graphIndex+1)
+            
+            for r in records:
+                if r.tag != tag:
+                    continue
+                pylab.plot(t, result_traces[r.what], label=r.label)
+            
+            pylab.ylabel(tag)
+            pylab.legend()
 
-# Add the X axis to the last plot:
-    pylab.xlabel('t [ms]')
+        # Add the X axis to the last plot:
+        pylab.xlabel('t [ms]')
 
-
-
-
-    pylab.suptitle("From Tree-Model Pathway")
-    pylab.show()
+        pylab.suptitle("From Tree-Model Pathway")
+        pylab.show()
 
     sim.end()
+
+
+
+    return t, result_traces

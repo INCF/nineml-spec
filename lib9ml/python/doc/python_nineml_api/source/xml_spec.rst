@@ -295,11 +295,11 @@ Child Elements:
 
     <StateAssignment>
 
-Used in transitions to assign a value to a statevariable during a transition. 
+Used in transitions to assign a value to a state-variable during a transition. 
 
 .. note::
 
-    'Inplace' operations arenot supported and should be written out as in full: :math:`x+=z \rightarrow x=x+z`
+    'In-place' operations are not supported and should be written out as in full: :math:`x+=z \rightarrow x=x+z`
 
 
 Attributes: 
@@ -322,7 +322,7 @@ Used in transitions to emit an event.
 
 Attributes: 
 
-* port_name [Required] (The name of the eventport to send an event over)
+* port_name [Required] (The name of the EventPort to send an event over)
 
 
 Child Elements: ``None``

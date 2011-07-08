@@ -21,7 +21,7 @@ class NamespaceAddress(object):
 
         This method take all the arguments supplied, converts each one into a
         namespace object, then, produces a new namespace object which is the
-        concatentation of all the arugements namespaces.
+        concatenation of all the arguments' namespaces.
         
         For example:
 

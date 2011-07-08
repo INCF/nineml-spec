@@ -39,7 +39,7 @@ back-end, it will automatically create the relevant module.
     
     See example XX for more about how to use NineML with NEURON.
 
-The interface to NineML is consistent accross back-ends; using with pyNN/Neuron
+The interface to NineML is consistent across back-ends; using with pyNN/Neuron
 or pyNN/NEST, the code will look like this ::
     
     

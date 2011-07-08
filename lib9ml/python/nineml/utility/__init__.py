@@ -251,7 +251,7 @@ def assert_no_duplicates(lst, error_func=None):
 
 def invert_dictionary(dct):
     """Takes a dictionary mapping (keys => values) and returns a 
-    new dictionry mapping (values => keys).
+    new dictionary mapping (values => keys).
     i.e. given a dictionary::
 
         {k1:v1, k2:v2, k3:v3, ...} 
@@ -273,7 +273,7 @@ def invert_dictionary(dct):
 
 
 def flatten_first_level( nested_list ):
-    """Flattens the first level of an iterable, ie
+    """Flattens the first level of an iterable, i.e.
         
         >>> flatten_first_level( [ ['This','is'],['a','short'],['phrase'] ] ) #doctest: +NORMALIZE_WHITESPACE 
         ['This', 'is', 'a', 'short', 'phrase'] 

@@ -3,28 +3,28 @@
 import nineml
 #from nineml.helpers import curry
 #from nineml.helpers import curry
-from nineml.exceptions import NineMLRuntimeError
+#from nineml.exceptions import NineMLRuntimeError
 
 
 class Port(object):
-    """ Base class for EventPort and AnalogPort.
+    """ Base class for |EventPort| and |AnalogPort|.
     
     In general, a port has a ``name``, which can be used to reference it, 
-    and a ``mode``, which specifies whether it sends or recieves information. 
+    and a ``mode``, which specifies whether it sends or receives information. 
     
-    Generally, a send port can be connected to recieve port to allow different
+    Generally, a send port can be connected to receive port to allow different
     components to communicate. 
     
-    In the case of an ``AnalogPort``, we have three
+    In the case of an |AnalogPort|, we have three
     modes, ``send``, ``recv`` and ``reduce``. ``send`` ports can be connected to
     any number of ``recv`` ports, but each ``recv`` port can only be connected
-    to a single ``send`` port. In order to collect analog input from several
+    to a single ``send`` port. In order to collect analog inputs from several
     ``send`` ports into a single port, we use a ``reduce`` port. A ``reduce``
     port also requires an additional parameter, ``op``, which specifies how to
-    combine the information from the ports, for example, by adding thier values
+    combine the information from the ports, for example, by adding their values
     together, `+`. 
     
-    For example, if we had several Hodgekin-Huxley channels on a neuron, we
+    For example, if we had several Hodgkin-Huxley channels on a neuron, we
     would want each one to have a ``send`` port, ``i`` containing the current
     passing through that type of channel. Then, we would have a single
     ``reduce`` port, ``I_in`` for example, with ``op='+'``, which would combine
@@ -58,11 +58,6 @@ class Port(object):
         self._mode = mode
         self._reduce_op = reduce_op
 
-        #from util import MathUtil
-        #if not MathUtil.is_single_symbol(name):
-        #    err = 'Invalid Port Name: %s'%name
-        #    raise nineml.exceptions.NineMLRuntimeError(err)
-
         
         if self._mode not in Port._modes:
             err = ("%s('%s')"+ "specified undefined mode: '%s'") %\
@@ -92,7 +87,7 @@ class Port(object):
     
     @property
     def reduce_op(self):
-        """The reduction operation of the port, if it is a 'reduce' port"""
+        """The reduce operation of the port, if it is a 'reduce' port"""
         return self._reduce_op
 
 
@@ -103,27 +98,22 @@ class Port(object):
                     (classstring, self.name, self.mode, opstr)
 
     def is_incoming(self):
-        """Returns True if the port's mode is 'recv' or 'reduce' """
+        """Returns ``True`` if the port's mode is 'recv' or 'reduce' """
         return self.mode in ('recv', 'reduce')
 
     def is_outgoing(self):
-        """Returns True if the port's mode is 'send' """
+        """Returns ``True`` if the port's mode is 'send' """
         return not self.is_incoming()
                    
-#    @property
-#    def symbol(self):
-#        """Deprecated, do not use"""
-#        assert False
-#        return self._name
 
 
 
 
 
 class AnalogPort(Port):
-    """Analog Port
+    """AnalogPort
     
-    An analog port represents a continuous input or output to/from a component.
+    An |AnalogPort| represents a continuous input or output to/from a Component.
     For example, this could be the membrane-voltage into a synapse component, or
     the current provided by a ion-channel. 
 
@@ -134,11 +124,11 @@ class AnalogPort(Port):
 
 
 class EventPort(Port):
-    """Event Port
+    """EventPort
     
-    An event port represents a port that can transmit and recieve discrete events at points
+    An |EventPort| is a port that can transmit and receive discrete events at points
     in time. For example, an integrate-and-fire could 'send' events to notify
-    other components that it had fired; or synapses could recieve events to
+    other components that it had fired; or synapses could receive events to
     notify them to provide current to a post-synaptic neuron. 
 
     """

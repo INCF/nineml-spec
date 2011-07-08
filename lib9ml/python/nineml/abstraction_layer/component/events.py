@@ -4,7 +4,7 @@ class OutputEvent(object):
     """OutputEvent
 
     OutputEvents can occur during transitions, and correspond to 
-    an event beng generated on the relevant EventPort port in 
+    an event being generated on the relevant EventPort port in 
     the component.
     """
 

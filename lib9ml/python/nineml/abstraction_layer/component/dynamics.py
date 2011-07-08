@@ -18,22 +18,22 @@ class Transition(object):
 
     def __init__(self, state_assignments=None, event_outputs=None, 
                  target_regime_name=None):
-        """Abstract class representing a transition from one ``Regime`` to
+        """Abstract class representing a transition from one |Regime| to
         another.
 
-        ``Transition`` objects are not created directly, but via the subclasses
-        ``OnEvent`` and ``OnCondition``.
+        |Transition| objects are not created directly, but via the subclasses
+        |OnEvent| and |OnCondition|.
 
-        :param state_assignments: A list of the state-assignements performed
+        :param state_assignments: A list of the state-assignments performed
             when this transition occurs. Objects in this list are either
-            `string` (e.g A = A+13) or `StateAssignment` objects.
-        :param event_outputs: A list of ``OutputEvent`` objects emitted when
+            `string` (e.g A = A+13) or |StateAssignment| objects.
+        :param event_outputs: A list of |OutputEvent| objects emitted when
             this transition occurs.
         :param target_regime_name: The name of the regime to go into after this
             transition.  ``None`` implies staying in the same regime. This has
             to be specified as a string, not the object, because in general the
-            ``Regime`` object is not yet constructed. This is automatically
-            resolved by the ``ComponentClass`` in
+            |Regime| object is not yet constructed. This is automatically
+            resolved by the |ComponentClass| in
             ``_ResolveTransitionRegimeNames()`` during construction.
 
 
@@ -73,7 +73,7 @@ class Transition(object):
         Used internally by the ComponentClass objects after all objects
         have be constructed, in the ``_ResolveTransitionRegimeNames()`` method.
         This is because when we build Transitions, the Regimes that they refer
-        to generally are not build yet, so are refered to by strings. This
+        to generally are not build yet, so are referred to by strings. This
         method is used to set the source ``Regime`` object. We check that the name
         of the object set is the same as that previously expected.
         """
@@ -149,7 +149,7 @@ class Transition(object):
 
         .. note::
         
-            This method will only be available after the ComponentClass
+            This method will only be available after the |ComponentClass|
             containing this transition has been built. See ``set_source_regime``
         """
         assert self._source_regime
@@ -158,13 +158,13 @@ class Transition(object):
 
     @property
     def state_assignments(self):
-        """An ordered list of StateAssignments that happen when this
+        """An ordered list of |StateAssignments| that happen when this
         transitions occurs"""
         return self._state_assignments
     
     @property
     def event_outputs(self):
-        """Events that happen when this transitions occurs"""
+        """|Events| that happen when this transitions occurs"""
         return self._event_outputs
 
 
@@ -183,7 +183,7 @@ class OnEvent(Transition):
                  event_outputs=None, target_regime_name=None):
         """Constructor for ``OnEvent``
             
-            :param src_port_name: The name of the port that triggers this transition
+            :param src_port_name: The name of the |EventPort| that triggers this transition
 
             See ``Transition.__init__`` for the definitions of the remaining
             parameters.
@@ -213,7 +213,7 @@ class OnCondition(Transition):
                  event_outputs=None, target_regime_name=None):
         """Constructor for ``OnEvent``
             
-            :param trigger: Either a ``Condition`` object or a ``string`` object
+            :param trigger: Either a |Condition| object or a ``string`` object
                 specifying the conditions under which this transition should
                 occur.
 
@@ -259,8 +259,8 @@ class OnCondition(Transition):
 
 class Regime(object):
     """
-    A regime is something that contains TimeDerivatives, has temporal extent, defines a set of Transitions
-    which occur based on conditions, and can be join the Regimes to other Regimes.
+    A Regime is something that contains |TimeDerivatives|, has temporal extent,
+    defines a set of |Transitions| which occur based on |Conditions|, and can be join the Regimes to other Regimes.
     """
 
     _n = 0
@@ -286,10 +286,10 @@ class Regime(object):
             :param name: The name of the constructor. If none, then a name will
                 be automatically generated.
             :param time_derivatives: A list of time derivatives, as
-                either ``string``s (e.g 'dg/dt = g/gtau') or as TimeDerivative
+                either ``string``s (e.g 'dg/dt = g/gtau') or as |TimeDerivative|
                 objects.
-            :param transitions: A list containing either ``OnEvent`` or
-                ``OnCondition`` objects, which will automatically be sorted into
+            :param transitions: A list containing either |OnEvent| or
+                |OnCondition| objects, which will automatically be sorted into
                 the appropriate classes automatically.
             :param *args: Any non-keyword arguments will be treated as
                 time_derivatives.
@@ -355,7 +355,7 @@ class Regime(object):
 
 
     def add_on_event(self, on_event):
-        """Add an OnEvent transition which leaves this regime
+        """Add an |OnEvent| transition which leaves this regime
 
         If the on_event object has not had its target regime name
         set in the constructor, or by calling its ``set_target_regime_name()``, 
@@ -374,7 +374,7 @@ class Regime(object):
         self._on_events.append( on_event )
 
     def add_on_condition(self, on_condition):
-        """Add an OnCondition transition which leaves this regime
+        """Add an |OnCondition| transition which leaves this regime
 
         If the on_condition object has not had its target regime name
         set in the constructor, or by calling its ``set_target_regime_name()``, 
@@ -403,7 +403,7 @@ class Regime(object):
 
         .. note::
     
-            This is not guarenteed to contain the time derivatives for all the
+            This is not guaranteed to contain the time derivatives for all the
             state-variables specified in the component. If they are not defined,
             they are assumed to be zero in this regime.
 
@@ -522,11 +522,11 @@ class Dynamics(object):
     def __init__(self, regimes = None, aliases = None, state_variables = None):
         """Dynamics object constructor
         
-           :param aliases: A list of aliases, which must be either ``Alias``
+           :param aliases: A list of aliases, which must be either |Alias|
                objects or ``string``s.
-           :param regimes: A list containing at least one ``Regime`` object.
+           :param regimes: A list containing at least one |Regime| object.
            :param state_variables: An optional list of the state variables,
-                which can either be ``StateVariable`` objects or `string` s. If
+                which can either be |StateVariable| objects or `string` s. If
                 provided, it must match the inferred state-variables from the
                 regimes; if it is not provided it will be inferred
                 automatically.

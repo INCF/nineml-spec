@@ -33,16 +33,16 @@ We begin by defining the *interface* to our neuron. The interface is composed of
  * **Ports**: which allow the component to communicate with other components
      during the simulation. Ports are divided into two categories:
 
-    - **Event** ports, which transmit or recieve single, discrete *events* at
+    - **Event** ports, which transmit or receive single, discrete *events* at
             points in time. For example, an event could represent a neuron spiking.
-    - **Analog** ports, which transmit or recieve continuous signals, for
+    - **Analog** ports, which transmit or receive continuous signals, for
             example the membrane voltage of the neuron. 
 
     Furthermore, ports have a ``direction``, specifying whether they represent
     information coming from the component ``send``, or information flowing into
     the component, ``recv`` (And ``reduce``, which will be discussed later.) 
 
-In this case, the neuron recieves an injected current *I*, which will be a
+In this case, the neuron receives an injected current *I*, which will be a
 ``recv`` Analog-port. Other components (such as synapses) may be interested in
 the neuron's voltage, *V*, so we should transmit this as a ``send`` Analog-port.
 When the neuron reaches the condition for firing (:math:`v> 30mV`), we may also
@@ -54,7 +54,7 @@ We can build a |COMPONENTCLASS|  with this interface with the following code:
 
 .. literalinclude:: /tutorial_example_code/example1_izikevich_interface.py
 
-If you try running this code, you will recieve the following error::
+If you try running this code, you will receive the following error::
 
     nineml.exceptions.exceptions.NineMLRuntimeError: Unable to find an Alias or State variable for analog-port: V
 
@@ -79,7 +79,7 @@ The state-variables can have different behaviours when operating in
 different *Regimes*. A regime can be considered the 'mode' of the component; at
 any time, the component will be in a single 'regime', and it is possible to
 move between regimes.  for example, an integrate-and-fire neuron with an
-explicit refactory period could be modelled as a component with two regimes, a
+explicit refractory period could be modelled as a component with two regimes, a
 default regime, where injected current affects membrane voltage, where and a
 second *refractory* regime where the voltage is fixed to a certain value. This
 will be further discussed in XX.
@@ -116,7 +116,7 @@ When a ``transition`` occurs, three things can optionally occur:
  
   * An event can be emitted on a ``send`` EventPort, for example, when a
     membrane voltage reaches a threshold values, we may want to send an event
-    to signal a spike occuring.
+    to signal a spike occurring.
   * StateVariables can be changes through ``StateAssignment``. For example, a
     transition in a synapse component may cause the post-synaptic conductance
     to increase by a fixed amount.
@@ -149,7 +149,7 @@ Multiple Regimes & Transitions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 We have only discussed the case of a single regime.  A leaky integrate-and-fire
-model with refractory period has two dynamical regimes - the subthreshold
+model with refractory period has two dynamical regimes - the sub-threshold
 regime and the refractory regime. Just for fun, we'll define the component in a
 single step:
 

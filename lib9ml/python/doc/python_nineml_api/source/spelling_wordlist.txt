@@ -3,6 +3,9 @@ RHS
 LHS
 
 
+rhs
+lhs
+
 
 TimeDerivative
 OnCondition
@@ -25,6 +28,7 @@ NEURON
 
 Izhikevich
 
+etc
 
 mV
 
@@ -33,13 +37,57 @@ workflow
 parameterise
 parameterised
 event1
+portconnections
 
 args
 kwargs
 namespace
 namespaces
-
+mixin
+tuple
+tuples
 
 recv
 send
+subnode
+subnodes
+addr
+analog
+reusable
+backend
 
+
+i
+j
+u
+w
+dS
+dt
+dg
+gtau
+
+loc
+src
+
+
+filename
+fileobject
+commandline
+pdf
+svg
+png
+iaf
+
+iterable
+unhashable
+init
+obj
+str
+func
+lst
+acceptedtype
+acceptedtypes
+dct
+bool
+
+Hodgkin
