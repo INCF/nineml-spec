@@ -444,7 +444,7 @@ class ClonerVisitorPrefixNamespace_test(unittest.TestCase):
                         ),
                     Regime( name='r2', transitions = On('SV1>1', to='r1') )
                     ],
-                analog_ports=[ RecvPort('cIn1'), SendPort('C1'), SendPort('C2')],
+                analog_ports=[ RecvPort('cIn1'), RecvPort('cIn2'), SendPort('C1'), SendPort('C2')],
                 parameters=['cp1','cp2']
                 )
 
@@ -465,7 +465,7 @@ class ClonerVisitorPrefixNamespace_test(unittest.TestCase):
         self.assertEqual( len( list(c_clone.regimes_map['r2'].on_conditions) ), 1)
 
         #  - Ports & Parameters:
-        self.assertEqual( set(c_clone.query.analog_ports_map.keys()),  set(['cIn1','C1','C2']))
+        self.assertEqual( set(c_clone.query.analog_ports_map.keys()),  set(['cIn2','cIn1','C1','C2']))
         self.assertEqual( set(c_clone.query.event_ports_map.keys()),   set(['spikein','emit']))
         self.assertEqual( set(c_clone.query.parameters_map.keys()),    set(['cp1','cp2']))
         self.assertEqual( set(c_clone.state_variables_map.keys()),     set(['SV1']))
@@ -508,10 +508,10 @@ class ClonerVisitorPrefixNamespace_test(unittest.TestCase):
         #  - Ports & Parameters:
         self.assertEqual( 
                 set(c1_clone.query.analog_ports_map.keys()),
-                set(['c1_cIn1','c1_C1','c1_C2']))
+                set(['c1_cIn1','c1_cIn2','c1_C1','c1_C2']))
         self.assertEqual( 
                 set(c2_clone.query.analog_ports_map.keys()),
-                set(['c2_cIn1','c2_C1','c2_C2']))
+                set(['c2_cIn1','c2_cIn2','c2_C1','c2_C2']))
 
         self.assertEqual( set(c1_clone.query.event_ports_map.keys()),
                 set(['c1_spikein','c1_emit']))
@@ -551,9 +551,8 @@ class ClonerVisitorPrefixNamespace_test(unittest.TestCase):
         a = ComponentClass( name='A', 
                 subnodes = {'b1':b, 'b2':b, 'c3':c}, 
                             portconnections = [
-                                ('b1.c1.emit','c3.spikeinput'),
-                                ('c3.C2','b1.c2.cIn1')
-                                
+                                ('b1.c1.emit','c3.spikein'),
+                                ('c3.C2','b1.c2.cIn2')
                                 ]
                             )
         a_clone = ClonerVisitorPrefixNamespace().visit( a )
@@ -640,27 +639,27 @@ class ClonerVisitorPrefixNamespace_test(unittest.TestCase):
 
         #Ports, params and state-vars:
         # c1:
-        self.assertEqual( set(b1c1_clone.query.analog_ports_map.keys()), set(['b1_c1_cIn1',   'b1_c1_C1','b1_c1_C2']))
+        self.assertEqual( set(b1c1_clone.query.analog_ports_map.keys()), set(['b1_c1_cIn1', 'b1_c1_cIn2',  'b1_c1_C1','b1_c1_C2']))
         self.assertEqual( set(b1c1_clone.query.event_ports_map.keys()),  set(['b1_c1_spikein','b1_c1_emit']))
         self.assertEqual( set(b1c1_clone.query.parameters_map.keys()),   set(['b1_c1_cp1',    'b1_c1_cp2']))
         self.assertEqual( set(b1c1_clone.state_variables_map.keys()),    set(['b1_c1_SV1']))
 
-        self.assertEqual( set(b1c2_clone.query.analog_ports_map.keys()), set(['b1_c2_cIn1',   'b1_c2_C1','b1_c2_C2']))
+        self.assertEqual( set(b1c2_clone.query.analog_ports_map.keys()), set(['b1_c2_cIn1',  'b1_c2_cIn2',  'b1_c2_C1','b1_c2_C2']))
         self.assertEqual( set(b1c2_clone.query.event_ports_map.keys()),  set(['b1_c2_spikein','b1_c2_emit']))
         self.assertEqual( set(b1c2_clone.query.parameters_map.keys()),   set(['b1_c2_cp1',    'b1_c2_cp2']))
         self.assertEqual( set(b1c2_clone.state_variables_map.keys()),    set(['b1_c2_SV1']))
 
-        self.assertEqual( set(b2c1_clone.query.analog_ports_map.keys()), set(['b2_c1_cIn1',   'b2_c1_C1','b2_c1_C2']))
+        self.assertEqual( set(b2c1_clone.query.analog_ports_map.keys()), set(['b2_c1_cIn1',  'b2_c1_cIn2',  'b2_c1_C1','b2_c1_C2']))
         self.assertEqual( set(b2c1_clone.query.event_ports_map.keys()),  set(['b2_c1_spikein','b2_c1_emit']))
         self.assertEqual( set(b2c1_clone.query.parameters_map.keys()),   set(['b2_c1_cp1',    'b2_c1_cp2']))
         self.assertEqual( set(b2c1_clone.state_variables_map.keys()),    set(['b2_c1_SV1']))
 
-        self.assertEqual( set(b2c2_clone.query.analog_ports_map.keys()), set(['b2_c2_cIn1',   'b2_c2_C1','b2_c2_C2']))
+        self.assertEqual( set(b2c2_clone.query.analog_ports_map.keys()), set(['b2_c2_cIn1',  'b2_c2_cIn2',  'b2_c2_C1','b2_c2_C2']))
         self.assertEqual( set(b2c2_clone.query.event_ports_map.keys()),  set(['b2_c2_spikein','b2_c2_emit']))
         self.assertEqual( set(b2c2_clone.query.parameters_map.keys()),   set(['b2_c2_cp1',    'b2_c2_cp2']))
         self.assertEqual( set(b2c2_clone.state_variables_map.keys()),    set(['b2_c2_SV1']))
 
-        self.assertEqual( set(c3_clone.query.analog_ports_map.keys()), set(['c3_cIn1','c3_C1','c3_C2']))
+        self.assertEqual( set(c3_clone.query.analog_ports_map.keys()), set(['c3_cIn1', 'c3_cIn2', 'c3_C1','c3_C2']))
         self.assertEqual( set(c3_clone.query.event_ports_map.keys()),  set(['c3_spikein',     'c3_emit']))
         self.assertEqual( set(c3_clone.query.parameters_map.keys()),   set(['c3_cp1',         'c3_cp2']))
         self.assertEqual( set(c3_clone.state_variables_map.keys()),    set(['c3_SV1']))
@@ -675,11 +674,14 @@ class ClonerVisitorPrefixNamespace_test(unittest.TestCase):
         self.assertEqual( set(b2_clone.query.parameters_map.keys()),   set([]))
         self.assertEqual( set(b2_clone.state_variables_map.keys()),    set([]))
 
+
+        print 'Found Port Connections:', b1_clone.portconnections
+
         # Port Connections
         self.assertEqual( 
                 set(b1_clone.portconnections), 
                 set( [
-                    ( NSA('c1.b_c1_C1'),NSA('c2.b1_c2_cIn1') ),
+                    ( NSA('c1.b1_c1_C1'),NSA('c2.b1_c2_cIn1') ),
                     ( NSA('c2.b1_c2_emit'),NSA('c1.b1_c1_spikein') ),
                     ] ) 
                 )
@@ -694,8 +696,8 @@ class ClonerVisitorPrefixNamespace_test(unittest.TestCase):
         self.assertEqual( 
                 set(a_clone.portconnections), 
                 set( [
-                    ( NSA('b1.c1.b1_c1_emit'),NSA('c3.c3_spikeinput') ),
-                    ( NSA('c3.c3_C2'),NSA('b1.c2.b1_c2_cIn1') ),
+                    ( NSA('b1.c1.b1_c1_emit'),NSA('c3.c3_spikein') ),
+                    ( NSA('c3.c3_C2'),NSA('b1.c2.b1_c2_cIn2') ),
                     ] ) 
                 )
 

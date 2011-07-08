@@ -538,7 +538,7 @@ class ComponentClass( ComponentClassMixinFlatStructure,
 
     def _validate_self(self):
         from nineml.abstraction_layer.validators import ComponentValidator
-        #ComponentValidator.validate_component(self)
+        ComponentValidator.validate_component(self)
         
 
 

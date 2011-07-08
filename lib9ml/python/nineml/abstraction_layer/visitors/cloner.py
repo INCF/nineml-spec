@@ -9,7 +9,7 @@ from itertools import chain
 import nineml.abstraction_layer 
 from nineml.abstraction_layer.component.namespaceaddress import NamespaceAddress
 
-
+NSA = NamespaceAddress
 
 
 
@@ -326,8 +326,17 @@ class ClonerVisitorPrefixNamespace(ClonerVisitor):
         for src, sink in component.portconnections:
             # To calculate the new address of the ports, we take of the 'local' port
             # address, i.e. the parent address, then add the prefixed string:
-            src_new = NamespaceAddress.concat( src.get_parent_addr(), src.getstr() )  
-            sink_new = NamespaceAddress.concat( sink.get_parent_addr(), sink.getstr() )  
+            src_new = NamespaceAddress.concat(  src.get_parent_addr(),
+                                                NSA.concat(component.get_node_addr(), src.get_parent_addr()).get_str_prefix() + self.prefix_variable(src.get_local_name() ) )  
+            sink_new = NamespaceAddress.concat( sink.get_parent_addr(),
+                                                NSA.concat(component.get_node_addr(), sink.get_parent_addr()).get_str_prefix() + self.prefix_variable(sink.get_local_name() ) )  
+            
+            #self.prefix_variable(sink.get_local_name(), **kwargs) )  
+            
+            print 'Mapping Ports:', src, '->', src_new, '(%s)'%src.get_local_name(), prefix
+            print 'Mapping Ports:', sink, '->', sink_new
+            #src_new = NamespaceAddress.concat( src.get_parent_addr(), src.getstr() )  
+            #sink_new = NamespaceAddress.concat( sink.get_parent_addr(), sink.getstr() )  
             port_connections.append ( (src_new, sink_new) )
            
 
