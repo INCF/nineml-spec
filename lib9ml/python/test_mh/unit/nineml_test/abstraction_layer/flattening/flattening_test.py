@@ -427,7 +427,7 @@ class ComponentFlattener_test(unittest.TestCase):
 
         c = ComponentClass(
                 name='C',
-                aliases=['C1:=cp1', 'C2 := cIn1', 'C3 := SV1'],
+                aliases=['C1:=cp1', 'C2 := cIn1', 'C3 := SV1','C4:=cIn2'],
                 regimes = [
                     Regime(
                         'dSV1/dt = -SV1/cp2',
@@ -468,18 +468,23 @@ class ComponentFlattener_test(unittest.TestCase):
 
         a = ComponentClass( name='A',
                 subnodes = {'b':b, 'c':c},
-                portconnections = [ ('b.c1.C1','b.c1.cIn2'),('b.c1.C1','b.c2.cIn1'),('b.c1.C1','b.d.dIn2') ]
+                portconnections = [ ('b.c1.C1','b.c1.cIn2'),('b.c1.C1','b.c2.cIn1'),('b.c1.C2','b.d.dIn2') ]
                 )
 
         a_flat = nineml.al.flattening.flatten(a)
+        print 'Flattened'
+        print
 
         # Name
-        self.assertEqual( a_flat.name, 'A' )
+        self.assertEqual( a_flat.name, 'A')
 
         #Aliases
         self.assertEqual( 
                 set( a_flat.aliases_map.keys() ), 
-                set( ['b_c1_C1','b_c1_C2','b_c1_C3','b_c2_C1','b_c2_C2','b_c2_C3','b_d_D1','b_d_D2','b_d_D3', 'c_C1','c_C2','c_C3']) )
+                set( ['b_c1_C1','b_c1_C2','b_c1_C3','b_c1_C4',
+                      'b_c2_C1','b_c2_C2','b_c2_C3','b_c2_C4',
+                      'b_d_D1','b_d_D2','b_d_D3', 
+                      'c_C1','c_C2','c_C3','c_C4']) )
 
         # - Regimes and Transitions:
         self.assertEqual( len(a_flat.regimes_map) , 16) 
@@ -612,8 +617,28 @@ class ComponentFlattener_test(unittest.TestCase):
 
 
 
+        # Back-sub everything - then do we get the correct port mappings:
+        a_flat.backsub_all()
+
+        self.assertEqual( 
+                set( a_flat.aliases_map['b_c2_C4'].rhs_atoms ),
+                set( ['b_c1_cp1'] ) )
+
+        self.assertEqual( 
+                set( a_flat.aliases_map['b_c2_C2'].rhs_atoms ),
+                set( ['b_c2_cp1'] ) )
+
+        self.assertEqual( 
+                set( a_flat.aliases_map['b_c1_C4'].rhs_atoms ),
+                set( ['b_c1_cp1'] ) )
 
 
+        self.assertEqual( 
+                set( a_flat.aliases_map['b_c2_C2'].rhs_atoms ),
+                set( ['b_c1_cp1'] ) )
 
+        self.assertEqual( 
+                set( a_flat.aliases_map['b_d_D2'].rhs_atoms ),
+                set( ['b_c2_cp1'] ) )
 
 

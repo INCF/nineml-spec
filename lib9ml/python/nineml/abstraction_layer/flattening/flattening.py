@@ -28,25 +28,27 @@ class ComponentFlattener(object):
 
 
 
-    def __init__(self,model, componentname=None):
-        assert isinstance( model, nineml.al.ComponentClass)
+    def __init__(self, component, componentname=None):
+        assert isinstance( component, nineml.al.ComponentClass)
 
         # Is our component already flat??
-        if model.is_flat():
-            self.reducedcomponent = ClonerVisitor().visit( model )
-            if model.flattener:
-                self.reducedcomponent.set_flattener( model.flattener )
+        if component.is_flat():
+            self.reducedcomponent = ClonerVisitor().visit( component )
+            if component.was_flattened():
+                self.reducedcomponent.set_flattener( component.flattener )
             return
 
         # New components name
-        self.componentname=componentname if componentname else model.name
+        self.componentname = componentname if componentname else component.name
 
 
-        # Flatten all the namespaces:
-        self.model = nineml.al.visitors.ClonerVisitorPrefixNamespace().visit(model)
+        # Make a clone of the component; in which all hierachical components
+        # have their internal symbols prefixed:
+        clonedcomponent = nineml.al.visitors.ClonerVisitorPrefixNamespace().visit(component)
+
 
         # Make a list of all components, and those components with regimes: 
-        self.all_components = list( self.model.query.recurse_all_components )
+        self.all_components = list( clonedcomponent.query.recurse_all_components )
         self.componentswithregimes = [ m for m in self.all_components if list(m.regimes) ] 
         
         
@@ -310,7 +312,7 @@ class ComponentFlattener(object):
         
         print 'new_analog_ports', new_analog_ports.keys()
 
-        # A. Handle Recieve Ports:
+        # A. Handle Receive Ports:
         for srcAddr,dstAddr in portconnections[:]:
             srcPort = new_analog_ports[srcAddr.get_local_name() ]
             dstPort = new_analog_ports[dstAddr.get_local_name() ]
