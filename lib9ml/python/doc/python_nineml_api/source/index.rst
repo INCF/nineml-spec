@@ -16,8 +16,8 @@ Typically, point-neurons are currently simulated by writing a either a custom
 simulation in a general purpose programming language, (such as Python, Matlab) 
 or by writing a model for a particular simulator (NEURON/NEST/BRIAN). As models
 of neuronal dynamics and connectivity become more and more complex, writing a
-simulations from scratch in python or matlab can become more and more complex; taking
-time to debug and producing hard to find bugs. On the otherhand, writing simulator
+simulations from scratch in python or Matlab can become more and more complex; taking
+time to debug and producing hard to find bugs. On the other-hand, writing simulator
 specific models can reduce some of this duplication, but means the model will
 only run on a single simulator.
 
@@ -60,9 +60,9 @@ For a single, relatively simple simulation, it may not be worth the effort!
 But imagine we are modelling a (relatively simple) network of neurons, which 
 contains 5 different types of neurons. The neurons synapse onto each other,
 and there are 3 different classes of synapses, with different models for 
-thier dynamics. If we were to implement this naively, we could potentially
+their dynamics. If we were to implement this naively, we could potentially
 copy and paste the same code 15 times, *for each simulator*. By factoring out
-basic functionality, we make our workflow much more managable.
+basic functionality, we make our workflow much more manageable.
 
 There is more about the NineML design and specification :doc:`here</src_rst/overview/nineml_overview>` 
 

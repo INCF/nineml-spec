@@ -190,7 +190,7 @@ Child Elements:
 
 This tag declares an regime in the component. There must be exactly on
 TimeDerivative block for each StateVariable block declared in the enclosing
-<Dynamics> block, even if it has a rhs of zero.
+<Dynamics> block, even if it has a RHS of zero.
 
 Attributes: 
 

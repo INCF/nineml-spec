@@ -14,7 +14,7 @@ Dynamics
 The dynamics are the *internal* mechanisms governing the behaviour of the component.
 The dynamics of a component are specified in terms of the following:
 
-* State Variables
+* StateVariables
 * Regimes
 * Transitions
 
@@ -56,10 +56,10 @@ regimes, *regime1*, *regime2* & *regime3*. At any time, a component will be in o
 
 
 Components can move between Regimes via transitions. There are 2 ways of
-triggering a transation:
+triggering a transition:
 
 * By a condition of the state variables, for example :math:`X>Y`.
-* By an `InputEvent` on a port. (Discussed futher in XX).
+* By an `InputEvent` on a port. (Discussed further in XX).
 
 When a transition is triggered; three things can happen:
 
@@ -68,7 +68,7 @@ When a transition is triggered; three things can happen:
   component will move into *regime1*.
 
 * `StateAssignments` can take place, for example, :math:`X=0`
-* The component can send `OutputEvents` (Dicussed further in XX)
+* The component can send `OutputEvents` (Discussed further in XX)
 
 During a transition, multiple StateAssignments and `OutputEvents` can occur.
 (For more on the resolution of Transition's, see XX)
@@ -112,13 +112,13 @@ Aliases are motivated from two problems;
 
 * If we would like to communicate a value other than a simple state variable to
   to another component. For example, if we have a component representing a
-  neuron, which has an internal statevariable, 'V', we may be interested in
+  neuron, which has an internal StateVariable, 'V', we may be interested in
   transmitting a current, for example :math:`i=g*(E-V)`
 
 .. note:: 
     
     Aliases are defined in the Dynamics, *not* in the Regime. This means that
-    aliases are the same accross all regimes.
+    aliases are the same across all regimes.
 
 
 
@@ -126,11 +126,11 @@ Aliases are motivated from two problems;
 Events
 #######
 
-As well as being able to comminicate continuous values, components are also able
-to emit and recieve `Event` s. Events are discrete notifications that are transmitted 
+As well as being able to communicate continuous values, components are also able
+to emit and receive `Event` s. Events are discrete notifications that are transmitted 
 over EventPorts (Discussed in section XX). Since EventPorts have names, saying
-that we transmit a 'spikeevent' for example would mean transmitting an event on
-the EventPort called 'spikeevent'. Events can be used to signal action
+that we transmit a 'event1' for example would mean transmitting an event on
+the EventPort called 'event1'. Events can be used to signal action
 potentials firing for example. 
 
 
@@ -166,26 +166,26 @@ Ports
 ######
 
 Ports allow components to communicate between each other during a simulation. 
-There are 2 types of ports *Analog* and *Event* ports, and each can have
+There are 2 types, *AnalogPorts* and *EventPorts*, and each can have
 different modes.
 
-Analog Ports:
-    Analog ports transmit and recieve continuous values, `Alias` es and
-    `StateVariables`. Analog ports can have 3 modes:
+AnalogPorts:
+    AnalogPorts transmit and receive continuous values, `Alias` es and
+    `StateVariables`. AnalogPorts can have 3 modes:
 
         * ``SendPort`` - transmit data originating in this component which can be read by
           other components
-        * ``RecvPort`` - recieve data from another components ``SendPort`` port.
+        * ``RecvPort`` - receive data from another components ``SendPort`` port.
             Each recv port can be connected to *one* ``SendPort``.
 
-        * ``ReducePort`` - recieve data from multiple ``SendPort`` . These
+        * ``ReducePort`` - receive data from multiple ``SendPort`` . These
           differ from ``RecvPorts`` in that they can be connected to multiple
           ``SendPort`` . ``ReducePorts`` take an additional operator,
           ``reduce_op``, which specifies how the data from multiple ``Send``
           ports should be combined to produce a single value. Currently, the
           only supported operations is `+`, which sums the inputs. The
           motivation for ``ReducePorts`` is that it allows us to make our
-          component defintions more general. For example, if we are defining a
+          component definitions more general. For example, if we are defining a
           neuron, would define a ``ReducePort`` called, ``InjectedCurrents``.
           This allows us to write the membrane equation for that neuron as:
             
@@ -199,18 +199,18 @@ Analog Ports:
           original component definitions.
         
 
-Event Ports:
+EventPorts:
     Event ports transmit discrete events. They are useful for example in
     simulation of integrate-and-fire neurons to notify components about neuron's
     spiking. Event ports only have 2 modes:
 
         * ``SendPort`` - transmit events originating in this component which can be read by
           other components
-        * ``RecvPort`` - recieve events from another components ``SendPort`` port.
+        * ``RecvPort`` - receive events from another components ``SendPort`` port.
             Each recv port can be connected to *multiple* ``SendPort``.
 
     For example, a synapse component may have a ``RecvPort`` connected to the
-    pre-synaptics neurons ``SendPort`` port. When the presynaptic neuron fires;
+    presynaptic neurons ``SendPort`` port. When the presynaptic neuron fires;
     it delivers an event to the synapse, which could cause it to produce current
     flow in a post-synaptic neuron. 
 
