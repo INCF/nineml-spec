@@ -26,7 +26,9 @@ import sys, os
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
 #extensions = ['sphinx.ext.autodoc', 'sphinx.ext.doctest', 'sphinx.ext.todo', 'sphinx.ext.coverage', 'sphinx.ext.pngmath', 'sphinx.ext.viewcode','sphinx.ext.autosummary']
-extensions = ['sphinx.ext.autodoc', 'sphinx.ext.doctest', 'sphinx.ext.todo', 'sphinx.ext.coverage', 'sphinx.ext.pngmath', 'sphinx.ext.autosummary']
+extensions = ['sphinx.ext.autodoc', 'sphinx.ext.doctest', 'sphinx.ext.todo',
+'sphinx.ext.coverage', 'sphinx.ext.pngmath', 'sphinx.ext.autosummary',
+'sphinx.ext.viewcode', 'sphinxcontrib.spelling']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -337,3 +339,15 @@ html_sidebars = {
    #'using/windows': ['windowssidebar.html', 'searchbox.html'],
 }
 #['localtoc.html', 'relations.html', 'sourcelink.html', 'searchbox.html']
+
+
+
+
+
+
+# For spelling:
+#spelling_show_suggestions=True
+spelling_word_list_filename='spelling_wordlist.txt'
+spelling_lang='en_GB'
+
+

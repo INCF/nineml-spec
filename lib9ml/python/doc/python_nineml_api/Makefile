@@ -38,6 +38,9 @@ help:
 	@echo "  linkcheck  to check all external links for integrity"
 	@echo "  doctest    to run all doctests embedded in the documentation (if enabled)"
 
+spell:
+	sphinx-build -b spelling -d build/doctrees/ source build/spelling
+
 clean:
 	-rm -rf source/src_rst/reference/nineml.abstraction_layer.*.rst
 	-rm -rf source/src_rst/reference/nineml.utility.*.rst
