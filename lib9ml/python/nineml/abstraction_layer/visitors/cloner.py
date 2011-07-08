@@ -312,6 +312,9 @@ class ClonerVisitorPrefixNamespace(ClonerVisitor):
     for flattening
     """
 
+        
+
+
     def visit_componentclass(self, component, **kwargs ):
         prefix = component.get_node_addr().get_str_prefix()
         if prefix == '_': prefix = ''
@@ -326,7 +329,7 @@ class ClonerVisitorPrefixNamespace(ClonerVisitor):
             src_new = NamespaceAddress.concat( src.get_parent_addr(), src.getstr() )  
             sink_new = NamespaceAddress.concat( sink.get_parent_addr(), sink.getstr() )  
             port_connections.append ( (src_new, sink_new) )
-            
+           
 
         return nineml.abstraction_layer.ComponentClass( name = component.name,
                                parameters  = [ p.accept_visitor(self, **kwargs) for p in component.parameters  ],

@@ -103,6 +103,10 @@ FUNCTION deriv_{{ var.name }}({{ deriv_func_args(component, var.name)|join(', ')
 
 
 NET_RECEIVE(w, channel) {
+
+  {# printf("Received event with weight %f on channel %f at %f\n", w, channel, t) #}
+
+
   INITIAL {
     : stop channel being set to 0 by default
   }
@@ -141,6 +145,8 @@ NET_RECEIVE(w, channel) {
   {%- for regime in component.regimes %}
   {%- for transition in regime.on_conditions %}
   } else if (regime == {{regime.label }} && flag == {{ transition.target_regime.label }} ) {
+    {# printf("\nChanging Regime from %ld to %ld", regime, flag ) #}
+    printf("\nt=%fChanging Regime from {{regime.name}} to {{transition.target_regime.name}}",t )
     regime = flag
     
     {%- for node in transition.event_outputs %}

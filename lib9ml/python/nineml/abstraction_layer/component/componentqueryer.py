@@ -76,7 +76,20 @@ class ComponentQueryer(object):
                 [ p for p in self.component.analog_ports if p.mode == 'recv'],
                 key = lambda p:p.name )
 
+    @property
+    def analog_ports_map(self):
+        """Returns a map of names to |AnalogPort| objects"""
+        return dict([(p.name, p) for p in self.component.analog_ports])
 
+    @property
+    def event_ports_map(self):
+        """Returns a map of names to |EventPort| objects"""
+        return dict([(p.name, p) for p in self.component.event_ports])
+
+    @property
+    def parameters_map(self):
+        """Returns a map of names to |Parameter| objects"""
+        return dict([(p.name, p) for p in self.component.parameters])
 
     # Used by the flattening code:
     def get_fully_qualified_port_connections(self):

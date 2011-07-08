@@ -197,6 +197,7 @@ class ComponentValidatorPortConnections(ComponentValidatorPerNamespace):
         self.portconnections = list()
         
         self.visit(component)
+
         
         connected_recv_ports = set()
         
@@ -223,15 +224,15 @@ class ComponentValidatorPortConnections(ComponentValidatorPerNamespace):
             
             
             if not  sink in self.ports:
-                raise nineml.exceptions.NineMLRuntimeError('Unable to find port specified in connection: %s'%(src) )
+                raise nineml.exceptions.NineMLRuntimeError('Unable to find port specified in connection: %s'%(sink) )
             
             if not self.ports[sink].is_incoming():
-                raise nineml.exceptions.NineMLRuntimeError('Port was specified as a sink, but is not incoming: %s'%(src) )
+                raise nineml.exceptions.NineMLRuntimeError('Port was specified as a sink, but is not incoming: %s'%(sink) )
                 
                 
             if self.ports[sink].mode == 'recv':
                 if self.ports[sink] in connected_recv_ports:
-                    raise nineml.exceptions.NineMLRuntimeError("Port was 'recv' and specified twice: %s"%(src) )
+                    raise nineml.exceptions.NineMLRuntimeError("Port was 'recv' and specified twice: %s"%(sink) )
                 connected_recv_ports.add( self.ports[sink] )
         
         
@@ -253,6 +254,9 @@ class ComponentValidatorPortConnections(ComponentValidatorPerNamespace):
         for src, sink in component.portconnections:
             full_src   = nineml.al.NamespaceAddress.concat( namespace, src )
             full_sink  = nineml.al.NamespaceAddress.concat( namespace, sink )
+
+            #print 'Adding Port:',full_src
+            #print 'Adding Port:',full_sink
             self.portconnections.append( (full_src, full_sink) )
             
         

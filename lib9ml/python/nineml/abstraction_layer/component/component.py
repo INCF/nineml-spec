@@ -103,6 +103,7 @@ class ComponentClassMixinFlatStructure(object):
 
 
 
+
     def backsub_all(self): 
         """Expand all alias definitions in local equations.
 
@@ -537,7 +538,7 @@ class ComponentClass( ComponentClassMixinFlatStructure,
 
     def _validate_self(self):
         from nineml.abstraction_layer.validators import ComponentValidator
-        ComponentValidator.validate_component(self)
+        #ComponentValidator.validate_component(self)
         
 
 

@@ -111,5 +111,4 @@ def std_pynn_simulation( test_component, parameters, initial_values,
     sim.end()
 
 
-
     return t, result_traces
