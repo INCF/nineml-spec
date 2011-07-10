@@ -107,6 +107,8 @@ ASSIGNED {
   #for alias in $component.aliases:
   $alias.lhs
   #end for
+
+  
 }
 
 
@@ -118,7 +120,6 @@ BREAKPOINT {
   $alias.lhs = $alias.rhs 
   #end for
 
-    net_event(t)
 }
 
 DERIVATIVE states {
@@ -153,7 +154,22 @@ NET_RECEIVE(w, channel) {
   INITIAL {
     : stop channel being set to 0 by default
   }
-  if (flag == SPIKE) {
+
+
+
+ if (flag == INIT) {
+
+    #for regime in $component.regimes 
+    #for transition in $regime.on_conditions 
+    WATCH ( $transition.trigger.rhs.replace('=','') )  $transition.flag
+    #end for 
+    #end for
+
+
+  } 
+  
+  
+  else if (flag == SPIKE) {
     printf("Received spike with weight %f on channel %f at %f\\n", w, channel, t)
 
     #for regime in $component.regimes 
@@ -180,31 +196,40 @@ NET_RECEIVE(w, channel) {
     }
     #end for
 
-  } else if (flag == INIT) {
+  } 
 
-    #for regime in $component.regimes 
-    #for transition in $regime.on_conditions 
-    WATCH ( $transition.trigger.rhs.replace('=','') )  $transition.target_regime.flag 
-    #end for 
-    #end for
+
 
   #for regime in $component.regimes:
+
+  else if ( regime == $regime.label) {
+
+
+  printf("\\nt=%f In Regime $regime.name Event With Flag: %d", t, flag )
+
+  if(0){}
+
   #for transition in $regime.on_conditions:
-  } else if (regime == $regime.label  && flag == $transition.target_regime.label) {
-    printf("\\nt=%f Changing Regime from $regime.name to $transition.target_regime.name", t )
-    regime = flag
+  else if (flag == $transition.flag) {
+    printf("\\nt=%f Changing Regime from $regime.name to $transition.target_regime.name via $transition.flag", t )
+    regime = $transition.target_regime.flag
     
     #for node in $transition.event_outputs
-    net_event(t)
+    :net_event(t)
     #end for 
 
     #for sa in transition.state_assignments 
     $sa.lhs  = $sa.rhs
     #end for
 
+    }
   #end for 
-  #end for 
+  
   }
+  
+  #end for 
+
+
 }
 
 """
