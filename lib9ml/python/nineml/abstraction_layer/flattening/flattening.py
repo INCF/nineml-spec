@@ -1,9 +1,7 @@
 
-#from nineml.utility import invert_dictionary, flatten_first_level, expect_single
 from nineml.utility import  flatten_first_level, expect_single
 
 # System Imports:
-#import copy
 import itertools
 
 
@@ -16,37 +14,49 @@ import nineml
 
 
 class TransitionResolver(object):
-    def __init__(self, oldtransition, regime_tuple, transition_regime_tuple_index, flattener ):
-        #print 'TRANSITION RESOLVER:', oldtransition
 
+    RecurseEventTransitions = True
+
+    def __init__(self, oldtransition, regime_tuple, transition_regime_tuple_index, flattener ):
+
+        # Store where we are starting and going to:
         self.src_regime_tuple = tuple( regime_tuple )
         self.dst_regime_tuple = tuple( regime_tuple )
 
         # Clone the old Node
-        oldtransition = oldtransition.accept_visitor( ClonerVisitor(), prefix='', prefix_excludes=[] )
+        oldtransition = ClonerVisitor().visit(oldtransition) 
 
-        portconnections = [model.portconnections for model in flattener.all_components]
-        self.portconnections = list( itertools.chain(* portconnections ) )
+        # Store a pointer to the flattener:
         self.flattener = flattener
 
-        self.events_emitted = []
-        self.unresolved_transitions = [ (oldtransition,transition_regime_tuple_index) ]
-        self.changed_regime_indices = set()
-
+        # Store the StateAssignments and OutputEvents for this 
+        # newly mapped transitions
         self.state_assignments = [] 
         self.event_outputs = [] 
 
 
+        # Construct a map of { send ports -> [recv ports] }.
+        # This makes it easy to iterate over send events:
+        portconnections = [model.portconnections for model in flattener.all_components]
+        portconnections = list( itertools.chain(* portconnections ) )
         self.send_rev_map = {}
-        for src,dst in self.portconnections:
+        for src, dst in portconnections:
             if not src.get_local_name() in self.send_rev_map:
                 self.send_rev_map[src.get_local_name()] = []
             self.send_rev_map[src.get_local_name()].append(dst.get_local_name())
 
 
+        # Variables used in recursion:
+        self.unresolved_transitions = [ (oldtransition, transition_regime_tuple_index) ]
+        self.changed_regime_indices = set()
+
+
+        # Recursively solve the transitions:
         self.resolve_transitions() 
 
-        self.targetRegime = flattener.old_regime_tuple_to_new_regime_map[ tuple(self.dst_regime_tuple)  ]
+
+        # Find the new target regime:
+        self.target_regime = flattener.old_regime_tuple_to_new_regime_map[ tuple(self.dst_regime_tuple)  ]
 
 
 
@@ -56,31 +66,30 @@ class TransitionResolver(object):
             transition, regime_index = self.unresolved_transitions.pop()
             
             if regime_index in self.changed_regime_indices:
-                raise NineMLRuntimeError('Something has gone wrong with event resolution. Changing Regime Twice!')
+                raise nineml.exceptions.NineMLRuntimeError('Something has gone wrong with event resolution. Changing Regime Twice!')
             self.changed_regime_indices.add(regime_index)
 
             self.resolve_transition(transition, regime_index)
 
     
     def resolve_transition(self, transition, transition_regime_tuple_index):
-        #print ' - Resolving Transition', transition
-
         # Update the target regime:
-        self.dst_regime_tuple = self.flattener.getNewRegimeTupleFromTransition( 
-                                    currentRegimeTuple = self.dst_regime_tuple, 
-                                    regimeIndex=transition_regime_tuple_index, 
+        self.dst_regime_tuple = self.get_new_regime_tuple_from_transition(
+                                    current_regime_tuple = self.dst_regime_tuple, 
+                                    regime_index=transition_regime_tuple_index, 
                                     oldtransition=transition)
 
 
-        #self.state_assignments.extend( transition.state_assignments )
-        #self.event_outputs.extend( transition.event_outputs )
-        
-        for eo in transition.event_outputs:
-            self.event_outputs.append( ClonerVisitor().visit(eo) )
-        for sa in transition.state_assignments:
-            self.state_assignments.append( ClonerVisitor().visit(sa) )
+        for ev_out in transition.event_outputs:
+            self.event_outputs.append( ClonerVisitor().visit(ev_out) )
+        for state_ass in transition.state_assignments:
+            self.state_assignments.append( ClonerVisitor().visit(state_ass) )
 
 
+        # Are we recursing? Or will the simulation engine take care
+        # off this for us??
+        if not TransitionResolver.RecurseEventTransitions:
+            return
 
 
         #Are any of the output events connected to other event_ports?
@@ -97,12 +106,23 @@ class TransitionResolver(object):
                 # this port??
                 
                 for cascade_regime_index, regime in enumerate(self.dst_regime_tuple):
-                    for ev in regime.on_events:
-                        if ev.src_port_name == recv_port:
+                    for cascade_ev in regime.on_events:
+                        if cascade_ev.src_port_name == recv_port:
                             #print '     (**Cascade found**)'
-                            self.unresolved_transitions.append( (ev,cascade_regime_index ))
+                            self.unresolved_transitions.append( (cascade_ev, cascade_regime_index ))
 
 
+    def get_new_regime_tuple_from_transition( self, current_regime_tuple, regime_index, oldtransition ):
+        
+        # Make a list from the old tuple, so its mutable:
+        dst_regime_tuple = list(current_regime_tuple)
+
+        name = oldtransition.target_regime_name
+        dst_regime_old = self.flattener.componentswithregimes[regime_index].query.regime(name=name) 
+        dst_regime_tuple[regime_index] = dst_regime_old
+        
+        # Return the tuple:
+        return tuple(dst_regime_tuple)
 
 
 
@@ -115,15 +135,15 @@ class ComponentFlattener(object):
     # Utility Functions: 
     # ------------------ #
     @classmethod
-    def flatten_namespace(cls, ns):
-        return ns.replace('.', '_')
+    def flatten_namespace(cls, ns_str):
+        return ns_str.replace('.', '_')
     
     @classmethod
-    def flatten_namespace_dict(cls, ns):
-        newParams = {}
-        for k, v in ns.iteritems():
-            newParams[ cls.flatten_namespace(k) ] = v
-        return newParams
+    def flatten_namespace_dict(cls, ns_dict):
+        new_dict = {}
+        for k, v in ns_dict.iteritems():
+            new_dict[ cls.flatten_namespace(k) ] = v
+        return new_dict
      
 
 
@@ -240,30 +260,16 @@ class ComponentFlattener(object):
     def create_compound_regime( cls, regimetuple ):
         
         # Copy accross all the odes from each regime. 
-        # [Don't worry about transitions yet, we deal with them later]
+        # We don't worry about transitions yet, we deal with them later.
 
         # We need to clone the time_derivatives:
-        time_derivatives = flatten_first_level( [ r.time_derivatives for r in regimetuple ] )
-        time_derivatives = [ ClonerVisitor().visit(td) for td in time_derivatives ]
+        time_derivs = flatten_first_level( [ r.time_derivatives for r in regimetuple ] )
+        time_derivs = [ ClonerVisitor().visit(td) for td in time_derivs ]
 
-        return nineml.al.Regime( 
-                name=None, 
-                time_derivatives = time_derivatives, 
-                transitions=[],  )
+        return nineml.al.Regime( name=None, time_derivatives = time_derivs )
 
 
 
-    def getNewRegimeTupleFromTransition( self, currentRegimeTuple, regimeIndex, oldtransition ):
-        srcRegime = list( currentRegimeTuple )
-        dstRegimeTuple = srcRegime[:]
-
-        # Points to another node:
-        name = oldtransition.target_regime_name
-        dstRegimeOld = self.componentswithregimes[regimeIndex].query.regime(name=name) 
-        dstRegimeTuple[regimeIndex] = dstRegimeOld
-
-        #print 'New Regime Transition:', currentRegimeTuple, '->', tuple( dstRegimeTuple )
-        return tuple(dstRegimeTuple)
 
 
 
@@ -276,43 +282,43 @@ class ComponentFlattener(object):
         # At this point, there are no transitions:
         self.old_regime_tuple_to_new_regime_map = {}
         regimes = [ comp.regimes for comp in self.componentswithregimes]
-        for i, regimetuple in enumerate( itertools.product(*regimes) ):
-            newRegime = ComponentFlattener.create_compound_regime( regimetuple ) 
-            self.old_regime_tuple_to_new_regime_map[regimetuple] = newRegime
+        for regimetuple in itertools.product(*regimes):
+            new_regime = ComponentFlattener.create_compound_regime( regimetuple ) 
+            self.old_regime_tuple_to_new_regime_map[regimetuple] = new_regime
 
 
         # Create New Events for the Regime-Map
         for regimetuple, regime_new in self.old_regime_tuple_to_new_regime_map.iteritems():
-            for regimeIndex, regime in enumerate( regimetuple ):
+            for regime_index, regime in enumerate( regimetuple ):
                 
                 for oldtransition in regime.on_conditions:
 
                     tr = TransitionResolver( 
                             oldtransition = oldtransition, 
                             regime_tuple=regimetuple, 
-                            transition_regime_tuple_index=regimeIndex, 
+                            transition_regime_tuple_index=regime_index, 
                             flattener=self,
                             )
-                    newOnCondition = nineml.al.OnCondition(oldtransition.trigger, 
+                    new_oncondition = nineml.al.OnCondition(oldtransition.trigger, 
                             state_assignments=tr.state_assignments, 
                             event_outputs = tr.event_outputs, 
-                            target_regime_name = tr.targetRegime.name)
+                            target_regime_name = tr.target_regime.name)
 
-                    regime_new.add_on_condition( newOnCondition)
+                    regime_new.add_on_condition( new_oncondition )
                     
 
                 for oldtransition in regime.on_events:
                     tr = TransitionResolver( 
                             oldtransition = oldtransition, 
                             regime_tuple=regimetuple, 
-                            transition_regime_tuple_index=regimeIndex, 
+                            transition_regime_tuple_index=regime_index, 
                             flattener=self,
                             )
-                    newOnEvent = nineml.al.OnEvent(oldtransition.src_port_name, 
+                    new_onevent = nineml.al.OnEvent(oldtransition.src_port_name, 
                                                        state_assignments=tr.state_assignments, 
                                                        event_outputs = tr.event_outputs, 
-                                                       target_regime_name = tr.targetRegime.name)
-                    regime_new.add_on_event( newOnEvent)
+                                                       target_regime_name = tr.target_regime.name)
+                    regime_new.add_on_event( new_onevent )
                     
                 
 
@@ -344,37 +350,33 @@ class ComponentFlattener(object):
 
 
         # A. Handle Receive Ports:
-        for srcAddr, dstAddr in portconnections[:]:
+        for src_addr, dst_addr in portconnections[:]:
             
 
-            srcPort = new_analog_ports[srcAddr.get_local_name() ]
-            dstPort = new_analog_ports[dstAddr.get_local_name() ]
-            if dstPort.mode == 'recv':
+            srcport = new_analog_ports[src_addr.get_local_name() ]
+            dstport = new_analog_ports[dst_addr.get_local_name() ]
+            if dstport.mode == 'recv':
 
-                ExpandPortDefinition( originalname=dstPort.name, targetname=srcPort.name).visit(self.reducedcomponent)
+                ExpandPortDefinition( originalname=dstport.name, targetname=srcport.name).visit(self.reducedcomponent)
                 
-                del new_analog_ports[ dstAddr.get_local_name() ]
-                self.reducedcomponent._analog_ports.remove( expect_single([p for
-                    p in self.reducedcomponent.analog_ports if p.name ==
-                    dstAddr.get_local_name() ]) )
+                del new_analog_ports[ dst_addr.get_local_name() ]
+                self.reducedcomponent._analog_ports.remove( expect_single([p for p in self.reducedcomponent.analog_ports if p.name == dst_addr.get_local_name() ]) )
 
-                portconnections.remove( (srcAddr, dstAddr) )
+                portconnections.remove( (src_addr, dst_addr) )
 
         # B. Handle Reduce Ports:
         # 1/ Make a map { reduce_port -> [send_port1, send_port2, send_port3], ...}
         from collections import defaultdict
         reduce_connections = defaultdict( list )
         for src, dst in portconnections:
-
-
             dstport = new_analog_ports[dst.get_local_name() ]
             srcport = new_analog_ports[src.get_local_name() ]
             if dstport.mode == 'reduce':
                 reduce_connections[dstport].append(srcport)
 
-        # 2/ Subsitute each reduce port in turn:
-        for dstport, srcportList in reduce_connections.iteritems():
-            src_subs = [ s.name for s in srcportList ]
+        # 2/ Substitute each reduce port in turn:
+        for dstport, srcport_list in reduce_connections.iteritems():
+            src_subs = [ s.name for s in srcport_list ]
             terms = [dstport.name] + src_subs
             reduce_expr = dstport.reduce_op.join(terms) 
 
