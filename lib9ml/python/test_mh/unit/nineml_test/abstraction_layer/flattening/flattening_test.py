@@ -640,3 +640,53 @@ class ComponentFlattener_test(unittest.TestCase):
                 set( ['b_c2_cp1','b_d_dp2'] ) )
 
 
+    def test_event_resolution(self):
+        
+        # Component that 'EvOut' every 20 ms
+        c1 = ComponentClass(
+                name = 'CC1',
+                regimes = [ Regime( 
+                        name = 'r1',
+                        transitions = On(' t > 20 + tlast', do= ['tlast=t',
+                            OutputEvent('EvOut')]) ,
+                        )
+                    ] )
+
+        # Component that forwards events from EvIn to EvOut
+        c2 = ComponentClass(
+                name = 'CC2',
+                regimes = [ Regime( name = 'r1', transitions = On('EvIn', do= OutputEvent('EvOut')) )
+                    ] )
+
+        c3 = ComponentClass(
+                name = 'CC3',
+                regimes = [ 
+                    Regime( name = 'r1', transitions = On('EvIn', to='r2') ),
+                    Regime( name = 'r2', transitions = On('EvIn', to='r1') ),
+                    ] )
+
+        # Component that chains the components together:
+        comp = ComponentClass(
+                name = 'C',
+                subnodes = { 'c1':c1, 'c2':c2, 'c3':c3},
+                portconnections= [ ('c1.EvOut','c2.EvIn'),('c2.EvOut','c3.EvIn') ]
+                )
+
+        c_flat = nineml.abstraction_layer.flattening.flatten(comp)
+
+
+
+        assert False
+
+
+
+
+                        
+
+
+
+
+
+
+
+

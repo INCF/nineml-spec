@@ -158,7 +158,7 @@ class ComponentClassMixinNamespaceStructure(object):
         # Initialise class variables:
         self._parentmodel = None
         self.subnodes = {}
-        self.portconnections = []
+        self._portconnections = []
 
         # Add the parameters using class methods:
         for namespace, subnode in subnodes.iteritems():
@@ -266,9 +266,14 @@ class ComponentClassMixinNamespaceStructure(object):
         """
 
         connection = (NamespaceAddress(src), NamespaceAddress(sink) )
-        self.portconnections.append( connection ) 
+        self._portconnections.append( connection ) 
 
         self._validate_self()
+
+    @property
+    def portconnections(self):
+        return self._portconnections
+
 
    
 
