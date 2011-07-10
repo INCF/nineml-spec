@@ -310,12 +310,16 @@ class InterfaceInferer(ActionVisitor):
         # Use visitation to collect all atoms that are not aliases and not
         # state variables
         
-        self.parameter_names = set()
+        self.free_atoms = set()
         self.input_event_port_names = set()
         self.output_event_port_names = set()
 
         self.visit(dynamics)
 
+
+        self.free_atoms -= self.input_event_port_names
+        self.free_atoms -= self.output_event_port_names
+        self.parameter_names = self.free_atoms
 
     def action_dynamics(self, dynamics, **kwargs): 
         pass
@@ -326,7 +330,7 @@ class InterfaceInferer(ActionVisitor):
 
     def _notify_atom(self, atom):
         if not atom in self.accounted_for_symbols:
-            self.parameter_names.add(atom)
+            self.free_atoms.add(atom)
 
     # Events:
     def action_outputevent(self, output_event, **kwargs):
