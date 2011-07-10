@@ -4,7 +4,6 @@ from nineml.abstraction_layer import *
 
 import unittest
 
-#class FuncTest_Flat2(unittest.TestCase):
 class FuncTest_Flat2(object):
     """ Create a Neuron with leak, and a current clamp, and check that the 
         Output is what we would expect.
