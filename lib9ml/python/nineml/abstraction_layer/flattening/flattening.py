@@ -17,7 +17,7 @@ import nineml
 
 class TransitionResolver(object):
     def __init__(self, oldtransition, regime_tuple, transition_regime_tuple_index, flattener ):
-        print 'TRANSITION RESOLVER:', oldtransition
+        #print 'TRANSITION RESOLVER:', oldtransition
 
         self.src_regime_tuple = tuple( regime_tuple )
         self.dst_regime_tuple = tuple( regime_tuple )
@@ -63,7 +63,7 @@ class TransitionResolver(object):
 
     
     def resolve_transition(self, transition, transition_regime_tuple_index):
-        print ' - Resolving Transition', transition
+        #print ' - Resolving Transition', transition
 
         # Update the target regime:
         self.dst_regime_tuple = self.flattener.getNewRegimeTupleFromTransition( 
@@ -86,12 +86,12 @@ class TransitionResolver(object):
         #Are any of the output events connected to other event_ports?
         #print self.send_rev_map.keys()
         for ev_out in transition.event_outputs:
-            print ' -- Checking for port connections from:', ev_out
+            #print ' -- Checking for port connections from:', ev_out
             if not ev_out.port_name in self.send_rev_map:
                 continue
 
             for recv_port in self.send_rev_map[ev_out.port_name]:
-                print '    -> Connection to ', recv_port
+                #print '    -> Connection to ', recv_port
 
                 # So this port is connected, but are we in a regime that triggers from
                 # this port??
@@ -99,7 +99,7 @@ class TransitionResolver(object):
                 for cascade_regime_index, regime in enumerate(self.dst_regime_tuple):
                     for ev in regime.on_events:
                         if ev.src_port_name == recv_port:
-                            print '     (**Cascade found**)'
+                            #print '     (**Cascade found**)'
                             self.unresolved_transitions.append( (ev,cascade_regime_index ))
 
 
@@ -252,166 +252,6 @@ class ComponentFlattener(object):
                 transitions=[],  )
 
 
-        
-
-
-
-#    def create_new_transition( self, oldtransition, regimetuple, regimeIndex, event_port_map ):
-#
-#        tr = TransitionResolver( 
-#                oldtransition = oldtransition, 
-#                regime_tuple=regimetuple, 
-#                transition_regime_tuple_index=regimeIndex, 
-#                flattener=self,
-#                )
-#
-#        return tr.state_assignments, tr.event_outputs, tr.targetRegime.name
-
-
-
-
-        ## This new transition will have the same state_assignments, but we need
-        ## to check the output_events, and see if they are locally connected.
-        ## If they are; then we need to work out what will happen from here.
-
-        #newRegimeTuple = self.getNewRegimeTupleFromTransition( currentRegimeTuple = regimetuple, regimeIndex=regimeIndex, oldtransition=oldtransition)
-        #state_assignments = list( oldtransition.state_assignments )
-        #event_outputs = []
-
-        #portconnections = [model.portconnections for model in self.all_components]
-        #portconnections = list( itertools.chain(* portconnections ) )
-        #
-
-
-
-        #send_rev_map = {}
-        #for src,dst in portconnections:
-        #    if not src in send_rev_map:
-        #        send_rev_map[src.get_local_name()] = []
-        #    send_rev_map[src.get_local_name()].append(dst.get_local_name())
-
-        #
-        #regime_indices_changed = set()
-
-        #for ev in oldtransition.event_outputs:
-        #    portname = ev.port_name
-        #    #print type(portname), portname
-        #    if portname in send_rev_map:
-        #        #print 'Port is a send port:', portname, '->', send_rev_map[portname]
-        #        
-        #        # OK, since this event port is connected, perhaps we have a
-        #        # cascade of events. Find all the knock-on transitions:
-
-        #        # Ensure we don't have event loops:
-        #        events_resolved = set()
-        #        events_to_resolve =  list( send_rev_map[portname]  )
-
-        #        while events_to_resolve:
-        #            target_port = events_to_resolve.pop(0)
-        #            assert isinstance(target_port, basestring)
-        #            #print 'target_port:', target_port
-        #            if target_port in events_resolved:
-        #                raise NineMLRuntimeError('Event Emission Cycle!')
-        #            events_resolved.add(target_port)
-        #            event_outputs.append( nineml.abstraction_layer.OutputEvent(target_port) )
-
-        #            #print ' - Resolving', target_port
-        #            # Find the transitions triggered by this event. The
-        #            # transitions have to start from transitions in the
-        #            # regime tuple:
-        #            for old_regime_index, old_regime in enumerate(regimetuple):
-        #                transitions_on_ev = [ on_ev for on_ev in old_regime.on_events if on_ev.src_port_name == target_port ] 
-        #                #print '   - Checking old regime for transitions triggered by this event', old_regime, transitions_on_ev
-        #                if transitions_on_ev == []:
-        #                    continue
-        #                trans_on_ev = nineml.utility.filter_expect_single(transitions_on_ev)
-
-        #                # We have found a cascaded event.
-        #                # 1. Copy new state assignments across
-        #                state_assignments.extend( trans_on_ev.state_assignments )
-
-        #                # 2. Update the target regime_tuple.
-        #                newRegimeTuple = self.getNewRegimeTupleFromTransition( currentRegimeTuple = newRegimeTuple, regimeIndex=old_regime_index, oldtransition=trans_on_ev )
-        #                if old_regime_index in regime_indices_changed:
-        #                    raise NineMLRuntimeError('Updating the same regime index twice. Something has gone wrong')
-        #                regime_indices_changed.add(old_regime_index)
-
-        #                # 3. Add any knock-on events.
-        #                events_to_resolve.extend( [ eo.port_name for eo in trans_on_ev.event_outputs ])
-
-
-        #    else:
-        #        print 'Unconnected Port -%s-'% portname
-
-        #    
-
-
-        ##handled_events = []
-        ##unhandled_events = []
-
-        ##state_assignments = oldtransition.state_assignments
-        ##output_events = oldtransition.event_outputs
-        ##unhandled_events.extend( flatten_first_level(
-        ##    [self.distribute_event( ev, event_port_map) for ev in output_events ]) ) 
-
-        ##newRegimeTuple = self.getNewRegimeTupleFromTransition( currentRegimeTuple = regimetuple, regimeIndex=regimeIndex, oldtransition=oldtransition)
-        ##
-        ##while unhandled_events:
-        ##    ev = unhandled_events.pop()
-        ##    new_state_assignments, new_event_outputs, newRegimeTuple = self.getRegimeTupleResponseToEvent(newRegimeTuple, ev ) 
-        ##    
-        ##    # Check for event recursion:
-        ##    for new_ev in new_event_outputs: assert not new_ev in handled_events and new_ev != ev
-        ##    
-        ##    state_assignments.extend( new_state_assignments )
-        ##    output_events.extend( new_event_outputs )
-        ##    unhandled_events.extend( flatten_first_level(
-        ##        self.distribute_event( new_event_outputs, event_port_map ) ) )
-        ##    handled_events.append(ev)
-
-        ##
-        #
-        #targetRegime = self.old_regime_tuple_to_new_regime_map[ tuple(newRegimeTuple)  ]
-
-        #return state_assignments, event_outputs, targetRegime.name
-
-
-    #def distribute_event(self, event_output, event_port_map):
-    #    #print 'Distributing Event', event_output, event_output.port_name
-    #    events = set()
-    #    for p1, p2 in event_port_map:
-    #        if p1 == event_output.port_name:
-    #            events.append( p2 )
-    #            events = events + self.distribute_event(p2)
-    #    return events
-
-
-
-    #def getRegimeTupleResponseToEvent( self, regimeTuple, eventName ):
-    #    " Do not recurse, but iterate once over each regime in the tuple"
-    #    import nineml.al.visitors as visitors
-
-    #    state_assignments = []
-    #    event_outputs = []
-    #    newRegimeTuple = list( regimeTuple )
-
-    #    for index, regime in enumerate(regimeTuple):
-    #        on_events = [ oe for oe in regime.on_events if oe.src_port_name == eventName ] 
-    #        assert len(on_events) in [0, 1]
-    #        if not on_events: continue
-
-    #        on_event = on_events[0]
-    #        state_assignments.extend( [sa.accept_visitor( visitors.ClonerVisitor() ) for sa in on_event.state_assignments ]) 
-    #        event_outputs.extend( [eo.accept_visitor( visitors.ClonerVisitor() ) for eo in one_event.event_outputs ]) 
-    #        
-    #        #Update dstRegime
-    #        dstRegimeName = oldtransition.to.get_ref() if oldtransition.to else regime
-    #        dstRegime = self.componentswithregimes[regimeIndex].query.regime(name=dstRegimeName.name) 
-    #        newRegimeTuple[index] = dstRegime
-
-    #    print 'EventOutputs', event_outputs
-    #    return state_assignments, event_outputs, tuple( newRegimeTuple )
-    
 
     def getNewRegimeTupleFromTransition( self, currentRegimeTuple, regimeIndex, oldtransition ):
         srcRegime = list( currentRegimeTuple )
@@ -440,16 +280,6 @@ class ComponentFlattener(object):
             newRegime = ComponentFlattener.create_compound_regime( regimetuple ) 
             self.old_regime_tuple_to_new_regime_map[regimetuple] = newRegime
 
-        
-
-        # Check for event-emission cycles:
-        # TODO
-        #event_port_map = flatten_first_level( [comp.query.get_fully_qualified_port_connections() for comp in self.all_components] )
-        #event_port_map = [ (p1.getstr(), p2.getstr() ) for (p1, p2) in event_port_map ] 
-
-        event_port_map = flatten_first_level( 
-                [comp.event_ports for comp in self.all_components]) 
-        event_port_map = dict( [ (p.name, p) for p in event_port_map ] ) 
 
         # Create New Events for the Regime-Map
         for regimetuple, regime_new in self.old_regime_tuple_to_new_regime_map.iteritems():
