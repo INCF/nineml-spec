@@ -7,8 +7,8 @@ from nineml.abstraction_layer import *
 
 import unittest
 
-#class FuncTest_Flat2(object):
-class FuncTest_Flat2(unittest.TestCase):
+class FuncTest_Flat2(object):
+#class FuncTest_Flat2(unittest.TestCase):
     """ Create a Neuron with leak, and a current clamp, and check that the 
         Output is what we would expect.
     """
@@ -87,7 +87,7 @@ class FuncTest_Flat2(unittest.TestCase):
                             initial_values = {},
                             synapse_components = [],
                             records = records,
-                            plot = False,
+                            #plot = False,
                            )
         
         t, records = res
@@ -143,5 +143,5 @@ class FuncTest_Flat2(unittest.TestCase):
         check_trace('nrn_V', (90+2,100),  exp_mean=(13.8/4.3) -70 )
 
 
-#FuncTest_Flat2().functest()
+FuncTest_Flat2().func_test()
 
