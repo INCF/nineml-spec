@@ -1,8 +1,23 @@
 TARGET=nineml_spec
 
-all: main.tex main.dvi ${TARGET}.ps ${TARGET}.pdf
+
+# Temp while building AL spec doc
+#all: Abstraction_Layer.pdf
+
+
+
+
+
+
+all: main.tex main.dvi ${TARGET}.ps ${TARGET}.pdf Abstraction_Layer.pdf
 
 long: main.tex long_main.dvi ${TARGET}.ps ${TARGET}.pdf
+
+
+
+Abstraction_Layer.pdf: Abstraction_Layer.rst
+	rst2pdf Abstraction_Layer.rst
+
 
 
 #long_main.dvi: discussion.tex introduction.tex body.tex main.tex references.bib
@@ -27,3 +42,4 @@ ${TARGET}.ps: main.dvi
 
 clean:
 	rm -f main.dvi main.aux main.bbl main.log ${TARGET}.ps ${TARGET}.pdf
+	rm -rf Abstraction_Layer.pdf
