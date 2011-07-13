@@ -6,6 +6,10 @@
 \usepackage{hyperref}
 \usepackage{amsmath}
 \usepackage{color}
+\usepackage{verbatim}
+
+
+\usepackage{xspace}
 
 \usepackage[margin=1in]{geometry}
 \usepackage{listings}
@@ -44,7 +48,83 @@ float=tbfh}
 \end{center}%
 }
 
-\newcommand{\nmlClass}[1]{{\tt #1}}
+\newcommand{\nmlClass}[1]{{\bf #1}}
+
+\newcommand{\ComponentClass}{{\bf{ComponentClass}}\xspace}
+\newcommand{\ComponentClasses}{{\bf{ComponentClass}}es\xspace}
+
+\newcommand{\Dynamics}{{\bf{Dynamics}}\xspace}
+
+
+\newcommand{\Interface}{{\bf{Interface}}\xspace}
+\newcommand{\Interfaces}{{\bf{Interface}}s\xspace}
+
+
+\newcommand{\StateVariable}{{\bf{StateVariable}}\xspace}
+\newcommand{\StateVariables}{{\bf{StateVariable}}s\xspace}
+
+
+\newcommand{\StateAssignment}{{\bf{StateAssignment}}\xspace}
+\newcommand{\StateAssignmentes}{{\bf{StateAssignment}}s\xspace}
+
+
+\newcommand{\TimeDerivative}{{\bf{TimeDerivative}}\xspace}
+\newcommand{\TimeDerivativees}{{\bf{TimeDerivative}}s\xspace}
+
+\newcommand{\Alias}{{\bf{Alias}}\xspace}
+\newcommand{\Aliases}{{\bf{Alias}}es\xspace}
+
+\newcommand{\AnalogPort}{{\bf{AnalogPort}}\xspace}
+\newcommand{\AnalogPorts}{{\bf{AnalogPort}}s\xspace}
+
+\newcommand{\EventPort}{{\bf{EventPort}}\xspace}
+\newcommand{\EventPorts}{{\bf{EventPort}}s\xspace}
+
+\newcommand{\Port}{{\bf{Port}}\xspace}
+\newcommand{\Ports}{{\bf{Port}}s\xspace}
+
+\newcommand{\Event}{{\bf{Event}}\xspace}
+\newcommand{\Events}{{\bf{Event}}s\xspace}
+
+\newcommand{\Regime}{{\bf{Regime}}\xspace}
+\newcommand{\Regimes}{{\bf{Regime}}s\xspace}
+
+\newcommand{\Transition}{{\bf{Transition}}\xspace}
+\newcommand{\Transitions}{{\bf{Transition}}s\xspace}
+
+\newcommand{\OnEvent}{{\bf{OnEvent}}\xspace}
+\newcommand{\OnEvents}{{\bf{OnEvent}}s\xspace}
+
+\newcommand{\OnCondition}{{\bf{OnCondition}}\xspace}
+\newcommand{\OnConditions}{{\bf{OnCondition}}s\xspace}
+
+
+\newcommand{\Parameter}{{\bf{Parameter}}\xspace}
+\newcommand{\Parameters}{{\bf{Parameter}}s\xspace}
+
+
+\newcommand{\OutputEvent}{{\bf{OutputEvent}}\xspace}
+\newcommand{\OutputEvents}{{\bf{OutputEvent}}s\xspace}
+
+
+\newcommand{\SendPort}{{\tt{SendPort}}\xspace}
+\newcommand{\RecvPort}{{\tt{RecvPort}}\xspace}
+\newcommand{\ReducePort}{{\tt{ReducePort}}\xspace}
+\newcommand{\SendPorts}{{\tt{SendPorts}}\xspace}
+\newcommand{\RecvPorts}{{\tt{RecvPorts}}\xspace}
+\newcommand{\ReducePorts}{{\tt{ReducePorts}}\xspace}
+
+
+
+
+
+
+
+
+
+
+
+
 
 \begin{document}
 
@@ -419,24 +499,24 @@ Who gives it a go: Ivan
 
 \subsection{ComponentClass}
 
-In the NineML Abstraction Layer the model is defined in terms of {\tt
-  ComponentClass}es. A {\tt ComponentClass} is the conglomerating
+In the NineML Abstraction Layer the model is defined in terms of
+\ComponentClasses. A \ComponentClass is the conglomerating
 object which is the subject of interaction with the User Layer.  A
-{\tt ComponentClass} could typically represent a point-neuron model or
-a synapse model for example. It is composed of an {\tt Interface} and
-its {\tt Dynamics}.
+\ComponentClass could typically represent a point-neuron model or
+a synapse model for example. It is composed of an \Interface and
+a \Dynamics.
 
 \subsubsection{Dynamics}
 
-The Dynamics are the \emph{internal} mechanisms governing the behaviour
+The \Dynamics are the \emph{internal} mechanisms governing the behaviour
 of the component. The dynamics of a component are specified in terms of
 the following:
 
 \begin{itemize}
-\item {\tt StateVariable} (section~\ref{state-var})
+\item \StateVariable (section~\ref{state-var})
 \item A {\tt RegimeGraph} (section~\ref{regime-graph}) composed of
-  instances of {\tt Regime} and {\tt Transition}
-\item {\tt Alias} (section~\ref{alias})
+  instances of \Regime and \Transition
+\item \Alias (section~\ref{alias})
 \end{itemize}
 
 \subsubsection{Interface}
@@ -444,35 +524,35 @@ the following:
 The interface is the \emph{external} view of the component that defines
 what inputs and outputs the component exposes to other components and the
 parameters that can be set for the component. The interface consists of
-instances of {\tt Port} (section~\ref{ports}) and {\tt Parameter}
+instances of \Port (section~\ref{ports}) and \Parameter
 (section~\ref{parameters}).
 
 \subsubsection{Events}
 \label{events}
 
 As well as being able to communicate continuous values, components are also
-able to emit and receive {\tt Event}s. Events are discrete notifications
-that are transmitted over {\tt EventPort}s (section~\ref{eventPorts}). Since
-{\tt EventPort}s have names, saying that we transmit 'event1' for example
+able to emit and receive \Events. Events are discrete notifications
+that are transmitted over \EventPorts (section~\ref{eventPorts}). Since
+\EventPorts have names, saying that we transmit 'event1' for example
 would mean transmitting an event on the EventPort called 'event1'. Events
 can be used to signal action potentials firing for example.
 
 \subsection{StateVariable}
 \label{state-var}
 
-The internal state of a component is defined by a set of {\tt StateVariable}
+The internal state of a component is defined by a set of \StateVariable
 -- variables that can change either continuously or discontinuously as a
 function of time.
 
-The {\tt StateVariable} changes happen in two ways:
+The \StateVariable changes happen in two ways:
 %
 \begin{quote}
 \begin{itemize}
-\item continuously through \textbf{TimeDerivatives} (in {\tt Regime}s),
-which define the {\tt StateVariable}s evolution over time, for example
+\item continuously through \textbf{TimeDerivatives} (in \Regimes),
+which define the \StateVariables evolution over time, for example
 \textsl{dX/dt=1-X}
-\item discretely through {\tt StateAssignment} (in {\tt Transition}),
-which make discrete changes to a {\tt StateVariable} value, for example
+\item discretely through \StateAssignment (in \Transition),
+which make discrete changes to a \StateVariable value, for example
 \textsl{X = X + 1}
 \end{itemize}
 \end{quote}
@@ -480,11 +560,10 @@ which make discrete changes to a {\tt StateVariable} value, for example
 \subsection{The Regime Graph}
 \label{regime-graph}
 
-The {\tt Regime} forms the vertices and the {\tt Transition} form the
+The \Regime forms the vertices and the \Transition form the
 directional edges of the {\tt Regime Graph}, which must have at least
-one {\tt Regime}, and contain no regime islands.  At any given time, a
-component will be in a single {\tt Regime}, and can change which {\tt
-  Regime} it is in through {\tt Transition}.
+one \Regime, and contain no regime islands.  At any given time, a
+component will be in a single \Regime, and can change which \Regime it is in through \Transition.
 
 \begin{figure}[htb!]
 \center
@@ -501,28 +580,26 @@ these regimes, and the state variables will evolve accordingly.
 \subsubsection{Regime}
 
 A \nmlClass{Regime} is defined in NineML as a system of ODEs in time
-on {\tt StateVariable}.  As such, {\tt Regime} defines how the {\tt
-  StateVariable}s change (propagate in time) between subsequent
-\nmlClass{Transition}. {\tt Regime} is defined to have non-vanishing
-temporal extent. Once construction of the {\tt Regime} is complete, it
+on \StateVariable.  As such, \Regime defines how the \StateVariables change (propagate in time) between subsequent \Transitions. \Regime is defined to have non-vanishing
+temporal extent. Once construction of the \Regime is complete, it
 should have defined the following properties:
 
 \begin{itemize}
 \item An unordered collection of \nmlClass{StateVariable}s which are
 propagated when the \nmlClass{Regime} is active.
-\item a set of {\tt TimeDerivative}, one for each {\tt StateVariable}
-of the {\tt ComponentClass}, which define how the {\tt StateVariable}
+\item a set of \TimeDerivative, one for each \StateVariable
+of the \ComponentClass, which define how the \StateVariable
 evolve over time in the form \textsl{dx\_i/dt = f(x\_0, ..., x\_i, t)}.
-\item {\tt Parameter} for the \nmlClass{Regime}
+\item \Parameter for the \nmlClass{Regime}
 \item An unordered collection of \nmlClass{AnalogPort}s which publish state
 variables (type=send), or consume state variables published from elsewhere
 (type=recv, or type=reduce).
 \item The independent variable must be shared between the collection
-of {\tt StateVariable}s and their propagators in a Regime.
+of \StateVariables and their propagators in a Regime.
 \end{itemize}
 
-\note{If a \textbf{TimeDerivative} for a {\tt StateVariable} is not defined
-in a {\tt Regime}, it is assumed to be zero.}
+\note{If a \textbf{TimeDerivative} for a \StateVariable is not defined
+in a \Regime, it is assumed to be zero.}
 
 [TODO:
 Sean's comment:
@@ -574,16 +651,15 @@ message to the user.
 
 \subsubsection{Transition}
 
-Movement between several instances of {\tt Regime} happens via {\tt
-  Transition}. A \nmlClass{Transition} is defined in NineML as having
+Movement between several instances of \Regime happens via \Transition. A \nmlClass{Transition} is defined in NineML as having
 a source and target \nmlClass{Regime}, where the target
 \nmlClass{Regime} can be the same as the source (For example \emph{t5}
-in Figure~\ref{SimpleRegimeGraph}). There are two types of {\tt Transition}:
+in Figure~\ref{SimpleRegimeGraph}). There are two types of \Transition:
 
 \begin{itemize}
-\item An {\tt OnCondition} function of the {\tt StateVariable}, for
+\item An \OnCondition function of the \StateVariable, for
 example \textsl{X>Y}.
-\item An {\tt OnEvent} on an input from {\tt EventPort}. (Discussed in
+\item An \OnEvent on an input from \EventPort. (Discussed in
 sections~\ref{events} and \ref{eventPorts}).
 \end{itemize}
 
@@ -593,11 +669,11 @@ During either type of transition three things can happen:
 the component is in \emph{regime3}, and the trigger for \emph{t3} is
 satisfied, then the component will move into \emph{regime1}.
 \item \textbf{StateAssignment}s can take place, for example, \textsl{X=0}
-\item The component can send {\tt OutputEvent}
+\item The component can send \OutputEvent
 \end{itemize}
 
-During a transition, multiple {\tt StateAssignment} and {\tt OutputEvent} can occur. 
-(For more on the resolution of {\tt Transition}, see section~\ref{resolution})
+During a transition, multiple \StateAssignment and \OutputEvent can occur. 
+(For more on the resolution of \Transition, see section~\ref{resolution})
 
 \nmlClass{Transition}s have a vanishing temportal extent (i.e. they are
 event-like). Once construction of a \nmlClass{Transition} is complete, it
@@ -605,7 +681,7 @@ should have defined the following properties:
 \begin{itemize}
 \item The \nmlClass{Condition} or \nmlClass{EventPort(mode=recv)} which
 triggers the \nmlClass{Transition}
-\item An set of {\tt StateAssignment} and{\tt OutputEvent} objects
+\item An set of \StateAssignment and\OutputEvent objects
 \item The label of the source \nmlClass{Regime}, and the label of the target
 \nmlClass{Regime}, which may be the same as the source \nmlClass{Regime}.
 \end{itemize}
@@ -616,8 +692,8 @@ triggers the \nmlClass{Transition}
 \textbf{Aliases} are motivated from two problems:
 
 \begin{itemize}
-\item Rather than writing long expressions for functions of {\tt StateVariable},
-we can define an {\tt Alias} once. For example, we can define chains of
+\item Rather than writing long expressions for functions of \StateVariable,
+we can define an \Alias once. For example, we can define chains of
 \textbf{Aliases}:
 %
 \begin{quote}{\ttfamily \raggedright \noindent
@@ -634,14 +710,14 @@ alias definitions. There is no reason we couldn't expand our \textsl{dm/dt}
 description out to eliminate these intermediate \textbf{Aliases}, but the expression
 would be very long and difficult to read.
 
-\item If we would like to communicate a value other than a simple {\tt StateVariable}
-to another {\tt ComponentClass}. For example, if we have a component representing a
-neuron, which has an internal {\tt StateVariable}, 'V', we may be interested in
+\item If we would like to communicate a value other than a simple \StateVariable
+to another \ComponentClass. For example, if we have a component representing a
+neuron, which has an internal \StateVariable, 'V', we may be interested in
 transmitting a current, for example \textsl{i=g*(E-V)}.
 \end{itemize}
 
-\note{{\tt Alias} is defined in the Dynamics, \emph{not} in the
-{\tt Regime}. This means that aliases are the same across all regimes.}
+\note{\Alias is defined in the Dynamics, \emph{not} in the
+\Regime. This means that aliases are the same across all regimes.}
 
 \subsection{Parameter}
 \label{parameters}
@@ -663,22 +739,22 @@ and \nmlClass{EventPort}, and each can have different modes.
 
 \subsubsection{AnalogPort}
 
-AnalogPorts transmit and receive continuous values, either {\tt Alias}
-or {\tt StateVariable}. {\tt AnalogPort} can have 3 modes:
+AnalogPorts transmit and receive continuous values, either \Alias
+or \StateVariable. \AnalogPort can have 3 modes:
 \begin{itemize}
-\item {\tt SendPort} - transmit data originating in this component which can
+\item \SendPort - transmit data originating in this component which can
 be read by other components.
-\item {\tt RecvPort} - receive data from another components {\tt SendPort}
-port. Each {\tt RecvPort} can be connected to \emph{one} {\tt SendPort}.
-\item {\tt ReducePort} - receive data from multiple {\tt SendPort}. These
-differ from {\tt RecvPort} in that they can be connected to multiple
-{\tt SendPort}. {\tt ReducePort} take an additional operator,
-{\tt reduce\_op}, which specifies how the data from multiple {\tt SendPort}
+\item \RecvPort - receive data from another components \SendPort
+port. Each \RecvPort can be connected to \emph{one} \SendPort.
+\item \ReducePort - receive data from multiple \SendPorts. These
+differ from \RecvPorts in that they can be connected to multiple
+\SendPort. \ReducePorts take an additional operator,
+{\tt reduce\_op}, which specifies how the data from multiple \SendPorts
 should be combined to produce a single value. Currently, the
 only supported operations is \textsl{+}, which sums the inputs.
-The motivation for {\tt ReducePort} is that it allows us to make our
+The motivation for \ReducePort is that it allows us to make our
 component definitions more general. For example, if we are defining a
-neuron, would define a {\tt ReducePort} called {\tt InjectedCurrent}.
+neuron, would define a \ReducePort called {\tt InjectedCurrent}.
 This allows us to write the membrane equation for that neuron as
 \textsl{dV/dt = (1/C) * InjectedCurrents}
 
@@ -696,25 +772,25 @@ simulation of integrate-and-fire neurons to notify components about neuron's
 spiking. Event ports only have 2 modes:
 
 \begin{itemize}
-\item {\tt SendPort} - transmit events originating in this component which can be read by
+\item \SendPort - transmit events originating in this component which can be read by
 other components
-\item {\tt RecvPort} - receive events from another components {\tt SendPort} port.
-Each recv port can be connected to \emph{multiple} {\tt SendPort}.
+\item \RecvPort - receive events from another components \SendPort port.
+Each recv port can be connected to \emph{multiple} \SendPorts.
 \end{itemize}
 
-For example, a synapse component may have a {\tt RecvPort} connected to the
-presynaptic neurons {\tt SendPort} port. When the presynaptic neuron fires;
+For example, a synapse component may have a \RecvPort connected to the
+presynaptic neurons \SendPort port. When the presynaptic neuron fires;
 it delivers an event to the synapse, which could cause it to produce current
 flow in a post-synaptic neuron.
 
 \subsection{Property}
 
 Property is a User Layer object that instantiates values in simple
-Abstraction Layer {\tt Parameter} and combines a value of one of the data
+Abstraction Layer \Parameter and combines a value of one of the data
 types defined in the section~\ref{DataTypes}, an indicator of the used type
 [not in the table below, is it necessary? AG.],
 and a label. The label should match the corresponding label in the
-Abstraction Layer {\tt Parameter} definition.
+Abstraction Layer \Parameter definition.
 
 \begin{table}[htb]
 \center
@@ -804,7 +880,7 @@ Reference \\
 \subsection{Component}
 
 The basic building block of NineML User Layer is called component. In the
-User Layer description component is a reference to a {\tt ComponentClass}
+User Layer description component is a reference to a \ComponentClass
 object defined in the Abstraction Layer. Abstraction Layer defines the
 mathematics of the component and this definition is then referred in the
 User Layer through an object of type {\tt Definition}.
@@ -946,15 +1022,15 @@ contains the syntax to import external files.
 \subsection{Scope of NineML Descriptions}
 \label{scope}
 
-Elements of {\tt Regime}s and {\tt Transition}s resolve state
+Elements of \Regimes and \Transitions resolve state
 variables, parameters, etc. relative to their containing
-{\tt ComponentClass}/{\tt Namespace} first, then the system {\tt Namespace}.
+\ComponentClass/{\tt Namespace} first, then the system {\tt Namespace}.
 
 The system {\tt Namespace} is immutable, and contains:
 \begin{itemize}
 \item[-]{SignalLib/MathLib (pi, e, sin, cos)}
 \item[-]{RandomLib}
-\item[-]{DiagramLib ({\tt Regime}, {\tt Transition}, {\tt ODE},
+\item[-]{DiagramLib (\Regime, \Transition, {\tt ODE},
 {\tt Assignment})}
 \item[-]{IntervalLib}
 \item[-]{etc.}
@@ -1016,16 +1092,16 @@ This tag starts an abstraction layer component definition.
 Attributes:
 %
 \begin{itemize}
-\item name {[}Required{]}
+\item \verb|name| {[}Required{]}
 \end{itemize}
 
 Child Elements:
 %
 \begin{itemize}
-\item <Parameter> {[}0+{]}
-\item <AnalogPort>{[}0+{]}
-\item <EventPort> {[}0+{]}
-\item <Dynamics>  {[}1{]}
+\item \verb|<Parameter>| {[}0+{]}
+\item \verb|<AnalogPort>|{[}0+{]}
+\item \verb|<EventPort>| {[}0+{]}
+\item \verb|<Dynamics>|  {[}1{]}
 \end{itemize}
 
 \subsubsection{Parameter}
@@ -1445,28 +1521,28 @@ Project, GENESIS-3, KInNeSS, MOOSE, NEURON, NEST, PyNN and NeuroML.
 \label{resolution}
 
 This section outlines pseudo code which defines the order of
-{\tt Transition}-triggering, state assignment execution, event emission,
+\Transition-triggering, state assignment execution, event emission,
 transmission and resolution in a system of connected components.
 Implementations do not need to implement this algorithm but should produce
 the same behaviours.
 
 A {\tt TransitionResolutionBlock} represents an instant in time. It begins
-before any {\tt Transition}s occur and ends after each component has moved
-into its new {\tt Regime}, all \textbf{StateAssignments} have been executed
-and all {\tt Event}s generated and resolved in the system.
+before any \Transitions occur and ends after each component has moved
+into its new \Regime, all \textbf{StateAssignments} have been executed
+and all \Events generated and resolved in the system.
 
 \subsection{Serial Implementation of Transition Resolution}
 
 \newcommand{\CN}[0]{\textsl{C\_n}}
 
 We have a system of \textsl{N} components \textsl{\{C\_1,C\_2,...,C\_N\}},
-at time, \textsl{t}, where each component, \CN, is in {\tt Regime}
+at time, \textsl{t}, where each component, \CN, is in \Regime
 $R^{t}_{n}$.
 
-\noindent From {\tt Regime} $R^{t}_{n}$, there are:
+\noindent From \Regime $R^{t}_{n}$, there are:
 \begin{itemize}
-\item OnEvent {\tt Transition}s $OnEv^{t}_{n} = \{ ... \}$
-\item OnCondition {\tt Transition}s $OnCond^{t}_{n} = \{ ... \}$
+\item OnEvent \Transitions $OnEv^{t}_{n} = \{ ... \}$
+\item OnCondition \Transitions $OnCond^{t}_{n} = \{ ... \}$
 \end{itemize}
 
 \newcommand{\send}[0]{\texttt{send} }
@@ -1479,7 +1555,7 @@ has:
 \item \recv EventPorts \textsl{EvRecv = \{$EvRecv_{n,1,}$, $EvRecv_{n,2,}$, ...  \}}
 \end{itemize}
 
-\noindent {\tt EventPort} connections are stored in a a map,
+\noindent \EventPort connections are stored in a a map,
 \textsl{EvPortConnections}, which maps EvSend to a list of EvRecv ports. i.e.,
 
 \textsl{\{EvSend $\rightarrow$ [EvRecv,EvRecv,..,EvRecv], EvSend $\rightarrow$
@@ -1545,7 +1621,7 @@ this target-regime, or remains in the same regime if \RCLn is empty.
 \begin{enumerate}
 \item  There is no order defined in transitions; this means
 that the order of resolution of state assignments can be ambiguous. If, for
-example, we have two transitions, T1 and T2, originating from the same Regime,
+example, we have two transitions, T1 and T2, originating from the same \Regime,
 in which T1 contains the state assignment \textsl{V=V+1} and T2 contains the
 assignment \textsl{V=V*V}, and both transitions are triggered, then there is no
 guarantee about the value of V. It is up the user to ensure this does not
@@ -1597,7 +1673,7 @@ discussed previously.
 
 \subsubsection{NetworkElementModel Interface}
 A {\tt Component} which exposes the NetworkElementModel
-{\tt Interface} must contain the following:
+\Interface must contain the following:
 \begin{itemize}
 \item An unordered collection of {\tt Transition}s which connect the {\tt Regime}s
   of the {\tt Component} by assigning sources and targets from the named
