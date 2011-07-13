@@ -51,7 +51,7 @@ float=tbfh}
 \pagestyle{empty}
 
 \begin{center}
-\includegraphics[width=0.7\columnwidth]{./images/incf.png}
+{\includegraphics[width=0.7\columnwidth]{images/incf.png}}
 \end{center}
 
 \vspace*{1cm}
@@ -62,15 +62,13 @@ float=tbfh}
 \vspace*{1cm}
 
 \begin{center}
-
-\noindent{\Huge \bf Network Interchange for Neuroscience Modeling Language (NineML)\\
+\noindent{\Huge \bf Network Interchange for Neuroscience Modeling Language (NineML)}\\
 \vspace{0.5cm}
 \noindent{\Large \bf Specification}\\
 \vspace{0.5cm}
 \noindent{\large INCF Task Force on Multi-Scale Modeling}\\
 \vspace{0.5cm}
-\noindent{\large Version: 0.95}
-
+\noindent{\large Version: 0.96}
 \end{center}
 
 \vspace*{0.75cm}
@@ -110,6 +108,12 @@ as group discussions within Task Force. This specification is created for
 public release at CNS 2011.
 
 \vskip 1in
+
+\paragraph{Changes from version 0.95:}
+\begin{itemize}
+\item Moved section Transition Resolution to the Appendix; consistent
+  highlighting of NineML class names (Ivan Raikov)
+\end{itemize}
 
 \paragraph{Changes from version 0.94:}
 \begin{itemize}
@@ -415,12 +419,12 @@ Who gives it a go: Ivan
 
 \subsection{ComponentClass}
 
-In the NineML Abstraction Layer the model is defined in terms of
-{\tt ComponentClass}es. A {\tt ComponentClass} is the conglomerating
-object which is the subject of interaction with the User Layer.
-A {\tt ComponentClass} could typically represent
-a point-neuron model or a synapse model for example. It is composed of
-its \em{Interface} and its \em{Dynamics}.
+In the NineML Abstraction Layer the model is defined in terms of {\tt
+  ComponentClass}es. A {\tt ComponentClass} is the conglomerating
+object which is the subject of interaction with the User Layer.  A
+{\tt ComponentClass} could typically represent a point-neuron model or
+a synapse model for example. It is composed of an {\tt Interface} and
+its {\tt Dynamics}.
 
 \subsubsection{Dynamics}
 
@@ -429,10 +433,10 @@ of the component. The dynamics of a component are specified in terms of
 the following:
 
 \begin{itemize}
-\item {\tt StateVariable}s (section~\ref{state-var})
-\item A \emph{RegimeGraph} (section~\ref{regime-graph}) composed of {\tt Regime}s
-and {\tt Transition}s
-\item \textbf{Aliases} (section~\ref{alias})
+\item {\tt StateVariable} (section~\ref{state-var})
+\item A {\tt RegimeGraph} (section~\ref{regime-graph}) composed of
+  instances of {\tt Regime} and {\tt Transition}
+\item {\tt Alias} (section~\ref{alias})
 \end{itemize}
 
 \subsubsection{Interface}
@@ -440,7 +444,7 @@ and {\tt Transition}s
 The interface is the \emph{external} view of the component that defines
 what inputs and outputs the component exposes to other components and the
 parameters that can be set for the component. The interface consists of
-{\tt Port}s (section~\ref{ports}) and {\tt Parameter}s
+instances of {\tt Port} (section~\ref{ports}) and {\tt Parameter}
 (section~\ref{parameters}).
 
 \subsubsection{Events}
@@ -456,7 +460,7 @@ can be used to signal action potentials firing for example.
 \subsection{StateVariable}
 \label{state-var}
 
-The internal state of a component is defined by a set of {\tt StateVariable}s
+The internal state of a component is defined by a set of {\tt StateVariable}
 -- variables that can change either continuously or discontinuously as a
 function of time.
 
@@ -467,8 +471,8 @@ The {\tt StateVariable} changes happen in two ways:
 \item continuously through \textbf{TimeDerivatives} (in {\tt Regime}s),
 which define the {\tt StateVariable}s evolution over time, for example
 \textsl{dX/dt=1-X}
-\item discretely through \textbf{StateAssignments} (in {\tt Transition}s),
-which make discrete changes to a {\tt StateVariable}'s value, for example
+\item discretely through {\tt StateAssignment} (in {\tt Transition}),
+which make discrete changes to a {\tt StateVariable} value, for example
 \textsl{X = X + 1}
 \end{itemize}
 \end{quote}
@@ -476,11 +480,11 @@ which make discrete changes to a {\tt StateVariable}'s value, for example
 \subsection{The Regime Graph}
 \label{regime-graph}
 
-The {\tt Regime}s form the vertices and the {\tt Transition}s form the
-directional edges of the \emph{Regime Graph}, which must have at least one
-{\tt Regime}, and contain no regime-islands.  At any given time, a
-component will be in a single {\tt Regime}, and can change which
-{\tt Regime} it is in through {\tt Transition}s.
+The {\tt Regime} forms the vertices and the {\tt Transition} form the
+directional edges of the {\tt Regime Graph}, which must have at least
+one {\tt Regime}, and contain no regime islands.  At any given time, a
+component will be in a single {\tt Regime}, and can change which {\tt
+  Regime} it is in through {\tt Transition}.
 
 \begin{figure}[htb!]
 \center
@@ -496,20 +500,20 @@ these regimes, and the state variables will evolve accordingly.
 
 \subsubsection{Regime}
 
-A \nmlClass{Regime} is defined in NineML as a system of ODEs in time on
-{\tt StateVariable}s.  As such, {\tt Regime}s define how the
-{\tt StateVariable}s change (propagate in time) between subsequent
-\nmlClass{Transition}s. {\tt Regime}s are defined to have non-vanishing
-temporal extent. Once construction of the {\tt Regime} is complete, it should
-have defined the following properties:
+A \nmlClass{Regime} is defined in NineML as a system of ODEs in time
+on {\tt StateVariable}.  As such, {\tt Regime} defines how the {\tt
+  StateVariable}s change (propagate in time) between subsequent
+\nmlClass{Transition}. {\tt Regime} is defined to have non-vanishing
+temporal extent. Once construction of the {\tt Regime} is complete, it
+should have defined the following properties:
 
 \begin{itemize}
 \item An unordered collection of \nmlClass{StateVariable}s which are
 propagated when the \nmlClass{Regime} is active.
-\item a set of \textbf{TimeDerivatives}, one for each {\tt StateVariable}
-of the {\tt ComponentClass}, which define how the {\tt StateVariable}s
+\item a set of {\tt TimeDerivative}, one for each {\tt StateVariable}
+of the {\tt ComponentClass}, which define how the {\tt StateVariable}
 evolve over time in the form \textsl{dx\_i/dt = f(x\_0, ..., x\_i, t)}.
-\item {\tt Parameter}s for the \nmlClass{Regime}
+\item {\tt Parameter} for the \nmlClass{Regime}
 \item An unordered collection of \nmlClass{AnalogPort}s which publish state
 variables (type=send), or consume state variables published from elsewhere
 (type=recv, or type=reduce).
@@ -522,7 +526,7 @@ in a {\tt Regime}, it is assumed to be zero.}
 
 [TODO:
 Sean's comment:
-We should not perclude other systems of equations,
+We should not preclude other systems of equations,
 overrideing regime, spatial regimes ...
 
 Generalize ODEs to general propagators ...
@@ -570,14 +574,14 @@ message to the user.
 
 \subsubsection{Transition}
 
-Movement between {\tt Regimes} happens via {\tt Transition}s. A
-\nmlClass{Transition} is defined in NineML as having a source and target
-\nmlClass{Regime}, where the target \nmlClass{Regime} can be the same as the
-source (For example \emph{t5} in Figure~\ref{SimpleRegimeGraph}). There
-are two types of {\tt Transition}s:
+Movement between several instances of {\tt Regime} happens via {\tt
+  Transition}. A \nmlClass{Transition} is defined in NineML as having
+a source and target \nmlClass{Regime}, where the target
+\nmlClass{Regime} can be the same as the source (For example \emph{t5}
+in Figure~\ref{SimpleRegimeGraph}). There are two types of {\tt Transition}:
 
 \begin{itemize}
-\item An {\tt OnCondition} function of the {\tt StateVariable}s, for
+\item An {\tt OnCondition} function of the {\tt StateVariable}, for
 example \textsl{X>Y}.
 \item An {\tt OnEvent} on an input from {\tt EventPort}. (Discussed in
 sections~\ref{events} and \ref{eventPorts}).
@@ -589,12 +593,11 @@ During either type of transition three things can happen:
 the component is in \emph{regime3}, and the trigger for \emph{t3} is
 satisfied, then the component will move into \emph{regime1}.
 \item \textbf{StateAssignment}s can take place, for example, \textsl{X=0}
-\item The component can send \textbf{OutputEvent}s
+\item The component can send {\tt OutputEvent}
 \end{itemize}
 
-During a transition, multiple \textbf{StateAssignment}s and
-\textbf{OutputEvent}s can occur. (For more on the resolution of
-{\tt Transition}s, see section~\ref{resolution})
+During a transition, multiple {\tt StateAssignment} and {\tt OutputEvent} can occur. 
+(For more on the resolution of {\tt Transition}, see section~\ref{resolution})
 
 \nmlClass{Transition}s have a vanishing temportal extent (i.e. they are
 event-like). Once construction of a \nmlClass{Transition} is complete, it
@@ -602,146 +605,10 @@ should have defined the following properties:
 \begin{itemize}
 \item The \nmlClass{Condition} or \nmlClass{EventPort(mode=recv)} which
 triggers the \nmlClass{Transition}
-\item An set of \textbf{StateAssignment}s and \textbf{OutputEvent}s objects
+\item An set of {\tt StateAssignment} and{\tt OutputEvent} objects
 \item The label of the source \nmlClass{Regime}, and the label of the target
 \nmlClass{Regime}, which may be the same as the source \nmlClass{Regime}.
 \end{itemize}
-
-\subsection{Transition Resolution}
-\label{resolution}
-
-This section outlines pseudo code which defines the order of
-{\tt Transition}-triggering, state assignment execution, event emission,
-transmission and resolution in a system of connected components.
-Implementations do not need to implement this algorithm but should produce
-the same behaviours.
-
-A {\tt TransitionResolutionBlock} represents an instant in time. It begins
-before any {\tt Transition}s occur and ends after each component has moved
-into its new {\tt Regime}, all \textbf{StateAssignments} have been executed
-and all {\tt Event}s generated and resolved in the system.
-
-\subsubsection{Serial Implementation of Transition Resolution}
-
-\newcommand{\CN}[0]{\textsl{C\_n}}
-
-We have a system of \textsl{N} components \textsl{\{C\_1,C\_2,...,C\_N\}},
-at time, \textsl{t}, where each component, \CN, is in {\tt Regime}
-$R^{t}_{n}$.
-
-\noindent From {\tt Regime} $R^{t}_{n}$, there are:
-\begin{itemize}
-\item OnEvent {\tt Transition}s $OnEv^{t}_{n} = \{ ... \}$
-\item OnCondition {\tt Transition}s $OnCond^{t}_{n} = \{ ... \}$
-\end{itemize}
-
-\newcommand{\send}[0]{\texttt{send} }
-\newcommand{\recv}[0]{\texttt{recv} }
-
-\noindent Component \CN
-has:
-\begin{itemize}
-\item \send EventPorts \textsl{EvSend = \{$EvSend_{n,1,}$, $EvSend_{n,2,}$, ...  \}}
-\item \recv EventPorts \textsl{EvRecv = \{$EvRecv_{n,1,}$, $EvRecv_{n,2,}$, ...  \}}
-\end{itemize}
-
-\noindent {\tt EventPort} connections are stored in a a map,
-\textsl{EvPortConnections}, which maps EvSend to a list of EvRecv ports. i.e.,
-
-\textsl{\{EvSend $\rightarrow$ [EvRecv,EvRecv,..,EvRecv], EvSend $\rightarrow$
-[EvRecv,EvRecv,EvRecv,...,EvRecv]\}}.
-
-\newcommand{\RCLn}{$RCL_n$}
-\newcommand{\AUTQn}{$AUTQ_n$}
-\newcommand{\EQn}{$EQ_n$}
-
-\noindent Each component has 3 associated data structures
-\begin{itemize}
-\item RegimeChangeList (\RCLn) (This list will contain target-regimes of
-triggered transitions)
-\item ActiveUnresolvedTransitionsQueue (\AUTQn) (This queue will
-contain transitions which will occur, but their effects have not be
-evaluated yet)
-\item EventQueue (\EQn) (This list contains events delivered to this
-component from other components via EventPort-connections)
-\end{itemize}
-
-\paragraph{Algorithm}
-
-\begin{enumerate}
-\item Enter {\tt TransitionResolutionBlock}
-\item For each component, \CN: clear \RCLn, \AUTQn and \EQn.
-\item For each component, \CN: for each \textsl{oncond} in $OnCond^{t}_{n}$ : if
-\textsl{oncond.trigger} evaluates to true, add \textsl{oncond} to \AUTQn.
-\item For each component, \CN:  for each \textsl{tr} in \AUTQn :
-\begin{itemize}
-\item
-remove \textsl{tr} from \AUTQn
-\item add the target\_regime to \RCLn
-\item for each
-\textsl{action} in \textsl{tr.do}:
-\begin{itemize}
-\item if \textsl{action} is an OutputEvent: test
-if the OutputEvent port is a key in \textsl{EvPortConnections}. If so, add the
-    OutputEvent to the EventQueue (\textsl{EQ\_{target}}) corresponding to each
-    \textsl{EvRecv} in the \textsl{EvPortConnections} map.
-
-\item  if \textsl{action}  is a StateAssignment, execute that state-assignment
-immediately.
-\end{itemize}
-\end{itemize}
-
-\item For each component \CN: for each event, \textsl{EvRecv} in \EQn: test
-whether there is a transition, \textsl{tr} triggered by this event, i.e an
-OnEvent in $OnEv^t_n$ from $R^t_n$ ; if so; then add it to \AUTQn.
-
-\item While any component has a non-empty \textsl{AUTQ}: Goto (4).
-
-\item For each component, \CN, check that all the target-regimes in the \RCLn
-are the same regime. (If not raise a RuntimeError). Each component moves into
-this target-regime, or remains in the same regime if \RCLn is empty.
-
-\item Leave {\tt TransitionResolutionBlock}
-
-\end{enumerate}
-
-\paragraph{Notes}
-
-
-\begin{enumerate}
-\item  There is no order defined in transitions; this means
-that the order of resolution of state assignments can be ambiguous. If, for
-example, we have two transitions, T1 and T2, originating from the same Regime,
-in which T1 contains the state assignment \textsl{V=V+1} and T2 contains the
-assignment \textsl{V=V*V}, and both transitions are triggered, then there is no
-guarantee about the value of V. It is up the user to ensure this does not
-happen.
-
-\item This Resolution System allows \emph{cascading} of Events, which in theory
-could be recursive through components, depending on connectivity. The
-implementation allows for this; and it is the users responsibility to ensure
-that there are not such issues. The implementation may decided to terminate
-Step (6) after a given number (say 1000) of iterations to prevent infinite
-loops.
-
-\item Flattening of hierarchical components; implementation should ensure that
-the behaviour of a flattened component is identical to that of an unflattened
-component.
-\end{enumerate}
-
-\subsubsection{Parallelising of Event Resolution}
-
-This algorithm can be parallelised as following. We create a thread for each
-Component, which can independently execute Steps (3 to 6). The threads need
-to be syncronised after steps (4) and (5) as shown in
-Figure~\ref{ParallelisingTransitions}.
-
-\begin{figure}[htb!]
-\center
-\includegraphics[width=14cm]{images/ParallelisingTransitions.pdf}
-\protect\caption{Parallelising of Event Resolution.}
-\label{ParallelisingTransitions}
-\end{figure}
 
 \subsection{Aliases}
 \label{alias}
@@ -749,8 +616,8 @@ Figure~\ref{ParallelisingTransitions}.
 \textbf{Aliases} are motivated from two problems:
 
 \begin{itemize}
-\item Rather than writing long expressions for functions of {\tt StateVariable}s,
-we can define an \textbf{Alias} once. For example, we can define chains of
+\item Rather than writing long expressions for functions of {\tt StateVariable},
+we can define an {\tt Alias} once. For example, we can define chains of
 \textbf{Aliases}:
 %
 \begin{quote}{\ttfamily \raggedright \noindent
@@ -773,7 +640,7 @@ neuron, which has an internal {\tt StateVariable}, 'V', we may be interested in
 transmitting a current, for example \textsl{i=g*(E-V)}.
 \end{itemize}
 
-\note{\textbf{Aliases} are defined in the Dynamics, \emph{not} in the
+\note{{\tt Alias} is defined in the Dynamics, \emph{not} in the
 {\tt Regime}. This means that aliases are the same across all regimes.}
 
 \subsection{Parameter}
@@ -796,28 +663,28 @@ and \nmlClass{EventPort}, and each can have different modes.
 
 \subsubsection{AnalogPort}
 
-AnalogPorts transmit and receive continuous values, either \textbf{Aliases}
-or {\tt StateVariable}s. {\tt AnalogPort}s can have 3 modes:
+AnalogPorts transmit and receive continuous values, either {\tt Alias}
+or {\tt StateVariable}. {\tt AnalogPort} can have 3 modes:
 \begin{itemize}
 \item {\tt SendPort} - transmit data originating in this component which can
 be read by other components.
 \item {\tt RecvPort} - receive data from another components {\tt SendPort}
 port. Each {\tt RecvPort} can be connected to \emph{one} {\tt SendPort}.
 \item {\tt ReducePort} - receive data from multiple {\tt SendPort}. These
-differ from {\tt RecvPort}s in that they can be connected to multiple
-{\tt SendPort}. {\tt ReducePort}s take an additional operator,
-{\tt reduce\_op}, which specifies how the data from multiple {\tt SendPort}s
+differ from {\tt RecvPort} in that they can be connected to multiple
+{\tt SendPort}. {\tt ReducePort} take an additional operator,
+{\tt reduce\_op}, which specifies how the data from multiple {\tt SendPort}
 should be combined to produce a single value. Currently, the
 only supported operations is \textsl{+}, which sums the inputs.
-The motivation for {\tt ReducePort}s is that it allows us to make our
+The motivation for {\tt ReducePort} is that it allows us to make our
 component definitions more general. For example, if we are defining a
-neuron, would define a {\tt ReducePort} called {\tt InjectedCurrents}.
+neuron, would define a {\tt ReducePort} called {\tt InjectedCurrent}.
 This allows us to write the membrane equation for that neuron as
 \textsl{dV/dt = (1/C) * InjectedCurrents}
 
 Then, when we connect this neuron to synapses, current-clamps, etc, we
 simply need to connect the SendPorts containing the currents of these
-components onto the {\tt InjectedCurrents} reduce-port, within having
+components onto the {\tt InjectedCurrent} reduce-port, within having
 to change our original component definitions.
 \end{itemize}
 
@@ -843,7 +710,7 @@ flow in a post-synaptic neuron.
 \subsection{Property}
 
 Property is a User Layer object that instantiates values in simple
-Abstraction Layer {\tt Parameter}s and combines a value of one of the data
+Abstraction Layer {\tt Parameter} and combines a value of one of the data
 types defined in the section~\ref{DataTypes}, an indicator of the used type
 [not in the table below, is it necessary? AG.],
 and a label. The label should match the corresponding label in the
@@ -1571,6 +1438,144 @@ Göttingen, Germany
 and thus includes the authors or primary contributors to a wide
 variety of computational neuroscience efforts including the Blue Brain
 Project, GENESIS-3, KInNeSS, MOOSE, NEURON, NEST, PyNN and NeuroML.
+
+
+
+\section{Transition Resolution}
+\label{resolution}
+
+This section outlines pseudo code which defines the order of
+{\tt Transition}-triggering, state assignment execution, event emission,
+transmission and resolution in a system of connected components.
+Implementations do not need to implement this algorithm but should produce
+the same behaviours.
+
+A {\tt TransitionResolutionBlock} represents an instant in time. It begins
+before any {\tt Transition}s occur and ends after each component has moved
+into its new {\tt Regime}, all \textbf{StateAssignments} have been executed
+and all {\tt Event}s generated and resolved in the system.
+
+\subsection{Serial Implementation of Transition Resolution}
+
+\newcommand{\CN}[0]{\textsl{C\_n}}
+
+We have a system of \textsl{N} components \textsl{\{C\_1,C\_2,...,C\_N\}},
+at time, \textsl{t}, where each component, \CN, is in {\tt Regime}
+$R^{t}_{n}$.
+
+\noindent From {\tt Regime} $R^{t}_{n}$, there are:
+\begin{itemize}
+\item OnEvent {\tt Transition}s $OnEv^{t}_{n} = \{ ... \}$
+\item OnCondition {\tt Transition}s $OnCond^{t}_{n} = \{ ... \}$
+\end{itemize}
+
+\newcommand{\send}[0]{\texttt{send} }
+\newcommand{\recv}[0]{\texttt{recv} }
+
+\noindent Component \CN
+has:
+\begin{itemize}
+\item \send EventPorts \textsl{EvSend = \{$EvSend_{n,1,}$, $EvSend_{n,2,}$, ...  \}}
+\item \recv EventPorts \textsl{EvRecv = \{$EvRecv_{n,1,}$, $EvRecv_{n,2,}$, ...  \}}
+\end{itemize}
+
+\noindent {\tt EventPort} connections are stored in a a map,
+\textsl{EvPortConnections}, which maps EvSend to a list of EvRecv ports. i.e.,
+
+\textsl{\{EvSend $\rightarrow$ [EvRecv,EvRecv,..,EvRecv], EvSend $\rightarrow$
+[EvRecv,EvRecv,EvRecv,...,EvRecv]\}}.
+
+\newcommand{\RCLn}{$RCL_n$}
+\newcommand{\AUTQn}{$AUTQ_n$}
+\newcommand{\EQn}{$EQ_n$}
+
+\noindent Each component has 3 associated data structures
+\begin{itemize}
+\item RegimeChangeList (\RCLn) (This list will contain target-regimes of
+triggered transitions)
+\item ActiveUnresolvedTransitionsQueue (\AUTQn) (This queue will
+contain transitions which will occur, but their effects have not be
+evaluated yet)
+\item EventQueue (\EQn) (This list contains events delivered to this
+component from other components via EventPort-connections)
+\end{itemize}
+
+\subsubsection{Algorithm}
+
+\begin{enumerate}
+\item Enter {\tt TransitionResolutionBlock}
+\item For each component, \CN: clear \RCLn, \AUTQn and \EQn.
+\item For each component, \CN: for each \textsl{oncond} in $OnCond^{t}_{n}$ : if
+\textsl{oncond.trigger} evaluates to true, add \textsl{oncond} to \AUTQn.
+\item For each component, \CN:  for each \textsl{tr} in \AUTQn :
+\begin{itemize}
+\item
+remove \textsl{tr} from \AUTQn
+\item add the target\_regime to \RCLn
+\item for each
+\textsl{action} in \textsl{tr.do}:
+\begin{itemize}
+\item if \textsl{action} is an OutputEvent: test
+if the OutputEvent port is a key in \textsl{EvPortConnections}. If so, add the
+    OutputEvent to the EventQueue (\textsl{EQ\_{target}}) corresponding to each
+    \textsl{EvRecv} in the \textsl{EvPortConnections} map.
+
+\item  if \textsl{action}  is a StateAssignment, execute that state-assignment
+immediately.
+\end{itemize}
+\end{itemize}
+
+\item For each component \CN: for each event, \textsl{EvRecv} in \EQn: test
+whether there is a transition, \textsl{tr} triggered by this event, i.e an
+OnEvent in $OnEv^t_n$ from $R^t_n$ ; if so; then add it to \AUTQn.
+
+\item While any component has a non-empty \textsl{AUTQ}: Goto (4).
+
+\item For each component, \CN, check that all the target-regimes in the \RCLn
+are the same regime. (If not raise a RuntimeError). Each component moves into
+this target-regime, or remains in the same regime if \RCLn is empty.
+
+\item Leave {\tt TransitionResolutionBlock}
+
+\end{enumerate}
+
+\subsubsection{Notes}
+
+
+\begin{enumerate}
+\item  There is no order defined in transitions; this means
+that the order of resolution of state assignments can be ambiguous. If, for
+example, we have two transitions, T1 and T2, originating from the same Regime,
+in which T1 contains the state assignment \textsl{V=V+1} and T2 contains the
+assignment \textsl{V=V*V}, and both transitions are triggered, then there is no
+guarantee about the value of V. It is up the user to ensure this does not
+happen.
+
+\item This Resolution System allows \emph{cascading} of Events, which in theory
+could be recursive through components, depending on connectivity. The
+implementation allows for this; and it is the users responsibility to ensure
+that there are not such issues. The implementation may decided to terminate
+Step (6) after a given number (say 1000) of iterations to prevent infinite
+loops.
+
+\item Flattening of hierarchical components; implementation should ensure that
+the behaviour of a flattened component is identical to that of an unflattened
+component.
+\end{enumerate}
+
+\subsection{Parallelising of Event Resolution}
+
+This algorithm can be parallelised as following. We create a thread for each
+Component, which can independently execute Steps (3 to 6). The threads need
+to be syncronised after steps (4) and (5) as shown in
+Figure~\ref{ParallelisingTransitions}.
+
+\begin{figure}[htb!]
+\center
+\includegraphics[width=14cm]{images/ParallelisingTransitions.pdf}
+\protect\caption{Parallelising of Event Resolution.}
+\label{ParallelisingTransitions}
+\end{figure}
 
 \bibliographystyle{apalike}
 %\bibliography{CondensedUL}
