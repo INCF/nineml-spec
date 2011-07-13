@@ -1129,7 +1129,7 @@ of components of the same node into a single node.}
 
 \subsection{Tag Descriptions}
 
-\subsubsection{<NineML>}
+\subsubsection{NineML}
 %
 \begin{lstlisting}
 <NineML>
@@ -1138,7 +1138,7 @@ of components of the same node into a single node.}
 This is the root namespace tag for a NineML file. It can contain
 \textsl{<ComponentClass>} elements.
 
-\subsubsection{<ComponentClass>}
+\subsubsection{ComponentClass}
 %
 \begin{lstlisting}
 <ComponentClass name="">
@@ -1161,7 +1161,7 @@ Child Elements:
 \item <Dynamics>  {[}1{]}
 \end{itemize}
 
-\subsubsection{<Parameter>}
+\subsubsection{Parameter}
 %
 \begin{lstlisting}
 <Parameter name="" dimension="">
@@ -1178,7 +1178,7 @@ Attributes:
 
 Child Elements: \texttt{None}
 
-\subsubsection{<AnalogPort>}
+\subsubsection{AnalogPort}
 %
 \begin{lstlisting}
 <AnalogPort name="" mode="" reduce_op="" dimension=" >
@@ -1197,7 +1197,7 @@ Attributes:
 
 Child Elements: \texttt{None}
 
-\subsubsection{<EventPort>}
+\subsubsection{EventPort}
 %
 \begin{lstlisting}
 <EventPort name="" mode="">
@@ -1215,8 +1215,7 @@ Attributes:
 
 Child Elements: \texttt{None}
 
-\subsubsection{<Dynamics>
-}
+\subsubsection{Dynamics}
 %
 \begin{lstlisting}
 <Dynamics>
@@ -1234,7 +1233,7 @@ Child Elements:
 \item <Regime> {[}1+{]}
 \end{itemize}
 
-\subsubsection{<StateVariable>}
+\subsubsection{StateVariable}
 %
 \begin{lstlisting}
 <StateVariable name="" dimension="">
@@ -1251,7 +1250,7 @@ Attributes:
 
 Child Elements: \texttt{None}
 
-\subsubsection{<Alias>}
+\subsubsection{Alias}
 %
 \begin{lstlisting}
 <Alias name="">
@@ -1272,7 +1271,7 @@ Child Elements:
 \item <MathInline> {[}Required{]} (The equation on the right-hand-side of the alias)
 \end{itemize}
 
-\subsubsection{<Regime>}
+\subsubsection{Regime}
 %
 \begin{lstlisting}
 <Regime name="">
@@ -1296,7 +1295,7 @@ Child Elements:
 \item <OnEvent> {[}0+{]} (The transitions from this regime, triggered by events)
 \end{itemize}
 
-\subsubsection{<TimeDerivative>}
+\subsubsection{TimeDerivative}
 %
 \begin{lstlisting}
 <TimeDerivative variable="">
@@ -1317,7 +1316,7 @@ Child Elements:
 \item <MathInline> {[}1{]} (The right-hand-side of the differential equation)
 \end{itemize}
 
-\subsubsection{<OnCondition>}
+\subsubsection{OnCondition}
 %
 \begin{lstlisting}
 <OnCondition>
@@ -1338,7 +1337,7 @@ transition is triggered)
 \item <EventOut> {[}0+{]} (The events that should be sent when this transition is triggered)
 \end{itemize}
 
-\subsubsection{<OnEvent>}
+\subsubsection{OnEvent}
 %
 \begin{lstlisting}
 <OnEvent port="">
@@ -1362,7 +1361,7 @@ transition is triggered)
 \item <EventOut> {[}0+{]} (The events that should be sent when this transition is triggered)
 \end{itemize}
 
-\subsubsection{<Trigger>}
+\subsubsection{Trigger}
 %
 \begin{lstlisting}
 <Trigger>
@@ -1380,7 +1379,7 @@ Child Elements:
 boolean, for example by invoking a comparison operator  \textsl{('>', '<')} )
 \end{itemize}
 
-\subsubsection{<StateAssignment>}
+\subsubsection{StateAssignment}
 %
 \begin{lstlisting}
 <StateAssignment>
@@ -1403,7 +1402,7 @@ Child Elements:
 \item <MathInline> {[}1{]} (The right-hand-side of the assignment expression)
 \end{itemize}
 
-\subsubsection{<EventOut>}
+\subsubsection{EventOut}
 %
 \begin{lstlisting}
 <EventOut port_name="">
@@ -1419,7 +1418,7 @@ Attributes:
 
 Child Elements: \texttt{None}
 
-\subsubsection{<MathInline>}
+\subsubsection{MathInline}
 %
 \begin{lstlisting}
 <MathInline>
