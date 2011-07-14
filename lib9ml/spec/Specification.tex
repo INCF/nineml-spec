@@ -65,11 +65,11 @@ float=tbfh}
 
 
 \newcommand{\StateAssignment}{{\bf{StateAssignment}}\xspace}
-\newcommand{\StateAssignmentes}{{\bf{StateAssignment}}s\xspace}
+\newcommand{\StateAssignments}{{\bf{StateAssignment}}s\xspace}
 
 
 \newcommand{\TimeDerivative}{{\bf{TimeDerivative}}\xspace}
-\newcommand{\TimeDerivativees}{{\bf{TimeDerivative}}s\xspace}
+\newcommand{\TimeDerivatives}{{\bf{TimeDerivative}}s\xspace}
 
 \newcommand{\Alias}{{\bf{Alias}}\xspace}
 \newcommand{\Aliases}{{\bf{Alias}}es\xspace}
@@ -148,7 +148,7 @@ float=tbfh}
 \vspace{0.5cm}
 \noindent{\large INCF Task Force on Multi-Scale Modeling}\\
 \vspace{0.5cm}
-\noindent{\large Version: 0.96}
+\noindent{\large Version: 0.97}
 \end{center}
 
 \vspace*{0.75cm}
@@ -188,6 +188,10 @@ as group discussions within Task Force. This specification is created for
 public release at CNS 2011.
 
 \vskip 1in
+\paragraph{Changes from version 0.96:}
+\begin{itemize}
+\item Draft definition of MathInline block (Mike Hull)
+\end{itemize}
 
 \paragraph{Changes from version 0.95:}
 \begin{itemize}
@@ -1425,16 +1429,106 @@ Used in transitions to emit an event.
 \begin{lstlisting}
 <MathInline>
 \end{lstlisting}
-
-A block used to specify mathematical expressions. The expression is expected to
-be in \texttt{C} style and given as text. In future versions of NineML, we will
-support \verb|<MathML>| blocks too.
-
 \begin{itemize}
 \item Attributes:  \texttt{None}
 
 \item Child Elements: \texttt{None}
 \end{itemize}
+
+A block used to specify mathematical expressions. The expression is expected to
+be in \texttt{C} style and given as text. In future versions of NineML, we will
+support \verb|<MathML>| blocks too.
+
+Depending on the context; MathInline blocks should return an expression that
+evaluates to either a \verb|Boolean| (when used as the trigger for \OnConditions) or a \verb|floating-point| number ( when used  as a right-hand-side for  \Aliases, \TimeDerivatives \& \StateAssignments).
+
+The following operators are supported, with the same precedence levels as ANSI C89. All
+numbers/variables are assumed to be \verb|floating-point| numbers, not integers.
+
+
+
+\begin{itemize}
+\item Arithmetic operators
+\begin{itemize}
+\item Addition \verb|+|
+\item Subtraction \verb|-|
+\item Division \verb|/|
+\item Multiplication \verb|*|
+\end{itemize}
+
+\item Relational operators
+\begin{itemize}
+\item Greater than \verb|>|
+\item Greater than equal \verb|>=|
+\item Lesser than \verb|<|
+\item Lesser than equal \verb|<=|
+\end{itemize}
+
+Logical operators
+\begin{itemize}
+\item Logical And: \verb|&&|
+\item Logical Or:  \verb+||+
+\item Logical Not: \verb|!|
+\end{itemize}
+
+\end{itemize}
+
+
+TODO: do we support the following operators?
+\begin{itemize}
+\item Exponentiation \verb|**|
+\item Ternary \verb| A?B:C |
+\end{itemize}
+
+
+The following symbols are builtin, and cannot be redefined:
+\begin{itemize}
+\item pi
+\item e
+\end{itemize}
+
+
+The following functions are builtin, and cannot be redefined:
+\begin{itemize}
+\item \verb|exp()|
+\item \verb|sin()|
+\item \verb|cos()|
+\item \verb|log()|
+\item \verb|log10()|
+\item \verb|pow()|
+\item \verb|sinh()|
+\item \verb|cosh()|
+\item \verb|tanh()|
+\item \verb|sqrt()|
+\item \verb|atan()|
+\item \verb|asin()|
+\item \verb|acos()|
+\item \verb|asinh()|
+\item \verb|acosh()|
+\item \verb|atanh()|
+\item \verb|atan2()|
+\item \verb|ceil()|
+\item \verb|floor()|
+\end{itemize}
+
+These functions take the same parameters and are defined as per ANSI C89.
+
+The following random distributions are available, through the \verb|random| namespace,
+although their use is only allowed within \StateAssignment blocks:
+
+\begin{itemize}
+\item \verb|random.uniform|
+\item \verb|random.normal|
+\item \verb|random.binomial|
+\item \verb|random.poisson|
+\item \verb|random.exponential|
+\end{itemize}
+
+TODO: CHOOSE a reference implementation
+
+
+
+
 
 \pagebreak
 
