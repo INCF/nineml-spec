@@ -114,18 +114,6 @@ float=tbfh}
 \newcommand{\RecvPorts}{{\tt{RecvPorts}}\xspace}
 \newcommand{\ReducePorts}{{\tt{ReducePorts}}\xspace}
 
-
-
-
-
-
-
-
-
-
-
-
-
 \begin{document}
 
 \pagestyle{empty}
@@ -367,12 +355,7 @@ form of an interpreter for the NineML native language as a compact
 representation and use code generation to produce a model
 representation for a target simulation environment.
 
-\section{Core Concepts}
-
-In this section, we start by laying the foundations of the NineML
-that include data types and core building blocks.
-
-\subsection{Data types}
+\section{Core Concepts: Data Types}
 \label{DataTypes}
 
 Values in NineML can have different types, which are listed in the
@@ -381,7 +364,7 @@ encapsulation of value data and are not intended as standalone
 objects outside of {\tt ComponentClass} objects in the Abstraction
 Layer or {\tt property} objects in the User Layer.
 
-\subsubsection{Dimension}
+\subsection{Dimension}
 
 Dimension is an object that provides physical dimension like length,
 mass, or time. A set of predefined dimensions is provided in the
@@ -390,48 +373,48 @@ NineML library and the user can derive compound dimensions from these
 of a {\tt Dimension} is a predefined empty dimension for dimensionless
 quantities.
 
-\subsubsection{Counter}
+\subsection{Counter}
 
 Counter is an object that represent the countable quantity (natural
 number) and is used to define a number of identical objects that have
 to be instantiated in a model from a single object definition (for
 example a number of neurons in a population of identical cells).
 
-\subsubsection{Number}
+\subsection{Number}
 
 Number is a object that represents numerical values. It is not designed for
 a direct use, but rather as a component of the {\tt Quantity} type that
 additionally includes the units of measurements for each specific quantity.
 
-\subsubsection{String}
+\subsection{String}
 
 String is an object that contains a string of text. It is used for labeling
 elements as well as for optional textual {\tt note}s that annotate these
 elements.
 
-\subsubsection{URL}
+\subsection{URL}
 
 URL is an object that contains a reference to an internet resource in a form
 of a URL. It is used for Abstraction Layer or external definitions as well as
 for links in optional {\tt note}s that annotate these elements.
 
-\subsubsection{Enumerated}
+\subsection{Enumerated}
 
 Enumerated is an object that is used for properties that can only take
 a few predefined by Abstraction Layer values.
 
-\subsubsection{Boolean}
+\subsection{Boolean}
 
 Boolean is an object that contains a binary true-false value or a logical
 expression that can be evaluated into such a value.
 
-\subsubsection{Function}
+\subsection{Function}
 
 Function is an object that returns a value of a {\tt Number} type resulting
 from calculation that can be deterministic or based on random number
 distribution.
 
-\subsubsection{Quantity}
+\subsection{Quantity}
 
 Quantity is a compound data type object that encapsulates a numerical value
 and a unit of measurements. Unit has to be of one of the {\tt Dimension} type.
@@ -473,7 +456,7 @@ Other quantities might be calculated according to some function dependent on
 some other quantities. These can be defined through the type {\tt Function} by
 including inline Abstraction Layer definitions or MathML.
 
-\subsubsection{Other compound types}
+\subsection{Other compound types}
 
 Copied from AL spec since I do not have Gif minutes. AG.
 
@@ -500,6 +483,9 @@ Sub-typing system
 See gif day2 minutes ... and write this section.
 Who gives it a go: Ivan
 ]
+
+\section{Core Concepts: Abstraction Layer}
+\label{AbstractionL}
 
 \subsection{ComponentClass}
 
@@ -655,7 +641,8 @@ message to the user.
 
 \subsubsection{Transition}
 
-Movement between several instances of \Regime happens via \Transition. A \nmlClass{Transition} is defined in NineML as having
+Movement between several instances of \Regime happens via \Transition.
+A \nmlClass{Transition} is defined in NineML as having
 a source and target \nmlClass{Regime}, where the target
 \nmlClass{Regime} can be the same as the source (For example \emph{t5}
 in Figure~\ref{SimpleRegimeGraph}). There are two types of \Transition:
@@ -676,7 +663,7 @@ satisfied, then the component will move into \emph{regime1}.
 \item The component can send \OutputEvent
 \end{itemize}
 
-During a transition, multiple \StateAssignment and \OutputEvent can occur. 
+During a transition, multiple \StateAssignment and \OutputEvent can occur.
 (For more on the resolution of \Transition, see section~\ref{resolution})
 
 \nmlClass{Transition}s have a vanishing temportal extent (i.e. they are
@@ -786,6 +773,9 @@ For example, a synapse component may have a \RecvPort connected to the
 presynaptic neurons \SendPort port. When the presynaptic neuron fires;
 it delivers an event to the synapse, which could cause it to produce current
 flow in a post-synaptic neuron.
+
+\section{Core Concepts: User Layer}
+\label{AbstractionL}
 
 \subsection{Property}
 
@@ -1111,13 +1101,6 @@ This tag starts an abstraction layer component definition.
 
 \end{itemize}
 
-
-
-
-
-
-
-
 \subsubsection{Parameter}
 %
 \begin{lstlisting}
@@ -1136,9 +1119,6 @@ This tag specifies a parameter in the interface of the component
 
 \item Child Elements: \texttt{None}
 \end{itemize}
-
-
-
 
 \subsubsection{AnalogPort}
 %
@@ -1161,10 +1141,6 @@ This tag specifies an AnalogPort in the interface of the component
 \item Child Elements: \texttt{None}
 \end{itemize}
 
-
-
-
-
 \subsubsection{EventPort}
 %
 \begin{lstlisting}
@@ -1184,9 +1160,6 @@ This tag specifies an EventPort in the interface of the component
 
 \item Child Elements: \texttt{None}
 \end{itemize}
-
-
-
 
 \subsubsection{Dynamics}
 %
@@ -1209,8 +1182,6 @@ This tag specifies the dynamics of the component
 
 \end{itemize}
 
-
-
 \subsubsection{StateVariable}
 %
 \begin{lstlisting}
@@ -1229,9 +1200,6 @@ This tag declares a state-variable in the component
 
 \item Child Elements: \texttt{None}
 \end{itemize}
-
-
-
 
 \subsubsection{Alias}
 %
@@ -1253,10 +1221,6 @@ This tag declares an alias in the component
 \item \verb|<MathInline>| {[}Required{]} (The equation on the right-hand-side of the alias)
 \end{itemize}
 \end{itemize}
-
-
-
-
 
 \subsubsection{Regime}
 %
@@ -1306,8 +1270,6 @@ in this regime.
 \end{itemize}
 \end{itemize}
 
-
-
 \subsubsection{OnCondition}
 %
 \begin{lstlisting}
@@ -1330,8 +1292,6 @@ transition is triggered)
 \item \verb|<EventOut>| {[}0+{]} (The events that should be sent when this transition is triggered)
 \end{itemize}
 \end{itemize}
-
-
 
 \subsubsection{OnEvent}
 %
@@ -1358,8 +1318,6 @@ transition is triggered)
 \item \verb|<EventOut>| {[}0+{]} (The events that should be sent when this transition is triggered)
 \end{itemize}
 \end{itemize}
-
-
 
 \subsubsection{Trigger}
 %
@@ -1445,8 +1403,6 @@ evaluates to either a \verb|Boolean| (when used as the trigger for \OnConditions
 The following operators are supported, with the same precedence levels as ANSI C89. All
 numbers/variables are assumed to be \verb|floating-point| numbers, not integers.
 
-
-
 \begin{itemize}
 \item Arithmetic operators
 \begin{itemize}
@@ -1526,10 +1482,6 @@ although their use is only allowed within \StateAssignment blocks:
 
 TODO: CHOOSE a reference implementation
 
-
-
-
-
 \pagebreak
 
 \subsection{Example XML}
@@ -1600,6 +1552,7 @@ An example model of an Izhikevich model is given:
   </ComponentClass>
 </NineML>
 \end{lstlisting}
+
 
 \newpage
 \appendix
