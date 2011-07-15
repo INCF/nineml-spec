@@ -62,7 +62,7 @@ def std_pynn_simulation( test_component, parameters, initial_values,
     cells.record()
 
     #Run the simulation:
-    sim.run(100.0)
+    sim.run(1000.0)
 
 
     if len(records) == 0:
