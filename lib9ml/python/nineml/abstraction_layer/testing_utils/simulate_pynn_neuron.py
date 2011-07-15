@@ -19,7 +19,7 @@ def std_pynn_simulation( test_component, parameters, initial_values,
     from pyNN.utility import init_logging
 
     init_logging(None, debug=True)
-    sim.setup(timestep=0.1, min_delay=0.1)
+    sim.setup(timestep=0.01, min_delay=0.1)
 
 
     synapse_components_ML = [ CoBaSyn( namespace=ns,  weight_connector=wc ) for (ns,wc) in synapse_components ]

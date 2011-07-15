@@ -10,6 +10,7 @@
     <Parameter name="b" dimension='none'/>
     <Parameter name="d" dimension='none'/>
     <Parameter name="theta" dimension='voltage'/>
+    <Parameter name='iinj_constant' dimension='none'/>
 
     <!-- AnalogPort or Exposure?? -->
     <AnalogPort name="iSyn" mode='reduce' reduce_op='+' dimension='current'/>
@@ -37,7 +38,7 @@
             <MathInline>a*(b*V - U)</MathInline>
           </TimeDerivative>
           <TimeDerivative variable="V">
-            <MathInline>0.04*V*V + 5*V + 140.0 - U + iSyn</MathInline>
+            <MathInline>0.04*V*V + 5*V + 140.0 - U + iSyn + iinj_constant</MathInline>
           </TimeDerivative>
 
           

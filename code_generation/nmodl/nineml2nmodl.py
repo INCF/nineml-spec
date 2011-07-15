@@ -114,7 +114,8 @@ ASSIGNED {
 
 
 BREAKPOINT {
-  SOLVE states METHOD derivimplicit
+  :SOLVE states METHOD derivimplicit
+  SOLVE states METHOD cnexp
 
   #for alias in $component.aliases
   $alias.lhs = $alias.rhs 
