@@ -30,6 +30,7 @@ float=tbfh}
 \definecolor{INCFBlue}{rgb}{0.0,0.59,1.0}
 
 \definecolor{issuecolor}{rgb}{0.8,0.8,0.8}
+\definecolor{light-gray}{gray}{0.95}
 \newcommand{\issue}[1]{%
 \begin{center}
 \colorbox{issuecolor}{\parbox{0.8\linewidth}{\textbf{Issue:} #1}}
@@ -169,15 +170,18 @@ float=tbfh}
 \newpage
 \pagestyle{plain}
 
-\tableofcontents
 \newpage
 
 \abstract
-This document formalizes the currently developed concepts of NineML and
-summarizes the decisions made during eight Task Force meetings as well
-as group discussions within Task Force. This specification is created for
-public release at CNS 2011.
+NineML is a simulator independent language with the aim of providing an unambiguous description of neuronal network models for efficient model sharing and reusability. This language emerges from a joint effort from experts in the field of Computational Neuroscience, simulator development and standardized language initiative (NeuroML), coordinated and supported by INCF. 
 
+This document provides the basis for understanding the Common Object Model, shared by the three current implementations, and the resulting XML schema and tags. The current work only covers the representation of spking neurons and synapses and will be further extended to represent network connectivity, synaptic plasticity, and all other necessary concepts to represent networks. 
+These extensions are still work in progress and your comments and feedbacks will be extremely valuable.
+
+\newpage
+\tableofcontents
+
+\newpage
 \vskip 1in
 \paragraph{Changes from version 0.97:}
 \begin{itemize}
@@ -278,8 +282,6 @@ integration method used, have to be described using different
 techniques.  Model description in NineML is intended to be formal in
 the sense that it is possible to interpret it unambiguously.
 
-\subsection{Objective}
-
 The key concepts of spiking neuron network modeling are:
 
 \begin{enumerate}
@@ -365,7 +367,7 @@ form of an interpreter for the NineML native language as a compact
 representation and use code generation to produce a model
 representation for a target simulation environment.
 
-\section{Core Concepts: Data Types}
+\section{Data Types}
 \label{DataTypes}
 
 Values in NineML can have different types, which are listed in the
@@ -494,8 +496,10 @@ See gif day2 minutes ... and write this section.
 Who gives it a go: Ivan
 ]
 
-\section{Core Concepts: Abstraction Layer}
+\section{Abstraction Layer: Core Concepts }
 \label{AbstractionL}
+
+[TO DO: Here a introduction to the AL with the description of the graph approach.]
 
 \subsection{ComponentClass}
 
@@ -504,61 +508,34 @@ In the NineML Abstraction Layer the model is defined in terms of
 object which is the subject of interaction with the User Layer.  A
 \ComponentClass could typically represent a point-neuron model or
 a synapse model for example. It is composed of an \Interface and
-a \Dynamics.
+a \Dynamics. 
 
-\subsubsection{Dynamics}
+[TO DO: Here should be a graph representing the ComponentClass and showing Dynamics and Interfaces]
+
+This concept is mapped with the following XML tag: 
+
+\begin{lstlisting}[frame=none, backgroundcolor=\color{light-gray}]
+<ComponentClass name="">
+	...
+</ComponentClass>
+\end{lstlisting}
+
+Example: 
+\begin{lstlisting}[frame=none, backgroundcolor=\color{light-gray}]
+<ComponentClass name="izhikevichCellNew">
+
+... here you will detail parameters, equations, ...
+
+</ComponentClass>
+\end{lstlisting}
+
+\subsection{Dynamics}
+
+[TO DO: reformulate the definition of the dynamic to integrate the concepts of regime graph]
 
 The \Dynamics are the \emph{internal} mechanisms governing the behaviour
 of the component. The dynamics of a component are specified in terms of
 the following:
-
-\begin{itemize}
-\item \StateVariable (section~\ref{state-var})
-\item A {\tt RegimeGraph} (section~\ref{regime-graph}) composed of
-  instances of \Regime and \Transition
-\item \Alias (section~\ref{alias})
-\end{itemize}
-
-\subsubsection{Interface}
-
-The interface is the \emph{external} view of the component that defines
-what inputs and outputs the component exposes to other components and the
-parameters that can be set for the component. The interface consists of
-instances of \Port (section~\ref{ports}) and \Parameter
-(section~\ref{parameters}).
-
-\subsubsection{Events}
-\label{events}
-
-As well as being able to communicate continuous values, components are also
-able to emit and receive \Events. Events are discrete notifications
-that are transmitted over \EventPorts (section~\ref{eventPorts}). Since
-\EventPorts have names, saying that we transmit 'event1' for example
-would mean transmitting an event on the EventPort called 'event1'. Events
-can be used to signal action potentials firing for example.
-
-\subsection{StateVariable}
-\label{state-var}
-
-The internal state of a component is defined by a set of \StateVariable
--- variables that can change either continuously or discontinuously as a
-function of time.
-
-The \StateVariable changes happen in two ways:
-%
-\begin{quote}
-\begin{itemize}
-\item continuously through \textbf{TimeDerivatives} (in \Regimes),
-which define the \StateVariables evolution over time, for example
-$dX/dt=1-X$.
-\item discretely through \StateAssignment (in \Transition),
-which make discrete changes to a \StateVariable value, for example
-$X = X + 1$.
-\end{itemize}
-\end{quote}
-
-\subsection{The Regime Graph}
-\label{regime-graph}
 
 The \Regime forms the vertices and the \Transition form the
 directional edges of the {\tt Regime Graph}, which must have at least
@@ -576,6 +553,32 @@ An example dynamics in Figure~\ref{SimpleRegimeGraph} has three state variables,
 \emph{X,Y} and \emph{Z}, and a state graph with three regimes, \emph{regime1},
 \emph{regime2} and \emph{regime3}. At any time, a component will be in one of
 these regimes, and the state variables will evolve accordingly.
+
+\begin{itemize}
+\item \StateVariable (section~\ref{state-var})
+\item A {\tt RegimeGraph} (section~\ref{regime-graph}) composed of
+  instances of \Regime and \Transition
+\item \Alias (section~\ref{alias})
+\end{itemize}
+
+\subsubsection{StateVariable}
+
+The internal state of a component is defined by a set of \StateVariable
+-- variables that can change either continuously or discontinuously as a
+function of time.
+
+The \StateVariable changes happen in two ways:
+%
+\begin{quote}
+\begin{itemize}
+\item continuously through \textbf{TimeDerivatives} (in \Regimes),
+which define the \StateVariables evolution over time, for example
+$dX/dt=1-X$.
+\item discretely through \StateAssignment (in \Transition),
+which make discrete changes to a \StateVariable value, for example
+$X = X + 1$.
+\end{itemize}
+\end{quote}
 
 \subsubsection{Regime}
 
@@ -686,8 +689,9 @@ triggers the \nmlClass{Transition}
 \nmlClass{Regime}, which may be the same as the source \nmlClass{Regime}.
 \end{itemize}
 
-\subsection{Aliases}
-\label{alias}
+\subsubsection{Aliases}
+
+What is the definition of an alias? Is it equivalent to the previous binding ?
 
 \textbf{Aliases} are motivated from two problems:
 
@@ -719,8 +723,22 @@ transmitting a current, for example $i=g*(E-V)$.
 \note{\Alias is defined in the Dynamics, \emph{not} in the
 \Regime. This means that aliases are the same across all regimes.}
 
-\subsection{Parameter}
-\label{parameters}
+\subsection{Interface}
+
+The interface is the \emph{external} view of the component that defines
+what inputs and outputs the component exposes to other components and the
+parameters that can be set for the component. The interface consists of
+instances of \Port (section~\ref{ports}) and \Parameter
+(section~\ref{parameters}).
+
+As well as being able to communicate continuous values, components are also
+able to emit and receive \Events. Events are discrete notifications
+that are transmitted over \EventPorts (section~\ref{eventPorts}). Since
+\EventPorts have names, saying that we transmit 'event1' for example
+would mean transmitting an event on the EventPort called 'event1'. Events
+can be used to signal action potentials firing for example.
+
+\subsubsection{Parameter}
 
 Parameters allow us to define the dynamics of a component once, then
 adjust the behaviours by using different parameters. For example, if
@@ -730,14 +748,14 @@ dynamics in terms of these parameters, then use the User Layer to
 provide parameters to create different neurons. Parameters are set at
 the start of the simulation, and remain constant throughout.
 
-\subsection{Port}
-\label{ports}
+\subsubsection{Port}
 
 Ports allow components to communicate between each other during a simulation.
 There are two sub-classes of \nmlClass{Port} objects: \nmlClass{AnalogPort}
 and \nmlClass{EventPort}, and each can have different modes.
 
-\subsubsection{AnalogPort}
+%\subsubsection{AnalogPort}
+\paragraph{AnalogPort}
 
 AnalogPorts transmit and receive continuous values, either \Alias
 or \StateVariable. \AnalogPort can have 3 modes:
@@ -764,7 +782,9 @@ components onto the {\tt InjectedCurrent} reduce-port, within having
 to change our original component definitions.
 \end{itemize}
 
-\subsubsection{EventPort}
+%\subsubsection{EventPort}
+\paragraph{EventPort}
+
 \label{eventPorts}
 
 Event ports transmit discrete events. They are useful for example in
@@ -783,8 +803,8 @@ presynaptic neurons \SendPort port. When the presynaptic neuron fires;
 it delivers an event to the synapse, which could cause it to produce current
 flow in a post-synaptic neuron.
 
-\section{Core Concepts: User Layer}
-\label{AbstractionL}
+\section{User Layer: Core Concepts}
+\label{UserL}
 
 \subsection{Property}
 
@@ -1015,13 +1035,11 @@ the user with all possible pre-wired combinations, NineML allows user
 to combine the plasticity$\rightarrow$response$\rightarrow$neuron
 chain from a set of small standard components.
 
-\section{Structure of a NineML Description}
+\newpage
+\appendix
 
-In order to simplify the descriptions themselves and the mechanisms for
-combining multiple components of the model the NineML description
-is consisting of multiple files that define various components and
-contains the syntax to import external files.
-
+\part*{Appendix}
+\addcontentsline{toc}{part}{Appendix}
 
 \section{NineML Abstraction Layer as XML}
 
@@ -1443,6 +1461,13 @@ TODO: CHOOSE a reference implementation. Possible candidates: GSL, R
 
 \pagebreak
 
+\section{Structure of a NineML Description}
+
+In order to simplify the descriptions themselves and the mechanisms for
+combining multiple components of the model the NineML description
+is consisting of multiple files that define various components and
+contains the syntax to import external files.
+
 \subsection{Example XML}
 
 An example model of an Izhikevich model is given:
@@ -1512,76 +1537,7 @@ An example model of an Izhikevich model is given:
 </NineML>
 \end{lstlisting}
 
-
-\newpage
-\appendix
-
-\part*{Appendix}
-\addcontentsline{toc}{part}{Appendix}
-
-\section{INCF Task Force}
-
-An oversight committee has been setup to guide the direction and
-objectives of the initiative with membership as follows:
-
-\begin{itemize}
-    \item Chair: Erik De Schutter, Okinawa Institute of Science and Technology, Japan
-    \item Ad Aertsen, Bernstein Center, Freiburg, Germany
-    \item Upinder Bhalla, National Center for Biological Sciences, Bangalore, India
-    \item Nicolas Brunel, CNRS-Université René Descartes, Paris, France
-    \item Sharon Crook, Arizona State University, Tempe, USA
-    \item Gustavo Deco, Universitat Pompeu Fabra, Barcelona, Spain
-    \item Markus Diesmann, RIKEN, Wako, Japan
-    \item Tomoki Fukai, RIKEN, Wako, Japan
-    \item Wulfram Gerstner, LCN, EPFL, Lausanne, Switzerland
-    \item Stephen Grossberg, Boston University, MA, USA
-    \item Rolf Kötter, Radboud University, Nijmegen, The Netherlands
-    \item Anders Lansner, Royal Institute of Technology (KTH), Stockholm, Sweden
-    \item Peter Latham, Gatsby Computational Neuroscience Unit, London, UK
-    \item Christiane Linster, Cornell University, Ithaca, NY, USA
-    \item Wolfgang Maass, Technische Universität Graz, Austria
-    \item Ernst Niebur, Johns Hopkins University, Baltimore, MD, USA
-    \item Felix Schürmann, EPFL, Lausanne, Switzerland
-    \item Simon Thorpe, Faculté de Médecine de Rangueil, Toulouse, France
-    \item Alessandro Treves, International School for Advanced Studies (SISSA), Trieste, Italy
-    \item Shiro Usui, RIKEN, Wako, Japan
-    \item Mark van Rossum, University of Edinburgh, UK
-    \item Xiao-Jing Wang, Yale University, New Haven, CT, USA
-\end{itemize}
-
-A task force has been assembled to evaluate and implement the
-recommendations of the oversight committee with membership as follows:
-
-\begin{itemize}
-    \item Lead: Sean Hill, BMI, EPFL, Lausanne, Switzerland
-    \item Lead: Anatoli Gorchetchnikov, Boston University, USA
-    \item Lead: Ivan Raikov, Okinawa Institute of Science and Technology, Japan
-    \item Board Secretary: Yann Le Franc, University of Antwerp, Belgium
-    \item Robert Cannon, Textensor Limited, Edinburgh, UK
-    \item Robert Clewley, Georgia State University, Atlanta, USA
-    \item Hugo Cornelis, University of Texas Health Science Center, San Antonio, USA
-    \item Andrew Davison, CNRS, Gif-sur-Yvette, France
-    \item Erik De Schutter, Okinawa Institute of Science and Technology, Okinawa, Japan
-    \item Mikael Djurfeldt, INCF Secretariat and PDC,
-Royal Institute of Technology, Stockholm, Sweden
-    \item Padraig Gleeson, University College London, UK
-    \item Michael Hines, Yale University, New Haven, CT, USA
-    \item Birgit Kriener, Max Planck Institute for Dynamics and Self-Organization,
-Göttingen, Germany
-    \item Chung-Chuan Lo, National Tsing Hua University, Hsinchu, Taiwan
-    \item Abigail Morrison, Bernstein Center Freiburg, Germany
-    \item Eilif Muller, LCN, EPFL, Lausanne, Switzerland
-    \item Hans Ekkehard Plesser, Norwegian University of Life Sciences, Aas, Norway
-    \item Subhasis Ray, National Center for Biological Sciences, Bangalore, India
-    \item Lars Schwabe, University of Rostock, Germany
-    \item Botond Szatmary, Neurosciences Institute, San Diego, CA, USA
-
-\end{itemize}
-
-and thus includes the authors or primary contributors to a wide
-variety of computational neuroscience efforts including the Blue Brain
-Project, GENESIS-3, KInNeSS, MOOSE, NEURON, NEST, PyNN and NeuroML.
-
+\pagebreak
 
 \section{Identifier Scope}
 \label{scope}
