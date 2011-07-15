@@ -368,6 +368,8 @@ class LocationMgr(object):
 class Settings(object):
     enable_component_validation = True
 
+    enable_nmodl_gsl = False
+
 
 def check_list_contain_same_items(lst1, lst2, desc1="", desc2="", ignore=[],
         desc=""):
