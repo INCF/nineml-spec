@@ -1445,9 +1445,9 @@ TODO: CHOOSE a reference implementation. Possible candidates: GSL, R
 
 \subsection{Example XML}
 
-An example model of an Izhikevich model is given:
-%
-\begin{lstlisting}
+An example model of an Izhikevich model is given in Listing~\ref{code:xmliz}.
+
+\begin{lstlisting}[caption={Example NineML file of an Izhikevich Neuron},label=xmliz]
 
 <?xml version='1.0' encoding='UTF-8'?>
 <NineML xmlns="http://nineml.org/9ML/0.1">
@@ -1461,6 +1461,7 @@ An example model of an Izhikevich model is given:
     <Parameter name="b" dimension="none"/>
     <Parameter name="d" dimension="none"/>
     <Parameter name="theta" dimension="voltage"/>
+    <Parameter name="iinj_constant" dimension="voltage"/>
 
     <AnalogPort name="iSyn" mode="reduce" reduce_op="+" dimension="current"/>
     <AnalogPort name="U" mode="send" dimension="none"/>
@@ -1484,7 +1485,7 @@ An example model of an Izhikevich model is given:
           </TimeDerivative>
 
           <TimeDerivative variable="V">
-            <MathInline>0.04*V*V + 5*V + 140.0 - U + iSyn</MathInline>
+            <MathInline>0.04*V*V + 5*V + 140.0 - U + iSyn + iinj_constant </MathInline>
           </TimeDerivative>
 
 
@@ -1502,15 +1503,66 @@ An example model of an Izhikevich model is given:
             </StateAssignment>
 
             <EventOut port="spikeOutput" />
-
           </OnCondition>
-
         </Regime>
     </Dynamics>
-
   </ComponentClass>
 </NineML>
 \end{lstlisting}
+
+\newpage
+
+\noindent
+This \ComponentClass has a single \Regime, $subthresholdRegime$ and two
+\StateVariables, $U$ \& $V$. 
+
+\noindent
+The \TimeDerivatives are defined for the Regime as:
+
+\begin{align}
+\frac{dV}{dt} &= 0.04*V*V + 5*V + 140.0 - U + iSyn + iinj\_constant   \\
+\frac{dU}{dt} &= a * ( b* V -U )
+\end{align}
+
+The \ComponentClass has a single \Transition, is triggered when $V>theta$. When
+triggered, It causes an \Event called $spikeOutput$ to be emitted, and two
+\StateAssignments to be made:
+\begin{align}
+U &\leftarrow U + d \\
+V &\leftarrow c
+\end{align}
+
+. The target-regime of the
+\Transition is not declared explicity in the XML, implying that the
+target-regime is the same as the source-regime, i.e. $subthresholdRegime$.
+
+The {\tt RegimeGraph} is shown in Figure~\ref{fig:EX1_RegimeGraph}
+
+\begin{figure}[htb!]
+\center
+%\includegraphics[width=14cm]{al/ParallelisingTransitions.pdf}example_IzRegimeTransGraph.pdf
+\includegraphics[width=8cm]{figures/example_IzRegimeTransGraph.pdf}
+\protect\caption{RegimeGraph for the XML model in Listing~\ref{code:xmliz}}
+\label{fig:EX1_RegimeGraph}
+\end{figure}
+
+
+Using this Abstraction Layer definition, as well as suitable parameters from the
+user layer; $a=0.02, b=0.2, c=-65, d= 8, iinj\_constant= 5.0$, we can simulate
+this, giving output as shown in Figure~\ref{fig:Ex1_Output}.
+
+\begin{figure}[htb!]
+\center
+%\includegraphics[width=14cm]{al/ParallelisingTransitions.pdf}example_IzRegimeTransGraph.pdf
+\includegraphics[width=8cm]{figures/example_IzVoltageWave.pdf}
+\protect\caption{Result of simulating of the XML model in Listing~\ref{code:xmliz}}
+\label{fig:EX1_Output}
+\end{figure}
+
+In Figure~\ref{fig:Ex1_Output}, we can see the value of the \StateVariable $V$
+over time. We can also see that when the value of $V>theta$ triggers the
+condition, we emit a spike, and the \StateAssignment of $V \leftarrow c$ resets
+the value of $V$.
 
 
 \newpage
