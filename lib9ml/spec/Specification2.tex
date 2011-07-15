@@ -164,6 +164,8 @@ float=tbfh}
 
 }
 
+Acknowledgements: We would like to thank the Task Force members for their comments on this document and in particular P. Gleeson, E. Muller, A. Davison, R. Cannon, S. Hill.
+
 
 \title{NineML (9ML) Specification}
 
@@ -175,7 +177,7 @@ float=tbfh}
 \abstract
 NineML is a simulator independent language with the aim of providing an unambiguous description of neuronal network models for efficient model sharing and reusability. This language emerges from a joint effort from experts in the field of Computational Neuroscience, simulator development and standardized language initiative (NeuroML), coordinated and supported by INCF. 
 
-This document provides the basis for understanding the Common Object Model, shared by the three current implementations, and the resulting XML schema and tags. The current work only covers the representation of spking neurons and synapses and will be further extended to represent network connectivity, synaptic plasticity, and all other necessary concepts to represent networks. 
+This document provides the basis for understanding the Common Object Model, shared by the three  implementations, and the resulting XML schema and tags. The current work only covers the representation of spking neurons and synapses and will be further extended to represent network connectivity, synaptic plasticity, and all other necessary concepts to represent networks. 
 These extensions are still work in progress and your comments and feedbacks will be extremely valuable.
 
 \newpage
@@ -256,33 +258,22 @@ level
 
 \section{Introduction}
 
-With an increasing number of studies related to large-scale neuronal
-network modeling, the International Neuroinformatics Coordinating
-Facility (INCF) has identified a need for standards and guidelines to
-ease model sharing and facilitate the replication of results across
-different simulators. To create such standards, the INCF has formed a
-program on Multiscale Modeling to develop a common standardized
-description language for neuronal network models.
-
-The name of the proposed standard is NineML (Network Interchange for
-Neuroscience Modeling Language) and its first version is aimed at
-descriptions of large networks of spiking neurons.
+The increasing number of studies related to neuronal network modeling and the diversity of the simulation platforms and implementations cause a major issue for model sharing, replicability and reusability of either whole model or part of the model for further analysis or simply for extension. 
+To overcome this problem, we are proposing a common description language to be used for exchanging models and being able to simulate them in any simulation platform. 
+This description language, using the XML technology, is based on a common Object Model describing the different elements of network models. This work, initiated and supported by the International Neuroinformatics Coordinating Facility as part of the MultiScale Program, involve simulator developers and developers from NeuroML, a similar initiative. 
+The name of the proposed language is NineML (Network Interchange for Neuroscience Modeling Language).
 
 \subsection{Scope}
 
-The purpose of NineML is to provide a computer language for
+The purpose of NineML is thus to provide a computer language for
 succinct and unambiguous description of computational neuroscience models of
 networks of spiking neurons.
 
 NineML is intended to describe the network architecture, parameters
 and equations that govern the dynamics of a network of spiking
-neurons. The behavioral aspects of such a system, such as input
-stimulus, and the numerical implementation details, such as
-integration method used, have to be described using different
-techniques.  Model description in NineML is intended to be formal in
-the sense that it is possible to interpret it unambiguously.
+neurons, without taking into account model implementation detail such as numerical integration method. 
 
-The key concepts of spiking neuron network modeling are:
+At the current stage of development, the following concepts of spiking neuron network modeling can be fully or partially described:
 
 \begin{enumerate}
 \item spiking neurons
@@ -294,70 +285,14 @@ The key concepts of spiking neuron network modeling are:
 \end{enumerate}
 \end{enumerate}
 
-Accordingly, NineML defines a set of mathematical abstractions that
-are capable of representing these concepts.
+The Object Model developped has been used to create three different implementations (Java, Python and Chicken Scheme) that are now able to import/export a common XML description and generate code for simulating the described model in different simulator.
 
 \subsection{Design Considerations}
 
-\subsubsection{User layer and Abstraction layer}
-
-The design of NineML is divided into two semantic layers: an Abstraction
-Layer that provides the core concepts, mathematics and syntax with which
-model variables and state update rules are explicitly described in
-{\em parametrized} form, and a User Layer that provides a syntax to specify
-the instantiation and parameters of all these components of a network model
-in biological terms.
-
-The User Layer provides the syntax for specifying the model and parameters to
-be used to instantiate the key elements of a spiking neuronal network in terms
-that are directly linked to the biological counterparts of the model. This
-includes descriptions of individual elements (cells, synapses, inputs).
-As the User Layer provides the mechanism for instantiating and
-parameterization of the model elements that have been defined in the
-Abstraction Layer, it is clearly essential that these two layers share
-a complementary and compatible design philosophy. There must be a
-clear definition of which aspects of a model are defined in the User
-Layer and which are defined in the Abstraction Layer. In addition, the
-mechanisms and syntax for naming and addressing Abstraction Layer
-concepts that are instantiated in the User Layer to keep things simple
-for the user.
-
-\subsubsection{Implementation assumptions}
-
-One of the goals identified by task force members, was to maintain a
-clear distinction between the role of NineML and a simulator. NineML
-should provide only the information necessary for any given simulator
-to instantiate the network models in a simulator agnostic way.  For
-example, NineML should specify the neuron membrane equation to solve,
-but not how to solve it.  In addition, for implementation and
-performance reasons, it is important to keep the language layer
-``close'' to the simulator – such that the language layer is not
-responsible for maintaining separate representations of the
-instantiated network.
-
-\subsubsection{Language syntax}
-
-It is envisioned that the language should not require a
-specific syntax or rely on any given technology or platform.
-Rather it is anticipated that the language can be
-employed by defining the model elements in a variety of different
-syntaxes including a native (domain specific) language, Python, Java,
-and XML (for example). There are currently three implementations:
-in Python, Java (via LEMS/NEUROML??) and Chicken. In this document
-the concepts common to the object models supported by these three
-implementations are defined.
-
-\subsection{Object Model, Native Language, and XML Serialization}
-
-The NineML specification consists of an Object Model, and an XML serialization
-format. The NineML Object Model specifies the data types, core and derived
-concepts of NineML and the object-oriented interface to them. The NineML
-XML format specifies how a NineML compliant program is to parse and emit
-NineML in a XML structured document.  The NineML XML schema is
-isomorphic to the NineML object model.
-
-The NineML object model, and XML schema are discussed in turn in the
-following sections.
+As one of the goals of NineML is to provide a mean to import/export a model from any simulator or implementation, it is crucial to maintain a clear distinction between the definition of NineML and a simulator. NineML should provide only the information necessary for any given simulator
+to instantiate the network models in a simulator agnostic way.  
+For example, NineML should specify the neuron membrane equation to solve,
+but not how to solve it.  In addition, for implementation and performance reasons, it is important to keep the language layer "close'' to the simulator – such that the language layer is not responsible for maintaining separate representations of the instantiated network. 
 
 A NineML object model representation then can take multiple forms.  A
 program can employ a concrete representation of the NineML objects in
@@ -366,6 +301,28 @@ representation to and from the NineML XML schema, or it can take the
 form of an interpreter for the NineML native language as a compact
 representation and use code generation to produce a model
 representation for a target simulation environment.
+
+
+The design of NineML is divided into two semantic layers: 
+\begin {enumerate}
+\item \underline {an Abstraction Layer} that provides the core concepts and mathematical descriptions with which
+model variables and state update rules are explicitly described in {\em parametrized} form, and 
+\item \underline {a User Layer} that provides a syntax to specify the instantiation and the value of parameters of all these components of a network model.
+\end {enumerate}
+
+As the User Layer provides the mechanism for instantiating and parameterization of the model elements that have been defined in the Abstraction Layer, it is clearly essential that these two layers share a complementary and compatible design philosophy. There must be a clear definition of which aspects of a model are defined in the User Layer and which are defined in the Abstraction Layer. 
+In addition, the mechanisms for naming and addressing Abstraction Layer concepts that are instantiated in the User Layer have been kept simple for the user.
+
+\subsection{About this document}
+
+This document presents the current NineML specifications and consists of:
+\begin{enumerate}
+\item a description of the Abstraction and User Layer Object model
+\item the XML serialization with the description of the different tags
+\item examples of XML descriptions
+\end{enumerate} 
+
+It is important to note that the NineML XML schema is isomorphic to the NineML object model.
 
 \section{Data Types}
 \label{DataTypes}
@@ -468,50 +425,22 @@ Other quantities might be calculated according to some function dependent on
 some other quantities. These can be defined through the type {\tt Function} by
 including inline Abstraction Layer definitions or MathML.
 
-\subsection{Other compound types}
-
-Copied from AL spec since I do not have Gif minutes. AG.
-
-[TODO: ... see Gif
-
-Constant/Primitives
-Compound Types:
-- Diagrams
-- Relation (Local functions for ``:='' in python) [I think this is covered above. AG]
-- Graphs
-- CSA
-
-- Closure/Python: ''Component Factory'' (mention here, refer to following section)
-  an intermediate value to represent Compound types with
-  unspecified internal values.
-
-
-[Sub-TODO: ComponentType/ComponentInterface ... probably not a
-value, but rather a ``meta value'' ... where to talk about it ...]
-
-
-Sub-typing system
-
-See gif day2 minutes ... and write this section.
-Who gives it a go: Ivan
-]
+\subsection{Mathematical entities ??}
 
 \section{Abstraction Layer: Core Concepts }
 \label{AbstractionL}
 
 [TO DO: Here a introduction to the AL with the description of the graph approach.]
+The Object Model for the Abstraction Layer has been developed using a graphical representation of the different components and their inter-relations.
 
 \subsection{ComponentClass}
-
-In the NineML Abstraction Layer the model is defined in terms of
-\ComponentClasses. A \ComponentClass is the conglomerating
-object which is the subject of interaction with the User Layer.  A
-\ComponentClass could typically represent a point-neuron model or
-a synapse model for example. It is composed of an \Interface and
-a \Dynamics. 
+The main building block of the Object Model is the ComponentClass. 
+It is designed to represent all the individual entities existing in a network model (cells, synapses, synaptic plasticity rules, random spike train, inputs, ...). 
+A \ComponentClass is the conglomerating object which is the subject of interaction with the User Layer and is composed of a \Dynamics block and \Interfaces to communicate between each other.
 
 [TO DO: Here should be a graph representing the ComponentClass and showing Dynamics and Interfaces]
 
+[MIKE'S COMMENT: IT MAKES THINGS MORE CONFUSING. Want to know the core ideas without implementation details...examples provide the information about the implementation]
 This concept is mapped with the following XML tag: 
 
 \begin{lstlisting}[frame=none, backgroundcolor=\color{light-gray}]
@@ -806,100 +735,6 @@ flow in a post-synaptic neuron.
 \section{User Layer: Core Concepts}
 \label{UserL}
 
-\subsection{Property}
-
-Property is a User Layer object that instantiates values in simple
-Abstraction Layer \Parameter and combines a value of one of the data
-types defined in the section~\ref{DataTypes}, an indicator of the used type
-[not in the table below, is it necessary? AG.],
-and a label. The label should match the corresponding label in the
-Abstraction Layer \Parameter definition.
-
-\begin{table}[htb]
-\center
-\begin{tabular}{|c|}
-\hline
-\hline
-Property \\
-\hline
-\hline
-{\em label}: {\tt String} \\
-\hline
-{\em value}: \{{\tt Quantity}$|${\tt Boolean}$|${\tt Enumerated}\} \\
-\hline
-{\em note}: \{{\tt String}$|${\tt URL}\} (optional)\\
-\hline
-\end{tabular}
-\end{table}
-
-The user can set the value of the property and (when applicable for the data
-type, e.g. {\tt Quantity}) the units of measurement. These units are also
-checked against the dimensionality of the corresponding property definition
-in the Abstraction Layer.
-
-User can add a note to a property. These notes are
-intended to provide a specific reference to the research paper page
-where the component is described and similar kind of information. These
-notes are not intended to duplicate the Abstraction Layer documentation
-or any other documentation, thus they shall not provide mathematical
-description and other details of the component implementation. Note can
-contain text (type {\tt String}) or link to an Internet resource (type
-{\tt URL}).
-
-\subsection{Definition}
-
-All constructs in the User Layer have their mathematical or algorithmical
-definitions in the Abstraction Layer. Definition is an object that
-establishes a link between User Layer and Abstraction Layer. The initial
-version of NineML allows to put references to external (including user
-space Abstraction Layer) definitions.
-
-\begin{table}[htb]
-\center
-\begin{tabular}{|c|}
-\hline
-\hline
-Definition \\
-\hline
-\hline
-{\em language}: {\tt String} \\
-\hline
-{\em link}: {\tt URL}\\
-\hline
-\end{tabular}
-\end{table}
-
-The language should be flexible enough to allow representation of concepts
-that do not yet exist, as it is developed to serve the forefront of research.
-A simple mechanism to add concepts that are not part of the standard is
-provided through external (other than Abstraction Layer based) definitions.
-It is the choice of a simulator developer to support these definitions during
-initial stage of NineML development. Future
-maturation of NineML shall eliminate the need to support simulator-specific
-definitions.
-
-\subsection{Reference}
-
-Reference is a User Layer object that can replace {\tt Definition} object
-in situations where user needs to reuse the same definition for multiple
-instances of objects. In this case the first instance shall be described using
-{\tt Definition} and the rest can use the first one through {\tt Reference}.
-Label in the {\tt Reference} must match a label in a previously defined
-object.
-
-\begin{table}[htb]
-\center
-\begin{tabular}{|c|}
-\hline
-\hline
-Reference \\
-\hline
-\hline
-{\em label}: {\tt String} \\
-\hline
-\end{tabular}
-\end{table}
-
 \subsection{Component}
 
 The basic building block of NineML User Layer is called component. In the
@@ -950,47 +785,101 @@ can create mappings directly between the reference to a definition in the
 User Layer description of the component and the intrinsic simulator code
 that implements the same mathematics.
 
-\subsubsection{Random Distribution Components}
-\label{randDist}
+[TO DO: Random Distribution Components, Neuronal Components, Plasticity Components, Post-synaptic Response (PSR) Components]
 
-This component allows to define random distribution with corresponding
-parameters. These component allows the reuse of the same distribution
-multiple times similar to reuse of all other components.
+\subsubsection{Property}
 
-\subsubsection{Neuronal Components}
-\label{neuron}
+Property is a User Layer object that instantiates values in simple
+Abstraction Layer \Parameter and combines a value of one of the data
+types defined in the section~\ref{DataTypes}, an indicator of the used type
+[not in the table below, is it necessary? AG.],
+and a label. The label should match the corresponding label in the
+Abstraction Layer \Parameter definition.
 
-The description of the neuronal component defines a prototypical neuron
-which can be reused multiple times within the network. As a consequence,
-multiple connectivity patterns can be applied to this neuron, which
-results in a different set of synaptic inputs. Therefore, no description
-of these inputs shall be provided at the component level, they shall be
-described at the projection level (Section \ref{projections}). Simulation
-software shall take care of complete construction of each neuron by
-analyzing both levels of description.
+\begin{table}[htb]
+\center
+\begin{tabular}{|c|}
+\hline
+\hline
+Property \\
+\hline
+\hline
+{\em label}: {\tt String} \\
+\hline
+{\em value}: \{{\tt Quantity}$|${\tt Boolean}$|${\tt Enumerated}\} \\
+\hline
+{\em note}: \{{\tt String}$|${\tt URL}\} (optional)\\
+\hline
+\end{tabular}
+\end{table}
 
-\subsubsection{Plasticity Components}
-\label{plasticity}
+The user can set the value of the property and (when applicable for the data
+type, e.g. {\tt Quantity}) the units of measurement. These units are also
+checked against the dimensionality of the corresponding property definition
+in the Abstraction Layer.
 
-Plasticity components handle the synaptic weight and its possible
-modification. Note that synaptic weight is a dimensionless quantity and
-as such always have units of the predefined empty {\tt Dimension}. This
-is done to allow same plasticity rules to operate on
-different types of postsynaptic responses. Synaptic weight defined in the
-plasticity component determines only the magnitude of the response, the
-shape and physical properties are defined in the corresponding post-synaptic
-response node (section \ref{secSynapse}).
+User can add a note to a property. These notes are
+intended to provide a specific reference to the research paper page
+where the component is described and similar kind of information. These
+notes are not intended to duplicate the Abstraction Layer documentation
+or any other documentation, thus they shall not provide mathematical
+description and other details of the component implementation. Note can
+contain text (type {\tt String}) or link to an Internet resource (type
+{\tt URL}).
 
-\subsubsection{Post-synaptic Response (PSR) Components}
-\label{secSynapse}
+\subsubsection{Definition}
 
-Post-synaptic response components define the effect imposed on the
-post-synaptic cell dynamics by triggering the synaptic input. This
-definition includes only the shape of this effect and does not include the
-exact magnitude of the effect. The magnitude is described separately through
-plasticity rules and synaptic weights in section \ref{plasticity}. Note
-though that the units of the effect are defined here and synaptic weights in
-plasticity nodes are left dimensionless.
+All constructs in the User Layer have their mathematical or algorithmical
+definitions in the Abstraction Layer. Definition is an object that
+establishes a link between User Layer and Abstraction Layer. The initial
+version of NineML allows to put references to external (including user
+space Abstraction Layer) definitions.
+
+\begin{table}[htb]
+\center
+\begin{tabular}{|c|}
+\hline
+\hline
+Definition \\
+\hline
+\hline
+{\em language}: {\tt String} \\
+\hline
+{\em link}: {\tt URL}\\
+\hline
+\end{tabular}
+\end{table}
+
+The language should be flexible enough to allow representation of concepts
+that do not yet exist, as it is developed to serve the forefront of research.
+A simple mechanism to add concepts that are not part of the standard is
+provided through external (other than Abstraction Layer based) definitions.
+It is the choice of a simulator developer to support these definitions during
+initial stage of NineML development. Future
+maturation of NineML shall eliminate the need to support simulator-specific
+definitions.
+
+\subsubsection{Reference}
+
+Reference is a User Layer object that can replace {\tt Definition} object
+in situations where user needs to reuse the same definition for multiple
+instances of objects. In this case the first instance shall be described using
+{\tt Definition} and the rest can use the first one through {\tt Reference}.
+Label in the {\tt Reference} must match a label in a previously defined
+object.
+
+\begin{table}[htb]
+\center
+\begin{tabular}{|c|}
+\hline
+\hline
+Reference \\
+\hline
+\hline
+{\em label}: {\tt String} \\
+\hline
+\end{tabular}
+\end{table}
 
 \subsection{Projection}
 \label{projections}
