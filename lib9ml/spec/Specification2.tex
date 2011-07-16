@@ -156,7 +156,7 @@ float=tbfh}
 {\bf Written by: }
 \end{center}
 
-\noindent Anatoli Gorchetchnikov, Ivan Raikov, Mike Hull, Sean Hill, Yann Le Franc  \\
+\noindent Anatoli Gorchetchnikov, Ivan Raikov, Mike Hull, Yann Le Franc  \\
 
 %\vspace*{0.5cm}
 
@@ -289,19 +289,18 @@ The Object Model developped has been used to create three different implementati
 
 \subsection{Design Considerations}
 
-As one of the goals of NineML is to provide a mean to import/export a model from any simulator or implementation, it is crucial to maintain a clear distinction between the definition of NineML and a simulator. NineML should provide only the information necessary for any given simulator
+As one of the goals of NineML is to provide a mean to import/export a model from any simulator or implementation, it is crucial to maintain a clear distinction between the definition of NineML and a simulator. Therefore, NineML should provide only the information necessary for any given simulator
 to instantiate the network models in a simulator agnostic way.  
 For example, NineML should specify the neuron membrane equation to solve,
-but not how to solve it.  In addition, for implementation and performance reasons, it is important to keep the language layer "close'' to the simulator – such that the language layer is not responsible for maintaining separate representations of the instantiated network. 
+but not how to solve it.  In addition, for implementation and performance reasons, it is important to keep the language layer "close'' to the simulator – such that the language layer is not responsible for maintaining separate representations of the instantiated network. [COMMENT_YANN: WHAT DO YOU MEAN??]
 
-A NineML object model representation then can take multiple forms.  A
+A NineML object model representation can take multiple forms.  A
 program can employ a concrete representation of the NineML objects in
 a specific programming language, or it can convert an internal model
 representation to and from the NineML XML schema, or it can take the
 form of an interpreter for the NineML native language as a compact
 representation and use code generation to produce a model
 representation for a target simulation environment.
-
 
 The design of NineML is divided into two semantic layers: 
 \begin {enumerate}
@@ -317,7 +316,7 @@ In addition, the mechanisms for naming and addressing Abstraction Layer concepts
 
 This document presents the current NineML specifications and consists of:
 \begin{enumerate}
-\item a description of the Abstraction and User Layer Object model
+\item a description of the Abstraction and User Layer Object models
 \item the XML serialization with the description of the different tags
 \item examples of XML descriptions
 \end{enumerate} 
@@ -427,11 +426,15 @@ including inline Abstraction Layer definitions or MathML.
 
 \subsection{Mathematical entities ??}
 
+
 \section{Abstraction Layer: Core Concepts }
 \label{AbstractionL}
 
 [TO DO: Here a introduction to the AL with the description of the graph approach.]
+The Abstraction Layer aims at providing general concepts to represent the mathematical entities defining the dynamics of the different types of models composing a network (neuron models, synapse models, synaptique/intrinsic plasticity, ...)
 The Object Model for the Abstraction Layer has been developed using a graphical representation of the different components and their inter-relations.
+This type of representation allows to visualize the interactions between the different components of a particular type of model and presents clear heuristic "properties".
+We will use this graph representation to introduce the core concepts of the Object Model.
 
 \subsection{ComponentClass}
 The main building block of the Object Model is the ComponentClass. 
@@ -458,17 +461,102 @@ Example:
 </ComponentClass>
 \end{lstlisting}
 
+\subsection{Interfaces}
+
+The interface is the \emph{external} view of the component that defines
+what inputs and outputs the component exposes to other components and the
+parameters that can be set for the component. The interface consists of
+instances of \Port (section~\ref{ports}) and \Parameter
+(section~\ref{parameters}).
+
+As well as being able to communicate continuous values, components are also
+able to emit and receive \Events. Events are discrete notifications
+that are transmitted over \EventPorts (section~\ref{eventPorts}). Since
+\EventPorts have names, saying that we transmit 'event1' for example
+would mean transmitting an event on the EventPort called 'event1'. Events
+can be used to signal action potentials firing for example.
+
+\subsubsection{Parameter}
+
+Parameters corresponds to a placeholder for a numerical value with or without dimensions, defining particular aspects of the model, such as the firing threshold, reset voltage, the decay time constant of a synapse model.
+The instantiation of Parameters at the Abstraction Layer level allow us to define the dynamics of a component once, then adjust the behaviours by using different parameters.  [TO DO : modify text. Better to talk about a general canvas or unique representation of the dynamics]
+For example, if we are building an integrate-and-fire neuron, we can specify that the
+Reset-Voltage and the Firing-Threshold are parameters, write our
+dynamics in terms of these parameters, then use the User Layer to
+provide parameters to create different neurons. By definition, Parameters are set at
+the start of the simulation, and remain constant throughout.
+
+\subsubsection{Port}
+
+Ports allow components to communicate between each other during a simulation.
+There are two sub-classes of \nmlClass{Port} objects: \nmlClass{AnalogPort}
+and \nmlClass{EventPort}, and each can have different modes.
+
+%\subsubsection{AnalogPort}
+\paragraph{AnalogPort}
+
+AnalogPorts transmit and receive continuous values, either \Alias
+or \StateVariable. \AnalogPort can have 3 modes:
+\begin{itemize}
+\item \SendPort - transmit data originating in this component which can
+be read by other components.
+\item \RecvPort - receive data from another components \SendPort
+port. Each \RecvPort can be connected to \emph{one} \SendPort.
+\item \ReducePort - receive data from multiple \SendPorts. These
+differ from \RecvPorts in that they can be connected to multiple
+\SendPort. \ReducePorts take an additional operator,
+{\tt reduce\_op}, which specifies how the data from multiple \SendPorts
+should be combined to produce a single value. Currently, the
+only supported operations is $+$, which sums the inputs.
+The motivation for \ReducePort is that it allows us to make our
+component definitions more general. For example, if we are defining a
+neuron, would define a \ReducePort called {\tt InjectedCurrent}.
+This allows us to write the membrane equation for that neuron as
+$dV/dt = (1/C) * InjectedCurrents$.
+
+Then, when we connect this neuron to synapses, current-clamps, etc, we
+simply need to connect the SendPorts containing the currents of these
+components onto the {\tt InjectedCurrent} reduce-port, without having
+to change our original component definitions.
+\end{itemize}
+
+%\subsubsection{EventPort}
+\paragraph{EventPort}
+
+\label{eventPorts}
+
+Event ports transmit discrete events. They are useful for example in
+simulation of integrate-and-fire neurons to notify components about neuron's
+spiking. Event ports only have 2 modes:
+
+\begin{itemize}
+\item \SendPort - transmit events originating in this component which can be read by
+other components
+\item \RecvPort - receive events from another components \SendPort port.
+Each recv port can be connected to \emph{multiple} \SendPorts.
+\end{itemize}
+
+For example, a synapse component may have a \RecvPort connected to the
+presynaptic neurons \SendPort port. When the presynaptic neuron fires;
+it delivers an event to the synapse, which could cause it to produce current
+flow in a post-synaptic neuron.
+
 \subsection{Dynamics}
 
-[TO DO: reformulate the definition of the dynamic to integrate the concepts of regime graph]
+The \Dynamics block represents the \emph{internal} mechanisms governing the behaviour
+of the component. 
+For most of the models these dynamics are non-linear, presenting transitions between different regimes at particular values of one or different state variables.
+To create a representation that include both simple dynamics and non-linear dynamics, the \Dynamics block can contains the following concepts:
 
-The \Dynamics are the \emph{internal} mechanisms governing the behaviour
-of the component. The dynamics of a component are specified in terms of
-the following:
+\begin{itemize}
+\item \StateVariable (section~\ref{state-var})
+\item {\tt Regime(s)} (section~\ref{regime}) that describe the dynamic of the system for particular values of \StateVariable 
+\item Transition(s) links two regimes and the condition
+\item \Alias (section~\ref{alias})
+\end{itemize}
 
-The \Regime forms the vertices and the \Transition form the
-directional edges of the {\tt Regime Graph}, which must have at least
-one \Regime, and contain no regime islands.  At any given time, a
+These different concepts are the building blocks of a graph, called the {\tt Regime Graph} (illustrated in figure ?), where the \Regime forms the vertices and the \Transition form the directional edges of the {\tt Regime Graph}.
+This graph must have at least one \Regime, and contain no regime islands.  At any given time, a
 component will be in a single \Regime, and can change which \Regime it is in through \Transition.
 
 \begin{figure}[htb!]
@@ -482,13 +570,6 @@ An example dynamics in Figure~\ref{SimpleRegimeGraph} has three state variables,
 \emph{X,Y} and \emph{Z}, and a state graph with three regimes, \emph{regime1},
 \emph{regime2} and \emph{regime3}. At any time, a component will be in one of
 these regimes, and the state variables will evolve accordingly.
-
-\begin{itemize}
-\item \StateVariable (section~\ref{state-var})
-\item A {\tt RegimeGraph} (section~\ref{regime-graph}) composed of
-  instances of \Regime and \Transition
-\item \Alias (section~\ref{alias})
-\end{itemize}
 
 \subsubsection{StateVariable}
 
@@ -532,6 +613,8 @@ of \StateVariables and their propagators in a Regime.
 
 \note{If a \textbf{TimeDerivative} for a \StateVariable is not defined
 in a \Regime, it is assumed to be zero.}
+
+It is important to note that, at the current stage of development, we are only considering "Temporal regimes". In the next version, we will extend the concept to the more general case where the independent variable can be anything (space for example)
 
 [TODO:
 Sean's comment:
@@ -620,7 +703,7 @@ triggers the \nmlClass{Transition}
 
 \subsubsection{Aliases}
 
-What is the definition of an alias? Is it equivalent to the previous binding ?
+An alias correspond to an intermediate variable allowing to store an information and to reuse it at different places in the definition of the dynamics. [TO DO: rewrite to incorporate the term substitution and make the definition clearer]
 
 \textbf{Aliases} are motivated from two problems:
 
@@ -646,91 +729,13 @@ would be very long and difficult to read.
 \item If we would like to communicate a value other than a simple \StateVariable
 to another \ComponentClass. For example, if we have a component representing a
 neuron, which has an internal \StateVariable, 'V', we may be interested in
-transmitting a current, for example $i=g*(E-V)$.
+transmitting a current, for example $i=g*(E-V)$. 
+[TO DO: add the fact that an alias is required for passing values through the Port]
+
 \end{itemize}
 
 \note{\Alias is defined in the Dynamics, \emph{not} in the
 \Regime. This means that aliases are the same across all regimes.}
-
-\subsection{Interface}
-
-The interface is the \emph{external} view of the component that defines
-what inputs and outputs the component exposes to other components and the
-parameters that can be set for the component. The interface consists of
-instances of \Port (section~\ref{ports}) and \Parameter
-(section~\ref{parameters}).
-
-As well as being able to communicate continuous values, components are also
-able to emit and receive \Events. Events are discrete notifications
-that are transmitted over \EventPorts (section~\ref{eventPorts}). Since
-\EventPorts have names, saying that we transmit 'event1' for example
-would mean transmitting an event on the EventPort called 'event1'. Events
-can be used to signal action potentials firing for example.
-
-\subsubsection{Parameter}
-
-Parameters allow us to define the dynamics of a component once, then
-adjust the behaviours by using different parameters. For example, if
-we are building an integrate-and-fire neuron, we can specify that the
-Reset-Voltage and the Firing-Threshold are parameters, write our
-dynamics in terms of these parameters, then use the User Layer to
-provide parameters to create different neurons. Parameters are set at
-the start of the simulation, and remain constant throughout.
-
-\subsubsection{Port}
-
-Ports allow components to communicate between each other during a simulation.
-There are two sub-classes of \nmlClass{Port} objects: \nmlClass{AnalogPort}
-and \nmlClass{EventPort}, and each can have different modes.
-
-%\subsubsection{AnalogPort}
-\paragraph{AnalogPort}
-
-AnalogPorts transmit and receive continuous values, either \Alias
-or \StateVariable. \AnalogPort can have 3 modes:
-\begin{itemize}
-\item \SendPort - transmit data originating in this component which can
-be read by other components.
-\item \RecvPort - receive data from another components \SendPort
-port. Each \RecvPort can be connected to \emph{one} \SendPort.
-\item \ReducePort - receive data from multiple \SendPorts. These
-differ from \RecvPorts in that they can be connected to multiple
-\SendPort. \ReducePorts take an additional operator,
-{\tt reduce\_op}, which specifies how the data from multiple \SendPorts
-should be combined to produce a single value. Currently, the
-only supported operations is $+$, which sums the inputs.
-The motivation for \ReducePort is that it allows us to make our
-component definitions more general. For example, if we are defining a
-neuron, would define a \ReducePort called {\tt InjectedCurrent}.
-This allows us to write the membrane equation for that neuron as
-$dV/dt = (1/C) * InjectedCurrents$.
-
-Then, when we connect this neuron to synapses, current-clamps, etc, we
-simply need to connect the SendPorts containing the currents of these
-components onto the {\tt InjectedCurrent} reduce-port, within having
-to change our original component definitions.
-\end{itemize}
-
-%\subsubsection{EventPort}
-\paragraph{EventPort}
-
-\label{eventPorts}
-
-Event ports transmit discrete events. They are useful for example in
-simulation of integrate-and-fire neurons to notify components about neuron's
-spiking. Event ports only have 2 modes:
-
-\begin{itemize}
-\item \SendPort - transmit events originating in this component which can be read by
-other components
-\item \RecvPort - receive events from another components \SendPort port.
-Each recv port can be connected to \emph{multiple} \SendPorts.
-\end{itemize}
-
-For example, a synapse component may have a \RecvPort connected to the
-presynaptic neurons \SendPort port. When the presynaptic neuron fires;
-it delivers an event to the synapse, which could cause it to produce current
-flow in a post-synaptic neuron.
 
 \section{User Layer: Core Concepts}
 \label{UserL}
@@ -1425,6 +1430,60 @@ An example model of an Izhikevich model is given:
   </ComponentClass>
 </NineML>
 \end{lstlisting}
+
+
+
+\noindent
+This \ComponentClass has a single \Regime, $subthresholdRegime$ and two
+\StateVariables, $U$ \& $V$. 
+
+\noindent
+The \TimeDerivatives are defined for the Regime as:
+
+\begin{align}
+\frac{dV}{dt} &= 0.04*V*V + 5*V + 140.0 - U + iSyn + iinj\_constant   \\
+\frac{dU}{dt} &= a * ( b* V -U )
+\end{align}
+
+\noindent
+The \ComponentClass has a single \Transition, is triggered when $V>theta$. When
+triggered, It causes an \Event called $spikeOutput$ to be emitted, and two
+\StateAssignments to be made:
+\begin{align}
+U &\leftarrow U + d \\
+V &\leftarrow c
+\end{align}
+
+The target-regime of the \Transition is not declared explicity in the XML, implying that the
+target-regime is the same as the source-regime, i.e. $subthresholdRegime$.
+
+The {\tt RegimeGraph} is shown in Figure~\ref{fig:EX1_RegimeGraph}
+
+\begin{figure}[htb!]
+\center
+%\includegraphics[width=14cm]{al/ParallelisingTransitions.pdf}example_IzRegimeTransGraph.pdf
+\includegraphics[width=8cm]{figures/example_IzRegimeTransGraph.pdf}
+\protect\caption{RegimeGraph for the XML model in Listing~\ref{code:xmliz}}
+\label{fig:EX1_RegimeGraph}
+\end{figure}
+
+
+Using this Abstraction Layer definition, as well as suitable parameters from the
+user layer; $a=0.02, b=0.2, c=-65, d= 8, iinj\_constant= 5.0$, we can simulate
+this, giving output as shown in Figure~\ref{fig:Ex1_Output}.
+
+\begin{figure}[htb!]
+\center
+%\includegraphics[width=14cm]{al/ParallelisingTransitions.pdf}example_IzRegimeTransGraph.pdf
+\includegraphics[width=8cm]{figures/example_IzVoltageWave.pdf}
+\protect\caption{Result of simulating of the XML model in Listing~\ref{code:xmliz}}
+\label{fig:EX1_Output}
+\end{figure}
+
+In Figure~\ref{fig:Ex1_Output}, we can see the value of the \StateVariable $V$
+over time. We can also see that when the value of $V>theta$ triggers the
+condition, we emit a spike, and the \StateAssignment of $V \leftarrow c$ resets
+the value of $V$.
 
 \pagebreak
 
