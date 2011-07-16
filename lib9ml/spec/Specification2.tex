@@ -135,7 +135,8 @@ float=tbfh}
 \vspace*{1cm}
 
 \begin{center}
-\noindent{\Huge \bf Network Interchange for Neuroscience Modeling Language (NineML)}\\
+\noindent{\Huge \bf Network Interchange for Neuroscience Modeling Language
+(NineML)}\\
 \vspace{0.5cm}
 \noindent{\Large \bf Specification}\\
 \vspace{0.5cm}
@@ -164,7 +165,9 @@ float=tbfh}
 
 }
 
-Acknowledgements: We would like to thank the Task Force members for their comments on this document and in particular P. Gleeson, E. Muller, A. Davison, R. Cannon, S. Hill.
+Acknowledgements: We would like to thank the Task Force members for their
+comments on this document and in particular P. Gleeson, E. Muller, A. Davison,
+R. Cannon, S. Hill.
 
 
 \title{NineML (9ML) Specification}
@@ -175,10 +178,19 @@ Acknowledgements: We would like to thank the Task Force members for their commen
 \newpage
 
 \abstract
-NineML is a simulator independent language with the aim of providing an unambiguous description of neuronal network models for efficient model sharing and reusability. This language emerges from a joint effort from experts in the field of Computational Neuroscience, simulator development and standardized language initiative (NeuroML), coordinated and supported by INCF.
+NineML is a simulator independent language with the aim of providing an
+unambiguous description of neuronal network models for efficient model sharing
+and reusability. This language emerges from a joint effort from experts in the
+field of Computational Neuroscience, simulator development and standardized
+language initiative (NeuroML), coordinated and supported by INCF.
 
-This document provides the basis for understanding the Common Object Model, shared by the three  implementations, and the resulting XML schema and tags. The current work only covers the representation of spking neurons and synapses and will be further extended to represent network connectivity, synaptic plasticity, and all other necessary concepts to represent networks.
-These extensions are still work in progress and your comments and feedbacks will be extremely valuable.
+This document provides the basis for understanding the Common Object Model,
+shared by the three  implementations, and the resulting XML schema and tags. The
+current work only covers the representation of spking neurons and synapses and
+will be further extended to represent network connectivity, synaptic plasticity,
+and all other necessary concepts to represent networks.
+These extensions are still work in progress and your comments and feedbacks will
+be extremely valuable.
 
 \newpage
 \tableofcontents
@@ -187,7 +199,8 @@ These extensions are still work in progress and your comments and feedbacks will
 \vskip 1in
 \paragraph{Changes from version 0.98:}
 Text edition and reorganization of the document.
-Description of the OM classes are reorganize to "fit" the hierarchical structure in XML both for the AL and the UL.
+Description of the OM classes are reorganize to ``fit'' the hierarchical structure
+in XML both for the AL and the UL.
 
 
 \paragraph{Changes from version 0.97:}
@@ -263,10 +276,20 @@ level
 
 \section{Introduction}
 
-The increasing number of studies related to neuronal network modeling and the diversity of the simulation platforms and implementations cause a major issue for model sharing, replicability and reusability of either whole model or part of the model for further analysis or simply for extension.
-To overcome this problem, we are proposing a common description language to be used for exchanging models and being able to simulate them in any simulation platform.
-This description language, using the XML technology, is based on a common Object Model describing the different elements of network models. This work, initiated and supported by the International Neuroinformatics Coordinating Facility as part of the MultiScale Program, involve simulator developers and developers from NeuroML, a similar initiative.
-The name of the proposed language is NineML (Network Interchange for Neuroscience Modeling Language).
+The increasing number of studies related to neuronal network modeling and the
+diversity of the simulation platforms and implementations cause a major issue
+for model sharing, replicability and reusability of either whole model or part
+of the model for further analysis or simply for extension.
+To overcome this problem, we are proposing a common description language to be
+used for exchanging models and being able to simulate them in any simulation
+platform.
+This description language, using the XML technology, is based on a common Object
+Model describing the different elements of network models. This work, initiated
+and supported by the International Neuroinformatics Coordinating Facility as
+part of the MultiScale Program, involve simulator developers and developers from
+NeuroML, a similar initiative.
+The name of the proposed language is NineML (Network Interchange for
+Neuroscience Modeling Language).
 
 \subsection{Scope}
 
@@ -276,9 +299,11 @@ networks of spiking neurons.
 
 NineML is intended to describe the network architecture, parameters
 and equations that govern the dynamics of a network of spiking
-neurons, without taking into account model implementation detail such as numerical integration method.
+neurons, without taking into account model implementation detail such as
+numerical integration method.
 
-At the current stage of development, the following concepts of spiking neuron network modeling can be fully or partially described:
+At the current stage of development, the following concepts of spiking neuron
+network modeling can be fully or partially described:
 
 \begin{enumerate}
 \item spiking neurons
@@ -292,22 +317,21 @@ At the current stage of development, the following concepts of spiking neuron ne
 
 The Object Model developped has been used to create three different
 implementations (Java, Python and Chicken Scheme) that are now able to
-import/export a common XML description and generate code for simulating
-the described model in different simulator.
+import/export a common XML description and generate code for simulating the
+described model in different simulator.
 
 \subsection{Design Considerations}
 
-As one of the goals of NineML is to provide a mean to import/export a model
-from any simulator or implementation, it is crucial to maintain a clear
-distinction between the definition of NineML and a simulator. Therefore,
-NineML should provide only the information necessary for any given simulator
+As one of the goals of NineML is to provide a mean to import/export a model from
+any simulator or implementation, it is crucial to maintain a clear distinction
+between the definition of NineML and a simulator. Therefore, NineML should
+provide only the information necessary for any given simulator
 to instantiate the network models in a simulator agnostic way.
 For example, NineML should specify the neuron membrane equation to solve,
 but not how to solve it.  In addition, for implementation and performance
-reasons, it is important to keep the language layer "close'' to the
-simulator -- such that the language layer is not responsible for maintaining
-separate representations of the instantiated network.
-[COMMENT\_YANN: WHAT DO YOU MEAN??]
+reasons, it is important to keep the language layer ``close'' to the simulator –
+such that the language layer is not responsible for maintaining separate
+representations of the instantiated network. [COMMENT\_YANN: WHAT DO YOU MEAN??]
 
 A NineML object model representation can take multiple forms.  A
 program can employ a concrete representation of the NineML objects in
@@ -319,13 +343,22 @@ representation for a target simulation environment.
 
 The design of NineML is divided into two semantic layers:
 \begin {enumerate}
-\item \underline {an Abstraction Layer} that provides the core concepts and mathematical descriptions with which
-model variables and state update rules are explicitly described in {\em parametrized} form, and
-\item \underline {a User Layer} that provides a syntax to specify the instantiation and the value of parameters of all these components of a network model.
+\item \underline {an Abstraction Layer} that provides the core concepts and
+mathematical descriptions with which
+model variables and state update rules are explicitly described in {\em
+parametrized} form, and
+\item \underline {a User Layer} that provides a syntax to specify the
+instantiation and the value of parameters of all these components of a network
+model.
 \end {enumerate}
 
-As the User Layer provides the mechanism for instantiating and parameterization of the model elements that have been defined in the Abstraction Layer, it is clearly essential that these two layers share a complementary and compatible design philosophy. There must be a clear definition of which aspects of a model are defined in the User Layer and which are defined in the Abstraction Layer.
-In addition, the mechanisms for naming and addressing Abstraction Layer concepts that are instantiated in the User Layer have been kept simple for the user.
+As the User Layer provides the mechanism for instantiating and parameterization
+of the model elements that have been defined in the Abstraction Layer, it is
+clearly essential that these two layers share a complementary and compatible
+design philosophy. There must be a clear definition of which aspects of a model
+are defined in the User Layer and which are defined in the Abstraction Layer.
+In addition, the mechanisms for naming and addressing Abstraction Layer concepts
+that are instantiated in the User Layer have been kept simple for the user.
 
 \subsection{About this document}
 
@@ -336,33 +369,145 @@ This document presents the current NineML specifications and consists of:
 \item examples of XML descriptions
 \end{enumerate}
 
-It is important to note that the NineML XML schema is isomorphic to the NineML object model.
+It is important to note that the NineML XML schema is isomorphic to the NineML
+object model.
+
+\section{Data Types}
+\label{DataTypes}
+
+Values in NineML can have different types, which are listed in the
+following subsections. Data types are the objects that allow the
+encapsulation of value data and are not intended as standalone
+objects outside of {\tt ComponentClass} objects in the Abstraction
+Layer or {\tt property} objects in the User Layer.
+
+\subsection{Dimension}
+
+Dimension is an object that provides physical dimension like length,
+mass, or time. A set of predefined dimensions is provided in the
+NineML library and the user can derive compound dimensions from these
+(for example velocity is derived from length and time). A special case
+of a {\tt Dimension} is a predefined empty dimension for dimensionless
+quantities.
+
+\subsection{Counter}
+
+Counter is an object that represent the countable quantity (natural
+number) and is used to define a number of identical objects that have
+to be instantiated in a model from a single object definition (for
+example a number of neurons in a population of identical cells).
+
+\subsection{Number}
+
+Number is a object that represents numerical values. It is not designed for
+a direct use, but rather as a component of the {\tt Quantity} type that
+additionally includes the units of measurements for each specific quantity.
+
+\subsection{String}
+
+String is an object that contains a string of text. It is used for labeling
+elements as well as for optional textual {\tt note}s that annotate these
+elements.
+
+\subsection{URL}
+
+URL is an object that contains a reference to an internet resource in a form
+of a URL. It is used for Abstraction Layer or external definitions as well as
+for links in optional {\tt note}s that annotate these elements.
+
+\subsection{Enumerated}
+
+Enumerated is an object that is used for properties that can only take
+a few predefined by Abstraction Layer values.
+
+\subsection{Boolean}
+
+Boolean is an object that contains a binary true-false value or a logical
+expression that can be evaluated into such a value.
+
+\subsection{Function}
+
+Function is an object that returns a value of a {\tt Number} type resulting
+from calculation that can be deterministic or based on random number
+distribution.
+
+\subsection{Quantity}
+
+Quantity is a compound data type object that encapsulates a numerical value
+and a unit of measurements. Unit has to be of one of the {\tt Dimension} type.
+Any numeric quantity in the language (except counters) has to be of this type,
+dimensionless quantities shall use predefined empty {\tt Dimension}.
+
+\begin{table}[htb]
+\center
+\begin{tabular}{|c|}
+\hline
+\hline
+Quantity \\
+\hline
+\hline
+{\em unit}: {\tt Dimension} \\
+\hline
+{\em value}: \{{\tt Number}$|${\tt Function}$|$%
+{\tt Component->Random Distribution}\} \\
+\hline
+\end{tabular}
+\end{table}
+
+There are two kinds of quantities: values of the first kind are given to the
+model by the user and stay fixed, values of a second kind are computed within
+the model during simulation. For all practical reasons the syntax of the user
+layer descriptions is identical for both kinds of quantities. Furthermore,
+because NineML does not provide any default values for quantities, it is a
+job of the user to provide initial values for all defined quantities. To
+ensure the integrity of the model NineML requires all initial values to be
+set in the User Layer description. For batch simulations and other
+modifications any of the values given in the User Layer can be overwritten
+by a simulation setup description, but this is outside of the scope of the
+current version of NineML.
+
+Some quantities can have values drawn from random distribution. In this case
+User Layer description of the quantities includes a reference to a random
+distribution component (section~\ref{randDist}) instead of a numeric value.
+Other quantities might be calculated according to some function dependent on
+some other quantities. These can be defined through the type {\tt Function} by
+including inline Abstraction Layer definitions or MathML.
+
+\subsection{Mathematical entities ??}
+
 
 \section{Abstraction Layer: Core Concepts }
 \label{AbstractionL}
 
-[TO DO: Here a introduction to the AL with the description of the graph approach.]
-The Abstraction Layer aims at providing general concepts to represent the mathematical entities defining the dynamics of the different types of models composing a network (neuron models, synapse models, synaptique/intrinsic plasticity, ...)
-The Object Model for the Abstraction Layer has been developed using a graphical representation of the different components and their inter-relations.
-This type of representation allows to visualize the interactions between the different components of a particular type of model and presents clear heuristic "properties".
-We will use this graph representation to introduce the core concepts of the Object Model.
+[TO DO: Here a introduction to the AL with the description of the graph
+approach.]
+The Abstraction Layer aims at providing general concepts to represent the
+mathematical entities defining the dynamics of the different types of models
+composing a network (neuron models, synapse models, synaptique/intrinsic
+plasticity, ...)
+The Object Model for the Abstraction Layer has been developed using a graphical
+representation of the different components and their inter-relations.
+This type of representation allows to visualize the interactions between the
+different components of a particular type of model and presents clear heuristic
+"properties".
+We will use this graph representation to introduce the core concepts of the
+Object Model.
 
 \subsection{ComponentClass}
-\begin{figure}[htb!]
-\center
-\includegraphics[width=8cm]{figures/component_simple.pdf}
-\protect\caption{ComponentClass Overview (Simple)\ref{code:xmliz}}
-\label{fig:EX1_RegimeGraph}
-\end{figure}
-
-
 The main building block of the Object Model is the ComponentClass.
-It is designed to represent all the individual entities existing in a network model (cells, synapses, synaptic plasticity rules, random spike train, inputs, ...).
-A \ComponentClass is the conglomerating object which is the subject of interaction with the User Layer and is composed of a \Dynamics block and \Interfaces to communicate between each other.
+It is designed to represent all the individual entities existing in a network
+model (cells, synapses, synaptic plasticity rules, random spike train, inputs,
+...).
+A \ComponentClass is the conglomerating object which is the subject of
+interaction with the User Layer and is composed of a \Dynamics block and
+\Interfaces to communicate between each other.
 
-[TO DO: Here should be a graph representing the ComponentClass and showing Dynamics and Interfaces]
+[TO DO: Here should be a graph representing the ComponentClass and showing
+Dynamics and Interfaces]
 
-[MIKE'S COMMENT: IT MAKES THINGS MORE CONFUSING. Want to know the core ideas without implementation details...examples provide the information about the implementation]
+[MIKE'S COMMENT: IT MAKES THINGS MORE CONFUSING. Want to know the core ideas
+without implementation details...examples provide the information about the
+implementation]
 This concept is mapped with the following XML tag:
 
 \begin{lstlisting}[frame=none, backgroundcolor=\color{light-gray}]
@@ -397,12 +542,19 @@ can be used to signal action potentials firing for example.
 
 \subsubsection{Parameter}
 
-Parameters corresponds to a placeholder for a numerical value with or without dimensions, defining particular aspects of the model, such as the firing threshold, reset voltage, the decay time constant of a synapse model.
-The instantiation of Parameters at the Abstraction Layer level allow us to define the dynamics of a component once, then adjust the behaviours by using different parameters.  [TO DO : modify text. Better to talk about a general canvas or unique representation of the dynamics]
-For example, if we are building an integrate-and-fire neuron, we can specify that the
+Parameters corresponds to a placeholder for a numerical value with or without
+dimensions, defining particular aspects of the model, such as the firing
+threshold, reset voltage, the decay time constant of a synapse model.
+The instantiation of Parameters at the Abstraction Layer level allow us to
+define the dynamics of a component once, then adjust the behaviours by using
+different parameters.  [TO DO : modify text. Better to talk about a general
+canvas or unique representation of the dynamics]
+For example, if we are building an integrate-and-fire neuron, we can specify
+that the
 Reset-Voltage and the Firing-Threshold are parameters, write our
 dynamics in terms of these parameters, then use the User Layer to
-provide parameters to create different neurons. By definition, Parameters are set at
+provide parameters to create different neurons. By definition, Parameters are
+set at
 the start of the simulation, and remain constant throughout.
 
 \subsubsection{Port}
@@ -449,7 +601,8 @@ simulation of integrate-and-fire neurons to notify components about neuron's
 spiking. Event ports only have 2 modes:
 
 \begin{itemize}
-\item \SendPort - transmit events originating in this component which can be read by
+\item \SendPort - transmit events originating in this component which can be
+read by
 other components
 \item \RecvPort - receive events from another components \SendPort port.
 Each recv port can be connected to \emph{multiple} \SendPorts.
@@ -462,21 +615,30 @@ flow in a post-synaptic neuron.
 
 \subsection{Dynamics}
 
-The \Dynamics block represents the \emph{internal} mechanisms governing the behaviour
+The \Dynamics block represents the \emph{internal} mechanisms governing the
+behaviour
 of the component.
-For most of the models these dynamics are non-linear, presenting transitions between different regimes at particular values of one or different state variables.
-To create a representation that include both simple dynamics and non-linear dynamics, the \Dynamics block can contains the following concepts:
+For most of the models these dynamics are non-linear, presenting transitions
+between different regimes at particular values of one or different state
+variables.
+To create a representation that include both simple dynamics and non-linear
+dynamics, the \Dynamics block can contains the following concepts:
 
 \begin{itemize}
 \item \StateVariable (section~\ref{state-var})
-\item {\tt Regime(s)} (section~\ref{regime}) that describe the dynamic of the system for particular values of \StateVariable
-\item Transition(s) links two regimes: the Source-Regime and the target-Regime, and can be triggered by an event or a condition. If a component is in the source-regime, and the transition is triggered; then the component moves into the target regime
+\item {\tt Regime(s)} (section~\ref{regime}) that describe the dynamic of the
+system for particular values of \StateVariable
+\item Transition(s) links two regimes and the condition
 \item \Alias (section~\ref{alias})
 \end{itemize}
 
-These different concepts are the building blocks of a graph, called the {\tt Regime Graph} (illustrated in figure ?), where the \Regime forms the vertices and the \Transition form the directional edges of the {\tt Regime Graph}.
-This graph must have at least one \Regime, and contain no regime islands.  At any given time, a
-component will be in a single \Regime, and can change which \Regime it is in through \Transition.
+These different concepts are the building blocks of a graph, called the {\tt
+Regime Graph} (illustrated in figure ?), where the \Regime forms the vertices
+and the \Transition form the directional edges of the {\tt Regime Graph}.
+This graph must have at least one \Regime, and contain no regime islands.  At
+any given time, a
+component will be in a single \Regime, and can change which \Regime it is in
+through \Transition.
 
 \begin{figure}[htb!]
 \center
@@ -512,7 +674,9 @@ $X = X + 1$.
 \subsubsection{Regime}
 
 A \nmlClass{Regime} is defined in NineML as a system of ODEs in time
-on \StateVariable.  As such, \Regime defines how the \StateVariables change (propagate in time) between subsequent \Transitions. \Regime is defined to have non-vanishing
+on \StateVariable.  As such, \Regime defines how the \StateVariables change
+(propagate in time) between subsequent \Transitions. \Regime is defined to have
+non-vanishing
 temporal extent. Once construction of the \Regime is complete, it
 should have defined the following properties:
 
@@ -533,7 +697,10 @@ of \StateVariables and their propagators in a Regime.
 \note{If a \textbf{TimeDerivative} for a \StateVariable is not defined
 in a \Regime, it is assumed to be zero.}
 
-It is important to note that, at the current stage of development, we are only considering "Temporal regimes". In the next version, we will extend the concept to the more general case where the independent variable can be anything (space for example)
+It is important to note that, at the current stage of development, we are only
+considering "Temporal regimes". In the next version, we will extend the concept
+to the more general case where the independent variable can be anything (space
+for example)
 
 [TODO:
 Sean's comment:
@@ -594,7 +761,8 @@ in Figure~\ref{SimpleRegimeGraph}). There are two types of \Transition:
 \begin{itemize}
 \item An \OnCondition function of the \StateVariable, for
 example $X > Y$.
-\item An \OnEvent on an input from \EventPort. (Discussed in sections~\ref{events} and \ref{eventPorts}).
+\item An \OnEvent on an input from \EventPort. (Discussed in
+sections~\ref{events} and \ref{eventPorts}).
 \end{itemize}
 
 During either type of transition three things can happen:
@@ -622,7 +790,9 @@ triggers the \nmlClass{Transition}
 
 \subsubsection{Aliases}
 
-An alias correspond to an intermediate variable allowing to store an information and to reuse it at different places in the definition of the dynamics. [TO DO: rewrite to incorporate the term substitution and make the definition clearer]
+An alias correspond to an intermediate variable allowing to store an information
+and to reuse it at different places in the definition of the dynamics. [TO DO:
+rewrite to incorporate the term substitution and make the definition clearer]
 
 \textbf{Aliases} are motivated from two problems:
 
@@ -649,23 +819,14 @@ would be very long and difficult to read.
 to another \ComponentClass. For example, if we have a component representing a
 neuron, which has an internal \StateVariable, 'V', we may be interested in
 transmitting a current, for example $i=g*(E-V)$.
-[TO DO: add the fact that an alias is required for passing values through the Port]
+[TO DO: add the fact that an alias is required for passing values through the
+Port]
 
 \end{itemize}
 
 \note{\Alias is defined in the Dynamics, \emph{not} in the
 \Regime. This means that aliases are the same across all regimes.}
 
-\subsection{To summarize}
-
-\begin{figure}[htb!]
-\center
-%\includegraphics[width=14cm]{al/ParallelisingTransitions.pdf}example_IzRegimeTransGraph.pdf
-\includegraphics[width=0.9\linewidth]{figures/component_complex.pdf}
-\protect\caption{ComponentClass Overview (Detailed)\ref{code:xmliz}}
-\label{fig:EX1_RegimeGraph}
-\end{figure}
-\newpage
 \section{User Layer: Core Concepts}
 \label{UserL}
 
@@ -719,7 +880,8 @@ can create mappings directly between the reference to a definition in the
 User Layer description of the component and the intrinsic simulator code
 that implements the same mathematics.
 
-[TO DO: Random Distribution Components, Neuronal Components, Plasticity Components, Post-synaptic Response (PSR) Components]
+[TO DO: Random Distribution Components, Neuronal Components, Plasticity
+Components, Post-synaptic Response (PSR) Components]
 
 \subsubsection{Property}
 
@@ -1020,7 +1182,8 @@ This tag declares an alias in the component
 
 \item Child Elements:
 \begin{itemize}
-\item \MathInline {[}Required{]} (The equation on the right-hand-side of the alias)
+\item \MathInline {[}Required{]} (The equation on the right-hand-side of the
+alias)
 \end{itemize}
 \end{itemize}
 
@@ -1043,7 +1206,8 @@ enclosing \Dynamics block, even if it has a RHS of zero.
 \item Child Elements:
 \begin{itemize}
 \item \TimeDerivative {[}0+{]}
-\item \OnCondition {[}0+{]} (The transitions from this regime, triggered by conditions)
+\item \OnCondition {[}0+{]} (The transitions from this regime, triggered by
+conditions)
 \item \OnEvent {[}0+{]} (The transitions from this regime, triggered by events)
 \end{itemize}
 
@@ -1055,7 +1219,8 @@ enclosing \Dynamics block, even if it has a RHS of zero.
 <TimeDerivative variable="">
 \end{lstlisting}
 
-This tag defines the differential equation controlling the evolution of a StateVariable while
+This tag defines the differential equation controlling the evolution of a
+StateVariable while
 in this regime.
 
 \begin{itemize}
@@ -1088,9 +1253,12 @@ Parameters.
 \item Child Elements:
 %
 \begin{itemize}
-\item \Trigger {[}1{]} (A \verb|<Trigger>| block defining the condition that causes this transition to occur)
-\item \StateAssignment {[}0+{]} (The state assignments that should occur when this transition is triggered)
-\item {\tt EventOut} {[}0+{]} (The events that should be sent when this transition is triggered)
+\item \Trigger {[}1{]} (A \verb|<Trigger>| block defining the condition that
+causes this transition to occur)
+\item \StateAssignment {[}0+{]} (The state assignments that should occur when
+this transition is triggered)
+\item {\tt EventOut} {[}0+{]} (The events that should be sent when this
+transition is triggered)
 \end{itemize}
 \end{itemize}
 
@@ -1100,23 +1268,27 @@ Parameters.
 <OnEvent port="">
 \end{lstlisting}
 
-This block specifies a transition from the enclosing \Regime block, which is triggered
+This block specifies a transition from the enclosing \Regime block, which is
+triggered
 by an input event.
 
 \begin{itemize}
 \item Attributes:
 %
 \begin{itemize}
-\item \verb|port| {[}Required{]} The name of the input event port which triggers this
+\item \verb|port| {[}Required{]} The name of the input event port which triggers
+this
 transition
 \end{itemize}
 
 \item Child Elements:
 %
 \begin{itemize}
-\item \StateAssignment {[}0+{]} (The state assignments that should occur when this
+\item \StateAssignment {[}0+{]} (The state assignments that should occur when
+this
 transition is triggered)
-\item {\tt EventOut} {[}0+{]} (The events that should be sent when this transition is triggered)
+\item {\tt EventOut} {[}0+{]} (The events that should be sent when this
+transition is triggered)
 \end{itemize}
 \end{itemize}
 
@@ -1126,7 +1298,8 @@ transition is triggered)
 <Trigger>
 \end{lstlisting}
 
-This block is used by \OnCondition blocks to define the condition needed for them to be triggered.
+This block is used by \OnCondition blocks to define the condition needed for
+them to be triggered.
 
 \begin{itemize}
 \item Attributes: \texttt{None}
@@ -1147,20 +1320,23 @@ boolean, for example by invoking a comparison operator  $>$ or $<$. )
 
 Used in transitions to assign a value to a state-variable during a transition.
 
-\note{'In-place' operations are not supported and should be written out as in full,
+\note{'In-place' operations are not supported and should be written out as in
+full,
 i.e., $x+=z$ is invalid and should be written as $x=x+z$.}
 
 \begin{itemize}
 \item Attributes:
 %
 \begin{itemize}
-\item \verb|variable| {[}Required{]} (The name of the variable to be assigned to)
+\item \verb|variable| {[}Required{]} (The name of the variable to be assigned
+to)
 \end{itemize}
 
 \item Child Elements:
 %
 \begin{itemize}
-\item \verb|<MathInline>| {[}1{]} (The right-hand-side of the assignment expression)
+\item \verb|<MathInline>| {[}1{]} (The right-hand-side of the assignment
+expression)
 \end{itemize}
 \end{itemize}
 
@@ -1176,7 +1352,8 @@ Used in transitions to emit an event.
 \item Attributes:
 %
 \begin{itemize}
-\item \verb|port_name| {[}Required{]} (The name of the EventPort to send an event over)
+\item \verb|port_name| {[}Required{]} (The name of the EventPort to send an
+event over)
 \end{itemize}
 
 \item Child Elements: \texttt{None}
@@ -1198,9 +1375,12 @@ be in \texttt{C} style and given as text. In future versions of NineML, we will
 support \verb|<MathML>| blocks too.
 
 Depending on the context; MathInline blocks should return an expression that
-evaluates to either a \verb|Boolean| (when used as the trigger for \OnConditions) or a \verb|floating-point| number ( when used  as a right-hand-side for  \Aliases, \TimeDerivatives \& \StateAssignments).
+evaluates to either a \verb|Boolean| (when used as the trigger for
+\OnConditions) or a \verb|floating-point| number ( when used  as a
+right-hand-side for  \Aliases, \TimeDerivatives \& \StateAssignments).
 
-The following operators are supported, with the same precedence levels as ANSI C89. All
+The following operators are supported, with the same precedence levels as ANSI
+C89. All
 numbers/variables are assumed to be \verb|floating-point| numbers, not integers.
 
 \begin{itemize}
@@ -1269,7 +1449,8 @@ The following functions are builtin, and cannot be redefined:
 
 These functions take the same parameters and are defined as per ANSI C89.
 
-The following random distributions are available, through the \verb|random| namespace,
+The following random distributions are available, through the \verb|random|
+namespace,
 although their use is only allowed within \StateAssignment blocks:
 
 \begin{itemize}
@@ -1283,6 +1464,162 @@ although their use is only allowed within \StateAssignment blocks:
 TODO: CHOOSE a reference implementation. Possible candidates: GSL, R
 
 \pagebreak
+
+\section{NineML User Layer as XML}
+
+\subsection{Tag Descriptions}
+
+\subsubsection{NineML}
+%
+\begin{lstlisting}
+<NineML>
+\end{lstlisting}
+
+This is the root namespace tag for a NineML file. It can contain
+\verb|<component>| elements. (In the examples on the web it also can
+have \verb|<import>| elements to bring in external files. Are these
+supported in this release? AG.)
+
+\subsubsection{Component}
+%
+\begin{lstlisting}
+<component name="">
+\end{lstlisting}
+
+This tag contains a User Layer component description.
+
+\begin{itemize}
+\item Attributes:
+%
+\begin{itemize}
+\item \verb|name| {[}Required{]}
+\end{itemize}
+
+\item Child Elements:
+%
+\begin{itemize}
+\item \verb|<definition>| {[}1{]} or \verb|<reference>| {[}1{]} Either one
+of the two is required
+\item \verb|<properties>|{[}0-1{]}
+\item \verb|<note>| {[}0-1{]}
+\end{itemize}
+
+\end{itemize}
+
+\subsubsection{Definition}
+%
+\begin{lstlisting}
+<definition>
+\end{lstlisting}
+
+This tag specifies a definition of the component through a link to Abstraction
+Layer
+
+\begin{itemize}
+\item Attributes:
+%
+\begin{itemize}
+\item \verb|language| {[}Required{]}
+\end{itemize}
+
+\item Child Elements:
+%
+\begin{itemize}
+\item \verb|<url>| {[}Required{]}
+\end{itemize}
+
+\end{itemize}
+
+\subsubsection{Properties}
+%
+\begin{lstlisting}
+<properties>
+\end{lstlisting}
+
+This tag specifies a list of properties in the interface of the component
+
+\begin{itemize}
+\item Attributes: \texttt{None}
+
+\item Child Elements:
+%
+\begin{itemize}
+\item \verb|<quantity>| {[}0+{]}
+\end{itemize}
+
+\issue{Some other data types can be used too, do we use any in this release? AG.}
+
+\end{itemize}
+
+\subsubsection{Note}
+%
+\begin{lstlisting}
+<note>
+\end{lstlisting}
+
+This tag specifies a textual or internet reference to a scientific paper where
+a component is described in detail
+
+\begin{itemize}
+\item Attributes: \texttt{None}
+
+\item Child Elements:
+%
+\begin{itemize}
+\item \verb|<url>| {[}1{]} or \verb|<string>| {[}1{]} Either one
+of the two is required
+\end{itemize}
+
+\end{itemize}
+
+\subsubsection{Quantity}
+%
+\begin{lstlisting}
+<quantity>
+\end{lstlisting}
+
+This tag specifies a parameter of a type Quantity (section~\ref{quantity})
+
+\begin{itemize}
+\item Attributes:
+%
+\begin{itemize}
+\item \verb|name| {[}Required{]}
+\end{itemize}
+
+
+\item Child Elements:
+%
+\begin{itemize}
+\item \verb|<value>| {[}Required{]}
+\end{itemize}
+
+\end{itemize}
+
+\subsubsection{Value}
+%
+\begin{lstlisting}
+<value>
+\end{lstlisting}
+
+This tag specifies a vaslue for a parameter of a type Quantity
+(section~\ref{quantity})
+
+\begin{itemize}
+\item Attributes: \texttt{None}
+
+\item Child Elements:
+%
+\begin{itemize}
+\item \verb|<unit>| {[}Required{]}
+\item \verb|<scalar>| {[}1{]} or \verb|<function>| {[}1{]} or
+\verb|<reference>| {[}1{]} Either one of the three is required. Reference
+shall refer to a random distribution component
+\end{itemize}
+
+\end{itemize}
+
+\newpage
 
 \section{Structure of a NineML Description}
 
@@ -1383,7 +1720,8 @@ U &\leftarrow U + d \\
 V &\leftarrow c
 \end{align}
 
-The target-regime of the \Transition is not declared explicity in the XML, implying that the
+The target-regime of the \Transition is not declared explicity in the XML,
+implying that the
 target-regime is the same as the source-regime, i.e. $subthresholdRegime$.
 
 The {\tt RegimeGraph} is shown in Figure~\ref{fig:EX1_RegimeGraph}
@@ -1405,7 +1743,8 @@ this, giving output as shown in Figure~\ref{fig:Ex1_Output}.
 \center
 %\includegraphics[width=14cm]{al/ParallelisingTransitions.pdf}example_IzRegimeTransGraph.pdf
 \includegraphics[width=8cm]{figures/example_IzVoltageWave.pdf}
-\protect\caption{Result of simulating of the XML model in Listing~\ref{code:xmliz}}
+\protect\caption{Result of simulating of the XML model in
+Listing~\ref{code:xmliz}}
 \label{fig:EX1_Output}
 \end{figure}
 
@@ -1414,116 +1753,12 @@ over time. We can also see that when the value of $V>theta$ triggers the
 condition, we emit a spike, and the \StateAssignment of $V \leftarrow c$ resets
 the value of $V$.
 
-\subsection{Second XML example}
+\subsection{Seconf XML example}
 
 [TO DO: Mike will create an example of a cell connected to a synapse or two]
 
-\newpage
+\pagebreak
 
-\section{Data Types}
-\label{DataTypes}
-
-Values in NineML can have different types, which are listed in the
-following subsections. Data types are the objects that allow the
-encapsulation of value data and are not intended as standalone
-objects outside of {\tt ComponentClass} objects in the Abstraction
-Layer or {\tt property} objects in the User Layer.
-
-\subsection{Dimension}
-
-Dimension is an object that provides physical dimension like length,
-mass, or time. A set of predefined dimensions is provided in the
-NineML library and the user can derive compound dimensions from these
-(for example velocity is derived from length and time). A special case
-of a {\tt Dimension} is a predefined empty dimension for dimensionless
-quantities.
-
-\subsection{Counter}
-
-Counter is an object that represent the countable quantity (natural
-number) and is used to define a number of identical objects that have
-to be instantiated in a model from a single object definition (for
-example a number of neurons in a population of identical cells).
-
-\subsection{Number}
-
-Number is a object that represents numerical values. It is not designed for
-a direct use, but rather as a component of the {\tt Quantity} type that
-additionally includes the units of measurements for each specific quantity.
-
-\subsection{String}
-
-String is an object that contains a string of text. It is used for labeling
-elements as well as for optional textual {\tt note}s that annotate these
-elements.
-
-\subsection{URL}
-
-URL is an object that contains a reference to an internet resource in a form
-of a URL. It is used for Abstraction Layer or external definitions as well as
-for links in optional {\tt note}s that annotate these elements.
-
-\subsection{Enumerated}
-
-Enumerated is an object that is used for properties that can only take
-a few predefined by Abstraction Layer values.
-
-\subsection{Boolean}
-
-Boolean is an object that contains a binary true-false value or a logical
-expression that can be evaluated into such a value.
-
-\subsection{Function}
-
-Function is an object that returns a value of a {\tt Number} type resulting
-from calculation that can be deterministic or based on random number
-distribution.
-
-\subsection{Quantity}
-
-Quantity is a compound data type object that encapsulates a numerical value
-and a unit of measurements. Unit has to be of one of the {\tt Dimension} type.
-Any numeric quantity in the language (except counters) has to be of this type,
-dimensionless quantities shall use predefined empty {\tt Dimension}.
-
-\begin{table}[htb]
-\center
-\begin{tabular}{|c|}
-\hline
-\hline
-Quantity \\
-\hline
-\hline
-{\em unit}: {\tt Dimension} \\
-\hline
-{\em value}: \{{\tt Number}$|${\tt Function}$|$%
-{\tt Component->Random Distribution}\} \\
-\hline
-\end{tabular}
-\end{table}
-
-There are two kinds of quantities: values of the first kind are given to the
-model by the user and stay fixed, values of a second kind are computed within
-the model during simulation. For all practical reasons the syntax of the user
-layer descriptions is identical for both kinds of quantities. Furthermore,
-because NineML does not provide any default values for quantities, it is a
-job of the user to provide initial values for all defined quantities. To
-ensure the integrity of the model NineML requires all initial values to be
-set in the User Layer description. For batch simulations and other
-modifications any of the values given in the User Layer can be overwritten
-by a simulation setup description, but this is outside of the scope of the
-current version of NineML.
-
-Some quantities can have values drawn from random distribution. In this case
-User Layer description of the quantities includes a reference to a random
-distribution component (section~\ref{randDist}) instead of a numeric value.
-Other quantities might be calculated according to some function dependent on
-some other quantities. These can be defined through the type {\tt Function} by
-including inline Abstraction Layer definitions or MathML.
-
-\subsection{Mathematical entities ??}
-
-\newpage
 \section{Identifier Scope}
 \label{scope}
 
@@ -1606,8 +1841,10 @@ $R^{t}_{n}$.
 \noindent Component \CN
 has:
 \begin{itemize}
-\item \send EventPorts \textsl{EvSend = \{$EvSend_{n,1,}$, $EvSend_{n,2,}$, ...  \}}
-\item \recv EventPorts \textsl{EvRecv = \{$EvRecv_{n,1,}$, $EvRecv_{n,2,}$, ...  \}}
+\item \send EventPorts \textsl{EvSend = \{$EvSend_{n,1,}$, $EvSend_{n,2,}$, ...
+\}}
+\item \recv EventPorts \textsl{EvRecv = \{$EvRecv_{n,1,}$, $EvRecv_{n,2,}$, ...
+\}}
 \end{itemize}
 
 \noindent \EventPort connections are stored in a a map,
@@ -1730,7 +1967,8 @@ discussed previously.
 A {\tt Component} which exposes the NetworkElementModel
 \Interface must contain the following:
 \begin{itemize}
-\item An unordered collection of {\tt Transition}s which connect the {\tt Regime}s
+\item An unordered collection of {\tt Transition}s which connect the {\tt
+Regime}s
   of the {\tt Component} by assigning sources and targets from the named
   collection of {\tt Regime}s.
 
@@ -1738,7 +1976,8 @@ A {\tt Component} which exposes the NetworkElementModel
 \begin{itemize}
 \item sub-{\tt Container} objects (may be user defined, or imported from the
 NineML standard libraray (see Section \ref{nml_lib}).
-\item at least one {\tt Regime} in the {\tt Container} or its sub-{\tt Container}s.
+\item at least one {\tt Regime} in the {\tt Container} or its sub-{\tt
+Container}s.
 \item {\tt StateVariable}s.
 \item {\tt Parameter}s.
 \item {\tt EventPort}s.
@@ -1803,8 +2042,10 @@ this document.
 The interface to a binding object must provide the following methods:
 \begin{equation*}
 \begin{array}{ll}
-   \mathbf{label} & :: Binding \rightarrow Label \\ & \textrm{[Returns the label of a binding]} \\
-   \mathbf{value} & :: Binding \rightarrow Value \\ & \textrm{[Returns the value of a binding]} \\
+   \mathbf{label} & :: Binding \rightarrow Label \\ & \textrm{[Returns the label
+of a binding]} \\
+   \mathbf{value} & :: Binding \rightarrow Value \\ & \textrm{[Returns the value
+of a binding]} \\
 \end{array}
 \end{equation*}
 
@@ -1871,7 +2112,8 @@ The interface to a binding object must provide the following methods:
    \mathbf{find}  & :: Namespace \times AccessPath \rightarrow
    NameEntry \cup \emptyset \\
    & \textrm{[Returns an entry with the given access path from a namespace]} \\
-   \mathbf{signature}  & :: Namespace \rightarrow (Label \times Type) \quad collection \\
+   \mathbf{signature}  & :: Namespace \rightarrow (Label \times Type) \quad
+collection \\
    & \textrm{[Returns the types of all entries in the namespace]} \\
 \end{array}
 \end{equation*}
