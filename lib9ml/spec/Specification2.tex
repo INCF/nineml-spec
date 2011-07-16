@@ -1472,13 +1472,43 @@ TODO: CHOOSE a reference implementation. Possible candidates: GSL, R
 \subsubsection{NineML}
 %
 \begin{lstlisting}
-<NineML>
+<nineml>
 \end{lstlisting}
 
-This is the root namespace tag for a NineML file. It can contain
-\verb|<component>| elements. (In the examples on the web it also can
-have \verb|<import>| elements to bring in external files. Are these
-supported in this release? AG.)
+This is the root namespace tag for a NineML file.
+
+\begin{itemize}
+\item Attributes: \texttt{None}
+
+\item Child Elements:
+%
+\begin{itemize}
+\item \verb|<component>| {[}0+{]}
+\item \verb|<import>| {[}0+{]} Used to import external files with
+other parts of the model
+\end{itemize}
+
+\end{itemize}
+
+\subsubsection{Import}
+%
+\begin{lstlisting}
+<definition>
+\end{lstlisting}
+
+This tag specifies an external NineML file that contains additional
+parts of the model.
+
+\begin{itemize}
+\item Attributes: \texttt{None}
+
+\item Child Elements:
+%
+\begin{itemize}
+\item \verb|<url>| {[}Required{]}
+\end{itemize}
+
+\end{itemize}
 
 \subsubsection{Component}
 %
@@ -1501,6 +1531,8 @@ This tag contains a User Layer component description.
 \item \verb|<definition>| {[}1{]} or \verb|<reference>| {[}1{]} Either one
 of the two is required
 \item \verb|<properties>|{[}0-1{]}
+\item \verb|<currents>|{[}0-1{]}  This allows an addition of arbitrary currents to
+neuronal component, for example injection currents.
 \item \verb|<note>| {[}0-1{]}
 \end{itemize}
 
@@ -1548,6 +1580,25 @@ This tag specifies a list of properties in the interface of the component
 \end{itemize}
 
 \issue{Some other data types can be used too, do we use any in this release? AG.}
+
+\end{itemize}
+
+\subsubsection{Currents}
+%
+\begin{lstlisting}
+<currents>
+\end{lstlisting}
+
+This tag specifies a list of currents in the interface of a component
+
+\begin{itemize}
+\item Attributes: \texttt{None}
+
+\item Child Elements:
+%
+\begin{itemize}
+\item \verb|<current>| {[}0+{]}
+\end{itemize}
 
 \end{itemize}
 
@@ -1616,6 +1667,76 @@ This tag specifies a vaslue for a parameter of a type Quantity
 \verb|<reference>| {[}1{]} Either one of the three is required. Reference
 shall refer to a random distribution component
 \end{itemize}
+
+\end{itemize}
+
+\subsubsection{Current}
+%
+\begin{lstlisting}
+<current>
+\end{lstlisting}
+
+This tag inserts a current into a component and links it to other variables
+
+\begin{itemize}
+\item Attributes:
+%
+\begin{itemize}
+\item \verb|name| {[}Required{]}
+\end{itemize}
+
+\item Child Elements:
+%
+\begin{itemize}
+\item \verb|<reference>| {[}Required{]} Refers to a definition of a current
+component
+\item \verb|<link>| {[}0+{]} Allows to link variables in different
+components, for example voltage of the neuron and voltage of the voltage
+gated current
+\end{itemize}
+
+\end{itemize}
+
+\subsubsection{Link}
+%
+\begin{lstlisting}
+<current>
+\end{lstlisting}
+
+This tag links two variables in different components essentially making them
+a single variable
+
+\begin{itemize}
+\item Attributes: \texttt{None}
+
+\item Child Elements:
+%
+\begin{itemize}
+\item \verb|<from>| {[}Required{]} Refers to a definition of a variable
+where its dynamics is defined
+\item \verb|<to>| {[}Required{]} Refers to where a variable is used in
+a different component
+\end{itemize}
+
+\end{itemize}
+
+\subsubsection{From/To}
+%
+\begin{lstlisting}
+<from>
+<to>
+\end{lstlisting}
+
+These tagspecify where the variiable is calculated (\verb|<from>|) and
+where it is used (\verb|<to>|)
+
+\begin{itemize}
+\item Attributes: \texttt{None}
+
+\item Child Elements:
+%
+TODO: I am using path like constructs here, need to double check if
+this is what we need. (Example: \verb|parentEntity.properties.voltage|)
 
 \end{itemize}
 
