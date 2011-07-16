@@ -177,6 +177,7 @@ R. Cannon, S. Hill.
 \newpage
 
 \abstract
+
 NineML is a simulator independent language with the aim of providing an
 unambiguous description of neuronal network models for efficient model sharing
 and reusability. This language emerges from a joint effort from experts in the
@@ -190,6 +191,15 @@ will be further extended to represent network connectivity, synaptic plasticity,
 and all other necessary concepts to represent networks.
 These extensions are still work in progress and your comments and feedbacks will
 be extremely valuable.
+
+
+This document provides the basis for understanding the Common Object
+Model, shared by the three implementations, and the resulting XML
+schema and tags. The current work only covers the representation of
+spking neurons and synapses and will be further extended to represent
+network connectivity, synaptic plasticity, and all other necessary
+concepts to represent networks.  These extensions are still work in
+progress and your comments and feedbacks will be extremely valuable.
 
 \newpage
 \tableofcontents
@@ -272,20 +282,21 @@ level
 
 \section{Introduction}
 
-The increasing number of studies related to neuronal network modeling and the
-diversity of the simulation platforms and implementations cause a major issue
-for model sharing, replicability and reusability of either whole model or part
-of the model for further analysis or simply for extension.
-To overcome this problem, we are proposing a common description language to be
-used for exchanging models and being able to simulate them in any simulation
-platform.
-This description language, using the XML technology, is based on a common Object
-Model describing the different elements of network models. This work, initiated
-and supported by the International Neuroinformatics Coordinating Facility as
-part of the MultiScale Program, involve simulator developers and developers from
-NeuroML, a similar initiative.
-The name of the proposed language is NineML (Network Interchange for
-Neuroscience Modeling Language).
+The increasing number of studies related to neuronal network modeling
+and the diversity of the simulation platforms and implementations
+cause a major issue for model sharing, replicability and reusability
+of either whole model or part of the model for further analysis or
+simply for extension.  To overcome this problem, we are proposing a
+common description language to be used for exchanging models and being
+able to simulate them in any simulation platform.
+
+This description language, using the XML technology, is based on a
+common Object Model describing the different elements of network
+models. This work, initiated and supported by the International
+Neuroinformatics Coordinating Facility as part of the MultiScale
+Program, involve simulator developers and developers from NeuroML, a
+similar initiative.  The name of the proposed language is NineML
+(Network Interchange for Neuroscience Modeling Language).
 
 \subsection{Scope}
 
@@ -348,13 +359,15 @@ instantiation and the value of parameters of all these components of a network
 model.
 \end {enumerate}
 
-As the User Layer provides the mechanism for instantiating and parameterization
-of the model elements that have been defined in the Abstraction Layer, it is
-clearly essential that these two layers share a complementary and compatible
-design philosophy. There must be a clear definition of which aspects of a model
-are defined in the User Layer and which are defined in the Abstraction Layer.
-In addition, the mechanisms for naming and addressing Abstraction Layer concepts
-that are instantiated in the User Layer have been kept simple for the user.
+As the User Layer provides the mechanism for instantiating and
+parameterization of the model elements that have been defined in the
+Abstraction Layer, it is clearly essential that these two layers share
+a complementary and compatible design philosophy. There must be a
+clear definition of which aspects of a model are defined in the User
+Layer and which are defined in the Abstraction Layer.  In addition,
+the mechanisms for naming and addressing Abstraction Layer concepts
+that are instantiated in the User Layer have been kept simple for the
+user.
 
 \subsection{About this document}
 
@@ -371,8 +384,8 @@ object model.
 \section{Abstraction Layer: Core Concepts }
 \label{AbstractionL}
 
-[TO DO: Here a introduction to the AL with the description of the graph
-approach.]
+[TO DO: Here a introduction to the AL with the description of the graph approach.]
+
 The Abstraction Layer aims at providing general concepts to represent the
 mathematical entities defining the dynamics of the different types of models
 composing a network (neuron models, synapse models, synaptique/intrinsic
@@ -385,6 +398,23 @@ different components of a particular type of model and presents clear heuristic
 We will use this graph representation to introduce the core concepts of the
 Object Model.
 
+[Proposed alternative introduction by Ivan: 
+The abstraction layer is meant to contain mathematical abstractions
+such as functions, differential equations, event handling, and other
+concepts necessary to define the dynamics of neuron models, synapse
+models, and synaptic/intrinsic plasticity. ]
+
+[Ivan: I think the following  paragraph does not make sense, best to
+rewrite it from scratch]
+
+Abstraction layer has been developed using a graphical representation
+of the different components and their inter-relations.  This type of
+representation allows to visualize the interactions between the
+different components of a particular type of model and presents clear
+heuristic "properties".  We will use this graph representation to
+introduce the core concepts of the Object Model.
+
+
 \subsection{ComponentClass}
 
 \begin{figure}[htb!]
@@ -394,6 +424,17 @@ Object Model.
 \label{fig:EX1_RegimeGraph}
 \end{figure}
 
+[Comment by Ivan: the following two paragraphs are not very clear. It
+is misleading to say that the ComponentClass represents all the
+entities of a network model. It was originally intended to serve as a
+generic container. So I suggest having one paragraph along the
+following lines:
+
+The ComponentClass object is intended to package together a collection
+of objects that relate to the definition of neuronal or synaptic
+dynamics. All equations and event declarations that are part of the
+neuronal model belong in a single ComponentClass.]
+
 The main building block of the Object Model is the ComponentClass.
 It is designed to represent all the individual entities existing in a network
 model (cells, synapses, synaptic plasticity rules, random spike train, inputs,
@@ -402,13 +443,11 @@ A \ComponentClass is the conglomerating object which is the subject of
 interaction with the User Layer and is composed of a \Dynamics block and
 \Interfaces to communicate between each other.
 
-[TO DO: Here should be a graph representing the ComponentClass and showing
-Dynamics and Interfaces]
-
 [MIKE'S COMMENT: IT MAKES THINGS MORE CONFUSING. Want to know the core ideas
 without implementation details...examples provide the information about the
 implementation]
 This concept is mapped with the following XML tag:
+
 
 \begin{lstlisting}[frame=none, backgroundcolor=\color{light-gray}]
 <ComponentClass name="">
@@ -442,19 +481,21 @@ can be used to signal action potentials firing for example.
 
 \subsubsection{Parameter}
 
-Parameters corresponds to a placeholder for a numerical value with or without
-dimensions, defining particular aspects of the model, such as the firing
-threshold, reset voltage, the decay time constant of a synapse model.
-The instantiation of Parameters at the Abstraction Layer level allow us to
-define the dynamics of a component once, then adjust the behaviours by using
-different parameters.  [TO DO : modify text. Better to talk about a general
-canvas or unique representation of the dynamics]
-For example, if we are building an integrate-and-fire neuron, we can specify
-that the
-Reset-Voltage and the Firing-Threshold are parameters, write our
-dynamics in terms of these parameters, then use the User Layer to
-provide parameters to create different neurons. By definition, Parameters are
-set at the start of the simulation, and remain constant throughout.
+Parameters correspond to a placeholder for a numerical value with or
+without dimensions, defining particular aspects of the model, such as
+the firing threshold, reset voltage, the decay time constant of a
+synapse model.  The instantiation of Parameters at the Abstraction
+Layer level allow us to define the dynamics of a component once, then
+adjust the behaviours by using different parameters.
+
+[TO DO : modify text. Better to talk about a general canvas or unique representation of the dynamics]
+
+For example, if we are building an integrate-and-fire neuron, we can
+specify that the Reset-Voltage and the Firing-Threshold are
+parameters, write our dynamics in terms of these parameters, then use
+the User Layer to provide parameters to create different neurons. By
+definition, Parameters are set at the start of the simulation, and
+remain constant throughout.
 
 \subsubsection{Port}
 
@@ -514,14 +555,13 @@ flow in a post-synaptic neuron.
 
 \subsection{Dynamics}
 
-The \Dynamics block represents the \emph{internal} mechanisms governing the
-behaviour
-of the component.
-For most of the models these dynamics are non-linear, presenting transitions
-between different regimes at particular values of one or different state
-variables.
-To create a representation that include both simple dynamics and non-linear
-dynamics, the \Dynamics block can contains the following concepts:
+The \Dynamics block represents the \emph{internal} mechanisms
+governing the behaviour of the component.  For most of the models
+these dynamics are non-linear, presenting transitions between
+different regimes at particular values of one or different state
+variables.  To create a representation that include both simple
+dynamics and non-linear dynamics, the \Dynamics block can contains the
+following concepts:
 
 \begin{itemize}
 \item \StateVariable (section~\ref{state-var})
@@ -531,13 +571,15 @@ system for particular values of \StateVariable
 \item \Alias (section~\ref{alias})
 \end{itemize}
 
-These different concepts are the building blocks of a graph, called the {\tt
-Regime Graph} (illustrated in figure ?), where the \Regime forms the vertices
-and the \Transition form the directional edges of the {\tt Regime Graph}.
-This graph must have at least one \Regime, and contain no regime islands.  At
-any given time, a
-component will be in a single \Regime, and can change which \Regime it is in
-through \Transition.
+
+
+These different concepts are the building blocks of a graph, called
+the {\tt Regime Graph} (illustrated in figure ?), where the \Regime
+forms the vertices and the \Transition form the directional edges of
+the {\tt Regime Graph}.  This graph must have at least one \Regime,
+and contain no regime islands.  At any given time, a component will be
+in a single \Regime, and can change which \Regime it is in through
+\Transition.
 
 \begin{figure}[htb!]
 \center
@@ -573,11 +615,11 @@ $X = X + 1$.
 \subsubsection{Regime}
 
 A \nmlClass{Regime} is defined in NineML as a system of ODEs in time
-on \StateVariable.  As such, \Regime defines how the \StateVariables change
-(propagate in time) between subsequent \Transitions. \Regime is defined to have
-non-vanishing
-temporal extent. Once construction of the \Regime is complete, it
-should have defined the following properties:
+on \StateVariable.  As such, \Regime defines how the \StateVariables
+change (propagate in time) between subsequent \Transitions. \Regime is
+defined to have non-vanishing temporal extent. Once construction of
+the \Regime is complete, it should have defined the following
+properties:
 
 \begin{itemize}
 \item An unordered collection of \nmlClass{StateVariable}s which are
@@ -676,7 +718,7 @@ satisfied, then the component will move into \emph{regime1}.
 During a transition, multiple \StateAssignment and \OutputEvent can occur.
 (For more on the resolution of \Transition, see section~\ref{resolution})
 
-\nmlClass{Transition}s have a vanishing temportal extent (i.e. they are
+\nmlClass{Transition}s have a vanishing temporal extent (i.e. they are
 event-like). Once construction of a \nmlClass{Transition} is complete, it
 should have defined the following properties:
 \begin{itemize}
@@ -689,9 +731,10 @@ triggers the \nmlClass{Transition}
 
 \subsubsection{Aliases}
 
-An alias correspond to an intermediate variable allowing to store an information
-and to reuse it at different places in the definition of the dynamics. [TO DO:
-rewrite to incorporate the term substitution and make the definition clearer]
+An alias corresponds to an intermediate variable allowing to store an
+information and to reuse it at different places in the definition of
+the dynamics. [TO DO: rewrite to incorporate the term substitution and
+make the definition clearer]
 
 \textbf{Aliases} are motivated from two problems:
 
@@ -733,7 +776,7 @@ Port]
 %\includegraphics[width=14cm]{al/ParallelisingTransitions.pdf}example_IzRegimeTransGraph.pdf
 \includegraphics[width=0.9\linewidth]{figures/component_complex.pdf}
 \protect\caption{ComponentClass Overview (Detailed)\ref{code:xmliz}}
-\label{fig:EX1_RegimeGraph}
+\label{fig:EX2_RegimeGraph}
 \end{figure}
 
 \newpage
@@ -1764,7 +1807,7 @@ The {\tt RegimeGraph} is shown in Figure~\ref{fig:EX1_RegimeGraph}
 %\includegraphics[width=14cm]{al/ParallelisingTransitions.pdf}example_IzRegimeTransGraph.pdf
 \includegraphics[width=8cm]{figures/example_IzRegimeTransGraph.pdf}
 \protect\caption{RegimeGraph for the XML model in Listing~\ref{code:xmliz}}
-\label{fig:EX1_RegimeGraph}
+\label{fig:EX3_RegimeGraph}
 \end{figure}
 
 
@@ -2012,12 +2055,13 @@ modifications any of the values given in the User Layer can be overwritten
 by a simulation setup description, but this is outside of the scope of the
 current version of NineML.
 
-Some quantities can have values drawn from random distribution. In this case
-User Layer description of the quantities includes a reference to a random
-distribution component (section~\ref{randDist}) instead of a numeric value.
-Other quantities might be calculated according to some function dependent on
-some other quantities. These can be defined through the type {\tt Function} by
-including inline Abstraction Layer definitions or MathML.
+Some quantities can have values drawn from random distribution. In
+this case User Layer description of the quantities includes a
+reference to a random distribution component instead of a numeric
+value.  Other quantities might be calculated according to some
+function dependent on some other quantities. These can be defined
+through the type {\tt Function} by including inline Abstraction Layer
+definitions or MathML.
 
 \subsection{Mathematical entities ??}
 
