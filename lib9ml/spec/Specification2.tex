@@ -175,9 +175,9 @@ Acknowledgements: We would like to thank the Task Force members for their commen
 \newpage
 
 \abstract
-NineML is a simulator independent language with the aim of providing an unambiguous description of neuronal network models for efficient model sharing and reusability. This language emerges from a joint effort from experts in the field of Computational Neuroscience, simulator development and standardized language initiative (NeuroML), coordinated and supported by INCF. 
+NineML is a simulator independent language with the aim of providing an unambiguous description of neuronal network models for efficient model sharing and reusability. This language emerges from a joint effort from experts in the field of Computational Neuroscience, simulator development and standardized language initiative (NeuroML), coordinated and supported by INCF.
 
-This document provides the basis for understanding the Common Object Model, shared by the three  implementations, and the resulting XML schema and tags. The current work only covers the representation of spking neurons and synapses and will be further extended to represent network connectivity, synaptic plasticity, and all other necessary concepts to represent networks. 
+This document provides the basis for understanding the Common Object Model, shared by the three  implementations, and the resulting XML schema and tags. The current work only covers the representation of spking neurons and synapses and will be further extended to represent network connectivity, synaptic plasticity, and all other necessary concepts to represent networks.
 These extensions are still work in progress and your comments and feedbacks will be extremely valuable.
 
 \newpage
@@ -186,7 +186,7 @@ These extensions are still work in progress and your comments and feedbacks will
 \newpage
 \vskip 1in
 \paragraph{Changes from version 0.98:}
-Text edition and reorganization of the document. 
+Text edition and reorganization of the document.
 Description of the OM classes are reorganize to "fit" the hierarchical structure in XML both for the AL and the UL.
 
 
@@ -263,9 +263,9 @@ level
 
 \section{Introduction}
 
-The increasing number of studies related to neuronal network modeling and the diversity of the simulation platforms and implementations cause a major issue for model sharing, replicability and reusability of either whole model or part of the model for further analysis or simply for extension. 
-To overcome this problem, we are proposing a common description language to be used for exchanging models and being able to simulate them in any simulation platform. 
-This description language, using the XML technology, is based on a common Object Model describing the different elements of network models. This work, initiated and supported by the International Neuroinformatics Coordinating Facility as part of the MultiScale Program, involve simulator developers and developers from NeuroML, a similar initiative. 
+The increasing number of studies related to neuronal network modeling and the diversity of the simulation platforms and implementations cause a major issue for model sharing, replicability and reusability of either whole model or part of the model for further analysis or simply for extension.
+To overcome this problem, we are proposing a common description language to be used for exchanging models and being able to simulate them in any simulation platform.
+This description language, using the XML technology, is based on a common Object Model describing the different elements of network models. This work, initiated and supported by the International Neuroinformatics Coordinating Facility as part of the MultiScale Program, involve simulator developers and developers from NeuroML, a similar initiative.
 The name of the proposed language is NineML (Network Interchange for Neuroscience Modeling Language).
 
 \subsection{Scope}
@@ -276,7 +276,7 @@ networks of spiking neurons.
 
 NineML is intended to describe the network architecture, parameters
 and equations that govern the dynamics of a network of spiking
-neurons, without taking into account model implementation detail such as numerical integration method. 
+neurons, without taking into account model implementation detail such as numerical integration method.
 
 At the current stage of development, the following concepts of spiking neuron network modeling can be fully or partially described:
 
@@ -290,14 +290,24 @@ At the current stage of development, the following concepts of spiking neuron ne
 \end{enumerate}
 \end{enumerate}
 
-The Object Model developped has been used to create three different implementations (Java, Python and Chicken Scheme) that are now able to import/export a common XML description and generate code for simulating the described model in different simulator.
+The Object Model developped has been used to create three different
+implementations (Java, Python and Chicken Scheme) that are now able to
+import/export a common XML description and generate code for simulating
+the described model in different simulator.
 
 \subsection{Design Considerations}
 
-As one of the goals of NineML is to provide a mean to import/export a model from any simulator or implementation, it is crucial to maintain a clear distinction between the definition of NineML and a simulator. Therefore, NineML should provide only the information necessary for any given simulator
-to instantiate the network models in a simulator agnostic way.  
+As one of the goals of NineML is to provide a mean to import/export a model
+from any simulator or implementation, it is crucial to maintain a clear
+distinction between the definition of NineML and a simulator. Therefore,
+NineML should provide only the information necessary for any given simulator
+to instantiate the network models in a simulator agnostic way.
 For example, NineML should specify the neuron membrane equation to solve,
-but not how to solve it.  In addition, for implementation and performance reasons, it is important to keep the language layer "close'' to the simulator – such that the language layer is not responsible for maintaining separate representations of the instantiated network. [COMMENT_YANN: WHAT DO YOU MEAN??]
+but not how to solve it.  In addition, for implementation and performance
+reasons, it is important to keep the language layer "close'' to the
+simulator -- such that the language layer is not responsible for maintaining
+separate representations of the instantiated network.
+[COMMENT\_YANN: WHAT DO YOU MEAN??]
 
 A NineML object model representation can take multiple forms.  A
 program can employ a concrete representation of the NineML objects in
@@ -307,14 +317,14 @@ form of an interpreter for the NineML native language as a compact
 representation and use code generation to produce a model
 representation for a target simulation environment.
 
-The design of NineML is divided into two semantic layers: 
+The design of NineML is divided into two semantic layers:
 \begin {enumerate}
 \item \underline {an Abstraction Layer} that provides the core concepts and mathematical descriptions with which
-model variables and state update rules are explicitly described in {\em parametrized} form, and 
+model variables and state update rules are explicitly described in {\em parametrized} form, and
 \item \underline {a User Layer} that provides a syntax to specify the instantiation and the value of parameters of all these components of a network model.
 \end {enumerate}
 
-As the User Layer provides the mechanism for instantiating and parameterization of the model elements that have been defined in the Abstraction Layer, it is clearly essential that these two layers share a complementary and compatible design philosophy. There must be a clear definition of which aspects of a model are defined in the User Layer and which are defined in the Abstraction Layer. 
+As the User Layer provides the mechanism for instantiating and parameterization of the model elements that have been defined in the Abstraction Layer, it is clearly essential that these two layers share a complementary and compatible design philosophy. There must be a clear definition of which aspects of a model are defined in the User Layer and which are defined in the Abstraction Layer.
 In addition, the mechanisms for naming and addressing Abstraction Layer concepts that are instantiated in the User Layer have been kept simple for the user.
 
 \subsection{About this document}
@@ -324,7 +334,7 @@ This document presents the current NineML specifications and consists of:
 \item a description of the Abstraction and User Layer Object models
 \item the XML serialization with the description of the different tags
 \item examples of XML descriptions
-\end{enumerate} 
+\end{enumerate}
 
 It is important to note that the NineML XML schema is isomorphic to the NineML object model.
 
@@ -442,14 +452,14 @@ This type of representation allows to visualize the interactions between the dif
 We will use this graph representation to introduce the core concepts of the Object Model.
 
 \subsection{ComponentClass}
-The main building block of the Object Model is the ComponentClass. 
-It is designed to represent all the individual entities existing in a network model (cells, synapses, synaptic plasticity rules, random spike train, inputs, ...). 
+The main building block of the Object Model is the ComponentClass.
+It is designed to represent all the individual entities existing in a network model (cells, synapses, synaptic plasticity rules, random spike train, inputs, ...).
 A \ComponentClass is the conglomerating object which is the subject of interaction with the User Layer and is composed of a \Dynamics block and \Interfaces to communicate between each other.
 
 [TO DO: Here should be a graph representing the ComponentClass and showing Dynamics and Interfaces]
 
 [MIKE'S COMMENT: IT MAKES THINGS MORE CONFUSING. Want to know the core ideas without implementation details...examples provide the information about the implementation]
-This concept is mapped with the following XML tag: 
+This concept is mapped with the following XML tag:
 
 \begin{lstlisting}[frame=none, backgroundcolor=\color{light-gray}]
 <ComponentClass name="">
@@ -457,7 +467,7 @@ This concept is mapped with the following XML tag:
 </ComponentClass>
 \end{lstlisting}
 
-Example: 
+Example:
 \begin{lstlisting}[frame=none, backgroundcolor=\color{light-gray}]
 <ComponentClass name="izhikevichCellNew">
 
@@ -549,13 +559,13 @@ flow in a post-synaptic neuron.
 \subsection{Dynamics}
 
 The \Dynamics block represents the \emph{internal} mechanisms governing the behaviour
-of the component. 
+of the component.
 For most of the models these dynamics are non-linear, presenting transitions between different regimes at particular values of one or different state variables.
 To create a representation that include both simple dynamics and non-linear dynamics, the \Dynamics block can contains the following concepts:
 
 \begin{itemize}
 \item \StateVariable (section~\ref{state-var})
-\item {\tt Regime(s)} (section~\ref{regime}) that describe the dynamic of the system for particular values of \StateVariable 
+\item {\tt Regime(s)} (section~\ref{regime}) that describe the dynamic of the system for particular values of \StateVariable
 \item Transition(s) links two regimes and the condition
 \item \Alias (section~\ref{alias})
 \end{itemize}
@@ -734,7 +744,7 @@ would be very long and difficult to read.
 \item If we would like to communicate a value other than a simple \StateVariable
 to another \ComponentClass. For example, if we have a component representing a
 neuron, which has an internal \StateVariable, 'V', we may be interested in
-transmitting a current, for example $i=g*(E-V)$. 
+transmitting a current, for example $i=g*(E-V)$.
 [TO DO: add the fact that an alias is required for passing values through the Port]
 
 \end{itemize}
@@ -1202,7 +1212,7 @@ transition is triggered)
 <Trigger>
 \end{lstlisting}
 
-This block is used by \OnCondition blocks to define the condition needed for them to be triggered. 
+This block is used by \OnCondition blocks to define the condition needed for them to be triggered.
 
 \begin{itemize}
 \item Attributes: \texttt{None}
@@ -1440,7 +1450,7 @@ An example model of an Izhikevich model is given:
 
 \noindent
 This \ComponentClass has a single \Regime, $subthresholdRegime$ and two
-\StateVariables, $U$ \& $V$. 
+\StateVariables, $U$ \& $V$.
 
 \noindent
 The \TimeDerivatives are defined for the Regime as:
