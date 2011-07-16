@@ -141,7 +141,7 @@ float=tbfh}
 \vspace{0.5cm}
 \noindent{\large INCF Task Force on Multi-Scale Modeling}\\
 \vspace{0.5cm}
-\noindent{\large Version: 0.98}
+\noindent{\large Version: 0.98-1}
 \end{center}
 
 \vspace*{0.75cm}
@@ -185,6 +185,11 @@ These extensions are still work in progress and your comments and feedbacks will
 
 \newpage
 \vskip 1in
+\paragraph{Changes from version 0.98:}
+Text edition and reorganization of the document. 
+Description of the OM classes are reorganize to "fit" the hierarchical structure in XML both for the AL and the UL.
+
+
 \paragraph{Changes from version 0.97:}
 \begin{itemize}
 \item Using math mode for math expressions; consistent type faces for
@@ -1362,7 +1367,7 @@ combining multiple components of the model the NineML description
 is consisting of multiple files that define various components and
 contains the syntax to import external files.
 
-\subsection{Example XML}
+\subsection{First XML example}
 
 An example model of an Izhikevich model is given:
 %
@@ -1484,6 +1489,10 @@ In Figure~\ref{fig:Ex1_Output}, we can see the value of the \StateVariable $V$
 over time. We can also see that when the value of $V>theta$ triggers the
 condition, we emit a spike, and the \StateAssignment of $V \leftarrow c$ resets
 the value of $V$.
+
+\subsection{Seconf XML example}
+
+[TO DO: Mike will create an example of a cell connected to a synapse or two]
 
 \pagebreak
 
