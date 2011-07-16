@@ -1786,9 +1786,135 @@ over time. We can also see that when the value of $V>theta$ triggers the
 condition, we emit a spike, and the \StateAssignment of $V \leftarrow c$ resets
 the value of $V$.
 
-\subsection{Seconf XML example}
+\newpage
+\subsection{Second XML example}
 
-[TO DO: Mike will create an example of a cell connected to a synapse or two]
+In this example, we build a representation of a integrate-and-fire neuron, with 
+an attached input synapse.
+
+We have a single \StateVariable, $iaf\_V$.
+This time, the neuron has an absolute refractory period; which is implemented by using 2 regimes. $RegularRegime$ \& $RefractoryRegime$
+In $RegularRegime$, the neuron voltage evolves as:
+\begin{eqnarray}
+\frac{d(iaf\_V)}{dt} = \frac{ iaf\_gl*( iaf\_vrest - iaf\_V ) + iaf\_ISyn+cobaExcit\_I} {iaf\_cm}
+\end{eqnarray}
+In $RefractoryRegime$, the neuron voltage does not change in response to any input:
+
+\begin{eqnarray}
+\frac{d(iaf\_V)}{dt} = 0
+\end{eqnarray}
+
+In both Regimes, the synapses dynamics evolve as:
+\begin{eqnarray}
+\frac{d(cobaExcit\_g)}{dt} = - \frac{cobaExcit\_g}{cobaExcit\_tau}
+\end{eqnarray}
+
+The neuron has 2 \EventPorts, $iaf\_spikeoutput$ is a send port, which sends events when the neuron fires, and $cobaExcit\_spikeinput$ is a recv port, which tells the attached synapse that it should 'fire'.
+
+
+The neuron has 4 \Transitions, 2 \OnEvents  and 2 \OnConditions.
+Two of the Transitions are triggered by $cobaExcit\_spikeinput$ events, which cause the conductance of the synapse to increase by an amount $q$, These happen in both Regimes.
+The other \OnConditions:
+\begin{itemize}
+\item One is triggered the voltage being above threshold, which moves the component from $RegularRegime$ to $RefractoryRegime$, sets V to the reset-voltage also emits a spike
+\item The other is triggered by enough time having passed for the component to come out of the $RefractoryRegime$ and move back to the $RegularRegime$
+\end{itemize}
+
+
+\begin{lstlisting}[label=code:xmliaf2]
+<?xml version='1.0' encoding='UTF-8'?>
+<NineML xmlns="http://nineml.org/9ML/0.1">
+  <ComponentClass name="iaf_1coba">
+    <AnalogPort mode="send" name="iaf_V"/>
+    <AnalogPort mode="reduce" reduce_op="+" name="iaf_ISyn"/>
+    <AnalogPort mode="send" name="cobaExcit_I"/>
+    <EventPort mode="send" name="iaf_spikeoutput"/>
+    <EventPort mode="recv" name="cobaExcit_spikeinput"/>
+    <Parameter dimension="??" name="iaf_cm"/>
+    <Parameter dimension="??" name="iaf_taurefrac"/>
+    <Parameter dimension="??" name="iaf_gl"/>
+    <Parameter dimension="??" name="iaf_vreset"/>
+    <Parameter dimension="??" name="iaf_vrest"/>
+    <Parameter dimension="??" name="iaf_vthresh"/>
+    <Parameter dimension="??" name="cobaExcit_tau"/>
+    <Parameter dimension="??" name="cobaExcit_q"/>
+    <Parameter dimension="??" name="cobaExcit_vrev"/>
+    <Dynamics>
+      <Regime name="RefractoryRegime">
+        <TimeDerivative variable="iaf_V">
+          <MathInline>0</MathInline>
+        </TimeDerivative>
+        <TimeDerivative variable="cobaExcit_g">
+          <MathInline>-cobaExcit_g/cobaExcit_tau</MathInline>
+        </TimeDerivative>
+        <OnEvent target_regime="RefractoryRegime" src_port="cobaExcit_spikeinput">
+          <StateAssignment variable="cobaExcit_g">
+            <MathInline>cobaExcit_g+cobaExcit_q</MathInline>
+          </StateAssignment>
+        </OnEvent>
+        <OnCondition target_regime="RegularRegime">
+          <Trigger>
+            <MathInline>t &gt;= iaf_tspike + iaf_taurefrac</MathInline>
+          </Trigger>
+        </OnCondition>
+      </Regime>
+      <Regime name="RegularRegime">
+        <TimeDerivative variable="iaf_V">
+          <MathInline>( iaf_gl*( iaf_vrest - iaf_V ) + iaf_ISyn+cobaExcit_I)/(iaf_cm)</MathInline>
+        </TimeDerivative>
+        <TimeDerivative variable="cobaExcit_g">
+          <MathInline>-cobaExcit_g/cobaExcit_tau</MathInline>
+        </TimeDerivative>
+        <OnEvent target_regime="RegularRegime" src_port="cobaExcit_spikeinput">
+          <StateAssignment variable="cobaExcit_g">
+            <MathInline>cobaExcit_g+cobaExcit_q</MathInline>
+          </StateAssignment>
+        </OnEvent>
+        <OnCondition target_regime="RefractoryRegime">
+          <StateAssignment variable="iaf_tspike">
+            <MathInline>t</MathInline>
+          </StateAssignment>
+          <StateAssignment variable="iaf_V">
+            <MathInline>iaf_vreset</MathInline>
+          </StateAssignment>
+          <EventOut port="iaf_spikeoutput"/>
+          <Trigger>
+            <MathInline>iaf_V &gt; iaf_vthresh</MathInline>
+          </Trigger>
+        </OnCondition>
+      </Regime>
+      <Alias name="cobaExcit_I">
+        <MathInline>cobaExcit_g*(cobaExcit_vrev-iaf_V)</MathInline>
+      </Alias>
+      <StateVariable dimension="??" name="iaf_V"/>
+      <StateVariable dimension="??" name="iaf_tspike"/>
+      <StateVariable dimension="??" name="cobaExcit_g"/>
+    </Dynamics>
+  </ComponentClass>
+</NineML>
+
+\end{lstlisting}
+
+\begin{figure}[htb!]
+\center
+\includegraphics[width=14cm]{figures/demo2_Coba1_out.pdf}
+\protect\caption{Result of simulating of the XML model from Listing~\ref{code:xmliz}. $cobaExcit\_spikeinput$ is fed events from an external poisson generator in this simulation}
+\label{fig:EX2_Output}
+\end{figure}
+
+
+\begin{figure}[htb!]
+\center
+\includegraphics[width=14cm]{figures/demo2_Coba1_trnasition.pdf}
+\protect\caption{RegimeGraph for the XML model in Listing~\ref{code:xmliaf2}}
+\label{fig:EX2_trans}
+\end{figure}
+
+
+
+
+
+
 
 \newpage
 
