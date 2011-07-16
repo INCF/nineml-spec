@@ -338,110 +338,6 @@ This document presents the current NineML specifications and consists of:
 
 It is important to note that the NineML XML schema is isomorphic to the NineML object model.
 
-\section{Data Types}
-\label{DataTypes}
-
-Values in NineML can have different types, which are listed in the
-following subsections. Data types are the objects that allow the
-encapsulation of value data and are not intended as standalone
-objects outside of {\tt ComponentClass} objects in the Abstraction
-Layer or {\tt property} objects in the User Layer.
-
-\subsection{Dimension}
-
-Dimension is an object that provides physical dimension like length,
-mass, or time. A set of predefined dimensions is provided in the
-NineML library and the user can derive compound dimensions from these
-(for example velocity is derived from length and time). A special case
-of a {\tt Dimension} is a predefined empty dimension for dimensionless
-quantities.
-
-\subsection{Counter}
-
-Counter is an object that represent the countable quantity (natural
-number) and is used to define a number of identical objects that have
-to be instantiated in a model from a single object definition (for
-example a number of neurons in a population of identical cells).
-
-\subsection{Number}
-
-Number is a object that represents numerical values. It is not designed for
-a direct use, but rather as a component of the {\tt Quantity} type that
-additionally includes the units of measurements for each specific quantity.
-
-\subsection{String}
-
-String is an object that contains a string of text. It is used for labeling
-elements as well as for optional textual {\tt note}s that annotate these
-elements.
-
-\subsection{URL}
-
-URL is an object that contains a reference to an internet resource in a form
-of a URL. It is used for Abstraction Layer or external definitions as well as
-for links in optional {\tt note}s that annotate these elements.
-
-\subsection{Enumerated}
-
-Enumerated is an object that is used for properties that can only take
-a few predefined by Abstraction Layer values.
-
-\subsection{Boolean}
-
-Boolean is an object that contains a binary true-false value or a logical
-expression that can be evaluated into such a value.
-
-\subsection{Function}
-
-Function is an object that returns a value of a {\tt Number} type resulting
-from calculation that can be deterministic or based on random number
-distribution.
-
-\subsection{Quantity}
-
-Quantity is a compound data type object that encapsulates a numerical value
-and a unit of measurements. Unit has to be of one of the {\tt Dimension} type.
-Any numeric quantity in the language (except counters) has to be of this type,
-dimensionless quantities shall use predefined empty {\tt Dimension}.
-
-\begin{table}[htb]
-\center
-\begin{tabular}{|c|}
-\hline
-\hline
-Quantity \\
-\hline
-\hline
-{\em unit}: {\tt Dimension} \\
-\hline
-{\em value}: \{{\tt Number}$|${\tt Function}$|$%
-{\tt Component->Random Distribution}\} \\
-\hline
-\end{tabular}
-\end{table}
-
-There are two kinds of quantities: values of the first kind are given to the
-model by the user and stay fixed, values of a second kind are computed within
-the model during simulation. For all practical reasons the syntax of the user
-layer descriptions is identical for both kinds of quantities. Furthermore,
-because NineML does not provide any default values for quantities, it is a
-job of the user to provide initial values for all defined quantities. To
-ensure the integrity of the model NineML requires all initial values to be
-set in the User Layer description. For batch simulations and other
-modifications any of the values given in the User Layer can be overwritten
-by a simulation setup description, but this is outside of the scope of the
-current version of NineML.
-
-Some quantities can have values drawn from random distribution. In this case
-User Layer description of the quantities includes a reference to a random
-distribution component (section~\ref{randDist}) instead of a numeric value.
-Other quantities might be calculated according to some function dependent on
-some other quantities. These can be defined through the type {\tt Function} by
-including inline Abstraction Layer definitions or MathML.
-
-\subsection{Mathematical entities ??}
-
-
 \section{Abstraction Layer: Core Concepts }
 \label{AbstractionL}
 
@@ -751,6 +647,11 @@ transmitting a current, for example $i=g*(E-V)$.
 
 \note{\Alias is defined in the Dynamics, \emph{not} in the
 \Regime. This means that aliases are the same across all regimes.}
+
+\subsection{To summarize}
+
+[Add summary graph ]
+
 
 \section{User Layer: Core Concepts}
 \label{UserL}
@@ -1500,12 +1401,116 @@ over time. We can also see that when the value of $V>theta$ triggers the
 condition, we emit a spike, and the \StateAssignment of $V \leftarrow c$ resets
 the value of $V$.
 
-\subsection{Seconf XML example}
+\subsection{Second XML example}
 
 [TO DO: Mike will create an example of a cell connected to a synapse or two]
 
-\pagebreak
+\newpage
 
+\section{Data Types}
+\label{DataTypes}
+
+Values in NineML can have different types, which are listed in the
+following subsections. Data types are the objects that allow the
+encapsulation of value data and are not intended as standalone
+objects outside of {\tt ComponentClass} objects in the Abstraction
+Layer or {\tt property} objects in the User Layer.
+
+\subsection{Dimension}
+
+Dimension is an object that provides physical dimension like length,
+mass, or time. A set of predefined dimensions is provided in the
+NineML library and the user can derive compound dimensions from these
+(for example velocity is derived from length and time). A special case
+of a {\tt Dimension} is a predefined empty dimension for dimensionless
+quantities.
+
+\subsection{Counter}
+
+Counter is an object that represent the countable quantity (natural
+number) and is used to define a number of identical objects that have
+to be instantiated in a model from a single object definition (for
+example a number of neurons in a population of identical cells).
+
+\subsection{Number}
+
+Number is a object that represents numerical values. It is not designed for
+a direct use, but rather as a component of the {\tt Quantity} type that
+additionally includes the units of measurements for each specific quantity.
+
+\subsection{String}
+
+String is an object that contains a string of text. It is used for labeling
+elements as well as for optional textual {\tt note}s that annotate these
+elements.
+
+\subsection{URL}
+
+URL is an object that contains a reference to an internet resource in a form
+of a URL. It is used for Abstraction Layer or external definitions as well as
+for links in optional {\tt note}s that annotate these elements.
+
+\subsection{Enumerated}
+
+Enumerated is an object that is used for properties that can only take
+a few predefined by Abstraction Layer values.
+
+\subsection{Boolean}
+
+Boolean is an object that contains a binary true-false value or a logical
+expression that can be evaluated into such a value.
+
+\subsection{Function}
+
+Function is an object that returns a value of a {\tt Number} type resulting
+from calculation that can be deterministic or based on random number
+distribution.
+
+\subsection{Quantity}
+
+Quantity is a compound data type object that encapsulates a numerical value
+and a unit of measurements. Unit has to be of one of the {\tt Dimension} type.
+Any numeric quantity in the language (except counters) has to be of this type,
+dimensionless quantities shall use predefined empty {\tt Dimension}.
+
+\begin{table}[htb]
+\center
+\begin{tabular}{|c|}
+\hline
+\hline
+Quantity \\
+\hline
+\hline
+{\em unit}: {\tt Dimension} \\
+\hline
+{\em value}: \{{\tt Number}$|${\tt Function}$|$%
+{\tt Component->Random Distribution}\} \\
+\hline
+\end{tabular}
+\end{table}
+
+There are two kinds of quantities: values of the first kind are given to the
+model by the user and stay fixed, values of a second kind are computed within
+the model during simulation. For all practical reasons the syntax of the user
+layer descriptions is identical for both kinds of quantities. Furthermore,
+because NineML does not provide any default values for quantities, it is a
+job of the user to provide initial values for all defined quantities. To
+ensure the integrity of the model NineML requires all initial values to be
+set in the User Layer description. For batch simulations and other
+modifications any of the values given in the User Layer can be overwritten
+by a simulation setup description, but this is outside of the scope of the
+current version of NineML.
+
+Some quantities can have values drawn from random distribution. In this case
+User Layer description of the quantities includes a reference to a random
+distribution component (section~\ref{randDist}) instead of a numeric value.
+Other quantities might be calculated according to some function dependent on
+some other quantities. These can be defined through the type {\tt Function} by
+including inline Abstraction Layer definitions or MathML.
+
+\subsection{Mathematical entities ??}
+
+\newpage
 \section{Identifier Scope}
 \label{scope}
 
