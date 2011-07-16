@@ -566,7 +566,7 @@ To create a representation that include both simple dynamics and non-linear dyna
 \begin{itemize}
 \item \StateVariable (section~\ref{state-var})
 \item {\tt Regime(s)} (section~\ref{regime}) that describe the dynamic of the system for particular values of \StateVariable
-\item Transition(s) links two regimes and the condition
+\item Transition(s) links two regimes: the Source-Regime and the target-Regime, and can be triggered by an event or a condition. If a component is in the source-regime, and the transition is triggered; then the component moves into the target regime
 \item \Alias (section~\ref{alias})
 \end{itemize}
 
