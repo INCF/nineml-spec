@@ -169,7 +169,6 @@ Acknowledgements: We would like to thank the Task Force members for their
 comments on this document and in particular P. Gleeson, E. Muller, A. Davison,
 R. Cannon, S. Hill.
 
-
 \title{NineML (9ML) Specification}
 
 \newpage
@@ -198,10 +197,11 @@ be extremely valuable.
 \newpage
 \vskip 1in
 \paragraph{Changes from version 0.98:}
-Text edition and reorganization of the document.
-Description of the OM classes are reorganize to ``fit'' the hierarchical structure
-in XML both for the AL and the UL.
-
+\begin{itemize}
+\item Text edition and reorganization of the document.
+\item Description of the OM classes are reorganized to ``fit'' the hierarchical
+structure in XML both for the AL and the UL.
+\end{itemize}
 
 \paragraph{Changes from version 0.97:}
 \begin{itemize}
@@ -246,17 +246,13 @@ Model'' for the User Layer.
 \item Replaced ``node'' with ``component'' as was decided in Antwerp 2010
 meeting.
 \item Replaced references to ``core semantics'' with references to
-``Abstraction Layer''
-because the term ``core semantics'' is no longer used.
+``Abstraction Layer'' because the term ``core semantics'' is no longer used.
 \item As Antwerp 2010 decided, properties are represented by a generic
-tag and specified
-by attribute {\tt name}.
+tag and specified by attribute {\tt name}.
 \item Added the reference to units of measurements dimensionality checking
-against
-the Abstraction Layer as was decided in Antwerp 2010.
+against the Abstraction Layer as was decided in Antwerp 2010.
 \item Moved edge effect descriptions from connectivity components to layout
-components. Also
-noted that some layouts might require complex masks.
+components. Also noted that some layouts might require complex masks.
 \end{itemize}
 
 \paragraph{Changes from version 0.9:}
@@ -372,110 +368,6 @@ This document presents the current NineML specifications and consists of:
 It is important to note that the NineML XML schema is isomorphic to the NineML
 object model.
 
-\section{Data Types}
-\label{DataTypes}
-
-Values in NineML can have different types, which are listed in the
-following subsections. Data types are the objects that allow the
-encapsulation of value data and are not intended as standalone
-objects outside of {\tt ComponentClass} objects in the Abstraction
-Layer or {\tt property} objects in the User Layer.
-
-\subsection{Dimension}
-
-Dimension is an object that provides physical dimension like length,
-mass, or time. A set of predefined dimensions is provided in the
-NineML library and the user can derive compound dimensions from these
-(for example velocity is derived from length and time). A special case
-of a {\tt Dimension} is a predefined empty dimension for dimensionless
-quantities.
-
-\subsection{Counter}
-
-Counter is an object that represent the countable quantity (natural
-number) and is used to define a number of identical objects that have
-to be instantiated in a model from a single object definition (for
-example a number of neurons in a population of identical cells).
-
-\subsection{Number}
-
-Number is a object that represents numerical values. It is not designed for
-a direct use, but rather as a component of the {\tt Quantity} type that
-additionally includes the units of measurements for each specific quantity.
-
-\subsection{String}
-
-String is an object that contains a string of text. It is used for labeling
-elements as well as for optional textual {\tt note}s that annotate these
-elements.
-
-\subsection{URL}
-
-URL is an object that contains a reference to an internet resource in a form
-of a URL. It is used for Abstraction Layer or external definitions as well as
-for links in optional {\tt note}s that annotate these elements.
-
-\subsection{Enumerated}
-
-Enumerated is an object that is used for properties that can only take
-a few predefined by Abstraction Layer values.
-
-\subsection{Boolean}
-
-Boolean is an object that contains a binary true-false value or a logical
-expression that can be evaluated into such a value.
-
-\subsection{Function}
-
-Function is an object that returns a value of a {\tt Number} type resulting
-from calculation that can be deterministic or based on random number
-distribution.
-
-\subsection{Quantity}
-
-Quantity is a compound data type object that encapsulates a numerical value
-and a unit of measurements. Unit has to be of one of the {\tt Dimension} type.
-Any numeric quantity in the language (except counters) has to be of this type,
-dimensionless quantities shall use predefined empty {\tt Dimension}.
-
-\begin{table}[htb]
-\center
-\begin{tabular}{|c|}
-\hline
-\hline
-Quantity \\
-\hline
-\hline
-{\em unit}: {\tt Dimension} \\
-\hline
-{\em value}: \{{\tt Number}$|${\tt Function}$|$%
-{\tt Component->Random Distribution}\} \\
-\hline
-\end{tabular}
-\end{table}
-
-There are two kinds of quantities: values of the first kind are given to the
-model by the user and stay fixed, values of a second kind are computed within
-the model during simulation. For all practical reasons the syntax of the user
-layer descriptions is identical for both kinds of quantities. Furthermore,
-because NineML does not provide any default values for quantities, it is a
-job of the user to provide initial values for all defined quantities. To
-ensure the integrity of the model NineML requires all initial values to be
-set in the User Layer description. For batch simulations and other
-modifications any of the values given in the User Layer can be overwritten
-by a simulation setup description, but this is outside of the scope of the
-current version of NineML.
-
-Some quantities can have values drawn from random distribution. In this case
-User Layer description of the quantities includes a reference to a random
-distribution component (section~\ref{randDist}) instead of a numeric value.
-Other quantities might be calculated according to some function dependent on
-some other quantities. These can be defined through the type {\tt Function} by
-including inline Abstraction Layer definitions or MathML.
-
-\subsection{Mathematical entities ??}
-
-
 \section{Abstraction Layer: Core Concepts }
 \label{AbstractionL}
 
@@ -494,6 +386,14 @@ We will use this graph representation to introduce the core concepts of the
 Object Model.
 
 \subsection{ComponentClass}
+
+\begin{figure}[htb!]
+\center
+\includegraphics[width=8cm]{figures/component_simple.pdf}
+\protect\caption{ComponentClass Overview (Simple)\ref{code:xmliz}}
+\label{fig:EX1_RegimeGraph}
+\end{figure}
+
 The main building block of the Object Model is the ComponentClass.
 It is designed to represent all the individual entities existing in a network
 model (cells, synapses, synaptic plasticity rules, random spike train, inputs,
@@ -554,8 +454,7 @@ that the
 Reset-Voltage and the Firing-Threshold are parameters, write our
 dynamics in terms of these parameters, then use the User Layer to
 provide parameters to create different neurons. By definition, Parameters are
-set at
-the start of the simulation, and remain constant throughout.
+set at the start of the simulation, and remain constant throughout.
 
 \subsubsection{Port}
 
@@ -826,6 +725,18 @@ Port]
 
 \note{\Alias is defined in the Dynamics, \emph{not} in the
 \Regime. This means that aliases are the same across all regimes.}
+
+\subsection{To summarize}
+
+\begin{figure}[htb!]
+\center
+%\includegraphics[width=14cm]{al/ParallelisingTransitions.pdf}example_IzRegimeTransGraph.pdf
+\includegraphics[width=0.9\linewidth]{figures/component_complex.pdf}
+\protect\caption{ComponentClass Overview (Detailed)\ref{code:xmliz}}
+\label{fig:EX1_RegimeGraph}
+\end{figure}
+
+\newpage
 
 \section{User Layer: Core Concepts}
 \label{UserL}
@@ -1285,8 +1196,7 @@ transition
 %
 \begin{itemize}
 \item \StateAssignment {[}0+{]} (The state assignments that should occur when
-this
-transition is triggered)
+this transition is triggered)
 \item {\tt EventOut} {[}0+{]} (The events that should be sent when this
 transition is triggered)
 \end{itemize}
@@ -1531,7 +1441,8 @@ This tag contains a User Layer component description.
 \item \verb|<definition>| {[}1{]} or \verb|<reference>| {[}1{]} Either one
 of the two is required
 \item \verb|<properties>|{[}0-1{]}
-\item \verb|<currents>|{[}0-1{]}  This allows an addition of arbitrary currents to
+\item \verb|<currents>|{[}0-1{]}  This allows an addition of arbitrary currents
+to
 neuronal component, for example injection currents.
 \item \verb|<note>| {[}0-1{]}
 \end{itemize}
@@ -1579,7 +1490,8 @@ This tag specifies a list of properties in the interface of the component
 \item \verb|<quantity>| {[}0+{]}
 \end{itemize}
 
-\issue{Some other data types can be used too, do we use any in this release? AG.}
+\issue{Some other data types can be used too, do we use any in this release?
+AG.}
 
 \end{itemize}
 
@@ -1849,7 +1761,8 @@ The {\tt RegimeGraph} is shown in Figure~\ref{fig:EX1_RegimeGraph}
 
 \begin{figure}[htb!]
 \center
-%\includegraphics[width=14cm]{al/ParallelisingTransitions.pdf}example_IzRegimeTransGraph.pdf
+%\includegraphics[width=14cm]{al/ParallelisingTransitions.pdf}
+example_IzRegimeTransGraph.pdf
 \includegraphics[width=8cm]{figures/example_IzRegimeTransGraph.pdf}
 \protect\caption{RegimeGraph for the XML model in Listing~\ref{code:xmliz}}
 \label{fig:EX1_RegimeGraph}
@@ -1862,7 +1775,8 @@ this, giving output as shown in Figure~\ref{fig:Ex1_Output}.
 
 \begin{figure}[htb!]
 \center
-%\includegraphics[width=14cm]{al/ParallelisingTransitions.pdf}example_IzRegimeTransGraph.pdf
+%\includegraphics[width=14cm]{al/ParallelisingTransitions.pdf}
+example_IzRegimeTransGraph.pdf
 \includegraphics[width=8cm]{figures/example_IzVoltageWave.pdf}
 \protect\caption{Result of simulating of the XML model in
 Listing~\ref{code:xmliz}}
@@ -1878,8 +1792,112 @@ the value of $V$.
 
 [TO DO: Mike will create an example of a cell connected to a synapse or two]
 
-\pagebreak
+\newpage
 
+\section{Data Types}
+\label{DataTypes}
+
+Values in NineML can have different types, which are listed in the
+following subsections. Data types are the objects that allow the
+encapsulation of value data and are not intended as standalone
+objects outside of {\tt ComponentClass} objects in the Abstraction
+Layer or {\tt property} objects in the User Layer.
+
+\subsection{Dimension}
+
+Dimension is an object that provides physical dimension like length,
+mass, or time. A set of predefined dimensions is provided in the
+NineML library and the user can derive compound dimensions from these
+(for example velocity is derived from length and time). A special case
+of a {\tt Dimension} is a predefined empty dimension for dimensionless
+quantities.
+
+\subsection{Counter}
+
+Counter is an object that represent the countable quantity (natural
+number) and is used to define a number of identical objects that have
+to be instantiated in a model from a single object definition (for
+example a number of neurons in a population of identical cells).
+
+\subsection{Number}
+
+Number is a object that represents numerical values. It is not designed for
+a direct use, but rather as a component of the {\tt Quantity} type that
+additionally includes the units of measurements for each specific quantity.
+
+\subsection{String}
+
+String is an object that contains a string of text. It is used for labeling
+elements as well as for optional textual {\tt note}s that annotate these
+elements.
+
+\subsection{URL}
+
+URL is an object that contains a reference to an internet resource in a form
+of a URL. It is used for Abstraction Layer or external definitions as well as
+for links in optional {\tt note}s that annotate these elements.
+
+\subsection{Enumerated}
+
+Enumerated is an object that is used for properties that can only take
+a few predefined by Abstraction Layer values.
+
+\subsection{Boolean}
+
+Boolean is an object that contains a binary true-false value or a logical
+expression that can be evaluated into such a value.
+
+\subsection{Function}
+
+Function is an object that returns a value of a {\tt Number} type resulting
+from calculation that can be deterministic or based on random number
+distribution.
+
+\subsection{Quantity}
+
+Quantity is a compound data type object that encapsulates a numerical value
+and a unit of measurements. Unit has to be of one of the {\tt Dimension} type.
+Any numeric quantity in the language (except counters) has to be of this type,
+dimensionless quantities shall use predefined empty {\tt Dimension}.
+
+\begin{table}[htb]
+\center
+\begin{tabular}{|c|}
+\hline
+\hline
+Quantity \\
+\hline
+\hline
+{\em unit}: {\tt Dimension} \\
+\hline
+{\em value}: \{{\tt Number}$|${\tt Function}$|$%
+{\tt Component->Random Distribution}\} \\
+\hline
+\end{tabular}
+\end{table}
+
+There are two kinds of quantities: values of the first kind are given to the
+model by the user and stay fixed, values of a second kind are computed within
+the model during simulation. For all practical reasons the syntax of the user
+layer descriptions is identical for both kinds of quantities. Furthermore,
+because NineML does not provide any default values for quantities, it is a
+job of the user to provide initial values for all defined quantities. To
+ensure the integrity of the model NineML requires all initial values to be
+set in the User Layer description. For batch simulations and other
+modifications any of the values given in the User Layer can be overwritten
+by a simulation setup description, but this is outside of the scope of the
+current version of NineML.
+
+Some quantities can have values drawn from random distribution. In this case
+User Layer description of the quantities includes a reference to a random
+distribution component (section~\ref{randDist}) instead of a numeric value.
+Other quantities might be calculated according to some function dependent on
+some other quantities. These can be defined through the type {\tt Function} by
+including inline Abstraction Layer definitions or MathML.
+
+\subsection{Mathematical entities ??}
+
+\newpage
 \section{Identifier Scope}
 \label{scope}
 
@@ -1962,10 +1980,8 @@ $R^{t}_{n}$.
 \noindent Component \CN
 has:
 \begin{itemize}
-\item \send EventPorts \textsl{EvSend = \{$EvSend_{n,1,}$, $EvSend_{n,2,}$, ...
-\}}
-\item \recv EventPorts \textsl{EvRecv = \{$EvRecv_{n,1,}$, $EvRecv_{n,2,}$, ...
-\}}
+\item \send EventPorts \textsl{EvSend = \{$EvSend_{n,1,}$, $EvSend_{n,2,}$, ... \}}
+\item \recv EventPorts \textsl{EvRecv = \{$EvRecv_{n,1,}$, $EvRecv_{n,2,}$, ... \}}
 \end{itemize}
 
 \noindent \EventPort connections are stored in a a map,
@@ -2088,17 +2104,16 @@ discussed previously.
 A {\tt Component} which exposes the NetworkElementModel
 \Interface must contain the following:
 \begin{itemize}
-\item An unordered collection of {\tt Transition}s which connect the {\tt
-Regime}s
-  of the {\tt Component} by assigning sources and targets from the named
-  collection of {\tt Regime}s.
+\item An unordered collection of {\tt Transition}s which connect the
+{\tt Regime}s of the {\tt Component} by assigning sources and targets
+from the named collection of {\tt Regime}s.
 
 \item A {\tt Container} object which contains an unordered named collection of
 \begin{itemize}
 \item sub-{\tt Container} objects (may be user defined, or imported from the
 NineML standard libraray (see Section \ref{nml_lib}).
-\item at least one {\tt Regime} in the {\tt Container} or its sub-{\tt
-Container}s.
+\item at least one {\tt Regime} in the {\tt Container} or its
+sub-{\tt Container}s.
 \item {\tt StateVariable}s.
 \item {\tt Parameter}s.
 \item {\tt EventPort}s.
