@@ -142,7 +142,7 @@ float=tbfh}
 \vspace{0.5cm}
 \noindent{\large INCF Task Force on Multi-Scale Modeling}\\
 \vspace{0.5cm}
-\noindent{\large Version: 0.98-1}
+\noindent{\large Version: 0.99}
 \end{center}
 
 \vspace*{0.75cm}
@@ -165,7 +165,7 @@ float=tbfh}
 
 }
 
-Acknowledgements: We would like to thank the Task Force members for their
+Acknowledgments: We would like to thank the Task Force members for their
 comments on this document and in particular P. Gleeson, E. Muller, A. Davison,
 R. Cannon, S. Hill.
 
@@ -182,19 +182,11 @@ NineML is a simulator independent language with the aim of providing an
 unambiguous description of neuronal network models for efficient model sharing
 and reusability. This language emerges from a joint effort from experts in the
 field of Computational Neuroscience, simulator development and standardized
-language initiative (NeuroML), coordinated and supported by INCF.
-
-This document provides the basis for understanding the Common Object Model,
-shared by the three  implementations, and the resulting XML schema and tags. The
-current work only covers the representation of spking neurons and synapses and
-will be further extended to represent network connectivity, synaptic plasticity,
-and all other necessary concepts to represent networks.
-These extensions are still work in progress and your comments and feedbacks will
-be extremely valuable.
-
+language initiative (NeuroML), coordinated and supported by International
+Neuroinformatics Coordinating Facility (INCF).
 
 This document provides the basis for understanding the Common Object
-Model, shared by the three implementations, and the resulting XML
+Model, shared by the three NineML implementations, and the resulting XML
 schema and tags. The current work only covers the representation of
 spiking neurons and synapses and will be further extended to represent
 network connectivity, synaptic plasticity, and all other necessary
@@ -285,8 +277,8 @@ level
 The increasing number of studies related to neuronal network modeling
 and the diversity of the simulation platforms and implementations
 cause a major issue for model sharing, replicability and reusability
-of either whole model or part of the model for further analysis or
-simply for extension.  To overcome this problem, we are proposing a
+of either complete models or parts of models for further analysis or
+for extension. To overcome this problem, we are proposing a
 common description language to be used for exchanging models and being
 able to simulate them in any simulation platform.
 
@@ -300,7 +292,7 @@ similar initiative.  The name of the proposed language is NineML
 
 \subsection{Scope}
 
-The purpose of NineML is thus to provide a computer language for
+The purpose of NineML is to provide a computer language for
 succinct and unambiguous description of computational neuroscience models of
 networks of spiking neurons.
 
@@ -322,7 +314,7 @@ network modeling can be fully or partially described:
 \end{enumerate}
 \end{enumerate}
 
-The Object Model developped has been used to create three different
+The developed Object Model has been used to create three different
 implementations (Java, Python and Chicken Scheme) that are now able to
 import/export a common XML description and generate code for simulating the
 described model in different simulator.
@@ -338,7 +330,7 @@ For example, NineML should specify the neuron membrane equation to solve,
 but not how to solve it.  In addition, for implementation and performance
 reasons, it is important to keep the language layer ``close'' to the simulator –
 such that the language layer is not responsible for maintaining separate
-representations of the instantiated network. [COMMENT\_YANN: WHAT DO YOU MEAN??]
+representations of all the instantiated elements in the network.
 
 A NineML object model representation can take multiple forms.  A
 program can employ a concrete representation of the NineML objects in
@@ -350,21 +342,20 @@ representation for a target simulation environment.
 
 The design of NineML is divided into two semantic layers:
 \begin {enumerate}
-\item \underline {an Abstraction Layer} that provides the core concepts and
-mathematical descriptions with which
-model variables and state update rules are explicitly described in {\em
-parametrized} form, and
-\item \underline {a User Layer} that provides a syntax to specify the
+\item An \bf{Abstraction Layer} that provides the core concepts and
+mathematical descriptions with which model variables and state update
+rules are explicitly described in {\em parametrized} form, and
+\item A \bf{User Layer} that provides a syntax to specify the
 instantiation and the value of parameters of all these components of a network
 model.
 \end {enumerate}
 
 As the User Layer provides the mechanism for instantiating and
-parameterization of the model elements that have been defined in the
+parametrization of the model elements that have been defined in the
 Abstraction Layer, it is clearly essential that these two layers share
-a complementary and compatible design philosophy. There must be a
+a complementary and compatible design philosophy. There is a
 clear definition of which aspects of a model are defined in the User
-Layer and which are defined in the Abstraction Layer.  In addition,
+Layer and which are defined in the Abstraction Layer. In addition,
 the mechanisms for naming and addressing Abstraction Layer concepts
 that are instantiated in the User Layer have been kept simple for the
 user.
@@ -388,17 +379,17 @@ object model.
 
 The Abstraction Layer aims at providing general concepts to represent the
 mathematical entities defining the dynamics of the different types of models
-composing a network (neuron models, synapse models, synaptique/intrinsic
+composing a network (neuron models, synapse models, synaptic/intrinsic
 plasticity, ...)
 The Object Model for the Abstraction Layer has been developed using a graphical
 representation of the different components and their inter-relations.
 This type of representation allows to visualize the interactions between the
 different components of a particular type of model and presents clear heuristic
-"properties".
+``properties''.
 We will use this graph representation to introduce the core concepts of the
 Object Model.
 
-[Proposed alternative introduction by Ivan: 
+[Proposed alternative introduction by Ivan:
 The abstraction layer is meant to contain mathematical abstractions
 such as functions, differential equations, event handling, and other
 concepts necessary to define the dynamics of neuron models, synapse
@@ -411,7 +402,7 @@ Abstraction layer has been developed using a graphical representation
 of the different components and their inter-relations.  This type of
 representation allows to visualize the interactions between the
 different components of a particular type of model and presents clear
-heuristic "properties".  We will use this graph representation to
+heuristic ``properties''.  We will use this graph representation to
 introduce the core concepts of the Object Model.
 
 
@@ -420,7 +411,7 @@ introduce the core concepts of the Object Model.
 \begin{figure}[htb!]
 \center
 \includegraphics[width=8cm]{figures/component_simple.pdf}
-\protect\caption{ComponentClass Overview (Simple)\ref{code:xmliz}}
+\protect\caption{ComponentClass Overview (Simple)}
 \label{fig:EX1_RegimeGraph}
 \end{figure}
 
@@ -437,7 +428,7 @@ neuronal model belong in a single ComponentClass.]
 
 The main building block of the Object Model is the ComponentClass.
 It is designed to represent all the individual entities existing in a network
-model (cells, synapses, synaptic plasticity rules, random spike train, inputs,
+model (cells, synapses, synaptic plasticity rules, random spike trains, inputs,
 ...).
 A \ComponentClass is the conglomerating object which is the subject of
 interaction with the User Layer and is composed of a \Dynamics block and
@@ -445,7 +436,7 @@ interaction with the User Layer and is composed of a \Dynamics block and
 
 [MIKE'S COMMENT: IT MAKES THINGS MORE CONFUSING. Want to know the core ideas
 without implementation details...examples provide the information about the
-implementation]
+implementation] [I agree, it does not fit here. AG]
 This concept is mapped with the following XML tag:
 
 
@@ -464,95 +455,6 @@ Example:
 </ComponentClass>
 \end{lstlisting}
 
-\subsection{Interfaces}
-
-The interface is the \emph{external} view of the component that defines
-what inputs and outputs the component exposes to other components and the
-parameters that can be set for the component. The interface consists of
-instances of \Port (section~\ref{ports}) and \Parameter
-(section~\ref{parameters}).
-
-As well as being able to communicate continuous values, components are also
-able to emit and receive \Events. Events are discrete notifications
-that are transmitted over \EventPorts (section~\ref{eventPorts}). Since
-\EventPorts have names, saying that we transmit 'event1' for example
-would mean transmitting an event on the EventPort called 'event1'. Events
-can be used to signal action potentials firing for example.
-
-\subsubsection{Parameter}
-
-Parameters correspond to a placeholder for a numerical value with or
-without dimensions, defining particular aspects of the model, such as
-the firing threshold, reset voltage, the decay time constant of a
-synapse model.  The instantiation of Parameters at the Abstraction
-Layer level allow us to define the dynamics of a component once, then
-adjust the behaviours by using different parameters.
-
-[TO DO : modify text. Better to talk about a general canvas or unique representation of the dynamics]
-
-For example, if we are building an integrate-and-fire neuron, we can
-specify that the Reset-Voltage and the Firing-Threshold are
-parameters, write our dynamics in terms of these parameters, then use
-the User Layer to provide parameters to create different neurons. By
-definition, Parameters are set at the start of the simulation, and
-remain constant throughout.
-
-\subsubsection{Port}
-
-Ports allow components to communicate between each other during a simulation.
-There are two sub-classes of \nmlClass{Port} objects: \nmlClass{AnalogPort}
-and \nmlClass{EventPort}, and each can have different modes.
-
-%\subsubsection{AnalogPort}
-\paragraph{AnalogPort}
-
-AnalogPorts transmit and receive continuous values, either \Alias
-or \StateVariable. \AnalogPort can have 3 modes:
-\begin{itemize}
-\item \SendPort - transmit data originating in this component which can
-be read by other components.
-\item \RecvPort - receive data from another components \SendPort
-port. Each \RecvPort can be connected to \emph{one} \SendPort.
-\item \ReducePort - receive data from multiple \SendPorts. These
-differ from \RecvPorts in that they can be connected to multiple
-\SendPort. \ReducePorts take an additional operator,
-{\tt reduce\_op}, which specifies how the data from multiple \SendPorts
-should be combined to produce a single value. Currently, the
-only supported operations is $+$, which sums the inputs.
-The motivation for \ReducePort is that it allows us to make our
-component definitions more general. For example, if we are defining a
-neuron, would define a \ReducePort called {\tt InjectedCurrent}.
-This allows us to write the membrane equation for that neuron as
-$dV/dt = (1/C) * InjectedCurrents$.
-
-Then, when we connect this neuron to synapses, current-clamps, etc, we
-simply need to connect the SendPorts containing the currents of these
-components onto the {\tt InjectedCurrent} reduce-port, without having
-to change our original component definitions.
-\end{itemize}
-
-%\subsubsection{EventPort}
-\paragraph{EventPort}
-
-\label{eventPorts}
-
-Event ports transmit discrete events. They are useful for example in
-simulation of integrate-and-fire neurons to notify components about neuron's
-spiking. Event ports only have 2 modes:
-
-\begin{itemize}
-\item \SendPort - transmit events originating in this component which can be
-read by
-other components
-\item \RecvPort - receive events from another components \SendPort port.
-Each recv port can be connected to \emph{multiple} \SendPorts.
-\end{itemize}
-
-For example, a synapse component may have a \RecvPort connected to the
-presynaptic neurons \SendPort port. When the presynaptic neuron fires;
-it delivers an event to the synapse, which could cause it to produce current
-flow in a post-synaptic neuron.
-
 \subsection{Dynamics}
 
 The \Dynamics block represents the \emph{internal} mechanisms
@@ -565,21 +467,24 @@ following concepts:
 
 \begin{itemize}
 \item \StateVariable (section~\ref{state-var})
-\item {\tt Regime(s)} (section~\ref{regime}) that describe the dynamic of the
+\item \Regime (section~\ref{regime}) that describe the dynamics of the
 system for particular values of \StateVariable
-\item Transition(s) A transition links two regimes: the Source-Regime and the target-Regime, and can be triggered by an event or a condition. If a component is in the source-regime, and the transition is triggered, then the component moves into the target regime.
+\item \Transition (section~\ref{transition}) that links two
+regimes: the Source-\Regime and the Target-\Regime, and can be triggered by
+an event or a condition. If a component is in the source-regime, and the
+transition is triggered, then the component moves into the target regime.
 \item \Alias (section~\ref{alias})
 \end{itemize}
 
 
 
 These different concepts are the building blocks of a graph, called
-the {\tt Regime Graph} (illustrated in figure ?), where the \Regime
-forms the vertices and the \Transition form the directional edges of
-the {\tt Regime Graph}.  This graph must have at least one \Regime,
-and contain no regime islands.  At any given time, a component will be
-in a single \Regime, and can change which \Regime it is in through
-\Transition.
+the {\tt Regime Graph} (illustrated in Figure~\ref{SimpleRegimeGraph}),
+where the \Regime forms the vertices and the \Transition form the
+directional edges of the {\tt Regime Graph}. This graph must have at
+least one \Regime, and contain no regime islands. At any given time,
+a component will be in a single \Regime, and can change which \Regime
+it is in through \Transition.
 
 \begin{figure}[htb!]
 \center
@@ -594,6 +499,7 @@ An example dynamics in Figure~\ref{SimpleRegimeGraph} has three state variables,
 these regimes, and the state variables will evolve accordingly.
 
 \subsubsection{StateVariable}
+\label{state-var}
 
 The internal state of a component is defined by a set of \StateVariable
 -- variables that can change either continuously or discontinuously as a
@@ -613,6 +519,7 @@ $X = X + 1$.
 \end{quote}
 
 \subsubsection{Regime}
+\label{regime}
 
 A \nmlClass{Regime} is defined in NineML as a system of ODEs in time
 on \StateVariable.  As such, \Regime defines how the \StateVariables
@@ -627,12 +534,12 @@ propagated when the \nmlClass{Regime} is active.
 \item a set of \TimeDerivative, one for each \StateVariable
 of the \ComponentClass, which define how the \StateVariable
 evolve over time in the form $\frac{dx_{i}}{dt} = f(x\_0, ..., x\_i, t)$.
-\item \Parameter for the \nmlClass{Regime}
+\item \nmlClass{Parameter}s for the \nmlClass{Regime}
 \item An unordered collection of \nmlClass{AnalogPort}s which publish state
 variables (type=send), or consume state variables published from elsewhere
 (type=recv, or type=reduce).
 \item The independent variable must be shared between the collection
-of \StateVariables and their propagators in a Regime.
+of \nmlClass{StateVariable}s and their propagators in a \Regime.
 \end{itemize}
 
 \note{If a \textbf{TimeDerivative} for a \StateVariable is not defined
@@ -646,7 +553,7 @@ for example)
 [TODO:
 Sean's comment:
 We should not preclude other systems of equations,
-overrideing regime, spatial regimes ...
+overriding regime, spatial regimes ...
 
 Generalize ODEs to general propagators ...
 ODE is a special case of a propagator ...
@@ -686,12 +593,13 @@ x==15
 \end{verbatim}
 
 A \nmlClass{Condition} which persistently evaluates to True
-violates the definition that \nmlClass{Tranisiton}s should have vanishing
+violates the definition that \nmlClass{Transition}s should have vanishing
 temporal extent, and the behaviour for this case is undefined, but
 it would be preferable for the implementation to produce an error
 message to the user.
 
 \subsubsection{Transition}
+\label{transition}
 
 Movement between several instances of \Regime happens via \Transition.
 A \nmlClass{Transition} is defined in NineML as having
@@ -702,8 +610,7 @@ in Figure~\ref{SimpleRegimeGraph}). There are two types of \Transition:
 \begin{itemize}
 \item An \OnCondition function of the \StateVariable, for
 example $X > Y$.
-\item An \OnEvent on an input from \EventPort. (Discussed in
-sections~\ref{events} and \ref{eventPorts}).
+\item An \OnEvent on an input from \EventPort. (See section~\ref{port}).
 \end{itemize}
 
 During either type of transition three things can happen:
@@ -716,7 +623,8 @@ satisfied, then the component will move into \emph{regime1}.
 \end{itemize}
 
 During a transition, multiple \StateAssignment and \OutputEvent can occur.
-(For more on the resolution of \Transition, see section~\ref{resolution})
+(For more on the resolution of \nmlClass{Transition}s see
+section~\ref{resolution})
 
 \nmlClass{Transition}s have a vanishing temporal extent (i.e. they are
 event-like). Once construction of a \nmlClass{Transition} is complete, it
@@ -724,12 +632,13 @@ should have defined the following properties:
 \begin{itemize}
 \item The \nmlClass{Condition} or \nmlClass{EventPort(mode=recv)} which
 triggers the \nmlClass{Transition}
-\item An set of \StateAssignment and\OutputEvent objects
+\item An set of \StateAssignment and \OutputEvent objects
 \item The label of the source \nmlClass{Regime}, and the label of the target
 \nmlClass{Regime}, which may be the same as the source \nmlClass{Regime}.
 \end{itemize}
 
 \subsubsection{Aliases}
+\label{alias}
 
 An alias corresponds to an intermediate variable allowing to store an
 information and to reuse it at different places in the definition of
@@ -769,13 +678,103 @@ Port]
 \note{\Alias is defined in the Dynamics, \emph{not} in the
 \Regime. This means that aliases are the same across all regimes.}
 
+\subsection{Interfaces}
+
+The interface is the \emph{external} view of the component that defines
+what inputs and outputs the component exposes to other components and the
+parameters that can be set for the component. The interface consists of
+instances of \Port (section~\ref{port}) and \Parameter
+(section~\ref{parameters}).
+
+As well as being able to communicate continuous values, components are also
+able to emit and receive \Events. Events are discrete notifications
+that are transmitted over \EventPorts (section~\ref{port}). Since
+\EventPorts have names, saying that we transmit `event1' for example
+would mean transmitting an event on the EventPort called `event1'. Events
+can be used for example to signal action potentials firing.
+
+\subsubsection{Parameter}
+\label{parameters}
+
+Parameters correspond to a placeholder for a numerical value with
+dimension (special degenerate {\tt Dimension} exists for dimensionless
+parameters, see section~\ref{dimensions}). It defines particular aspects
+of the model, such as
+the firing threshold, reset voltage, the decay time constant of a
+synapse model.  The instantiation of Parameters at the Abstraction
+Layer level allow us to define the dynamics of a component once, then
+adjust the behaviours by using different parameters.
+
+[TO DO : modify text. Better to talk about a general canvas or unique
+representation of the dynamics]
+
+For example, if we are building an integrate-and-fire neuron, we can
+specify that the Reset-Voltage and the Firing-Threshold are
+parameters, write our dynamics in terms of these parameters, then use
+the User Layer to provide parameters to create different neurons. By
+definition, Parameters are set at the start of the simulation, and
+remain constant throughout.
+
+\subsubsection{Port}
+\label{port}
+
+Ports allow components to communicate between each other during a simulation.
+There are two sub-classes of \nmlClass{Port} objects: \nmlClass{AnalogPort}
+and \nmlClass{EventPort}, and each can have different modes.
+
+\paragraph{AnalogPort}
+
+AnalogPorts transmit and receive continuous values, either \Alias
+or \StateVariable. \AnalogPort can have 3 modes:
+\begin{itemize}
+\item \SendPort - transmit data originating in this component which can
+be read by other components.
+\item \RecvPort - receive data from another components \SendPort
+port. Each \RecvPort can be connected to \emph{one} \SendPort.
+\item \ReducePort - receive data from multiple \SendPorts. These
+differ from \RecvPorts in that they can be connected to multiple
+\SendPort. \ReducePorts take an additional operator,
+{\tt reduce\_op}, which specifies how the data from multiple \SendPorts
+should be combined to produce a single value. Currently, the
+only supported operations is $+$, which sums the inputs.
+The motivation for \ReducePort is that it allows us to make our
+component definitions more general. For example, if we are defining a
+neuron, would define a \ReducePort called {\tt InjectedCurrent}.
+This allows us to write the membrane equation for that neuron as
+$dV/dt = (1/C) * InjectedCurrents$.
+
+Then, when we connect this neuron to synapses, current-clamps, etc, we
+simply need to connect the SendPorts containing the currents of these
+components onto the {\tt InjectedCurrent} reduce-port, without having
+to change our original component definitions.
+\end{itemize}
+
+\paragraph{EventPort}
+
+Event ports transmit discrete events. They are useful for example in
+simulation of integrate-and-fire neurons to notify components about neuron's
+spiking. Event ports only have 2 modes:
+
+\begin{itemize}
+\item \SendPort - transmit events originating in this component which can be
+read by
+other components
+\item \RecvPort - receive events from another components \SendPort port.
+Each recv port can be connected to \emph{multiple} \SendPorts.
+\end{itemize}
+
+For example, a synapse component may have a \RecvPort connected to the
+presynaptic neurons \SendPort port. When the presynaptic neuron fires;
+it delivers an event to the synapse, which could cause it to produce current
+flow in a post-synaptic neuron.
+
 \subsection{To summarize}
 
 \begin{figure}[htb!]
 \center
 %\includegraphics[width=14cm]{al/ParallelisingTransitions.pdf}example_IzRegimeTransGraph.pdf
 \includegraphics[width=0.9\linewidth]{figures/component_complex.pdf}
-\protect\caption{ComponentClass Overview (Detailed)\ref{code:xmliz}}
+\protect\caption{ComponentClass Overview (Detailed)}
 \label{fig:EX2_RegimeGraph}
 \end{figure}
 
@@ -820,8 +819,13 @@ between mathematical description of the object in the abstraction
 layer and the corresponding properties labels in the User Layer are
 provided in this specification.
 
-User can add short notes to each component's description similar to
-notes described above for properties.
+User can add a note to a component. These notes are intended to provide
+a specific reference to the research paper page where this component is
+described and similar kind of information. These notes are not intended
+to duplicate the Abstraction Layer documentation or any other
+documentation, thus they shall not provide mathematical description and
+other details of the component implementation. Note can contain text
+(type {\tt String}) or link to an Internet resource (type {\tt URL}).
 
 To reduce the size of the resulting model description user can refer to
 already described component by referencing their label instead of providing
@@ -868,22 +872,16 @@ type, e.g. {\tt Quantity}) the units of measurement. These units are also
 checked against the dimensionality of the corresponding property definition
 in the Abstraction Layer.
 
-User can add a note to a property. These notes are
-intended to provide a specific reference to the research paper page
-where the component is described and similar kind of information. These
-notes are not intended to duplicate the Abstraction Layer documentation
-or any other documentation, thus they shall not provide mathematical
-description and other details of the component implementation. Note can
-contain text (type {\tt String}) or link to an Internet resource (type
-{\tt URL}).
+User can add short notes to each property description similar to notes
+described above for components.
 
 \subsubsection{Definition}
 
 All constructs in the User Layer have their mathematical or algorithmical
 definitions in the Abstraction Layer. Definition is an object that
-establishes a link between User Layer and Abstraction Layer. The initial
-version of NineML allows to put references to external (including user
-space Abstraction Layer) definitions.
+establishes a link between User Layer component and Abstraction Layer
+\ComponentClass. The initial version of NineML allows to put references
+to external (including user space Abstraction Layer) definitions.
 
 \begin{table}[htb]
 \center
@@ -900,14 +898,15 @@ Definition \\
 \end{tabular}
 \end{table}
 
-The language should be flexible enough to allow representation of concepts
-that do not yet exist, as it is developed to serve the forefront of research.
-A simple mechanism to add concepts that are not part of the standard is
-provided through external (other than Abstraction Layer based) definitions.
-It is the choice of a simulator developer to support these definitions during
-initial stage of NineML development. Future
-maturation of NineML shall eliminate the need to support simulator-specific
-definitions.
+Language in the above diagram will be set to ``NineML'' for any Abstraction
+Layer definition and to some other value for temporary simulator-specific
+definitions. Due to this mechanism
+NineML is flexible enough to allow representation of concepts that do not
+yet exist, as it is developed to serve the forefront of research.
+It is the choice of a simulator developer to support external definitions
+during initial stage of NineML development. Future maturation of NineML shall
+eliminate the need to support simulator-specific definitions and include new
+concepts only as user space Abstraction Layer definitions.
 
 \subsubsection{Reference}
 
@@ -916,7 +915,7 @@ in situations where user needs to reuse the same definition for multiple
 instances of objects. In this case the first instance shall be described using
 {\tt Definition} and the rest can use the first one through {\tt Reference}.
 Label in the {\tt Reference} must match a label in a previously defined
-object.
+component.
 
 \begin{table}[htb]
 \center
@@ -934,7 +933,7 @@ Reference \\
 \subsection{Projection}
 \label{projections}
 
-A projection a User Layer object that holds a description of the connectivity
+A projection is a User Layer object that holds a description of the connectivity
 between two cells. The projection does not create any new components. The
 purpose of projection object is to bind source and destination components
 using a certain plasticity rule and post-synaptic response.
@@ -1370,14 +1369,14 @@ TODO: do we support the following operators?
 \end{itemize}
 
 
-The following symbols are builtin, and cannot be redefined:
+The following symbols are built in, and cannot be redefined:
 \begin{itemize}
 \item pi
 \item e
 \end{itemize}
 
 
-The following functions are builtin, and cannot be redefined:
+The following functions are built in, and cannot be redefined:
 \begin{itemize}
 \item \verb|exp(x)|
 \item \verb|sin(x)|
@@ -1499,7 +1498,7 @@ neuronal component, for example injection currents.
 \end{lstlisting}
 
 This tag specifies a definition of the component through a link to Abstraction
-Layer
+Layer definition or simulator-specific definition.
 
 \begin{itemize}
 \item Attributes:
@@ -1608,7 +1607,7 @@ This tag specifies a parameter of a type Quantity (section~\ref{quantity})
 <value>
 \end{lstlisting}
 
-This tag specifies a vaslue for a parameter of a type Quantity
+This tag specifies a value for a parameter of a type Quantity
 (section~\ref{quantity})
 
 \begin{itemize}
@@ -1682,7 +1681,7 @@ a different component
 <to>
 \end{lstlisting}
 
-These tagspecify where the variiable is calculated (\verb|<from>|) and
+These tags specify where the variable is calculated (\verb|<from>|) and
 where it is used (\verb|<to>|)
 
 \begin{itemize}
@@ -1796,7 +1795,7 @@ U &\leftarrow U + d \\
 V &\leftarrow c
 \end{align}
 
-The target-regime of the \Transition is not declared explicity in the XML,
+The target-regime of the \Transition is not declared explicitly in the XML,
 implying that the
 target-regime is the same as the source-regime, i.e. $subthresholdRegime$.
 
@@ -1806,7 +1805,7 @@ The {\tt RegimeGraph} is shown in Figure~\ref{fig:EX1_RegimeGraph}
 \center
 %\includegraphics[width=14cm]{al/ParallelisingTransitions.pdf}example_IzRegimeTransGraph.pdf
 \includegraphics[width=8cm]{figures/example_IzRegimeTransGraph.pdf}
-\protect\caption{RegimeGraph for the XML model in Listing~\ref{code:xmliz}}
+\protect\caption{{\tt RegimeGraph} for the XML model in this section.}
 \label{fig:EX3_RegimeGraph}
 \end{figure}
 
@@ -1820,8 +1819,8 @@ this, giving output as shown in Figure~\ref{fig:Ex1_Output}.
 %\includegraphics[width=14cm]{al/ParallelisingTransitions.pdf}example_IzRegimeTransGraph.pdf
 \includegraphics[width=8cm]{figures/example_IzVoltageWave.pdf}
 \protect\caption{Result of simulating of the XML model in
-Listing~\ref{code:xmliz}}
-\label{fig:EX1_Output}
+this section}
+\label{fig:Ex1_Output}
 \end{figure}
 
 In Figure~\ref{fig:Ex1_Output}, we can see the value of the \StateVariable $V$
@@ -1832,7 +1831,7 @@ the value of $V$.
 \newpage
 \subsection{Second XML example}
 
-In this example, we build a representation of a integrate-and-fire neuron, with 
+In this example, we build a representation of a integrate-and-fire neuron, with
 an attached input synapse.
 
 We have a single \StateVariable, $iaf\_V$.
@@ -1941,7 +1940,9 @@ The other \OnConditions:
 \begin{figure}[htb!]
 \center
 \includegraphics[width=14cm]{figures/demo2_Coba1_out.pdf}
-\protect\caption{Result of simulating of the XML model from Listing~\ref{code:xmliz}. $cobaExcit\_spikeinput$ is fed events from an external poisson generator in this simulation}
+\protect\caption{Result of simulating of the XML model in this section.
+$cobaExcit\_spikeinput$ is fed events from an external Poisson generator
+in this simulation}
 \label{fig:EX2_Output}
 \end{figure}
 
@@ -1949,15 +1950,9 @@ The other \OnConditions:
 \begin{figure}[htb!]
 \center
 \includegraphics[width=14cm]{figures/demo2_Coba1_trnasition.pdf}
-\protect\caption{RegimeGraph for the XML model in Listing~\ref{code:xmliaf2}}
+\protect\caption{RegimeGraph for the XML model in this section}
 \label{fig:EX2_trans}
 \end{figure}
-
-
-
-
-
-
 
 \newpage
 
@@ -1971,6 +1966,7 @@ objects outside of {\tt ComponentClass} objects in the Abstraction
 Layer or {\tt property} objects in the User Layer.
 
 \subsection{Dimension}
+\label{dimensions}
 
 Dimension is an object that provides physical dimension like length,
 mass, or time. A set of predefined dimensions is provided in the
@@ -2021,6 +2017,7 @@ from calculation that can be deterministic or based on random number
 distribution.
 
 \subsection{Quantity}
+\label{quantity}
 
 Quantity is a compound data type object that encapsulates a numerical value
 and a unit of measurements. Unit has to be of one of the {\tt Dimension} type.
@@ -2240,7 +2237,7 @@ component.
 
 This algorithm can be parallelised as following. We create a thread for each
 Component, which can independently execute Steps (3 to 6). The threads need
-to be syncronised after steps (4) and (5) as shown in
+to be synchronized after steps (4) and (5) as shown in
 Figure~\ref{ParallelisingTransitions}.
 
 \begin{figure}[htb!]
@@ -2255,9 +2252,9 @@ Figure~\ref{ParallelisingTransitions}.
 
 \end{document}
 
-Hierarchical Namespace scheme used to unambigiously address elements
+Hierarchical Namespace scheme used to unambiguously address elements
 of a given NineML model.  We then proceed to define the elements
-which populate Namespaces to make up an Abraction Layer model and
+which populate Namespaces to make up an Abstraction Layer model and
 provide primitives that allow to instantiate this model in the User
 Layer. This instantiation is based on five key elements: data types,
 property, definition, component, and projection.
@@ -2279,7 +2276,7 @@ from the named collection of {\tt Regime}s.
 \item A {\tt Container} object which contains an unordered named collection of
 \begin{itemize}
 \item sub-{\tt Container} objects (may be user defined, or imported from the
-NineML standard libraray (see Section \ref{nml_lib}).
+NineML standard library (see Section \ref{nml_lib}).
 \item at least one {\tt Regime} in the {\tt Container} or its
 sub-{\tt Container}s.
 \item {\tt StateVariable}s.
@@ -2316,7 +2313,7 @@ type (e.g. {\tt EventPort}) are returned.
 
 A fundamental aspect of the organization of most programming languages
 is to use names to refer to computational entities.  Likewise, to each
-computational element of NineML, refered to as \emph{values}, we
+computational element of NineML, referred to as \emph{values}, we
 assign a name, referred to as a NineML \emph{label}. As such, we say
 that labels identify values.
 
@@ -2363,7 +2360,7 @@ bindings and sub-namespaces.
 NameEntry is a compound object that is either a binding or a
 label/{\tt Namespace} pair referring to sub-namespace.
 [unclear to me why not just allow Bindings to
-have Namespace as value and eliminate NameEntry alltogether. AG]
+have Namespace as value and eliminate NameEntry altogether. AG]
 
 \begin{table}[htb]
 \center
@@ -2518,7 +2515,7 @@ dynamics, we propose a flexible block diagram notation.  The notation
 represents continuous and discrete variables, their evolution
 according to a set of rules such as a system of ordinary differential
 equations, a \nmlClass{Regime}, and the conditions that induce a change of
-Regime and/or discontinous changes in Regime state variables, a
+Regime and/or discontinuous changes in Regime state variables, a
 \nmlClass{Transition}, such as the transition from subthreshold to
 spiking and refractory modes.
 
@@ -2543,7 +2540,7 @@ RNGs, Special Functions, Logical Ops, Relational Ops, etc.
 
 Most implementations will want to introduce syntactic sugar for
 standard mathematical, logical, relational operations as well as
-exposing globally a subset of frequently occuring standard constants
+exposing globally a subset of frequently occurring standard constants
 ($e$, $pi$, etc.) and functions ($\sin(x)$, $\cos(x)$, $\exp(x)$,
 etc.).
 
