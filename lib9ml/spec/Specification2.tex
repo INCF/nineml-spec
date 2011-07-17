@@ -285,8 +285,7 @@ level
 The increasing number of studies related to neuronal network modeling
 and the diversity of the simulation platforms and implementations
 cause a major issue for model sharing, replicability and reusability
-of either complete models or parts of models for further analysis or
-for extension. To overcome this problem, we are proposing a
+of either complete models or parts of models. To overcome this problem, we are proposing a
 common description language to be used for exchanging models and being
 able to simulate them in any simulation platform.
 
@@ -305,9 +304,7 @@ succinct and unambiguous description of computational neuroscience models of
 networks of spiking neurons.
 
 NineML is intended to describe the network architecture, parameters
-and equations that govern the dynamics of a network of spiking
-neurons, without taking into account model implementation detail such as
-numerical integration method.
+and equations that govern the dynamics of a spiking neurons network, without taking into account model implementation detail such as numerical integration method.
 
 At the current stage of development, the following concepts of spiking neuron
 network modeling can be fully or partially described:
@@ -383,19 +380,9 @@ object model.
 \section{Abstraction Layer: Core Concepts }
 \label{AbstractionL}
 
-[TO DO: Here a introduction to the AL with the description of the graph approach.]
-
 The Abstraction Layer aims at providing general concepts to represent the
-mathematical entities defining the dynamics of the different types of models
-composing a network (neuron models, synapse models, synaptic/intrinsic
+mathematical entities (functions, differential equations, event handling,...) defining the dynamics of the different types of models composing a network (neuron models, synapse models, synaptic/intrinsic
 plasticity, ...)
-The Object Model for the Abstraction Layer has been developed using a graphical
-representation of the different components and their inter-relations.
-This type of representation allows to visualize the interactions between the
-different components of a particular type of model and presents clear heuristic
-``properties''.
-We will use this graph representation to introduce the core concepts of the
-Object Model.
 
 [Proposed alternative introduction by Ivan:
 The abstraction layer is meant to contain mathematical abstractions
@@ -406,13 +393,13 @@ models, and synaptic/intrinsic plasticity. ]
 [Ivan: I think the following  paragraph does not make sense, best to
 rewrite it from scratch]
 
-Abstraction layer has been developed using a graphical representation
-of the different components and their inter-relations.  This type of
-representation allows to visualize the interactions between the
-different components of a particular type of model and presents clear
-heuristic ``properties''.  We will use this graph representation to
-introduce the core concepts of the Object Model.
-
+The Object Model for the Abstraction Layer can be represented by a graphical
+visualization of the different components and their inter-relations.
+This type of representation allows to visualize the interactions between the
+different components of a particular type of model and presents clear heuristic
+``properties''.
+We will use this graph representation to introduce the core concepts of the
+Object Model.
 
 \subsection{ComponentClass}
 
@@ -434,13 +421,9 @@ of objects that relate to the definition of neuronal or synaptic
 dynamics. All equations and event declarations that are part of the
 neuronal model belong in a single ComponentClass.]
 
-The main building block of the Object Model is the ComponentClass.
-It is designed to represent all the individual entities existing in a network
-model (cells, synapses, synaptic plasticity rules, random spike trains, inputs,
-...).
-A \ComponentClass is the conglomerating object which is the subject of
-interaction with the User Layer and is composed of a \Dynamics block and
-\Interfaces to communicate between each other.
+The main building block of the Object Model is the \ComponentClass.
+The \ComponentClass object is intended to package together a collection of objects that relate to the definition of all the individual entities existing in a network model (cells, synapses, synaptic plasticity rules, random spike trains, inputs, ...). All equations and event declarations that are part of particular entity model, such as neuron model for instance, belong in a single ComponentClass.
+A \ComponentClass is the subject of interaction with the User Layer and is composed of a \Dynamics block and \Interfaces to communicate between each other, as shown in figure 1.
 
 [MIKE'S COMMENT: IT MAKES THINGS MORE CONFUSING. Want to know the core ideas
 without implementation details...examples provide the information about the
@@ -558,26 +541,9 @@ considering "Temporal regimes". In the next version, we will extend the concept
 to the more general case where the independent variable can be anything (space
 for example)
 
-[TODO:
-Sean's comment:
-We should not preclude other systems of equations,
-overriding regime, spatial regimes ...
-
-Generalize ODEs to general propagators ...
-ODE is a special case of a propagator ...
-Independent variable
-Who: Ivan.
-]
-
 [TODO: Hybrid state machine as Appendix to clearly define Regime
 in terms of atomic lower-level primitives.
 Who: Ivan
-]
-
-[TODO:
-TemporalRegime vs Regime ...
-For this Developer release, Regimes are Temporal Regimes.
-Who: not assigned until after CNS
 ]
 
 \subsubsection{Condition}
@@ -623,7 +589,7 @@ example $X > Y$.
 
 During either type of transition three things can happen:
 \begin{itemize}
-\item The component can change regime. For example, if
+\item The component can change regime. For example, in figure 2, if
 the component is in \emph{regime3}, and the trigger for \emph{t3} is
 satisfied, then the component will move into \emph{regime1}.
 \item \textbf{StateAssignment}s can take place, for example, $X=0$
@@ -631,7 +597,7 @@ satisfied, then the component will move into \emph{regime1}.
 \end{itemize}
 
 During a transition, multiple \StateAssignment and \OutputEvent can occur.
-(For more on the resolution of \nmlClass{Transition}s see
+(For more on the resolution of \nmlClass{Transition}s see Appendix
 section~\ref{resolution})
 
 \nmlClass{Transition}s have a vanishing temporal extent (i.e. they are
@@ -710,12 +676,8 @@ parameters, see section~\ref{dimensions}). It defines particular aspects
 of the model, such as
 the firing threshold, reset voltage, the decay time constant of a
 synapse model.  The instantiation of Parameters at the Abstraction
-Layer level allow us to define the dynamics of a component once, then
-adjust the behaviours by using different parameters.
-
-[TO DO : modify text. Better to talk about a general canvas or unique
-representation of the dynamics]
-
+Layer level allow us to define the dynamics of a general component.
+It is then possible to instantiate several variant of this component by attributing different values for the \Parameters, in the User Layer.
 For example, if we are building an integrate-and-fire neuron, we can
 specify that the Reset-Voltage and the Firing-Threshold are
 parameters, write our dynamics in terms of these parameters, then use
@@ -846,9 +808,6 @@ can create mappings directly between the reference to a definition in the
 User Layer description of the component and the intrinsic simulator code
 that implements the same mathematics.
 
-[TO DO: Random Distribution Components, Neuronal Components, Plasticity
-Components, Post-synaptic Response (PSR) Components]
-
 \subsubsection{Property}
 
 Property is a User Layer object that instantiates values in simple
@@ -938,8 +897,10 @@ Reference \\
 \end{tabular}
 \end{table}
 
-\subsection{Projection}
+\subsection{Projection} 
 \label{projections}
+
+[COMMENT YANN: Should we keep this section?]
 
 A projection is a User Layer object that holds a description of the connectivity
 between two cells. The projection does not create any new components. The
@@ -1408,6 +1369,8 @@ The following functions are built in, and cannot be redefined:
 \end{itemize}
 
 These functions take the same parameters and are defined as per ANSI C89.
+
+[COMMENT YANN: IS IT THE SAME FOR ALL THE IMPLEMENTATIONS ?]
 
 The following random distributions are available, through the \verb|random|
 namespace,
@@ -2071,13 +2034,15 @@ definitions or MathML.
 \subsection{Mathematical entities ??}
 
 \newpage
-\section{Identifier Scope}
+\section{Identifier Scope: Scoping rule?}
 \label{scope}
 
+[COMMENT YANN: This section is difficult to understand...we should rewrite some part to make it clear]
 Elements of \Regimes and \Transitions resolve state
 variables, parameters, etc. relative to their containing
 \ComponentClass/{\tt Namespace} first, then the system {\tt Namespace}.
 
+[COMMENT YANN: Where are they defined ?]
 The system {\tt Namespace} is immutable, and contains:
 \begin{itemize}
 \item[-]{SignalLib/MathLib (pi, e, sin, cos)}
