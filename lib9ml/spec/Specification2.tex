@@ -206,6 +206,12 @@ progress and your comments and feedbacks will be extremely valuable.
 
 \newpage
 \vskip 1in
+\paragraph{Changes from version 0.99-2:}
+\begin{itemize}
+\item Add text from Robert on the Unit and Dimension. Modified it to be compatible with the current agreement about the UL tags.
+\item Added placeholder for the unit and scalar tags in the UL
+\item Removed the summary figure
+\end{itemize}
 
 \paragraph{Changes from version 0.99-1:}
 \begin{itemize}
@@ -394,8 +400,37 @@ object model.
 
 \section{Units and Dimensions in NineML}
 
-[To be contributed by Robert]
+\noindent
+Each specification of a parameter or a state variable in the definition of a class of component must state its dimension. A dimension declaration associates a name with values for the powers for each of seven SI base units: length, l; mass, m; time t; electric current i; temperature T; luminouse intensity L and ammount of substance, n. 
+For example, acceleration has dimension $lt^{-2}$ and voltage is $ml^2t^3i^{-1}$.  
+Dimensions can be declared at the top level of a NineML file with the "Dimension" element with attributes for each of the base dimensions, eg:
 
+\begin{lstlisting}[frame=none]
+<Dimension name="voltage" m="1" l="2" t="3" i="-1"/>
+\end{lstlisting}
+
+\noindent
+Exponents that are zero do not need stating explicitly.
+
+Each dimension can give rise to a family of unit declarations, each of which has the same dimensionality but a different multiplier. For example, typical units for a quantity with dimensionality voltage include milliVolts (multiplier = $10^{-3}$), microVolts (multiplier = $10^{-6}$) and Volts (multiplier = 1). Units can be expressed in a NineML file with the "Units" element containing the symbol, a reference to the dimension, and the numerical value of the multiplier, as in:
+
+\begin{lstlisting}[frame=none]
+<Unit name="milliVolt" symbol="mV" multiplier="0.001"/>
+\end{lstlisting}
+
+
+To express a dimensional quantity both a numerical factor and a unit are required. These can be  expressed in the User Layer, as follows: 
+
+\begin{lstlisting}[frame=none]
+<Quantity>
+	<value>
+		<scalar>-40</scalar>
+		<unit>mV</unit>
+	</value>
+</Quantity> 
+\end{lstlisting}
+
+Except where physical constants are required, abstraction layer definitions generally only contain references to dimensions and are independent of any particular choice of units. Conversely, the user layer only refers to units, and such references only occur on the right hand side of parameter assignments. Internally, dimensional quantities are to be understood as rich types with a numerical factor and exponents for each of the base dimensions. They are independent of the particular choice of units by which they are assigned.
 
 \section{Abstraction Layer: Core Concepts }
 \label{AbstractionL}
@@ -856,16 +891,6 @@ For example, a synapse component may have a \RecvPort connected to the
 presynaptic neurons \SendPort port. When the presynaptic neuron fires;
 it delivers an event to the synapse, which could cause it to produce current
 flow in a post-synaptic neuron.
-
-\subsection{To summarize}
-
-\begin{figure}[htb!]
-\center
-%\includegraphics[width=14cm]{al/ParallelisingTransitions.pdf}example_IzRegimeTransGraph.pdf
-\includegraphics[width=0.9\linewidth]{figures/component_complex.pdf}
-\protect\caption{ComponentClass Overview (Detailed)}
-\label{fig:EX2_RegimeGraph}
-\end{figure}
 
 \newpage
 
@@ -1694,6 +1719,20 @@ shall refer to a random distribution component
 
 \end{itemize}
 
+\subsubsection{unit}
+%
+\begin{lstlisting}
+<unit>
+\end{lstlisting}
+
+This tag needs to be documented by Anatoly
+
+\subsubsection{scalar}
+%
+\begin{lstlisting}
+<scalar>
+\end{lstlisting}
+
 \newpage
 
 \section{Structure of a NineML Description}
@@ -1772,9 +1811,8 @@ An example model of an Izhikevich model is given:
 </NineML>
 \end{lstlisting}
 
-
-
 \noindent
+%
 This \ComponentClass has a single \Regime, $subthresholdRegime$ and two
 \StateVariables, $U$ \& $V$.
 
