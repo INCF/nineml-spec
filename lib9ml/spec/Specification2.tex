@@ -142,7 +142,7 @@ float=tbfh}
 \vspace{0.5cm}
 \noindent{\large INCF Task Force on Multi-Scale Modeling}\\
 \vspace{0.5cm}
-\noindent{\large Version: 0.99-1}
+\noindent{\large Version: 0.99-2}
 \end{center}
 
 \vspace*{0.75cm}
@@ -206,6 +206,12 @@ progress and your comments and feedbacks will be extremely valuable.
 
 \newpage
 \vskip 1in
+
+\paragraph{Changes from version 0.99-1:}
+\begin{itemize}
+\item Added object definition tables in the abstraction layer section   (Ivan Raikov)
+\end{itemize}
+
 \paragraph{Changes from version 0.99:}
 \begin{itemize}
 \item Reorganization of the document based on discussion during the documentation meeting:
@@ -416,6 +422,27 @@ A \ComponentClass is the subject of interaction with the User Layer and is compo
 
 \subsection{Dynamics}
 
+
+\begin{table}[htb]
+\center
+\begin{tabular}{|c|}
+\hline
+\hline
+Dynamics \\
+\hline \\
+\colorbox{issuecolor}{\parbox{0.4\linewidth}
+{\center Set of {\tt StateVariable} objects}} \\
+\hline
+\colorbox{issuecolor}{\parbox{0.4\linewidth}
+{\center Set of {\tt Regime} objects}} \\
+\hline
+\colorbox{issuecolor}{\parbox{0.4\linewidth}
+{\center Set of {\tt Alias} objects}} \\
+\hline
+\end{tabular}
+\end{table}
+
+
 The \Dynamics block represents the \emph{internal} mechanisms
 governing the behaviour of the component.  For most of the models
 these dynamics are non-linear, presenting transitions between
@@ -459,6 +486,23 @@ these regimes, and the state variables will evolve accordingly.
 \subsubsection{StateVariable}
 \label{state-var}
 
+
+\begin{table}[htb]
+\center
+\begin{tabular}{|c|}
+\hline
+\hline
+StateVariable \\
+\hline
+\hline
+{\em name}: {\tt String} \\
+\hline
+{\em dimension}: {\tt Dimension} \\
+\hline
+\end{tabular}
+\end{table}
+
+
 The internal state of a component is defined by a set of \StateVariable
 -- variables that can change either continuously or discontinuously as a
 function of time.
@@ -478,6 +522,30 @@ $X = X + 1$.
 
 \subsubsection{Regime}
 \label{regime}
+
+
+\begin{table}[htb]
+\center
+\begin{tabular}{|c|}
+\hline
+\hline
+Regime \\
+\hline
+\hline
+{\em name}: {\tt String} \\
+\hline
+\colorbox{issuecolor}{\parbox{0.4\linewidth}
+{\center Set of {\tt TimeDerivative} objects}} \\
+\hline
+\colorbox{issuecolor}{\parbox{0.4\linewidth}
+{\center Set of {\tt OnCondition} objects}} \\
+\hline
+\colorbox{issuecolor}{\parbox{0.4\linewidth}
+{\center Set of {\tt OnEvent} objects}} \\
+\hline
+\end{tabular}
+\end{table}
+
 
 A \nmlClass{Regime} is defined in NineML as a system of ODEs in time
 on \StateVariable.  As such, \Regime defines how the \StateVariables
@@ -500,7 +568,7 @@ variables (type=send), or consume state variables published from elsewhere
 of \nmlClass{StateVariable}s and their propagators in a \Regime.
 \end{itemize}
 
-\note{If a \textbf{TimeDerivative} for a \StateVariable is not defined
+\note{If a nmlClass{TimeDerivative} for a \StateVariable is not defined
 in a \Regime, it is assumed to be zero.}
 
 It is important to note that, at the current stage of development, we are only
@@ -508,18 +576,39 @@ considering "Temporal regimes". In the next version, we will extend the concept
 to the more general case where the independent variable can be anything (space
 for example)
 
-\subsubsection{Condition}
+\subsubsection{OnCondition}
 
-\nmlClass{Condition}s are the mathematical expressions which define
+
+\begin{table}[htb]
+\center
+\begin{tabular}{|c|}
+\hline
+\hline
+OnCondition \\
+\hline
+\hline
+{\em trigger}: {\tt Trigger} \\
+\hline
+\colorbox{issuecolor}{\parbox{0.4\linewidth}
+{\center Set of {\tt StateAssingment} objects}} \\
+\hline
+\colorbox{issuecolor}{\parbox{0.4\linewidth}
+{\center Set of {\tt EventOut} objects}} \\
+\hline
+\end{tabular}
+\end{table}
+
+
+\nmlClass{OnCondition}s are the mathematical expressions which define
 when a \nmlClass{Transition} should be triggered.
-\nmlClass{Condition}s are any arbitrary combination of \emph{Logical
+\nmlClass{OnCondition}s are any arbitrary combination of \emph{Logical
 Operations} (and, or, noop, etc.) on the
 result of any arbitrary combination of \emph{Relational Operations}
 ($>$,$<$,$==$,$<=$,$>=$, etc.) on
 \nmlClass{StateVariable}s. At any given time in the \nmlClass{Regime},
-the \nmlClass{Condition} expression then evaluates to True or False
+the \nmlClass{OnCondition} expression then evaluates to True or False
 {\tt Boolean} result. For example, the following are valid
-\nmlClass{Condition}s
+\nmlClass{OnCondition}s
 
 \begin{verbatim}
 x>10
@@ -528,14 +617,29 @@ x>exp(-cos(y)) | y<sin(t)+5
 x==15
 \end{verbatim}
 
-A \nmlClass{Condition} which persistently evaluates to True
-violates the definition that \nmlClass{Transition}s should have vanishing
-temporal extent, and the behaviour for this case is undefined, but
-it would be preferable for the implementation to produce an error
-message to the user.
+A \nmlClass{OnCondition} which persistently evaluates to True violates
+the definition that \nmlClass{Transition}s should have vanishing
+temporal extent, and the behaviour for this case is undefined, but it
+would be preferable for the implementation to produce an error message
+to the user.
 
 \subsubsection{Transition}
 \label{transition}
+
+\begin{table}[htb]
+\center
+\begin{tabular}{|c|}
+\hline
+\hline
+Transition \\
+\hline
+\hline
+{\em source}: {\tt Regime} \\
+\hline
+{\em target}: {\tt Regime} \\
+\hline
+\end{tabular}
+\end{table}
 
 Movement between several instances of \Regime happens via \Transition.
 A \nmlClass{Transition} is defined in NineML as having
@@ -628,20 +732,39 @@ can be used for example to signal action potentials firing.
 \subsubsection{Parameter}
 \label{parameters}
 
+
+\begin{table}[htb]
+\center
+\begin{tabular}{|c|}
+\hline
+\hline
+Parameter \\
+\hline
+\hline
+{\em name}: {\tt String} \\
+\hline
+{\em dimension}: {\tt Dimension} \\
+\hline
+\end{tabular}
+\end{table}
+
+
 Parameters correspond to a placeholder for a numerical value with
 dimension (special degenerate {\tt Dimension} exists for dimensionless
-parameters, see section~\ref{dimensions}). It defines particular aspects
-of the model, such as
-the firing threshold, reset voltage, the decay time constant of a
-synapse model.  The instantiation of Parameters at the Abstraction
-Layer level allow us to define the dynamics of a general \ComponentClass.
-It is then possible to instantiate several variant of this \ComponentClass by attributing different values for the \Parameters, in the User Layer.
-For example, if we are building an integrate-and-fire neuron, we can
-specify that the Reset-Voltage and the Firing-Threshold are
-parameters, write our dynamics in terms of these parameters, then use
-the User Layer to provide parameters to create different neurons. By
-definition, Parameters are set at the start of the simulation, and
-remain constant throughout.
+
+parameters, see section~\ref{dimensions}). It defines particular
+aspects of the model, such as the firing threshold, reset voltage, the
+decay time constant of a synapse model.  The instantiation of
+Parameters at the Abstraction Layer level allow us to define the
+dynamics of a general component.  It is then possible to instantiate
+several variant of this component by attributing different values for
+the \Parameters, in the User Layer.  For example, if we are building
+an integrate-and-fire neuron, we can specify that the Reset-Voltage
+and the Firing-Threshold are parameters, write our dynamics in terms
+of these parameters, then use the User Layer to provide parameters to
+create different neurons. By definition, Parameters are set at the
+start of the simulation, and remain constant throughout.
+
 
 \subsubsection{Port}
 \label{port}
@@ -651,6 +774,27 @@ There are two sub-classes of \nmlClass{Port} objects: \nmlClass{AnalogPort}
 and \nmlClass{EventPort}, and each can have different modes.
 
 \paragraph{AnalogPort}
+
+
+\begin{table}[htb]
+\center
+\begin{tabular}{|c|}
+\hline
+\hline
+AnalogPort \\
+\hline
+\hline
+{\em name}: {\tt String} \\
+\hline
+{\em mode}: {\tt PortMode} \\
+\hline
+{\em dimension}: {\tt Dimension} \\
+\hline
+{\em reduce\_op}: {\tt ArithOp} option \\
+\hline
+\end{tabular}
+\end{table}
+
 
 AnalogPorts transmit and receive continuous values, either \Alias
 or \StateVariable. \AnalogPort can have 3 modes:
@@ -678,6 +822,23 @@ to change our original \ComponentClass definitions.
 \end{itemize}
 
 \paragraph{EventPort}
+
+\begin{table}[htb]
+\center
+\begin{tabular}{|c|}
+\hline
+\hline
+EventPort \\
+\hline
+\hline
+{\em name}: {\tt String} \\
+\hline
+{\em mode}: {\tt PortMode} \\
+\hline
+{\em dimension}: {\tt Dimension} \\
+\hline
+\end{tabular}
+\end{table}
 
 Event ports transmit discrete events. They are useful for example in
 simulation of integrate-and-fire neurons to notify \ComponentClasses about neuron's
