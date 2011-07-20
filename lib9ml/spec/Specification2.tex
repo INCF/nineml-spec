@@ -441,12 +441,22 @@ plasticity, ...)
 
 \subsection{ComponentClass}
 
-\begin{figure}[htb!]
+
+\begin{table}[htb]
 \center
-\includegraphics[width=8cm]{figures/component_simple.pdf}
-\protect\caption{ComponentClass Overview (Simple)}
-\label{fig:EX1_RegimeGraph}
-\end{figure}
+\begin{tabular}{|c|}
+\hline
+\hline
+ComponentClass \\
+\hline \\
+\colorbox{issuecolor}{\parbox{0.4\linewidth}
+{\center {\tt Dynamics} object}} \\
+\hline
+\colorbox{issuecolor}{\parbox{0.4\linewidth}
+{\center {\tt Interface} object}} \\
+\hline
+\end{tabular}
+\end{table}
 
 
 The main building block of the Object Model is the \ComponentClass.
@@ -454,6 +464,13 @@ The \ComponentClass object is intended to package together a collection of objec
 All equations and event declarations that are part of particular entity model, such as neuron model for instance, belong in a single \ComponentClass.
 A \ComponentClass can be used to either a specific model of neuron or a composite model, including synaptic mechanisms (as in the second example provided in the Appendix for example) as long as the algebra is correct.
 A \ComponentClass is the subject of interaction with the User Layer and is composed of a \Dynamics block and \Interfaces to communicate between each other, as shown in figure 1.
+
+\begin{figure}[htb!]
+\center
+\includegraphics[width=8cm]{figures/component_simple.pdf}
+\protect\caption{ComponentClass Overview (Simple)}
+\label{fig:EX1_RegimeGraph}
+\end{figure}
 
 \subsection{Dynamics}
 
@@ -714,6 +731,22 @@ triggers the \nmlClass{Transition}
 
 \subsubsection{Aliases}
 \label{alias}
+
+
+\begin{table}[htb]
+\center
+\begin{tabular}{|c|}
+\hline
+\hline
+Alias \\
+\hline
+\hline
+{\em name}: {\tt String} \\
+\hline
+{\em rhs}: {\tt MathInline} \\
+\hline
+\end{tabular}
+\end{table}
 
 An alias corresponds to an intermediate variable allowing to store an
 information and to reuse it at different places in the definition of
