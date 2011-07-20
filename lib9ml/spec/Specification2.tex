@@ -142,7 +142,7 @@ float=tbfh}
 \vspace{0.5cm}
 \noindent{\large INCF Task Force on Multi-Scale Modeling}\\
 \vspace{0.5cm}
-\noindent{\large Version: 0.99-2}
+\noindent{\large Version: 0.99-4}
 \end{center}
 
 \vspace*{0.75cm}
@@ -206,6 +206,12 @@ progress and your comments and feedbacks will be extremely valuable.
 
 \newpage
 \vskip 1in
+\paragraph{Changes from version 0.99-3:}
+\begin{itemize}
+\item Added object definition tables to Interface, ComponentClass, and
+  Alias sections (Ivan Raikov)
+\end{itemize}
+
 \paragraph{Changes from version 0.99-2:}
 \begin{itemize}
 \item Add text from Robert on the Unit and Dimension. Modified it to be compatible with the current agreement about the UL tags.
@@ -642,7 +648,7 @@ OnCondition \\
 {\em trigger}: {\tt Trigger} \\
 \hline
 \colorbox{issuecolor}{\parbox{0.4\linewidth}
-{\center Set of {\tt StateAssingment} objects}} \\
+{\center Set of {\tt StateAssignment} objects}} \\
 \hline
 \colorbox{issuecolor}{\parbox{0.4\linewidth}
 {\center Set of {\tt EventOut} objects}} \\
@@ -783,6 +789,23 @@ transmitting a current, for example $i=g*(E-V)$.
 \Regime. This means that aliases are the same across all regimes.}
 
 \subsection{Interfaces}
+
+\begin{table}[htb]
+\center
+\begin{tabular}{|c|}
+\hline
+\hline
+Interface \\
+\hline
+\colorbox{issuecolor}{\parbox{0.4\linewidth}
+{\center Set of {\tt Parameter} objects}} \\
+\hline
+\colorbox{issuecolor}{\parbox{0.4\linewidth}
+{\center Set of {\tt Port} objects}} \\
+\hline
+\end{tabular}
+\end{table}
+
 
 The interface is the \emph{external} view of the \ComponentClass that defines
 what inputs and outputs the component exposes to other \ComponentClasses and the
