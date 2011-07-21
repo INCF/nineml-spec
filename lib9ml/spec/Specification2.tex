@@ -154,15 +154,15 @@ float=tbfh}
 \noindent{\Large
 
 {\bf Editors: }
-\noindent 
+\noindent
 \begin{itemize}
 \begin{small}
-\item Anatoli Gorchetchnikov,     
+\item Anatoli Gorchetchnikov,
 \item Ivan Raikov,
 \item Mike Hull,
 \item Yann Le Franc
 \end{small}
-\end{itemize} 
+\end{itemize}
 
 \noindent
 \begin{footnotesize}
@@ -214,19 +214,22 @@ progress and your comments and feedbacks will be extremely valuable.
 
 \paragraph{Changes from version 0.99-2:}
 \begin{itemize}
-\item Add text from Robert on the Unit and Dimension. Modified it to be compatible with the current agreement about the UL tags.
+\item Add text from Robert on the Unit and Dimension. Modified it to be
+compatible with the current agreement about the UL tags.
 \item Added placeholder for the unit and scalar tags in the UL
 \item Removed the summary figure
 \end{itemize}
 
 \paragraph{Changes from version 0.99-1:}
 \begin{itemize}
-\item Added object definition tables in the abstraction layer section   (Ivan Raikov)
+\item Added object definition tables in the abstraction layer section
+(Ivan Raikov)
 \end{itemize}
 
 \paragraph{Changes from version 0.99:}
 \begin{itemize}
-\item Reorganization of the document based on discussion during the documentation meeting:
+\item Reorganization of the document based on discussion during the documentation
+meeting:
 \item Adding section Units and Dimension contributed by Robert
 \item Removing Appendix D Datatypes and move Quantity to the User Layer section
 \item Modification of the ComponentClass definition
@@ -312,7 +315,8 @@ level
 The increasing number of studies related to neuronal network modeling
 and the diversity of the simulation platforms and implementations
 cause a major issue for model sharing, replicability and reusability
-of either complete models or parts of models. To overcome this problem, we are proposing a
+of either complete models or parts of models. To overcome this problem,
+we are proposing a
 common description language to be used for exchanging models and being
 able to simulate them in any simulation platform.
 
@@ -331,7 +335,9 @@ succinct and unambiguous description of computational neuroscience models of
 networks of spiking neurons.
 
 NineML is intended to describe the network architecture, parameters
-and equations that govern the dynamics of a spiking neurons network, without taking into account model implementation detail such as numerical integration method.
+and equations that govern the dynamics of a spiking neurons network, without
+taking into account model implementation detail such as numerical integration
+method.
 
 At the current stage of development, the following concepts of spiking neuron
 network modeling can be fully or partially described:
@@ -360,8 +366,8 @@ provide only the information necessary for any given simulator
 to instantiate the network models in a simulator agnostic way.
 For example, NineML should specify the neuron membrane equation to solve,
 but not how to solve it.  In addition, for implementation and performance
-reasons, it is important to keep the language layer ``close'' to the simulator –
-such that the language layer is not responsible for maintaining separate
+reasons, it is important to keep the language layer ``close'' to the simulator
+-- such that the language layer is not responsible for maintaining separate
 representations of all the instantiated elements in the network.
 
 A NineML object model representation can take multiple forms.  A
@@ -405,11 +411,18 @@ It is important to note that the NineML XML schema is isomorphic to the NineML
 object model.
 
 \section{Units and Dimensions in NineML}
+\label{dimensions}
 
 \noindent
-Each specification of a parameter or a state variable in the definition of a class of component must state its dimension. A dimension declaration associates a name with values for the powers for each of seven SI base units: length, l; mass, m; time t; electric current i; temperature T; luminouse intensity L and ammount of substance, n. 
-For example, acceleration has dimension $lt^{-2}$ and voltage is $ml^2t^3i^{-1}$.  
-Dimensions can be declared at the top level of a NineML file with the "Dimension" element with attributes for each of the base dimensions, eg:
+Each specification of a parameter or a state variable in the definition of
+a class of component must state its dimension. A dimension declaration
+associates a name with values for the powers for each of seven SI base
+units: length, l; mass, m; time t; electric current i; temperature T;
+luminous intensity L and amount of substance, n.
+For example, acceleration has dimension $lt^{-2}$ and voltage is
+$ml^2t^3i^{-1}$.
+Dimensions can be declared at the top level of a NineML file with
+the "Dimension" element with attributes for each of the base dimensions, e.g. :
 
 \begin{lstlisting}[frame=none]
 <Dimension name="voltage" m="1" l="2" t="3" i="-1"/>
@@ -418,14 +431,21 @@ Dimensions can be declared at the top level of a NineML file with the "Dimension
 \noindent
 Exponents that are zero do not need stating explicitly.
 
-Each dimension can give rise to a family of unit declarations, each of which has the same dimensionality but a different multiplier. For example, typical units for a quantity with dimensionality voltage include milliVolts (multiplier = $10^{-3}$), microVolts (multiplier = $10^{-6}$) and Volts (multiplier = 1). Units can be expressed in a NineML file with the "Units" element containing the symbol, a reference to the dimension, and the numerical value of the multiplier, as in:
+Each dimension can give rise to a family of unit declarations, each of
+which has the same dimensionality but a different multiplier. For example,
+typical units for a quantity with dimensionality voltage include
+milliVolts (multiplier = $10^{-3}$), microVolts (multiplier = $10^{-6}$)
+and Volts (multiplier = 1). Units can be expressed in a NineML file with
+the "Units" element containing the symbol, a reference to the dimension,
+and the numerical value of the multiplier, as in:
 
 \begin{lstlisting}[frame=none]
 <Unit name="milliVolt" symbol="mV" multiplier="0.001"/>
 \end{lstlisting}
 
 
-To express a dimensional quantity both a numerical factor and a unit are required. These can be  expressed in the User Layer, as follows: 
+To express a dimensional quantity both a numerical factor and a unit are
+required. These can be  expressed in the User Layer, as follows:
 
 \begin{lstlisting}[frame=none]
 <Quantity>
@@ -433,16 +453,25 @@ To express a dimensional quantity both a numerical factor and a unit are require
 		<scalar>-40</scalar>
 		<unit>mV</unit>
 	</value>
-</Quantity> 
+</Quantity>
 \end{lstlisting}
 
-Except where physical constants are required, abstraction layer definitions generally only contain references to dimensions and are independent of any particular choice of units. Conversely, the user layer only refers to units, and such references only occur on the right hand side of parameter assignments. Internally, dimensional quantities are to be understood as rich types with a numerical factor and exponents for each of the base dimensions. They are independent of the particular choice of units by which they are assigned.
+Except where physical constants are required, abstraction layer definitions
+generally only contain references to dimensions and are independent of any
+particular choice of units. Conversely, the user layer only refers to units,
+and such references only occur on the right hand side of parameter
+assignments. Internally, dimensional quantities are to be understood
+as rich types with a numerical factor and exponents for each of the
+base dimensions. They are independent of the particular choice of
+units by which they are assigned.
 
 \section{Abstraction Layer: Core Concepts }
 \label{AbstractionL}
 
 The Abstraction Layer aims at providing general concepts to represent the
-mathematical entities (functions, differential equations, event handling,...) defining the dynamics of the different types of models composing a network (neuron models, synapse models, synaptic/intrinsic
+mathematical entities (functions, differential equations, event handling,...)
+defining the dynamics of the different types of models composing a network
+(neuron models, synapse models, synaptic/intrinsic
 plasticity, ...)
 
 \subsection{ComponentClass}
@@ -466,10 +495,17 @@ ComponentClass \\
 
 
 The main building block of the Object Model is the \ComponentClass.
-The \ComponentClass object is intended to package together a collection of objects that relate to the definition of a model (cells, synapses, synaptic plasticity rules, random spike trains, inputs, ...). 
-All equations and event declarations that are part of particular entity model, such as neuron model for instance, belong in a single \ComponentClass.
-A \ComponentClass can be used to either a specific model of neuron or a composite model, including synaptic mechanisms (as in the second example provided in the Appendix for example) as long as the algebra is correct.
-A \ComponentClass is the subject of interaction with the User Layer and is composed of a \Dynamics block and \Interfaces to communicate between each other, as shown in figure 1.
+The \ComponentClass object is intended to package together a collection of
+objects that relate to the definition of a model (cells, synapses, synaptic
+plasticity rules, random spike trains, inputs, ...).
+All equations and event declarations that are part of particular entity
+model, such as neuron model for instance, belong in a single \ComponentClass.
+A \ComponentClass can be used to either a specific model of neuron or a
+composite model, including synaptic mechanisms (as in the second example
+provided in the Appendix for example) as long as the algebra is correct.
+A \ComponentClass is the subject of interaction with the User Layer and
+is composed of a \Dynamics block and \Interfaces to communicate between
+each other, as shown in figure~\ref{fig:EX1_RegimeGraph}.
 
 \begin{figure}[htb!]
 \center
@@ -756,14 +792,14 @@ Alias \\
 
 An alias corresponds to an intermediate variable allowing to store an
 information and to reuse it at different places in the definition of
-the dynamics. 
+the dynamics.
 
 \textbf{Aliases} are motivated from two problems:
 
 \begin{itemize}
-\item {\bf substitution}: rather than writing long expressions for functions of \StateVariable,
-we can define an \Alias once. For example, we can define chains of
-\Aliases:
+\item {\bf substitution}: rather than writing long expressions for functions of
+\StateVariable, we can define an \Alias once. For example, we can define chains
+of \Aliases:
 %
 \begin{quote}{\ttfamily \raggedright \noindent
 m\_alpha~=~(alphaA~+~alphaB*V)~/~(~alphaC~+~exp((alphaD+V/alphaE))~)\\
@@ -779,7 +815,9 @@ alias definitions. There is no reason we couldn't expand our $dm/dt$
 description out to eliminate these intermediate \Aliases, but the expression
 would be very long and difficult to read.
 
-\item {\bf Accessing intermediate variable}: if we would like to communicate a value other than a simple \StateVariable to another \ComponentClass. For example, if we have a component representing a
+\item {\bf Accessing intermediate variable}: if we would like to communicate a
+value other than a simple \StateVariable to another \ComponentClass. For
+example, if we have a component representing a
 neuron, which has an internal \StateVariable, 'V', we may be interested in
 transmitting a current, for example $i=g*(E-V)$.
 
@@ -1012,9 +1050,9 @@ that implements the same mathematics.
 \label{quantity}
 
 Quantity is a compound data type object that encapsulates a numerical value
-and a unit of measurements. Unit has to be of one of the {\tt Dimension} type.
+and a unit of measurements. Unit has to be of one of the {\tt Unit} type.
 Any numeric quantity in the language (except counters) has to be of this type,
-dimensionless quantities shall use predefined empty {\tt Dimension}.
+dimensionless quantities shall use predefined empty {\tt Unit}.
 
 \begin{table}[htb]
 \center
@@ -1024,7 +1062,7 @@ dimensionless quantities shall use predefined empty {\tt Dimension}.
 Quantity \\
 \hline
 \hline
-{\em unit}: {\tt Dimension} \\
+{\em unit}: {\tt Unit} \\
 \hline
 {\em value}: \{{\tt Number}$|${\tt Function}$|$%
 {\tt Component->Random Distribution}\} \\
@@ -1652,10 +1690,7 @@ This tag contains a User Layer component description.
 \begin{itemize}
 \item \verb|<definition>| {[}1{]} or \verb|<reference>| {[}1{]} Either one
 of the two is required
-\item \verb|<properties>|{[}0-1{]}
-\item \verb|<currents>|{[}0-1{]}  This allows an addition of arbitrary currents
-to
-neuronal component, for example injection currents.
+\item \verb|<property>|{[}0+{]}
 \item \verb|<note>| {[}0-1{]}
 \end{itemize}
 
@@ -1685,10 +1720,10 @@ Layer definition or simulator-specific definition.
 
 \end{itemize}
 
-\subsubsection{Properties}
+\subsubsection{Property}
 %
 \begin{lstlisting}
-<properties>
+<property>
 \end{lstlisting}
 
 This tag specifies a list of properties in the interface of the component
@@ -1699,7 +1734,7 @@ This tag specifies a list of properties in the interface of the component
 \item Child Elements:
 %
 \begin{itemize}
-\item \verb|<quantity>| {[}0+{]}
+\item \verb|<quantity>| {[}0-1{]}
 \end{itemize}
 
 \issue{Some other data types can be used too, do we use any in this release?
@@ -1775,19 +1810,53 @@ shall refer to a random distribution component
 
 \end{itemize}
 
-\subsubsection{unit}
+\subsubsection{Reference}
+%
+\begin{lstlisting}
+<reference>
+\end{lstlisting}
+
+This tag specifies acomponent already defined in the model through
+\verb|<definition>| tag to allow quick reuse of components
+
+\begin{itemize}
+\item Attributes: \texttt{None}
+
+\item Child Elements: \texttt{None}
+
+\end{itemize}
+
+\subsubsection{Unit}
 %
 \begin{lstlisting}
 <unit>
 \end{lstlisting}
 
-This tag needs to be documented by Anatoly
+This tag specifies a unit of measurements for a parent numeric value
+through a link to a definition of Unit as discussed in
+section~\ref{dimensions}
 
-\subsubsection{scalar}
+\begin{itemize}
+\item Attributes: \texttt{None}
+
+\item Child Elements: \texttt{None}
+
+\end{itemize}
+
+\subsubsection{Scalar}
+
+This tag specifies a scalar numeric value for its parent.
 %
 \begin{lstlisting}
 <scalar>
 \end{lstlisting}
+
+\begin{itemize}
+\item Attributes: \texttt{None}
+
+\item Child Elements: \texttt{None}
+
+\end{itemize}
 
 \newpage
 
@@ -1929,12 +1998,14 @@ In this example, we build a representation of a integrate-and-fire neuron, with
 an attached input synapse.
 
 We have a single \StateVariable, $iaf\_V$.
-This time, the neuron has an absolute refractory period; which is implemented by using 2 regimes. $RegularRegime$ \& $RefractoryRegime$
+This time, the neuron has an absolute refractory period; which is implemented
+by using 2 regimes. $RegularRegime$ \& $RefractoryRegime$
 In $RegularRegime$, the neuron voltage evolves as:
 \begin{eqnarray}
 \frac{d(iaf\_V)}{dt} = \frac{ iaf\_gl*( iaf\_vrest - iaf\_V ) + iaf\_ISyn+cobaExcit\_I} {iaf\_cm}
 \end{eqnarray}
-In $RefractoryRegime$, the neuron voltage does not change in response to any input:
+In $RefractoryRegime$, the neuron voltage does not change in response to any
+input:
 
 \begin{eqnarray}
 \frac{d(iaf\_V)}{dt} = 0
@@ -1945,15 +2016,22 @@ In both Regimes, the synapses dynamics evolve as:
 \frac{d(cobaExcit\_g)}{dt} = - \frac{cobaExcit\_g}{cobaExcit\_tau}
 \end{eqnarray}
 
-The neuron has 2 \EventPorts, $iaf\_spikeoutput$ is a send port, which sends events when the neuron fires, and $cobaExcit\_spikeinput$ is a recv port, which tells the attached synapse that it should 'fire'.
+The neuron has 2 \EventPorts, $iaf\_spikeoutput$ is a send port, which sends
+events when the neuron fires, and $cobaExcit\_spikeinput$ is a recv port,
+which tells the attached synapse that it should `fire'.
 
 
 The neuron has 4 \Transitions, 2 \OnEvents  and 2 \OnConditions.
-Two of the Transitions are triggered by $cobaExcit\_spikeinput$ events, which cause the conductance of the synapse to increase by an amount $q$, These happen in both Regimes.
+Two of the Transitions are triggered by $cobaExcit\_spikeinput$ events, which
+cause the conductance of the synapse to increase by an amount $q$, These
+happen in both Regimes.
 The other \OnConditions:
 \begin{itemize}
-\item One is triggered the voltage being above threshold, which moves the component from $RegularRegime$ to $RefractoryRegime$, sets V to the reset-voltage also emits a spike
-\item The other is triggered by enough time having passed for the component to come out of the $RefractoryRegime$ and move back to the $RegularRegime$
+\item One is triggered the voltage being above threshold, which moves the
+component from $RegularRegime$ to $RefractoryRegime$, sets V to the
+reset-voltage also emits a spike
+\item The other is triggered by enough time having passed for the component
+to come out of the $RefractoryRegime$ and move back to the $RegularRegime$
 \end{itemize}
 
 
