@@ -167,18 +167,20 @@ float=tbfh}
 
 
 \begin{footnotesize}
-\noindent Acknowledgments: We would like to thank the Task Force members for their comments on this document and in particular\\P. Gleeson, E. Muller, A. Davison, R. Cannon, Birgit Kriener, Subhasis Ray and S. Hill.
+\noindent Acknowledgments: We would like to thank the Task Force members for their
+comments on this document and in particular\\P. Gleeson, E. Muller, A. Davison,
+R. Cannon, Birgit Kriener, Subhasis Ray and S. Hill.
 \end{footnotesize}
 
 \vspace*{0.3cm}
 
-\noindent 
+\noindent
 \begin{Large}
 This document is under the Common Creative license BY-NC-SA:
 
 \noindent
 http://creativecommons.org/licenses/by-nc-sa/3.0/
-\end{Large} 
+\end{Large}
 
 \vspace*{0.3cm}
 
@@ -202,8 +204,9 @@ http://creativecommons.org/licenses/by-nc-sa/3.0/
 NineML is a simulator independent language with the aim of providing an
 unambiguous description of neuronal network models for efficient model sharing
 and reusability. This language emerges from a joint effort from experts in the
-field of Computational Neuroscience, simulator development and simulator-independent language initiatives (NeuroML, PyNN), coordinated and supported by International
-Neuroinformatics Coordinating Facility (INCF).
+field of Computational Neuroscience, simulator development and
+simulator-independent language initiatives (NeuroML, PyNN), coordinated and
+supported by International Neuroinformatics Coordinating Facility (INCF).
 
 This document provides the basis for understanding the Common Object
 Model, shared by the three NineML implementations, and the resulting XML
@@ -232,8 +235,10 @@ This description language, using the XML technology, is based on a
 common Object Model describing the different elements of network
 models. This work, initiated and supported by the International
 Neuroinformatics Coordinating Facility as part of the Multiscale
-Program, involve Computational Neuroscientists, simulator developers and developers of simulator-independent language (NeuroML, PyNN).  The name of the proposed language is NineML
-(Network Interchange for Neuroscience Modeling Language).
+Program, involve Computational Neuroscientists, simulator developers and
+developers of simulator-independent language (NeuroML, PyNN).  The name of the
+proposed language is NineML (Network Interchange for Neuroscience Modeling
+Language).
 
 \subsection{Scope}
 
@@ -290,10 +295,10 @@ object model.
 
 The design of NineML is divided into two semantic layers:
 \begin {enumerate}
-\item An \bf{Abstraction Layer} that provides the core concepts and
+\item An {\bf Abstraction Layer} that provides the core concepts and
 mathematical descriptions with which model variables and state update
 rules are explicitly described in {\em parametrized} form, and
-\item A \bf{User Layer} that provides a syntax to specify the
+\item A {\bf User Layer} that provides a syntax to specify the
 instantiation and the value of parameters of all these components of a network
 model.
 \end {enumerate}
@@ -330,17 +335,21 @@ luminous intensity L and amount of substance, n.
 For example, acceleration has dimension $lt^{-2}$ and voltage is
 $ml^2t^3i^{-1}$.
 Dimensions can be declared at the top level of a NineML file with
-the "Dimension" element with attributes for each of the base dimensions or imported from a specific XML file, describing a set of dimensions
+the "Dimension" element with attributes for each of the base dimensions or
+imported from a specific XML file, describing a set of dimensions.
 
 Each dimension can give rise to a family of unit declarations, each of
 which has the same dimensionality but a different multiplier. For example,
 typical units for a quantity with dimensionality voltage include
 milliVolts (multiplier = $10^{-3}$), microVolts (multiplier = $10^{-6}$)
-and Volts (multiplier = 1).  To express a dimensional quantity both a numerical factor and a unit are required. Units can be expressed in a NineML file with the "unit" element, defined at the User Layer level or imported from a specific XML file, describing a set of units.
+and Volts (multiplier = 1).  To express a dimensional quantity both a
+numerical factor and a unit are required. Units can be expressed in a NineML
+file with the "unit" element, defined at the User Layer level or imported
+from a specific XML file, describing a set of units.
 
 Except where physical constants are required, abstraction layer definitions
 generally only contain references to dimensions and are independent of any
-particular choice of units. Conversely, the user layer only refers to units. 
+particular choice of units. Conversely, the user layer only refers to units.
 Internally, dimensional quantities are to be understood
 as rich types with a numerical factor and exponents for each of the
 base dimensions. They are independent of the particular choice of
@@ -384,8 +393,11 @@ model, such as neuron model for instance, belong in a single \ComponentClass.
 A \ComponentClass can be used to represent either a specific model of neuron or a
 composite model, including synaptic mechanisms (as in the second example
 provided in the Appendix for example) as long as the algebra is correct.
-A \ComponentClass is composed of a \Dynamics block and \Interfaces, as shown in Figure 1.
-The \Dynamic block represent the internal dynamic of the model while the \Interface block allows the \ComponentClass to communicate with other instantiations of the \ComponentClass and with the User Layer.
+A \ComponentClass is composed of a \Dynamics block and \Interfaces, as shown
+in Figure~\ref{fig:EX1_RegimeGraph}. The \Dynamic block represent the internal
+dynamic of the model while the \Interface block allows the \ComponentClass to
+communicate with other instantiations of the \ComponentClass and with the User
+Layer.
 
 \begin{figure}[htb!]
 \center
@@ -420,7 +432,7 @@ Dynamics \\
 The \Dynamics block represents the \emph{internal} mechanisms
 governing the behaviour of the component.  For most of the models
 these dynamics are non-linear, presenting transitions between
-different regimes at particular values of one or different \StateVariables.  
+different regimes at particular values of one or different \StateVariables.
 To create a representation that include both simple
 dynamics and non-linear dynamics, the \Dynamics block can contains the
 following concepts:
@@ -428,7 +440,7 @@ following concepts:
 \begin{itemize}
 \item \StateVariable (section~\ref{state-var})
 \item \Regime (section~\ref{regime}) that describe the dynamics of the
-system for a particular doamine of \StateVariable
+system for a particular domain of \StateVariable
 \item \Transition (section~\ref{transition}) that links two
 regimes: the Source \Regime and the Target \Regime, and can be triggered by
 an event or a condition. If a component is in the Source \Regime, and the
@@ -478,8 +490,6 @@ StateVariable \\
 \hline
 \end{tabular}
 \end{table}
-
-
 
 The \StateVariable changes happen in two ways:
 %
@@ -546,7 +556,8 @@ of \nmlClass{StateVariable}s and their propagators in a \Regime.
 in a \Regime, it is assumed to be zero.}
 
 It is important to note that, at the current stage of development, we are only
-considering "Temporal regimes". In the future, the concept could be extended to more general cases where the independent variable can be anything (space
+considering "Temporal regimes". In the future, the concept could be extended
+to more general cases where the independent variable can be anything (space
 for example)
 
 \subsubsection{OnCondition}
@@ -727,8 +738,9 @@ parameters that can be set for the \ComponentClass. The interface consists of
 instances of \Port (section~\ref{port}) and \Parameter
 (section~\ref{parameters}).
 
-As well as being able to specify the communication of continuous values, \ComponentClasses are also
-able to specify the emission and the reception of \Events. Events are discrete notifications
+As well as being able to specify the communication of continuous values,
+\ComponentClasses are also able to specify the emission and the reception
+of \Events. Events are discrete notifications
 that are transmitted over \EventPorts (section~\ref{port}). Since
 \EventPorts have names, saying that we transmit `event1' for example
 would mean transmitting an event on the EventPort called `event1'. Events
@@ -738,7 +750,7 @@ can be used for example to signal action potentials firing.
 \label{parameters}
 
 Parameters correspond to a placeholder for a numerical value with
-dimension (this value can also be defined as dimensionless). 
+dimension (this value can also be defined as dimensionless).
 
 \begin{table}[htb]
 \center
@@ -755,7 +767,8 @@ Parameter \\
 \end{tabular}
 \end{table}
 
-It defines particular aspects of the model, such as the firing threshold, reset voltage, the
+It defines particular aspects of the model, such as the firing threshold,
+reset voltage, the
 decay time constant of a synapse model.  The instantiation of
 Parameters at the Abstraction Layer level allow us to define the
 dynamics of a general component.  It is then possible to instantiate
@@ -771,7 +784,8 @@ start of the simulation, and remain constant throughout.
 \subsubsection{Port}
 \label{port}
 
-Ports allow instantiations of \ComponentClasses to communicate between each other during a simulation.
+Ports allow instantiations of \ComponentClasses to communicate between each
+other during a simulation.
 There are two sub-classes of \nmlClass{Port} objects: \nmlClass{AnalogPort}
 and \nmlClass{EventPort}, and each can have different modes.
 
@@ -966,7 +980,8 @@ definitions or MathML.
 \subsection{Property}
 
 Property is a User Layer object that instantiates values in simple
-Abstraction Layer \Parameter and combines described in the quantity object and a label. The label should match the corresponding label in the
+Abstraction Layer \Parameter and combines described in the quantity object
+and a label. The label should match the corresponding label in the
 Abstraction Layer \Parameter definition.
 
 \begin{table}[htb]
@@ -1690,7 +1705,7 @@ shall refer to a random distribution component
 <reference>
 \end{lstlisting}
 
-This tag specifies acomponent already defined in the model through
+This tag specifies a component already defined in the model through
 \verb|<definition>| tag to allow quick reuse of components
 
 \begin{itemize}
@@ -1745,7 +1760,7 @@ contains the syntax to import external files.
 
 \noindent
 In this first example, we are describing how to represent the Izhikevich model using the NineML Object Model, described above.
-The model is composed of simgle \ComponentClass, containing a single \Regime, $subthresholdRegime$ and two
+The model is composed of single \ComponentClass, containing a single \Regime, $subthresholdRegime$ and two
 \StateVariables, $U$ \& $V$.
 
 \noindent
