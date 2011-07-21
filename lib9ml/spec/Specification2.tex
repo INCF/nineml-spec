@@ -142,7 +142,7 @@ float=tbfh}
 \vspace{0.5cm}
 \noindent{\large INCF Task Force on Multi-Scale Modeling}\\
 \vspace{0.5cm}
-\noindent{\large Version: 0.99-4}
+\noindent{\large Version: 0.1}
 \end{center}
 
 \vspace*{0.75cm}
@@ -168,8 +168,13 @@ float=tbfh}
 \begin{footnotesize}
 Acknowledgments: We would like to thank the Task Force members for their
 comments on this document and in particular P. Gleeson, E. Muller, A. Davison,
-R. Cannon, S. Hill
+R. Cannon, , Birgit Kriener, Subhasis Ray and S. Hill
 \end{footnotesize}.
+
+\begin{figure}[htb!]
+\includegraphics{images/by-nc-sa.eu.png}
+\end{figure}
+This document is under the Common Creative license BY-NC-SA.
 
 \vspace*{0.5cm}
 
@@ -189,8 +194,7 @@ R. Cannon, S. Hill
 NineML is a simulator independent language with the aim of providing an
 unambiguous description of neuronal network models for efficient model sharing
 and reusability. This language emerges from a joint effort from experts in the
-field of Computational Neuroscience, simulator development and standardized
-language initiative (NeuroML), coordinated and supported by International
+field of Computational Neuroscience, simulator development and simulator-independent language initiatives (NeuroML, PyNN), coordinated and supported by International
 Neuroinformatics Coordinating Facility (INCF).
 
 This document provides the basis for understanding the Common Object
@@ -204,110 +208,6 @@ progress and your comments and feedbacks will be extremely valuable.
 \newpage
 \tableofcontents
 
-\newpage
-\vskip 1in
-\paragraph{Changes from version 0.99-3:}
-\begin{itemize}
-\item Added object definition tables to Interface, ComponentClass, and
-  Alias sections (Ivan Raikov)
-\end{itemize}
-
-\paragraph{Changes from version 0.99-2:}
-\begin{itemize}
-\item Add text from Robert on the Unit and Dimension. Modified it to be
-compatible with the current agreement about the UL tags.
-\item Added placeholder for the unit and scalar tags in the UL
-\item Removed the summary figure
-\end{itemize}
-
-\paragraph{Changes from version 0.99-1:}
-\begin{itemize}
-\item Added object definition tables in the abstraction layer section
-(Ivan Raikov)
-\end{itemize}
-
-\paragraph{Changes from version 0.99:}
-\begin{itemize}
-\item Reorganization of the document based on discussion during the documentation
-meeting:
-\item Adding section Units and Dimension contributed by Robert
-\item Removing Appendix D Datatypes and move Quantity to the User Layer section
-\item Modification of the ComponentClass definition
-\item Remove subsection Projection
-\end{itemize}
-
-\paragraph{Changes from version 0.98:}
-\begin{itemize}
-\item Text edition and reorganization of the document.
-\item Description of the OM classes are reorganized to ``fit'' the hierarchical
-structure in XML both for the AL and the UL.
-\end{itemize}
-
-\paragraph{Changes from version 0.97:}
-\begin{itemize}
-\item Using math mode for math expressions; consistent type faces for
-  class names; small tweaks to the MathInline definition; moved Scope
-  section (5.1) to an appendix (Ivan Raikov)
-\end{itemize}
-
-\paragraph{Changes from version 0.96:}
-\begin{itemize}
-\item Draft definition of MathInline block (Mike Hull)
-\end{itemize}
-
-\paragraph{Changes from version 0.95:}
-\begin{itemize}
-\item Moved section Transition Resolution to the Appendix; consistent
-  highlighting of NineML class names (Ivan Raikov)
-\end{itemize}
-
-\paragraph{Changes from version 0.94:}
-\begin{itemize}
-\item Merged in Abstraction Layer documentation by Mike Hull
-\end{itemize}
-
-\paragraph{Changes from version 0.93:}
-\begin{itemize}
-\item Combined User and Abstraction Layer specifications into a single document
-\item Cut out the group and set sections since they are not part of the release
-\end{itemize}
-
-\paragraph{Changes from version 0.92:}
-\begin{itemize}
-\item Adapted the format similar to the Abstraction layer specification.
-I think this document shall essentially become User Layer section of the
-general specification document.
-\item Attempted to reorganize and adapt the text to be more like ``Object
-Model'' for the User Layer.
-\end{itemize}
-
-\paragraph{Changes from version 0.91:}
-\begin{itemize}
-\item Replaced ``node'' with ``component'' as was decided in Antwerp 2010
-meeting.
-\item Replaced references to ``core semantics'' with references to
-``Abstraction Layer'' because the term ``core semantics'' is no longer used.
-\item As Antwerp 2010 decided, properties are represented by a generic
-tag and specified by attribute {\tt name}.
-\item Added the reference to units of measurements dimensionality checking
-against the Abstraction Layer as was decided in Antwerp 2010.
-\item Moved edge effect descriptions from connectivity components to layout
-components. Also noted that some layouts might require complex masks.
-\end{itemize}
-
-\paragraph{Changes from version 0.9:}
-\begin{itemize}
-\item added footnotes for some issues raised in Stockholm June meeting
-\item added brief description of interactions between User Layer and
-simulation software that does not support Abstraction Layer
-\item removed random number generator nodes as decided in Stockholm
-\item added space, region, and layout nodes as a first draft of geometrical
-concepts (based on NetworkML proposal by Padraig and Robert as well as
-Stockholm discussions)
-\item removed recurrent projections that can be described on the population
-level
-\item cut out the previous approach to cell positioning within population
-\end{itemize}
 \newpage
 
 \section{Introduction}
@@ -324,15 +224,14 @@ This description language, using the XML technology, is based on a
 common Object Model describing the different elements of network
 models. This work, initiated and supported by the International
 Neuroinformatics Coordinating Facility as part of the Multiscale
-Program, involve simulator developers and developers from NeuroML, a
-similar initiative.  The name of the proposed language is NineML
+Program, involve Computational Neuroscientists, simulator developers and developers of simulator-independent language (NeuroML, PyNN).  The name of the proposed language is NineML
 (Network Interchange for Neuroscience Modeling Language).
 
 \subsection{Scope}
 
 The purpose of NineML is to provide a computer language for
 succinct and unambiguous description of computational neuroscience models of
-networks of spiking neurons.
+spiking neurons networks.
 
 NineML is intended to describe the network architecture, parameters
 and equations that govern the dynamics of a spiking neurons network, without
@@ -378,6 +277,9 @@ form of an interpreter for the NineML native language as a compact
 representation and use code generation to produce a model
 representation for a target simulation environment.
 
+It is important to note that the NineML XML schema is isomorphic to the NineML
+object model.
+
 The design of NineML is divided into two semantic layers:
 \begin {enumerate}
 \item An \bf{Abstraction Layer} that provides the core concepts and
@@ -404,11 +306,9 @@ This document presents the current NineML specifications and consists of:
 \begin{enumerate}
 \item a description of the Abstraction and User Layer Object models
 \item the XML serialization with the description of the different tags
-\item examples of XML descriptions
+\item documented examples of XML descriptions
+\item a proposal to solve the transition resolution problem
 \end{enumerate}
-
-It is important to note that the NineML XML schema is isomorphic to the NineML
-object model.
 
 \section{Units and Dimensions in NineML}
 \label{dimensions}
@@ -422,45 +322,18 @@ luminous intensity L and amount of substance, n.
 For example, acceleration has dimension $lt^{-2}$ and voltage is
 $ml^2t^3i^{-1}$.
 Dimensions can be declared at the top level of a NineML file with
-the "Dimension" element with attributes for each of the base dimensions, e.g. :
-
-\begin{lstlisting}[frame=none]
-<Dimension name="voltage" m="1" l="2" t="3" i="-1"/>
-\end{lstlisting}
-
-\noindent
-Exponents that are zero do not need stating explicitly.
+the "Dimension" element with attributes for each of the base dimensions or imported from a specific XML file, describing a set of dimensions
 
 Each dimension can give rise to a family of unit declarations, each of
 which has the same dimensionality but a different multiplier. For example,
 typical units for a quantity with dimensionality voltage include
 milliVolts (multiplier = $10^{-3}$), microVolts (multiplier = $10^{-6}$)
-and Volts (multiplier = 1). Units can be expressed in a NineML file with
-the "Units" element containing the symbol, a reference to the dimension,
-and the numerical value of the multiplier, as in:
-
-\begin{lstlisting}[frame=none]
-<Unit name="milliVolt" symbol="mV" multiplier="0.001"/>
-\end{lstlisting}
-
-
-To express a dimensional quantity both a numerical factor and a unit are
-required. These can be  expressed in the User Layer, as follows:
-
-\begin{lstlisting}[frame=none]
-<Quantity>
-	<value>
-		<scalar>-40</scalar>
-		<unit>mV</unit>
-	</value>
-</Quantity>
-\end{lstlisting}
+and Volts (multiplier = 1).  To express a dimensional quantity both a numerical factor and a unit are required. Units can be expressed in a NineML file with the "unit" element, defined at the User Layer level or imported from a specific XML file, describing a set of units.
 
 Except where physical constants are required, abstraction layer definitions
 generally only contain references to dimensions and are independent of any
-particular choice of units. Conversely, the user layer only refers to units,
-and such references only occur on the right hand side of parameter
-assignments. Internally, dimensional quantities are to be understood
+particular choice of units. Conversely, the user layer only refers to units. 
+Internally, dimensional quantities are to be understood
 as rich types with a numerical factor and exponents for each of the
 base dimensions. They are independent of the particular choice of
 units by which they are assigned.
@@ -500,12 +373,11 @@ objects that relate to the definition of a model (cells, synapses, synaptic
 plasticity rules, random spike trains, inputs, ...).
 All equations and event declarations that are part of particular entity
 model, such as neuron model for instance, belong in a single \ComponentClass.
-A \ComponentClass can be used to either a specific model of neuron or a
+A \ComponentClass can be used to represent either a specific model of neuron or a
 composite model, including synaptic mechanisms (as in the second example
 provided in the Appendix for example) as long as the algebra is correct.
-A \ComponentClass is the subject of interaction with the User Layer and
-is composed of a \Dynamics block and \Interfaces to communicate between
-each other, as shown in figure~\ref{fig:EX1_RegimeGraph}.
+A \ComponentClass is composed of a \Dynamics block and \Interfaces, as shown in Figure 1.
+The \Dynamic block represent the internal dynamic of the model while the \Interface block allows the \ComponentClass to communicate with other instantiations of the \ComponentClass and with the User Layer.
 
 \begin{figure}[htb!]
 \center
@@ -540,19 +412,19 @@ Dynamics \\
 The \Dynamics block represents the \emph{internal} mechanisms
 governing the behaviour of the component.  For most of the models
 these dynamics are non-linear, presenting transitions between
-different regimes at particular values of one or different state
-variables.  To create a representation that include both simple
+different regimes at particular values of one or different \StateVariables.  
+To create a representation that include both simple
 dynamics and non-linear dynamics, the \Dynamics block can contains the
 following concepts:
 
 \begin{itemize}
 \item \StateVariable (section~\ref{state-var})
 \item \Regime (section~\ref{regime}) that describe the dynamics of the
-system for particular values of \StateVariable
+system for a particular doamine of \StateVariable
 \item \Transition (section~\ref{transition}) that links two
-regimes: the Source-\Regime and the Target-\Regime, and can be triggered by
-an event or a condition. If a component is in the source-regime, and the
-transition is triggered, then the component moves into the target regime.
+regimes: the Source \Regime and the Target \Regime, and can be triggered by
+an event or a condition. If a component is in the Source \Regime, and the
+transition is triggered, then the component moves into the Target \Regime.
 \item \Alias (section~\ref{alias})
 \end{itemize}
 
@@ -572,14 +444,17 @@ it is in through \Transition.
 \label{SimpleRegimeGraph}
 \end{figure}
 
-An example dynamics in Figure~\ref{SimpleRegimeGraph} has three state variables,
-\emph{X,Y} and \emph{Z}, and a state graph with three regimes, \emph{regime1},
+An example dynamics in Figure~\ref{SimpleRegimeGraph} has three \StateVariables,
+\emph{X,Y} and \emph{Z}, and a state graph with three \Regimes, \emph{regime1},
 \emph{regime2} and \emph{regime3}. At any time, a component will be in one of
 these regimes, and the state variables will evolve accordingly.
 
 \subsubsection{StateVariable}
 \label{state-var}
 
+The internal state of a component is defined by a set of \StateVariable
+-- variables that can change either continuously or discontinuously as a
+function of time.
 
 \begin{table}[htb]
 \center
@@ -597,9 +472,6 @@ StateVariable \\
 \end{table}
 
 
-The internal state of a component is defined by a set of \StateVariable
--- variables that can change either continuously or discontinuously as a
-function of time.
 
 The \StateVariable changes happen in two ways:
 %
@@ -641,7 +513,7 @@ Regime \\
 \end{table}
 
 
-A \nmlClass{Regime} is defined in NineML as a system of ODEs in time
+A \Regime is defined in NineML as a system of ODEs in time
 on \StateVariable.  As such, \Regime defines how the \StateVariables
 change (propagate in time) between subsequent \Transitions. \Regime is
 defined to have non-vanishing temporal extent. Once construction of
@@ -662,16 +534,32 @@ variables (type=send), or consume state variables published from elsewhere
 of \nmlClass{StateVariable}s and their propagators in a \Regime.
 \end{itemize}
 
-\note{If a nmlClass{TimeDerivative} for a \StateVariable is not defined
+\note{If a \nmlClass{TimeDerivative} for a \StateVariable is not defined
 in a \Regime, it is assumed to be zero.}
 
 It is important to note that, at the current stage of development, we are only
-considering "Temporal regimes". In the next version, we will extend the concept
-to the more general case where the independent variable can be anything (space
+considering "Temporal regimes". In the future, the concept could be extended to more general cases where the independent variable can be anything (space
 for example)
 
 \subsubsection{OnCondition}
 
+\nmlClass{OnCondition}s are the mathematical expressions which define
+when a \nmlClass{Transition} should be triggered.
+\nmlClass{OnCondition}s are any arbitrary combination of \emph{Logical
+Operations} (and, or, noop, etc.) on the
+result of any arbitrary combination of \emph{Relational Operations}
+($>$,$<$,$==$,$<=$,$>=$, etc.) on
+\nmlClass{StateVariable}s. At any given time in the \nmlClass{Regime},
+the \nmlClass{OnCondition} expression then evaluates to True or False
+{\tt Boolean} result. For example, the following are valid
+\nmlClass{OnCondition}s
+
+\begin{verbatim}
+x>10
+x>10 & y<20
+x>exp(-cos(y)) | y<sin(t)+5
+x==15
+\end{verbatim}
 
 \begin{table}[htb]
 \center
@@ -692,25 +580,6 @@ OnCondition \\
 \end{tabular}
 \end{table}
 
-
-\nmlClass{OnCondition}s are the mathematical expressions which define
-when a \nmlClass{Transition} should be triggered.
-\nmlClass{OnCondition}s are any arbitrary combination of \emph{Logical
-Operations} (and, or, noop, etc.) on the
-result of any arbitrary combination of \emph{Relational Operations}
-($>$,$<$,$==$,$<=$,$>=$, etc.) on
-\nmlClass{StateVariable}s. At any given time in the \nmlClass{Regime},
-the \nmlClass{OnCondition} expression then evaluates to True or False
-{\tt Boolean} result. For example, the following are valid
-\nmlClass{OnCondition}s
-
-\begin{verbatim}
-x>10
-x>10 & y<20
-x>exp(-cos(y)) | y<sin(t)+5
-x==15
-\end{verbatim}
-
 A \nmlClass{OnCondition} which persistently evaluates to True violates
 the definition that \nmlClass{Transition}s should have vanishing
 temporal extent, and the behaviour for this case is undefined, but it
@@ -719,6 +588,18 @@ to the user.
 
 \subsubsection{Transition}
 \label{transition}
+
+Movement between several instances of \Regime happens via \Transition.
+A \nmlClass{Transition} is defined in NineML as having
+a source and target \nmlClass{Regime}, where the target
+\nmlClass{Regime} can be the same as the source (For example \emph{t5}
+in Figure~\ref{SimpleRegimeGraph}). There are two types of \Transition:
+
+\begin{itemize}
+\item An \OnCondition function of the \StateVariable, for
+example $X > Y$.
+\item An \OnEvent on an input from \EventPort. (See section~\ref{port}).
+\end{itemize}
 
 \begin{table}[htb]
 \center
@@ -734,18 +615,6 @@ Transition \\
 \hline
 \end{tabular}
 \end{table}
-
-Movement between several instances of \Regime happens via \Transition.
-A \nmlClass{Transition} is defined in NineML as having
-a source and target \nmlClass{Regime}, where the target
-\nmlClass{Regime} can be the same as the source (For example \emph{t5}
-in Figure~\ref{SimpleRegimeGraph}). There are two types of \Transition:
-
-\begin{itemize}
-\item An \OnCondition function of the \StateVariable, for
-example $X > Y$.
-\item An \OnEvent on an input from \EventPort. (See section~\ref{port}).
-\end{itemize}
 
 During either type of transition three things can happen:
 \begin{itemize}
@@ -766,7 +635,7 @@ should have defined the following properties:
 \begin{itemize}
 \item The \nmlClass{Condition} or \nmlClass{EventPort(mode=recv)} which
 triggers the \nmlClass{Transition}
-\item An set of \StateAssignment and \OutputEvent objects
+\item A set of \StateAssignment and \OutputEvent objects
 \item The label of the source \nmlClass{Regime}, and the label of the target
 \nmlClass{Regime}, which may be the same as the source \nmlClass{Regime}.
 \end{itemize}
@@ -774,6 +643,9 @@ triggers the \nmlClass{Transition}
 \subsubsection{Aliases}
 \label{alias}
 
+An alias corresponds to an intermediate variable allowing to store an
+information and to reuse it at different places in the definition of
+the dynamics.
 
 \begin{table}[htb]
 \center
@@ -789,10 +661,6 @@ Alias \\
 \hline
 \end{tabular}
 \end{table}
-
-An alias corresponds to an intermediate variable allowing to store an
-information and to reuse it at different places in the definition of
-the dynamics.
 
 \textbf{Aliases} are motivated from two problems:
 
@@ -851,8 +719,8 @@ parameters that can be set for the \ComponentClass. The interface consists of
 instances of \Port (section~\ref{port}) and \Parameter
 (section~\ref{parameters}).
 
-As well as being able to communicate continuous values, \ComponentClasses are also
-able to emit and receive \Events. Events are discrete notifications
+As well as being able to specify the communication of continuous values, \ComponentClasses are also
+able to specify the emission and the reception of \Events. Events are discrete notifications
 that are transmitted over \EventPorts (section~\ref{port}). Since
 \EventPorts have names, saying that we transmit `event1' for example
 would mean transmitting an event on the EventPort called `event1'. Events
@@ -861,6 +729,8 @@ can be used for example to signal action potentials firing.
 \subsubsection{Parameter}
 \label{parameters}
 
+Parameters correspond to a placeholder for a numerical value with
+dimension (this value can also be defined as dimensionless). 
 
 \begin{table}[htb]
 \center
@@ -877,16 +747,11 @@ Parameter \\
 \end{tabular}
 \end{table}
 
-
-Parameters correspond to a placeholder for a numerical value with
-dimension (special degenerate {\tt Dimension} exists for dimensionless
-
-parameters, see section~\ref{dimensions}). It defines particular
-aspects of the model, such as the firing threshold, reset voltage, the
+It defines particular aspects of the model, such as the firing threshold, reset voltage, the
 decay time constant of a synapse model.  The instantiation of
 Parameters at the Abstraction Layer level allow us to define the
 dynamics of a general component.  It is then possible to instantiate
-several variant of this component by attributing different values for
+several variants of this component by attributing different values for
 the \Parameters, in the User Layer.  For example, if we are building
 an integrate-and-fire neuron, we can specify that the Reset-Voltage
 and the Firing-Threshold are parameters, write our dynamics in terms
@@ -898,7 +763,7 @@ start of the simulation, and remain constant throughout.
 \subsubsection{Port}
 \label{port}
 
-Ports allow \ComponentClasses to communicate between each other during a simulation.
+Ports allow instantiations of \ComponentClasses to communicate between each other during a simulation.
 There are two sub-classes of \nmlClass{Port} objects: \nmlClass{AnalogPort}
 and \nmlClass{EventPort}, and each can have different modes.
 
@@ -952,6 +817,18 @@ to change our original \ComponentClass definitions.
 
 \paragraph{EventPort}
 
+Event ports transmit discrete events. They are useful for example in
+simulation of integrate-and-fire neurons to notify \ComponentClasses about neuron's
+spiking. Event ports only have 2 modes:
+
+\begin{itemize}
+\item \SendPort - transmit events originating in this \ComponentClass which can be
+read by
+other \ComponentClasses
+\item \RecvPort - receive events from another \ComponentClass \SendPort port.
+Each recv port can be connected to \emph{multiple} \SendPorts.
+\end{itemize}
+
 \begin{table}[htb]
 \center
 \begin{tabular}{|c|}
@@ -968,18 +845,6 @@ EventPort \\
 \hline
 \end{tabular}
 \end{table}
-
-Event ports transmit discrete events. They are useful for example in
-simulation of integrate-and-fire neurons to notify \ComponentClasses about neuron's
-spiking. Event ports only have 2 modes:
-
-\begin{itemize}
-\item \SendPort - transmit events originating in this \ComponentClass which can be
-read by
-other \ComponentClasses
-\item \RecvPort - receive events from another \ComponentClass \SendPort port.
-Each recv port can be connected to \emph{multiple} \SendPorts.
-\end{itemize}
 
 For example, a synapse component may have a \RecvPort connected to the
 presynaptic neurons \SendPort port. When the presynaptic neuron fires;
@@ -1093,10 +958,7 @@ definitions or MathML.
 \subsection{Property}
 
 Property is a User Layer object that instantiates values in simple
-Abstraction Layer \Parameter and combines a value of one of the data
-types defined in the section~\ref{DataTypes}, an indicator of the used type
-[not in the table below, is it necessary? AG.],
-and a label. The label should match the corresponding label in the
+Abstraction Layer \Parameter and combines described in the quantity object and a label. The label should match the corresponding label in the
 Abstraction Layer \Parameter definition.
 
 \begin{table}[htb]
@@ -1109,7 +971,7 @@ Property \\
 \hline
 {\em label}: {\tt String} \\
 \hline
-{\em value}: \{{\tt Quantity}$|${\tt Boolean}$|${\tt Enumerated}\} \\
+{\em value}: {\tt Quantity} \\
 \hline
 {\em note}: \{{\tt String}$|${\tt URL}\} (optional)\\
 \hline
@@ -1607,8 +1469,6 @@ The following functions are built in, and cannot be redefined:
 
 These functions take the same parameters and are defined as per ANSI C89.
 
-[COMMENT YANN: IS IT THE SAME FOR ALL THE IMPLEMENTATIONS ?]
-
 The following random distributions are available, through the \verb|random|
 namespace,
 although their use is only allowed within \StateAssignment blocks:
@@ -1620,8 +1480,6 @@ although their use is only allowed within \StateAssignment blocks:
 \item \verb|random.poisson(L)|
 \item \verb|random.exponential(L)|
 \end{itemize}
-
-TODO: CHOOSE a reference implementation. Possible candidates: GSL, R
 
 \pagebreak
 
@@ -1748,9 +1606,6 @@ or a {\tt StateVariable} in corresponding Abstraction Layer definition
 \item \verb|<note>| {[}0-1{]}
 \end{itemize}
 
-\issue{Some other data types can be used too, do we use any in this release?
-AG.}
-
 \end{itemize}
 
 \subsubsection{Note}
@@ -1855,12 +1710,12 @@ section~\ref{dimensions}
 \end{itemize}
 
 \subsubsection{Scalar}
-
-This tag specifies a scalar numeric value for its parent.
 %
 \begin{lstlisting}
 <scalar>
 \end{lstlisting}
+
+This tag specifies a scalar numeric value for its parent.
 
 \begin{itemize}
 \item Attributes: \texttt{None}
@@ -1880,8 +1735,55 @@ contains the syntax to import external files.
 
 \subsection{First XML example}
 
-An example model of an Izhikevich model is given for the Abstraction
-Layer as:
+\noindent
+In this first example, we are describing how to represent the Izhikevich model using the NineML Object Model, described above.
+The model is composed of simgle \ComponentClass, containing a single \Regime, $subthresholdRegime$ and two
+\StateVariables, $U$ \& $V$.
+
+\noindent
+The \TimeDerivatives are defined for the Regime as:
+
+\begin{align}
+\frac{dV}{dt} &= 0.04*V*V + 5*V + 140.0 - U + iSyn + iinj\_constant   \\
+\frac{dU}{dt} &= a * ( b* V -U )
+\end{align}
+
+\noindent
+The \ComponentClass has a single \Transition, is triggered when $V>theta$. When
+triggered, It causes an \Event called $spikeOutput$ to be emitted, and two
+\StateAssignments to be made:
+\begin{align}
+U &\leftarrow U + d \\
+V &\leftarrow c
+\end{align}
+
+\noindent
+The target-regime of the \Transition is not declared explicitly in the XML,
+implying that the
+target-regime is the same as the source-regime, i.e. $subthresholdRegime$.
+
+The {\tt RegimeGraph} is shown in Figure~\ref{fig:EX1_RegimeGraph}
+
+\begin{figure}[htb!]
+\center
+%\includegraphics[width=14cm]{al/ParallelisingTransitions.pdf}example_IzRegimeTransGraph.pdf
+\includegraphics[width=8cm]{figures/example_IzRegimeTransGraph.pdf}
+\protect\caption{{\tt RegimeGraph} for the XML model in this section.}
+\label{fig:EX3_RegimeGraph}
+\end{figure}
+
+\noindent
+Using this Abstraction Layer definition, as well as suitable parameters from the
+user layer; $a=0.02, b=0.2, c=-65, d= 8, iinj\_constant= 5.0$, we can simulate
+this, giving output as shown in Figure~\ref{fig:Ex1_Output}.
+
+In Figure~\ref{fig:Ex1_Output}, we can see the value of the \StateVariable $V$
+over time. We can also see that when the value of $V>theta$ triggers the
+condition, we emit a spike, and the \StateAssignment of $V \leftarrow c$ resets
+the value of $V$.
+%
+\noindent
+The corresponding Abstraction Layer XML description for this model is the following:
 %
 \begin{lstlisting}
 
@@ -1947,52 +1849,6 @@ Layer as:
   </ComponentClass>
 </NineML>
 \end{lstlisting}
-
-\noindent
-%
-This \ComponentClass has a single \Regime, $subthresholdRegime$ and two
-\StateVariables, $U$ \& $V$.
-
-\noindent
-The \TimeDerivatives are defined for the Regime as:
-
-\begin{align}
-\frac{dV}{dt} &= 0.04*V*V + 5*V + 140.0 - U + iSyn + iinj\_constant   \\
-\frac{dU}{dt} &= a * ( b* V -U )
-\end{align}
-
-\noindent
-The \ComponentClass has a single \Transition, is triggered when $V>theta$. When
-triggered, It causes an \Event called $spikeOutput$ to be emitted, and two
-\StateAssignments to be made:
-\begin{align}
-U &\leftarrow U + d \\
-V &\leftarrow c
-\end{align}
-
-The target-regime of the \Transition is not declared explicitly in the XML,
-implying that the
-target-regime is the same as the source-regime, i.e. $subthresholdRegime$.
-
-The {\tt RegimeGraph} is shown in Figure~\ref{fig:EX1_RegimeGraph}
-
-\begin{figure}[htb!]
-\center
-%\includegraphics[width=14cm]{al/ParallelisingTransitions.pdf}example_IzRegimeTransGraph.pdf
-\includegraphics[width=8cm]{figures/example_IzRegimeTransGraph.pdf}
-\protect\caption{{\tt RegimeGraph} for the XML model in this section.}
-\label{fig:EX3_RegimeGraph}
-\end{figure}
-
-
-Using this Abstraction Layer definition, as well as suitable parameters from the
-user layer; $a=0.02, b=0.2, c=-65, d= 8, iinj\_constant= 5.0$, we can simulate
-this, giving output as shown in Figure~\ref{fig:Ex1_Output}.
-
-In Figure~\ref{fig:Ex1_Output}, we can see the value of the \StateVariable $V$
-over time. We can also see that when the value of $V>theta$ triggers the
-condition, we emit a spike, and the \StateAssignment of $V \leftarrow c$ resets
-the value of $V$.
 
 User Layer description for the above example:
 
@@ -2073,6 +1929,7 @@ User Layer description for the above example:
 </nineml>
 \end{lstlisting}
 
+Here, we show the simulation results of this XML representation.
 \begin{figure}[htb!]
 \center
 %\includegraphics[width=14cm]{al/ParallelisingTransitions.pdf}example_IzRegimeTransGraph.pdf
@@ -2087,7 +1944,7 @@ this section}
 
 In this example, we build a representation of a integrate-and-fire neuron, with
 an attached input synapse.
-
+\noindent
 We have a single \StateVariable, $iaf\_V$.
 This time, the neuron has an absolute refractory period; which is implemented
 by using 2 regimes. $RegularRegime$ \& $RefractoryRegime$
@@ -2101,17 +1958,16 @@ input:
 \begin{eqnarray}
 \frac{d(iaf\_V)}{dt} = 0
 \end{eqnarray}
-
+\noindent
 In both Regimes, the synapses dynamics evolve as:
 \begin{eqnarray}
 \frac{d(cobaExcit\_g)}{dt} = - \frac{cobaExcit\_g}{cobaExcit\_tau}
 \end{eqnarray}
-
+\noindent
 The neuron has 2 \EventPorts, $iaf\_spikeoutput$ is a send port, which sends
 events when the neuron fires, and $cobaExcit\_spikeinput$ is a recv port,
 which tells the attached synapse that it should `fire'.
-
-
+\noindent
 The neuron has 4 \Transitions, 2 \OnEvents  and 2 \OnConditions.
 Two of the Transitions are triggered by $cobaExcit\_spikeinput$ events, which
 cause the conductance of the synapse to increase by an amount $q$, These
@@ -2125,6 +1981,16 @@ reset-voltage also emits a spike
 to come out of the $RefractoryRegime$ and move back to the $RegularRegime$
 \end{itemize}
 
+The corresponding Regime Graph is shown in Figure 5.
+
+\begin{figure}[htb!]
+\center
+\includegraphics[width=14cm]{figures/demo2_Coba1_trnasition.pdf}
+\protect\caption{RegimeGraph for the XML model in this section}
+\label{fig:EX2_trans}
+\end{figure}
+
+The resulting XML description for the Abstraction Layer is :
 
 \begin{lstlisting}[label=code:xmliaf2]
 <?xml version='1.0' encoding='UTF-8'?>
@@ -2324,6 +2190,7 @@ User Layer description for the above example:
 </nineml>
 \end{lstlisting}
 
+The simulation results is presented in Figure 6.
 \begin{figure}[htb!]
 \center
 \includegraphics[width=14cm]{figures/demo2_Coba1_out.pdf}
@@ -2333,13 +2200,7 @@ in this simulation}
 \label{fig:EX2_Output}
 \end{figure}
 
-
-\begin{figure}[htb!]
-\center
-\includegraphics[width=14cm]{figures/demo2_Coba1_trnasition.pdf}
-\protect\caption{RegimeGraph for the XML model in this section}
-\label{fig:EX2_trans}
-\end{figure}
+\pagebreak
 
 \newpage
 
@@ -2477,301 +2338,8 @@ Figure~\ref{ParallelisingTransitions}.
 \protect\caption{Parallelising of Event Resolution.}
 \label{ParallelisingTransitions}
 \end{figure}
-
 \bibliographystyle{apalike}
 %\bibliography{CondensedUL}
 
 \end{document}
-
-Hierarchical Namespace scheme used to unambiguously address elements
-of a given NineML model.  We then proceed to define the elements
-which populate Namespaces to make up an Abstraction Layer model and
-provide primitives that allow to instantiate this model in the User
-Layer. This instantiation is based on five key elements: data types,
-property, definition, component, and projection.
-
-To allow for modular composition of {\tt ComponentClass}es
-and to avoid name collision with symbols and
-functions provided in standard libraries, a mechanism of namespace
-encapsulation is required, and implemented by the {\tt Namespace} object
-discussed previously.
-
-\subsubsection{NetworkElementModel Interface}
-A {\tt Component} which exposes the NetworkElementModel
-\Interface must contain the following:
-\begin{itemize}
-\item An unordered collection of {\tt Transition}s which connect the
-{\tt Regime}s of the {\tt Component} by assigning sources and targets
-from the named collection of {\tt Regime}s.
-
-\item A {\tt Container} object which contains an unordered named collection of
-\begin{itemize}
-\item sub-{\tt Container} objects (may be user defined, or imported from the
-NineML standard library (see Section \ref{nml_lib}).
-\item at least one {\tt Regime} in the {\tt Container} or its
-sub-{\tt Container}s.
-\item {\tt StateVariable}s.
-\item {\tt Parameter}s.
-\item {\tt EventPort}s.
-\item {\tt AnalogPort}s.
-\item {\tt Binding}s.
-\end{itemize}
-
-The following points are to be observed:
-\begin{itemize}
-\item All {\tt StateVariable} symbols defined by the
-  {\tt Regime}s in the {\tt Component} should be by default
-  exposed in the collection of {\tt AnalogPort} objects with
-  mode=send.
-\item All objects in a {\tt Container}, such as
-  {\tt Regime}s, {\tt Equation}s, {\tt Port}s, etc. do
-  name look-up in the {\tt Component} {\tt Container}
-  hierarchy using the {\tt Container} they are contained in for
-  the root scope.
-\item {\tt Condition}s, and source and target {\tt Regime}
-  names in the {\tt Component} {\tt Transition}s do name
-  look up with scoping as if they are contained in the Component root
-  Container.
-\end{itemize}
-
-Implementations of the object model will likely want to provide
-query/filter methods for Containers, such that all names of a given
-type (e.g. {\tt EventPort}) are returned.
-
-\end{itemize}
-
-\subsection{Binding}
-
-A fundamental aspect of the organization of most programming languages
-is to use names to refer to computational entities.  Likewise, to each
-computational element of NineML, referred to as \emph{values}, we
-assign a name, referred to as a NineML \emph{label}. As such, we say
-that labels identify values.
-
-In the NineML Abstraction Layer, the act of assigning a label to a value
-is achieved with the {\tt Binding} object:
-
-\begin{table}[htb]
-\center
-\begin{tabular}{|c|}
-\hline
-\hline
-Binding \\
-\hline
-\hline
-{\em Label}: {\tt String} \\
-\hline
-{\em Value}: any Data Type (sec.~\ref{DataTypes}) \\
-\hline
-\end{tabular}
-\end{table}
-
-Once a label is declared in a binding, its associated value can be
-reached by other bindings in the program, according to the scoping
-rules of the NineML {\tt Namespace} object, as described later in
-this document.
-
-The interface to a binding object must provide the following methods:
-\begin{equation*}
-\begin{array}{ll}
-   \mathbf{label} & :: Binding \rightarrow Label \\ & \textrm{[Returns the label
-of a binding]} \\
-   \mathbf{value} & :: Binding \rightarrow Value \\ & \textrm{[Returns the value
-of a binding]} \\
-\end{array}
-\end{equation*}
-
-\subsection{Namespaces}
-
-A NineML Abstraction Layer namespace is an ordered collection of
-bindings and sub-namespaces.
-
-\subsubsection{NameEntry}
-
-NameEntry is a compound object that is either a binding or a
-label/{\tt Namespace} pair referring to sub-namespace.
-[unclear to me why not just allow Bindings to
-have Namespace as value and eliminate NameEntry altogether. AG]
-
-\begin{table}[htb]
-\center
-\begin{tabular}{|c|}
-\hline
-\hline
-NameEntry \\
-\hline
-\hline
-{\em Label}: {\tt String} \\
-\hline
-{\em Value}: \{any Data Type (sec.~\ref{DataTypes})$|${\tt Namespace}\} \\
-\hline
-\end{tabular}
-\end{table}
-
-\subsubsection{Namespace}
-
-\begin{table}[htb]
-\center
-\begin{tabular}{|c|}
-\hline
-\hline
-Namespace \\
-\hline
-\hline
-\colorbox{issuecolor}{\parbox{0.4\linewidth}
-{\center Set of {\tt NameEntry} objects}} \\
-\hline
-\end{tabular}
-\end{table}
-
-\begin{itemize}
-\item A value in a binding must not refer to a name that is not in the
-  current namespace scope.
-\item All entries in a namespace (at the same scope) have distinct
-  names. For example, a namespace \verb^C^ cannot have two members
-  named \verb^m^, because we would not know which type \verb^C.m^
-  refers to.
-\item Sub-namespaces can still have entries with the same name as
-  entries from an outer enclosing namespace. For instance, \verb^C^
-  can have an entry \verb^m^ and a sub-namespace \verb^D^ with another
-  entry \verb^m^.  The former entry \verb^m^ is referred to as
-  \verb^C.m^, and the latter as \verb^C.D.m^.
-\end{itemize}
-
-The interface to a binding object must provide the following methods:
-\begin{equation*}
-\begin{array}{ll}
-   \mathbf{find}  & :: Namespace \times AccessPath \rightarrow
-   NameEntry \cup \emptyset \\
-   & \textrm{[Returns an entry with the given access path from a namespace]} \\
-   \mathbf{signature}  & :: Namespace \rightarrow (Label \times Type) \quad
-collection \\
-   & \textrm{[Returns the types of all entries in the namespace]} \\
-\end{array}
-\end{equation*}
-
-[What does Type refer to in this expression? Is it Data Type or something
-more elaborate? AG.]
-
-\subsubsection{Access Paths for Nested Namespaces}
-
-\begin{equation*}
-\begin{array}{ll}
-   AccessPath & ::= Label  \quad \lvert \quad AccessPath \times Label \\
-\end{array}
-\end{equation*}
-
-[Did you mean {\tt NameEntry.Label} in this expression? AG.]
-
-Since {\tt Namespace}s can be nested, names in
-sub-{\tt Namespace}s of the current scope can be accessed via dot
-notation, e.g. \verb^M.x^ to refer to the member \verb^x^ of container
-\verb^M^.
-
-
-
-\subsection{Propagator}
-
-\subsubsection{Equation}
-
-NineML presently defines the following equation types: \nmlClass{ODE} and
-\nmlClass{Assignment}. Each of these \nmlClass{Equation} sub-types must
-define its left-hand-side (lhs) and right-hand-side (rhs), where
-it is the lhs which differs for each of the equation types above.
-
-\begin{table}[htb]
-\center
-\begin{tabular}{|c|}
-\hline
-\hline
-ODE \\
-\hline
-\hline
-{\em DependentLHS}: {\tt Quantity} \\
-\hline
-{\em IndependentLHS}: {\tt Quantity} \\
-\hline
-{\em RHS}: {\tt Function} \\
-\hline
-\end{tabular}
-\end{table}
-
-For example:
-\begin{verbatim}
-dx/dt = -x/tau
-\end{verbatim}
-In this \nmlClass{ODE}, the dependent variable is \verb^x^, the independent
-variable is \verb^t^, and the rhs is \verb^-x/tau^.
-
-[Shall there be a binding of LHS variable quantity to label? Maybe both are
-bindings of label/Quantity pairs? AG.]
-
-\begin{table}[htb]
-\center
-\begin{tabular}{|c|}
-\hline
-\hline
-Assignment \\
-\hline
-\hline
-{\em LHS}: {\tt Quantity} \\
-\hline
-{\em RHS}: {\tt Function} \\
-\hline
-\end{tabular}
-\end{table}
-
-For example:
-\begin{verbatim}
-x = sin(t)+10
-\end{verbatim}
-In this \nmlClass{Assignment}, the assigned variable is \verb^x^, and the rhs
-is \verb^sin(t)+10^.
-
-Note that {\tt Quantity} LHS variables is limited with respect that
-{\tt Quantity.value} is only used to set the initial value of the variable
-from a User Layer description and after that is determined within a simulator
-from RHS (or internal clock for independent time variable) and has the type
-{\tt Number}.
-
-In all cases, the rhs is a nested tree of functions, \nmlClass{Bindings},
-and arguments, where the functions are drawn from the component library
-available to the model, as discussed in section \ref{nml_lib}, and arguments
-can be of type \nmlClass{Parameter} or \nmlClass{StateVariable}.
-
-\subsection{Diagram}
-
-To handle events and spiking dynamics, but also domains of continuous
-dynamics, we propose a flexible block diagram notation.  The notation
-represents continuous and discrete variables, their evolution
-according to a set of rules such as a system of ordinary differential
-equations, a \nmlClass{Regime}, and the conditions that induce a change of
-Regime and/or discontinuous changes in Regime state variables, a
-\nmlClass{Transition}, such as the transition from subthreshold to
-spiking and refractory modes.
-
-\subsubsection{Names}
-
-Objects of the following classes are bound to a name in a \nmlClass{Container}:
-\nmlClass{StateVariable}, \nmlClass{Parameter}, \nmlClass{Binding},
-\nmlClass{Port}, \nmlClass{Regime}, \nmlClass{Container}.
-
-\subsubsection{Summary of Objects}
-
-% TODO (using LaTeX packages uml, or pst-uml ?)
-A bunch of UML diagrams of all the objects, and how they hook up to each other.
-
-\subsubsection{\label{nml_lib}Libraries of Functions and Operations}
-
-% TODO
-RNGs, Special Functions, Logical Ops, Relational Ops, etc.
-% Probably we want to put the detailed reference in an Appendix.
-
-\subsubsection{Global Operations}
-
-Most implementations will want to introduce syntactic sugar for
-standard mathematical, logical, relational operations as well as
-exposing globally a subset of frequently occurring standard constants
-($e$, $pi$, etc.) and functions ($\sin(x)$, $\cos(x)$, $\exp(x)$,
-etc.).
 
