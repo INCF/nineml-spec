@@ -1638,7 +1638,12 @@ TODO: CHOOSE a reference implementation. Possible candidates: GSL, R
 This is the root namespace tag for a NineML file.
 
 \begin{itemize}
-\item Attributes: \texttt{None}
+\item Attributes:
+%
+\begin{itemize}
+\item \verb|name| {[}Required{]} Used to set a name for the model
+described within this block of NineML code
+\end{itemize}
 
 \item Child Elements:
 %
@@ -1729,12 +1734,18 @@ Layer definition or simulator-specific definition.
 This tag specifies a list of properties in the interface of the component
 
 \begin{itemize}
-\item Attributes: \texttt{None}
+\item Attributes:
+%
+\begin{itemize}
+\item \verb|name| {[}Required{]} Has to match a name of a {\tt Parameter}
+or a {\tt StateVariable} in corresponding Abstraction Layer definition
+\end{itemize}
 
 \item Child Elements:
 %
 \begin{itemize}
 \item \verb|<quantity>| {[}0-1{]}
+\item \verb|<note>| {[}0-1{]}
 \end{itemize}
 
 \issue{Some other data types can be used too, do we use any in this release?
@@ -1869,7 +1880,8 @@ contains the syntax to import external files.
 
 \subsection{First XML example}
 
-An example model of an Izhikevich model is given:
+An example model of an Izhikevich model is given for the Abstraction
+Layer as:
 %
 \begin{lstlisting}
 
@@ -1977,6 +1989,81 @@ Using this Abstraction Layer definition, as well as suitable parameters from the
 user layer; $a=0.02, b=0.2, c=-65, d= 8, iinj\_constant= 5.0$, we can simulate
 this, giving output as shown in Figure~\ref{fig:Ex1_Output}.
 
+In Figure~\ref{fig:Ex1_Output}, we can see the value of the \StateVariable $V$
+over time. We can also see that when the value of $V>theta$ triggers the
+condition, we emit a spike, and the \StateAssignment of $V \leftarrow c$ resets
+the value of $V$.
+
+User Layer description for the above example:
+
+\begin{lstlisting}
+<?xml version='1.0' encoding='UTF-8'?>
+<nineml xmlns="http://www.NineML.org/9ML/1.0" name="Izhikevich neuron">
+  <import language="NineML">
+    http://www.NineML.org/1.0/dimensions.9ml
+  </import>
+  <component name="Izhikevich neuron">
+    <definition language="NineML">
+      http://www.NineML.org/neurons/izhikevichCellNew.9ml
+    </definition>
+    <property name="V">
+       <quantity>
+         <value>
+           <scalar>-60</scalar>
+           <unit>mV</unit>
+         </value>
+       </quantity>
+       <note><String>Initial value</String></note>
+    </property>
+    <property name="U">
+       <quantity>
+         <value>
+           <scalar>0</scalar>
+           <unit>mV_per_ms</unit>
+         </value>
+       </quantity>
+       <note><String>Initial value</String></note>
+    </property>
+    <property name="a">
+       <quantity>
+         <value>
+           <scalar>0.02</scalar>
+           <unit>none</unit>
+         </value>
+       </quantity>
+       <note><String>Parameter value</String></note>
+    </property>
+    <property name="b">
+       <quantity>
+         <value>
+           <scalar>0.2</scalar>
+           <unit>per_ms</unit>
+         </value>
+       </quantity>
+       <note><String>Parameter value</String></note>
+    </property>
+    <property name="c">
+       <quantity>
+         <value>
+           <scalar>-65</scalar>
+           <unit>mV</unit>
+         </value>
+       </quantity>
+       <note><String>Parameter value (reset voltage)</String></note>
+    </property>
+    <property name="d">
+       <quantity>
+         <value>
+           <scalar>8</scalar>
+           <unit>mV_per_ms</unit>
+         </value>
+       </quantity>
+       <note><String>Parameter value</String></note>
+    </property>
+  </component>
+</nineml>
+\end{lstlisting}
+
 \begin{figure}[htb!]
 \center
 %\includegraphics[width=14cm]{al/ParallelisingTransitions.pdf}example_IzRegimeTransGraph.pdf
@@ -1985,11 +2072,6 @@ this, giving output as shown in Figure~\ref{fig:Ex1_Output}.
 this section}
 \label{fig:Ex1_Output}
 \end{figure}
-
-In Figure~\ref{fig:Ex1_Output}, we can see the value of the \StateVariable $V$
-over time. We can also see that when the value of $V>theta$ triggers the
-condition, we emit a spike, and the \StateAssignment of $V \leftarrow c$ resets
-the value of $V$.
 
 \newpage
 \subsection{Second XML example}
