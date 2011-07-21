@@ -1893,9 +1893,9 @@ Layer as:
   <ComponentClass name="izhikevichCellNew">
 
     <Parameter name="a" dimension="none"/>
-    <Parameter name="c" dimension="none"/>
-    <Parameter name="b" dimension="none"/>
-    <Parameter name="d" dimension="none"/>
+    <Parameter name="c" dimension="voltage"/>
+    <Parameter name="b" dimension="per_time"/>
+    <Parameter name="d" dimension="voltage_per_time"/>
     <Parameter name="theta" dimension="voltage"/>
 
     <AnalogPort name="iSyn" mode="reduce" reduce_op="+" dimension="current"/>
@@ -1907,7 +1907,7 @@ Layer as:
     <Dynamics>
 
         <StateVariable name="V" dimension="voltage"/>
-        <StateVariable name="U" dimension="none"/>
+        <StateVariable name="U" dimension="voltage_per_time"/>
 
         <Alias name="rv" dimension="none">
             <MathInline>V*U</MathInline>
@@ -2023,6 +2023,15 @@ User Layer description for the above example:
          </value>
        </quantity>
        <note><String>Initial value</String></note>
+    </property>
+    <property name="theta">
+       <quantity>
+         <value>
+           <scalar>50</scalar>
+           <unit>mV</unit>
+         </value>
+       </quantity>
+       <note><String>Parameter value (spike amplitude)</String></note>
     </property>
     <property name="a">
        <quantity>
@@ -2189,6 +2198,130 @@ to come out of the $RefractoryRegime$ and move back to the $RegularRegime$
   </ComponentClass>
 </NineML>
 
+\end{lstlisting}
+
+User Layer description for the above example:
+
+\begin{lstlisting}
+<?xml version='1.0' encoding='UTF-8'?>
+<nineml xmlns="http://www.NineML.org/9ML/1.0" name="IaF neuron with synapse">
+  <import language="NineML">
+    http://www.NineML.org/1.0/dimensions.9ml
+  </import>
+  <component name="IaF neuron">
+    <definition language="NineML">
+      http://www.NineML.org/neurons/iaf_1coba.9ml
+    </definition>
+    <property name="iaf_V">
+       <quantity>
+         <value>
+           <scalar>-60</scalar>
+           <unit>mV</unit>
+         </value>
+       </quantity>
+       <note><String>Initial value</String></note>
+    </property>
+    <property name="iaf_tspike">
+       <quantity>
+         <value>
+           <scalar>-1</scalar>
+           <unit>ms</unit>
+         </value>
+       </quantity>
+       <note><String>Initial value</String></note>
+    </property>
+    <property name="cobaExcit_g">
+       <quantity>
+         <value>
+           <scalar>0</scalar>
+           <unit>mS</unit>
+         </value>
+       </quantity>
+       <note><String>Initial value</String></note>
+    </property>
+    <property name="iaf_cm">
+       <quantity>
+         <value>
+           <scalar>0.02</scalar>
+           <unit>cm_square</unit>
+         </value>
+       </quantity>
+       <note><String>Parameter value</String></note>
+    </property>
+    <property name="iaf_taurefrac">
+       <quantity>
+         <value>
+           <scalar>3</scalar>
+           <unit>ms</unit>
+         </value>
+       </quantity>
+       <note><String>Parameter value (refractory period)</String></note>
+    </property>
+    <property name="iaf_gl">
+       <quantity>
+         <value>
+           <scalar>0.1</scalar>
+           <unit>mS</unit>
+         </value>
+       </quantity>
+       <note><String>Parameter value (leak conductance)</String></note>
+    </property>
+    <property name="iaf_vreset">
+       <quantity>
+         <value>
+           <scalar>-70</scalar>
+           <unit>mV</unit>
+         </value>
+       </quantity>
+       <note><String>Parameter value (reset voltage)</String></note>
+    </property>
+    <property name="iaf_vrest">
+       <quantity>
+         <value>
+           <scalar>-60</scalar>
+           <unit>mV</unit>
+         </value>
+       </quantity>
+       <note><String>Parameter value (resting potential)</String></note>
+    </property>
+    <property name="iaf_vthresh">
+       <quantity>
+         <value>
+           <scalar>20</scalar>
+           <unit>mV</unit>
+         </value>
+       </quantity>
+       <note><String>Parameter value (threshold potential)</String></note>
+    </property>
+    <property name="cobaExcit_tau">
+       <quantity>
+         <value>
+           <scalar>2</scalar>
+           <unit>ms</unit>
+         </value>
+       </quantity>
+       <note><String>Parameter value (synaptic time constant)</String></note>
+    </property>
+    <property name="cobaExcit_q">
+       <quantity>
+         <value>
+           <scalar>1</scalar>
+           <unit>ms</unit>
+         </value>
+       </quantity>
+       <note><String>Parameter value (conductance increase on spike)</String></note>
+    </property>
+    <property name="cobaExcit_vrev">
+       <quantity>
+         <value>
+           <scalar>0</scalar>
+           <unit>mV</unit>
+         </value>
+       </quantity>
+       <note><String>Parameter value (synaptic reversal potential)</String></note>
+    </property>
+  </component>
+</nineml>
 \end{lstlisting}
 
 \begin{figure}[htb!]
