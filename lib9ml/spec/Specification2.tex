@@ -2135,15 +2135,15 @@ to come out of the $RefractoryRegime$ and move back to the $RegularRegime$
     <AnalogPort mode="send" name="cobaExcit_I"/>
     <EventPort mode="send" name="iaf_spikeoutput"/>
     <EventPort mode="recv" name="cobaExcit_spikeinput"/>
-    <Parameter dimension="" name="iaf_cm"/>
-    <Parameter dimension="" name="iaf_taurefrac"/>
-    <Parameter dimension="" name="iaf_gl"/>
-    <Parameter dimension="" name="iaf_vreset"/>
-    <Parameter dimension="" name="iaf_vrest"/>
-    <Parameter dimension="" name="iaf_vthresh"/>
-    <Parameter dimension="" name="cobaExcit_tau"/>
-    <Parameter dimension="" name="cobaExcit_q"/>
-    <Parameter dimension="" name="cobaExcit_vrev"/>
+    <Parameter dimension="area" name="iaf_cm"/>
+    <Parameter dimension="time" name="iaf_taurefrac"/>
+    <Parameter dimension="conductance" name="iaf_gl"/>
+    <Parameter dimension="voltage" name="iaf_vreset"/>
+    <Parameter dimension="voltage" name="iaf_vrest"/>
+    <Parameter dimension="voltage" name="iaf_vthresh"/>
+    <Parameter dimension="time" name="cobaExcit_tau"/>
+    <Parameter dimension="conductance" name="cobaExcit_q"/>
+    <Parameter dimension="voltage" name="cobaExcit_vrev"/>
     <Dynamics>
       <Regime name="RefractoryRegime">
         <TimeDerivative variable="iaf_V">
@@ -2191,9 +2191,9 @@ to come out of the $RefractoryRegime$ and move back to the $RegularRegime$
       <Alias name="cobaExcit_I">
         <MathInline>cobaExcit_g*(cobaExcit_vrev-iaf_V)</MathInline>
       </Alias>
-      <StateVariable dimension="" name="iaf_V"/>
-      <StateVariable dimension="" name="iaf_tspike"/>
-      <StateVariable dimension="" name="cobaExcit_g"/>
+      <StateVariable dimension="voltage" name="iaf_V"/>
+      <StateVariable dimension="time" name="iaf_tspike"/>
+      <StateVariable dimension="conductance" name="cobaExcit_g"/>
     </Dynamics>
   </ComponentClass>
 </NineML>
