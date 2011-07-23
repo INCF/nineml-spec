@@ -1,0 +1,32 @@
+;;;; -*- Hen -*-
+
+((egg "9ML-toolkit.egg") ; This should never change
+
+ ; List here all the files that should be bundled as part of your egg.  
+
+ (files "9ML-toolkit.setup" "9ML-toolkit.meta"
+	"NineML.l" "NineML.grm" "expr.grm" "NineMLparse.scm" "expr-parser.scm" 
+	"NineMLcore.scm" "NineMLdiagram.scm" "NineMLsignal.scm" "NineMLinterval.scm" "NineMLgraph.scm" "NineMLivp.scm" 
+	"repr.scm" "SXML.scm" "SXML-to-XML.scm" "shell.scm" "report.scm" 
+	"ivp-chicken.scm" "ivp-mlton.scm" "ivp-octave-mlton.scm" "ivp.scm" 
+	"examples")
+
+
+ ; Your egg's license:
+
+ (license "GPL-3")
+
+ ; Pick one from the list of categories (see below) for your egg and
+ ; enter it here.
+
+ (category tools)
+
+ ; A list of eggs 9ML-toolkit depends on.
+
+ (needs matchable datatype static-modules (miniML 1.3) (getopt-long  1.8)
+	ssax sxml-transforms sxpath object-graph format-graph
+	mathh silex lalr setup-helper (signal-diagram 1.5) )
+
+ (author "Ivan Raikov")
+
+ (synopsis "A set of tools to support the NineML language."))

@@ -1,0 +1,122 @@
+
+(*
+   Simple Model of Spiking Neurons, Izhikevich  E
+
+   IEEE Transactions on Neural Networks (2003) 14:1569- 1572
+ 
+*) 
+
+
+component Izhikevich03 =
+struct
+
+  binding construct t V U k1 k2 k3 theta a b c d spike tspike Isyn h =
+
+    binding subthreshold_eq = [ 
+                                [ d (V t h) =  (k1 * V * V) + (k2 * V) + k3 + (- U) + Isyn ]
+                                [ d (U t h) =  a * ((b * V) - U) ]
+                              ]
+
+    binding threshold_detect  =  [ spike = (V > theta) ]
+
+    binding tspike_set        =  [ tspike = (if spike then t else tspike) ]
+
+    binding subthreshold_regime  = Diagram.SEQUENCE subthreshold_eq (Diagram.SEQUENCE threshold_detect tspike_set)
+		 
+    binding refractory_eq        = [ 
+                                     [ t      =  t ]
+				     [ spike  = false ]
+				     [ tspike = tspike ]
+				     [ V      = c ]
+				     [ U      = (U + d) ] 
+                                    ]
+
+    return   Diagram.TRANSIENT subthreshold_regime refractory_eq spike 
+
+end
+
+component S = Signal 
+
+component TestIzhikevich03 =
+struct
+
+  val h = S.realsig `h (S.realconst 0.01)
+
+  (* Parameters common to all spiking regimes *)
+  val k1    =    S.realsig `k1 (S.realconst 0.04)
+  val k2    =    S.realsig `k2 (S.realconst 5.0)
+  val k3    =    S.realsig `k3 (S.realconst 140.0)
+  val theta =    S.realsig `theta (S.realconst 30.0)
+  val Isyn  =    S.realsig `Isyn  (S.realconst 10.0)
+
+  (* State initial values *)
+  val t      = S.realsig `t (S.realconst 0.0)
+  val V      = S.realsig `V (S.realconst -65.0)
+  val tspike = S.realsig `tspike (S.realconst 0.0)
+  val spike  = S.boolsig `spike (S.boolconst false)
+
+  (* Regular spiking (RS) parameters *)
+  val RS_a   = S.realsig `a (S.realconst 0.02)
+  val RS_b   = S.realsig `b (S.realconst 0.2)
+  val RS_c   = S.realsig `c (S.realconst -65.0)
+  val RS_d   = S.realsig `d (S.realconst 8.0)
+  val RS_U   = S.realsig `U (S.mul RS_b V)
+  val RS     = Izhikevich03.construct t V RS_U k1 k2 k3 theta RS_a RS_b RS_c RS_d spike tspike Isyn h
+  val RS_ivp = IVP.construct RS `t `h 0.0 250.0 
+
+  (* Intrinsically bursting (IB) parameters *)
+  val IB_a = S.realsig `a (S.realconst 0.02)
+  val IB_b = S.realsig `b (S.realconst 0.2)
+  val IB_c = S.realsig `c (S.realconst -55.0)
+  val IB_d = S.realsig `d (S.realconst 4.0)
+  val IB_U = S.realsig `U (S.mul IB_b V)
+  val IB   = Izhikevich03.construct t V IB_U k1 k2 k3 theta IB_a IB_b IB_c IB_d spike tspike Isyn h
+  val IB_ivp = IVP.construct IB `t `h 0.0 250.0 
+
+  (* Chattering (CH) parameters *)
+  val CH_a = S.realsig `a (S.realconst 0.02)
+  val CH_b = S.realsig `b (S.realconst 0.2)
+  val CH_c = S.realsig `c (S.realconst -50.0)
+  val CH_d = S.realsig `d (S.realconst 2.0)
+  val CH_U = S.realsig `U (S.mul CH_b V)
+  val CH   = Izhikevich03.construct t V CH_U k1 k2 k3 theta CH_a CH_b CH_c CH_d spike tspike Isyn h
+  val CH_ivp = IVP.construct CH `t `h 0.0 250.0 
+	     
+  (* Fast-spiking (FS) parameters *)
+  val FS_a = S.realsig `a (S.realconst 0.1)
+  val FS_b = S.realsig `b (S.realconst 0.2)
+  val FS_c = S.realsig `c (S.realconst -65.0)
+  val FS_d = S.realsig `d (S.realconst 2.0)
+  val FS_U = S.realsig `U (S.mul FS_b V)
+  val FS   = Izhikevich03.construct t V FS_U k1 k2 k3 theta FS_a FS_b FS_c FS_d spike tspike Isyn h
+  val FS_ivp = IVP.construct FS `t `h 0.0 250.0 
+	     
+  (* Thalamo-cortical (TC) parameters *)
+  val TC_a = S.realsig `a (S.realconst 0.02)
+  val TC_b = S.realsig `b (S.realconst 0.25)
+  val TC_c = S.realsig `c (S.realconst -65.0)
+  val TC_d = S.realsig `d (S.realconst 0.05)
+  val TC_U = S.realsig `U (S.mul TC_b V)
+  val TC   = Izhikevich03.construct t V TC_U k1 k2 k3 theta TC_a TC_b TC_c TC_d spike tspike Isyn h
+  val TC_ivp = IVP.construct TC `t `h 0.0 250.0 
+	     
+  (* Resonator (RZ) parameters *)
+  val RZ_a = S.realsig `a (S.realconst 0.1)
+  val RZ_b = S.realsig `b (S.realconst 0.26)
+  val RZ_c = S.realsig `c (S.realconst -65.0)
+  val RZ_d = S.realsig `d (S.realconst 2.0)
+  val RZ_U = S.realsig `U (S.mul RZ_b V)
+  val RZ   = Izhikevich03.construct t V RZ_U k1 k2 k3 theta RZ_a RZ_b RZ_c RZ_d spike tspike Isyn h
+  val RZ_ivp = IVP.construct RZ `t `h 0.0 250.0 
+	     
+  (* Low-threshold spiking (LTS) parameters *)
+  val LTS_a = S.realsig `a (S.realconst 0.02)
+  val LTS_b = S.realsig `b (S.realconst 0.25)
+  val LTS_c = S.realsig `c (S.realconst -65.0)
+  val LTS_d = S.realsig `d (S.realconst 2.0)
+  val LTS_U = S.realsig `U (S.mul LTS_b V)
+  val LTS   = Izhikevich03.construct t V LTS_U k1 k2 k3 theta LTS_a LTS_b LTS_c LTS_d spike tspike Isyn h
+  val LTS_ivp = IVP.construct LTS `t `h 0.0 250.0 
+
+end
+

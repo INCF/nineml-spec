@@ -1,0 +1,213 @@
+;; -*- Hen -*-
+;;
+;;  A grammar for NineML native syntax.
+;;
+;;  Based on the code and paper by Xavier Leroy (2000): A modular
+;;  module system. Journal of Functional Programming, 10, pp 269-303
+;;  doi:10.1017/S0956796800003683
+;;
+;;
+;; Copyright 2010-2011 Ivan Raikov and the Okinawa Institute of
+;; Science and Technology.
+;;
+;; This program is free software: you can redistribute it and/or
+;; modify it under the terms of the GNU General Public License as
+;; published by the Free Software Foundation, either version 3 of the
+;; License, or (at your option) any later version.
+;;
+;; This program is distributed in the hope that it will be useful, but
+;; WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;; General Public License for more details.
+;;
+;; A full copy of the GPL license can be found at
+;; <http://www.gnu.org/licenses/>.
+;;
+
+(require-extension lalr static-modules miniML)
+
+(define parser
+  (lalr-parser
+
+   (output:  parser "NineML.grm.scm")
+
+   (out-table: "NineML.grm.out")
+
+   ;; --- token definitions
+
+   (IDENT LABEL STRING NAT REAL ELSE
+	  END EOF  
+	  IF IN  LET  
+	  RPAREN RETURN
+	  SIG STRUCT THEN SEXPR
+	  (left:  COMMA DOT FUNCTION )
+	  (left:  LG LESS LEQ GREATER GEQ EQEQ EQUAL)
+	  (left:  PLUS MINUS STAR SLASH)
+	  (right: TYPE VALUE ARROW MODULE FUNCTOR)
+	  (right: LPAREN SEMICOLON COLON QUOTE))
+
+   ;; Toplevel entry point 
+
+   (phrase
+    (moddef opt_semi)          :    (list $1)
+    (moddef opt_semi phrase)   :    (cons $1 $3)
+    )
+   
+   ;; Paths 
+
+   (path
+    (IDENT)            : (Pident  (token-value $1))
+    (path DOT IDENT)   : (Pdot $1 (ident-name (token-value $3))) )
+   ;; Value expressions for the core language 
+
+   (valexpr
+    (valexpr1)                             : $1
+    (valexpr COMMA valexpr)                : (binop "pair" $1 $3 )
+    (valexpr PLUS valexpr)                 : (binop "add" $1 $3 )
+    (valexpr MINUS valexpr)                : (binop "sub" $1 $3 )
+    (valexpr STAR valexpr)                 : (binop "mul" $1 $3 )
+    (valexpr SLASH valexpr)                : (binop "div" $1 $3 )
+    (valexpr EQEQ valexpr)                 : (binop "==" $1 $3 )
+    (valexpr LG valexpr)                   : (binop "<>" $1 $3 )
+    (valexpr LESS valexpr)                 : (binop "<" $1 $3 )
+    (valexpr LEQ valexpr)                  : (binop "<=" $1 $3 )
+    (valexpr GREATER valexpr)              : (binop ">" $1 $3 )
+    (valexpr GEQ valexpr)                  : (binop ">=" $1 $3 )
+    (FUNCTION IDENT ARROW valexpr)         : (Function (token-value $2) $4)
+    (LET IDENT valbind IN valexpr)         : (Let0 (token-value $2) $3 $5) 
+    (RETURN valexpr)                       : $2
+    (VALUE IDENT valbind valexpr)          : (Let0 (token-value $2) $3 $4) 
+    (IF valexpr THEN valexpr ELSE valexpr) : (ternop "cond" $2 $4 $6)
+    (SEXPR)                                : (begin
+					       (parse-sexpr-macro (read (open-input-string (list->string (reverse (token-value $1)))))))
+    )
+
+   (valexpr1
+    (valexpr0) : $1 
+    (valexpr1 valexpr0) : (Apply $1 $2))
+
+   (valexpr0
+    (path)                              : (Longid $1)
+    (LABEL)                             : (Const `(label ,(token-value $1)))
+    (STRING)                            : (Const `(string ,(token-value $1)))
+    (REAL)                              : (Const `(real ,(token-value $1)))
+    (NAT)                               : (Const `(nat ,(token-value $1)))
+    (LPAREN valexpr RPAREN)             : $2 )
+
+   (valbind
+    (EQUAL valexpr)     : $2 
+    (IDENT valbind)     : (Function (token-value $1) $2)
+    )
+
+   ;; Type expressions for the core language 
+
+   (simpletype
+    (QUOTE IDENT)                       : (Tvar (find-type-variable (token-value $2)))
+    (simpletype ARROW simpletype)       : (Tcon path-arrow (list $1 $3))
+    (simpletype STAR simpletype)        : (Tcon path-star (list $1 $3))
+    (path)                              : (Tcon $1 '())
+    (simpletype path)                   : (Tcon $2 (list $1))
+    (LPAREN simpletypelist RPAREN path) : (Tcon $4 (reverse $2))
+    )
+
+
+   (simpletypelist
+    (simpletype)                      : (list $1)
+    (simpletypelist COMMA simpletype) : (cons $3 $1)
+    )
+
+
+   (valuedecl
+    (colon-begin-scheme simpletype) : (begin (reset-type-variables)
+					     (end-def)
+					     (generalize $2)))
+
+   (colon-begin-scheme ;; Hack to perform side effects before reading the type 
+    (COLON):   (begin
+		 (begin-def)
+		 (reset-type-variables)))
+
+
+   ;; Type definitions and declarations 
+
+   (typedecl
+    (typeparams IDENT) :        (list (token-value $2) (make-kind (length $1))))
+
+   (typedef
+    (typeparams IDENT EQUAL simpletype):   (begin
+					     (reset-type-variables)
+					     (list (token-value $2) (make-kind (length $1)) (make-deftype $1 $4)))
+    )
+
+   (typeparams
+    ()                            : '()
+    (typeparam)                   :  (list $1)
+    (LPAREN typeparamlist RPAREN) : (reverse $2))
+
+   (typeparamlist
+    (typeparam) : (list $1)
+    (typeparamlist COMMA typeparam) :   (cons $3 $1 ))
+
+   
+   (typeparam
+    (QUOTE IDENT) : (find-type-variable (token-value $2)))
+
+   (typeinfo
+    (typedef) :   (begin
+		    (let ((id (car $1)) (kind (cadr $1)) (def (caddr $1)))
+		      (list id (make-typedecl kind def))))
+    (typedecl) :  (begin
+		    (let ((id (car $1)) (kind (cadr $1)))
+		      (list id (make-typedecl kind #f)))))
+
+
+;; Value expressions for the module language 
+
+   (modterm
+    (path) :                              (Modid $1)
+    (STRUCT modstruct END) :              (Structure (reverse $2))
+    (FUNCTOR LPAREN IDENT COLON modtype RPAREN modterm) :
+    (Functor (token-value $3) $5 $7)
+    (modterm LPAREN modterm RPAREN) : (Mapply $1 $3)
+    (LPAREN modterm RPAREN) :           $2 
+    (modterm COLON modtype) :        (Constraint $1 $3))
+
+   (modstruct
+    () : '()
+    (modstruct moddef opt_semi) : (cons $2  $1))
+
+
+   (moddef
+    (VALUE IDENT valbind) :            (Value_def (token-value $2) $3)
+    (TYPE typedef) :                   (begin
+					 (let ((id (car $2)) (kind (cadr $2)) (def (caddr $2)))
+					   (Type_def id kind def)))
+    (MODULE IDENT COLON modtype EQUAL modterm) : (Module_def (token-value $2) (Constraint $6 $4))
+    (MODULE IDENT EQUAL modterm) :   (Module_def (token-value $2) $4))
+
+   (opt_semi
+    () : '()
+    (SEMICOLON) : '())
+
+
+   ;; Type expressions for the module language 
+
+   (modtype
+    (SIG modsig END) :               (Signature (reverse $2))
+    (FUNCTOR LPAREN IDENT COLON modtype RPAREN modtype) : (Functorty (token-value $3) $5 $7)
+    (LPAREN modtype RPAREN) :        $2 )
+
+   (modsig
+    () : '()
+    (modsig modspec opt_semi) : (cons $2  $1 ))
+
+   (modspec
+    (VALUE IDENT valuedecl) :         (Value_sig (token-value $2) $3)
+    (TYPE typeinfo) :                 (begin
+					(let ((id (car $2))
+					      (def (cadr $2)))
+					  (Type_sig id def) ))
+    (MODULE IDENT COLON modtype) : (Module_sig (token-value $2) $4) )
+
+
+))

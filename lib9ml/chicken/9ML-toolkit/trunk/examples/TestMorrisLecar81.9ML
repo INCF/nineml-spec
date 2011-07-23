@@ -1,0 +1,53 @@
+
+(*
+   Voltage oscillations in the barnacle giant muscle fiber, Morris C and Lecar H
+
+   Biophys J (1981) 35:193-213
+ 
+*) 
+
+component MorrisLecar81 =
+struct
+
+  binding construct t V W  gl gk gca vl vk vca v1 v2 v3 v4 phi c Isyn h =
+
+    return  [
+               [ minf (V) = 0.5 * (1 + (tanh ((V - v1) / v2))) ]
+	       [ winf (V) = 0.5 * (1 + (tanh ((V - v3) / v4))) ]
+	       [ lamw (V) = phi * (cosh ((V - v3) / (2 * v4))) ]
+	       [ ica  (V) = gca * (minf (V) * ( vca - V))      ]
+	       [ ik   (V) = gk  * (W * (vk - V))               ]
+	       [ D (V t h)  = (Isyn + (gl * (vl - V)) + ica(V) + ik(V)) / c ]
+	       [ D (W t h)  = lamw(V) *((winf(V) - W))                     ]
+            ]
+
+end
+  
+
+
+component TestMorrisLecar81 =
+struct
+
+  binding t    = Signal.realsig `t    (Signal.realconst 0.0)
+  binding V    = Signal.realsig `V    (Signal.realconst -60.899)
+  binding W    = Signal.realsig `W    (Signal.realconst 0.0149)
+  binding Isyn = Signal.realsig `Isyn (Signal.realconst 80.0)
+  binding gl   = Signal.realsig `gl   (Signal.realconst 2.0)
+  binding gk   = Signal.realsig `gk   (Signal.realconst 8.0)
+  binding gca  = Signal.realsig `gca  (Signal.realconst 4.0)
+  binding vl   = Signal.realsig `vl   (Signal.realconst -50.0)
+  binding vk   = Signal.realsig `vk   (Signal.realconst -70.0)
+  binding vca  = Signal.realsig `vca  (Signal.realconst 100.0)
+  binding v1   = Signal.realsig `v1   (Signal.realconst -1.0)
+  binding v2   = Signal.realsig `v2   (Signal.realconst 15.0)
+  binding v3   = Signal.realsig `v3   (Signal.realconst 10.0)
+  binding v4   = Signal.realsig `v4   (Signal.realconst 14.5)
+  binding phi  = Signal.realsig `phi  (Signal.realconst 0.0667)
+  binding c    = Signal.realsig `c    (Signal.realconst 20.0)
+  binding h    = Signal.realsig `h    (Signal.realconst 0.001)
+
+  binding type1 = MorrisLecar81.construct t V W  gl gk gca vl vk vca v1 v2 v3 v4 phi c Isyn h
+  binding type1_ivp = IVP.construct type1 `t `h 0.0 140.0 
+
+end
+

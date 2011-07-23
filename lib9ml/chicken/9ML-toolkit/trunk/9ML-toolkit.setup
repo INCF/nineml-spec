@@ -1,0 +1,223 @@
+;;;; -*- Hen -*-
+
+(define (dynld-name fn)		
+  (make-pathname #f fn ##sys#load-dynamic-extension))	
+
+(required-extension-version 'getopt-long 1.9)
+(required-extension-version 'miniML 1.4)
+(required-extension-version 'signal-diagram 1.5)
+
+(define version 1.1)
+
+(make (
+       ("NineML.grm.scm" ("NineML.grm")
+	(run (csi -s NineML.grm)))
+
+       ("NineML.l.scm" ("NineML.l")
+	(run (csi -n -R silex
+		  -e "'(lex \"NineML.l\" \"NineML.l.scm\" (quote counters) (quote line))'")))
+
+       ("expr.grm.scm" ("expr.grm")
+	(run (csi -s expr.grm)))
+
+       ((dynld-name "9ML-parse") ("parse.scm" "NineML.l.scm" "NineML.grm.scm" "expr.grm.scm" "expr-parser.scm")
+	(compile -O -d2 -S -s parse.scm -o ,(dynld-name "9ML-parse") -j 9ML-parse))
+
+       ((dynld-name "9ML-parse.import") ("9ML-parse.import.scm")
+	(compile  -s 9ML-parse.import.scm))
+
+       ((dynld-name "9ML-repr") ("repr.scm" "SXML.scm" "SXML-to-XML.scm" (dynld-name "9ML-parse") )
+	(compile -O -d2 -S -s repr.scm -o ,(dynld-name "9ML-repr") -j 9ML-repr))
+
+       ((dynld-name "9ML-repr.import") ("9ML-repr.import.scm")
+	(compile  -s 9ML-repr.import.scm))
+
+       ((dynld-name "9ML-ivp-chicken") ("ivp-chicken.scm" )
+	(compile -O -d2 -S -s ivp-chicken.scm -o ,(dynld-name "9ML-ivp-chicken") -j 9ML-ivp-chicken))
+
+       ((dynld-name "9ML-ivp-chicken.import") ( "9ML-ivp-chicken.import.scm" )
+	(compile  -s 9ML-ivp-chicken.import.scm))
+
+       ((dynld-name "9ML-ivp-mlton") ( "9ML-ivp-chicken.import.scm" )
+	(compile -O -d2 -S -s ivp-mlton.scm -o ,(dynld-name "9ML-ivp-mlton") -j 9ML-ivp-mlton))
+
+       ((dynld-name "9ML-ivp-mlton.import") ( "9ML-ivp-mlton.import.scm" )
+	(compile  -s 9ML-ivp-mlton.import.scm))
+
+       ((dynld-name "9ML-ivp-octave-mlton") ( "ivp-octave-mlton.scm" (dynld-name "9ML-ivp-mlton") )
+	(compile -O -d2 -S -s ivp-octave-mlton.scm -o ,(dynld-name "9ML-ivp-octave-mlton") -j 9ML-ivp-octave-mlton))
+
+       ((dynld-name "9ML-ivp-octave-mlton.import") ("9ML-ivp-octave-mlton.import.scm")
+	(compile  -s 9ML-ivp-octave-mlton.import.scm))
+
+       ((dynld-name "9ML-toolkit") 
+	("9ML-toolkit.scm" "NineMLcore.scm" "NineMLsignal.scm" "NineMLdiagram.scm" "NineMLinterval.scm" "NineMLgraph.scm" "NineMLivp.scm"  )
+	(compile -O -d2 -S -s 9ML-toolkit.scm -o ,(dynld-name "9ML-toolkit") -j 9ML-toolkit))
+
+       ((dynld-name "9ML-toolkit.import") ("9ML-toolkit.import.scm")
+	(compile  -s 9ML-toolkit.import.scm))
+
+       ("9ML-report" 
+	("NineMLcore.scm" "NineMLsignal.scm" "NineMLdiagram.scm" "NineMLinterval.scm"  "NineMLgraph.scm" 
+	 "report.scm" )
+	(compile -O -d2 -S report.scm -o 9ML-report ))
+
+       ("9ML-ivp" 
+	("NineMLcore.scm" "NineMLsignal.scm" "NineMLdiagram.scm" "NineMLinterval.scm" "NineMLgraph.scm" "NineMLivp.scm"  
+	 "ivp.scm" )
+	(compile -O -d2 -S ivp.scm -o 9ML-ivp ))
+
+       ("9ML-shell" 
+	("NineMLcore.scm" "NineMLsignal.scm" "NineMLdiagram.scm" "NineMLinterval.scm" "NineMLgraph.scm"  
+	 "shell.scm" )
+	(compile -O -d2 -S shell.scm -o 9ML-shell ))
+
+       ("9ML-ulp" 
+	("NineMLcore.scm" "NineMLsignal.scm" "NineMLdiagram.scm" "NineMLinterval.scm" "NineMLgraph.scm"  
+	 "ulp.scm" )
+	(compile -O -d2 -S ulp.scm -o 9ML-ulp ))
+
+       )
+
+  (list (dynld-name "9ML-toolkit") (dynld-name "9ML-toolkit.import") 
+	(dynld-name "9ML-repr") (dynld-name "9ML-repr.import") 
+	(dynld-name "9ML-parse") (dynld-name "9ML-parse.import") 
+	(dynld-name "9ML-ivp-chicken") (dynld-name "9ML-ivp-chicken.import") 
+	(dynld-name "9ML-ivp-mlton") (dynld-name "9ML-ivp-mlton.import") 
+	(dynld-name "9ML-ivp-octave-mlton") (dynld-name "9ML-ivp-octave-mlton.import") 
+	"9ML-report" "9ML-ivp" "9ML-shell" "9ML-ulp" )
+
+  )
+
+
+(install-extension
+
+  ; Name of your extension:
+  '9ML-ivp-chicken
+
+  ; Files to install for your extension:
+  `(,(dynld-name "9ML-ivp-chicken") ,(dynld-name "9ML-ivp-chicken.import") )
+
+  ; Assoc list with properties for your extension:
+  `((version ,version)
+    ))
+
+(install-extension
+
+  ; Name of your extension:
+  '9ML-ivp-mlton
+
+  ; Files to install for your extension:
+  `(,(dynld-name "9ML-ivp-mlton") ,(dynld-name "9ML-ivp-mlton.import") )
+
+  ; Assoc list with properties for your extension:
+  `((version ,version)
+    ))
+
+(install-extension
+
+  ; Name of your extension:
+  '9ML-ivp-octave-mlton
+
+  ; Files to install for your extension:
+  `(,(dynld-name "9ML-ivp-octave-mlton") ,(dynld-name "9ML-ivp-octave-mlton.import") )
+
+  ; Assoc list with properties for your extension:
+  `((version ,version)
+    ))
+
+(install-extension
+
+  ; Name of your extension:
+  '9ML-toolkit
+
+  ; Files to install for your extension:
+  `(,(dynld-name "9ML-toolkit") ,(dynld-name "9ML-toolkit.import") )
+
+  ; Assoc list with properties for your extension:
+  `((version ,version)
+    ))
+
+(install-extension
+
+  ; Name of your extension:
+  '9ML-repr
+
+  ; Files to install for your extension:
+  `(,(dynld-name "9ML-repr") ,(dynld-name "9ML-repr.import") )
+
+  ; Assoc list with properties for your extension:
+  `((version ,version)
+    ))
+
+
+(install-extension
+
+  ; Name of your extension:
+  '9ML-parse
+
+  ; Files to install for your extension:
+  `(,(dynld-name "9ML-parse") ,(dynld-name "9ML-parse.import") )
+
+  ; Assoc list with properties for your extension:
+  `((version ,version)
+    ))
+
+
+(install-program 
+ '9ML-report 
+ 
+ `("9ML-report" )
+
+  ; Assoc list with properties for the program:
+  `((version ,version)))
+
+
+(install-program 
+ '9ML-ivp 
+ 
+ `("9ML-ivp" )
+
+  ; Assoc list with properties for the program:
+  `((version ,version)))
+
+
+(install-program 
+ '9ML-shell 
+ 
+ `("9ML-shell" )
+
+  ; Assoc list with properties for the program:
+  `((version ,version)))
+
+(install-program 
+ '9ML-ulp 
+ 
+ `("9ML-ulp" )
+
+  ; Assoc list with properties for the program:
+  `((version ,version)))
+
+
+(include "setup-helper")
+(define SHARED-DIR (installation-chicken-home))
+(define 9ML-DIR (make-pathname SHARED-DIR "9ML"))
+
+;; File Copy Operations
+
+(define (*file-copy fn dn)
+  (let ([fn (->string fn)])
+    (copy-file fn (make-pathname dn fn)) ) )
+
+(define (copy-file-to-9ML-dir fn)
+  (*file-copy (->string fn) 9ML-DIR) )
+
+(if (not (file-exists? 9ML-DIR))
+    (create-directory 9ML-DIR))
+
+
+(copy-file-to-9ML-dir "examples/MorrisLecar81.9ML")
+(copy-file-to-9ML-dir "examples/Izhikevich03.9ML")
+(copy-file-to-9ML-dir "examples/Destexhe94.9ML")
+(copy-file-to-9ML-dir "examples/LeakyIAF.9ML")
+(copy-file-to-9ML-dir "examples/ExcInhNetwork.9ML")

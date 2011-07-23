@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<NineML xmlns="http://nineml.org/9ML/0.1"
+    xmlns:comodl="CoModL"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://nineml.org/9ML/0.1 NineML_v0.2.xsd">
+
+  <ComponentClass name="izhikevichCell" xmlns="CoModL">
+
+    <Parameter name="a" dimension='none'/>
+    <Parameter name="c" dimension='none'/>
+    <Parameter name="b" dimension='none'/>
+    <Parameter name="d" dimension='none'/>
+    <Parameter name="theta" dimension='voltage'/>
+
+    <!-- AnalogPort or Exposure?? -->
+    <AnalogPort name="iSyn" mode='reduce' dimension='current'/>
+    <AnalogPort name="U" mode="send" dimension='none'/>
+    <AnalogPort name="V" mode="send" dimension='voltage'/>
+    <EventPort name="spikeOutput" mode="send"/>
+    
+
+    <Dynamics>
+        
+        <!-- Suggested addition Wednesday morning...-->
+        <StateVariable name="V" dimension="voltage"/>
+        <StateVariable name="U" dimension="none"/> 
+          
+        <Regime name="subthresholdRegime">
+            
+              
+          <!-- if 'independent_variable' is missing, it should be assumed to be 't' -->
+          <!-- Should this 'ODE' be called 'Rate', RateODE, 'RateEqn' ??-->
+          <TimeDerivative variable="U">
+            <MathInline>a*(b*V - U)</MathInline>
+          </TimeDerivative>
+          <TimeDerivative variable="V">
+            <MathInline>0.04*V*V + 5*V + 140.0 - U + iSyn</MathInline>
+          </TimeDerivative>
+
+          
+          <OnCondition>
+            <Trigger>
+              <MathInline>V &gt; theta </MathInline>
+            </Trigger>
+
+            <StateAssignment variable="V" >
+              <MathInline>c</MathInline>
+            </StateAssignment>
+            
+            <StateAssignment variable="U" >
+              <MathInline>U+d</MathInline>
+            </StateAssignment>
+            
+            <EventOut port="spikeOutput" />
+            
+          </OnCondition>
+
+        </Regime>
+    </Dynamics>
+
+  </ComponentClass>
+</NineML>

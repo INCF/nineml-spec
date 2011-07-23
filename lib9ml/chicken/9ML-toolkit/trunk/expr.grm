@@ -1,0 +1,45 @@
+; -*- Hen -*-
+
+(require-extension lalr)
+
+(define expr-parser
+  (lalr-parser
+
+   (output:    expr-parser "expr.grm.scm")
+
+   ;; --- token definitions
+   ( ID NUM IF THEN ELSE RPAREN  ;;LET
+       (right: QUESTION COLON)
+       (left: < > = >= <=)
+       (left: + -)
+       (left: * /)
+       (left: uminus)
+       (right: ^ ) 
+       (left: LPAREN)
+       )
+   
+   (expr     (NUM)                    : (exact->inexact (token-value $1))
+             (ID)                     : (token-value $1)
+	     (ID LPAREN RPAREN)       : `(,(token-value $1))
+	     (ID LPAREN args RPAREN)  : `(,(token-value $1) . ,(reverse $3))
+	     (expr + expr)            : `(+ ,$1 ,$3)
+             (expr - expr)            : `(- ,$1 ,$3)
+             (expr * expr)            : `(* ,$1 ,$3)
+             (expr / expr)            : `(/ ,$1 ,$3)
+             (- expr (prec: uminus))  : `(- ,$2)
+             (expr ^ expr)            : `(pow ,$1 ,$3)
+	     (expr < = expr)          : `(<= ,$1 ,$4)
+	     (expr > = expr)          : `(>= ,$1 ,$4)
+	     (expr <= expr)           : `(<= ,$1 ,$3)
+	     (expr >= expr)           : `(>= ,$1 ,$3)
+	     (expr > expr)            : `(> ,$1 ,$3)
+	     (expr < expr)            : `(< ,$1 ,$3)
+	     (expr QUESTION expr COLON expr) :  `(if ,$1 ,$3 ,$5) 
+	     (IF  expr THEN expr ELSE expr)  :  `(if ,$2 ,$4 ,$6) 
+	     (LPAREN expr RPAREN)     : $2 
+	     )
+
+   (args     (expr)                   : (list $1)
+             (args expr)              : (cons $2 $1))
+
+  ))

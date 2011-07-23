@@ -1,0 +1,62 @@
+(* 
+
+    An efficient method for computing synaptic conductances based on a
+    kinetic model of receptor binding, Destexhe, A and Mainen, Z and Sejnowski, T.J.
+ 
+    Neural Computation 6: 10-14, 1994.
+
+
+ 1. during the pulse (from t=t0 to t=t1), C = Cmax, which gives:
+
+   R(t-t0) = Rinf + [ R(t0) - Rinf ] * exp (- (t-t0) / Rtau )		
+
+ where 
+   Rinf = Alpha * Cmax / (Alpha * Cmax + Beta) 
+ and
+   Rtau = 1 / (Alpha * Cmax + Beta)
+
+ 2. after the pulse (t>t1), C = 0, and one can write:
+
+    R(t-t1) = R(t1) * exp (- Beta * (t-t1) )				
+*)
+
+component Destexhe94 =
+struct
+
+  binding construct t t0 t1 R R0 R1 R_ss R_tau Alpha Beta C_dur spike endrelease Isyn gsyn Vsyn Esyn =
+
+   (* on-regime: during the pulse, t \in [t0,t1] *)
+   binding on_regime = [ 
+                         [ R          = R_ss + ((R0 - R_ss) * (exp (neg ((t - t0) / R_tau)))) ]
+			 [ endrelease = t > t1 ]
+			 [ spike      = spike ] 
+                       ]
+
+   (* transient between off and on regimes: sets t0 and t1 to indicate pulse boundaries *)
+   binding off_on  =  [
+                        [ t0 = t ]
+			[ t1 = t + C_dur ]
+			[ R0 = R ]
+			[ R1 = R1 ] 
+                      ]
+
+    (* off-regime: after the pulse, t > t1 *)
+    binding off_regime =  [
+                             [ R          = R1 * (exp (neg ((t - t1) * Beta))) ]
+                             [ endrelease = false ]
+                             [ spike      = spike ]
+                          ]
+ 
+    (* transient between on and off regimes: *)
+    binding on_off =  [ R1 = R ]
+
+    (* synaptic current equation *)
+
+    binding synaptic_current = [ Isyn = gsyn * R * (Vsyn - Esyn) ]
+
+    return Diagram.SEQUENCE (Diagram.RTRANSITION (Diagram.TRANSIENT on_off off_regime endrelease )
+    	                     			 (Diagram.TRANSIENT off_on on_regime spike )
+   		                                 spike endrelease)
+                            synaptic_current
+
+end

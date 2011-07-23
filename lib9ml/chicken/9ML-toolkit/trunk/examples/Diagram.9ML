@@ -1,0 +1,12 @@
+
+component Test = 
+struct
+
+binding make_diagram V t gL vL Isyn C =
+
+  binding subthreshold_eq = [d (V t) = ((- gL) * (V - vL) + Isyn) / C]
+
+  return subthreshold_eq
+
+end
+
