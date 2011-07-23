@@ -1,0 +1,4 @@
+(repo svn "http://anonymous:@svn.incf.org/svn/nineml/trunk/lib9ml/chicken/{egg-name}")
+(uri meta-file "http://anonymous:@svn.incf.org/svn/nineml/trunk/lib9ml/chicken/{egg-name}/tags/{egg-release}/{egg-name}.meta")
+
+(release "1.0")
