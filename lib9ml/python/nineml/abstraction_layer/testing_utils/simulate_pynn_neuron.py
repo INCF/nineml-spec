@@ -5,7 +5,7 @@ from os.path import abspath, realpath, join
 
 
 def std_pynn_simulation( test_component, parameters, initial_values,
-        synapse_components, records, plot=True):
+        synapse_components, records, plot=True,sim_time=100.,synapse_weights=1.0, syn_input_rate=100):
 
     import nineml
     nineml.utility.LocationMgr.StdAppendToPath()
@@ -46,8 +46,8 @@ def std_pynn_simulation( test_component, parameters, initial_values,
 
     # For each synapse type, create a spike source:
     if synapse_components:
-        input = sim.Population(len(synapse_components), sim.SpikeSourcePoisson, {'rate': 100})
-        connector = sim.OneToOneConnector(weights=1.0, delays=0.5)
+        input = sim.Population(len(synapse_components), sim.SpikeSourcePoisson, {'rate': syn_input_rate})
+        connector = sim.OneToOneConnector(weights=synapse_weights, delays=0.5)
 
         conn = []
         for i,(ns, weight_connector) in enumerate(synapse_components):
@@ -62,7 +62,7 @@ def std_pynn_simulation( test_component, parameters, initial_values,
     cells.record()
 
     #Run the simulation:
-    sim.run(1000.0)
+    sim.run(sim_time)
 
 
     if len(records) == 0:
@@ -86,11 +86,14 @@ def std_pynn_simulation( test_component, parameters, initial_values,
     for record in records:
         if not record.tag in tags:
             tags.append( record.tag )
-
+ 
+    
     # Plot the graphs:
     if plot:
         import pylab
-        nGraphs = len(tags)
+        nGraphs = len(tags) 
+
+        # Plot the Records:
         for graphIndex, tag in enumerate(tags):
             pylab.subplot(nGraphs,1, graphIndex+1)
             
@@ -102,10 +105,20 @@ def std_pynn_simulation( test_component, parameters, initial_values,
             pylab.ylabel(tag)
             pylab.legend()
 
+        #Plot the spikes:
+        #pylab.subplot(nGraphs,1, len(tags)+1)
+        #t_spikes = cells[0:1].getSpikes()[:1]
+        #pylab.plot( [1,3],[1,3],'x'  )
+        #print t_spikes
+        #if t_spikes:
+        #    pylab.scatter( t_spikes, t_spikes )
+        
+
+
         # Add the X axis to the last plot:
         pylab.xlabel('t [ms]')
 
-        pylab.suptitle("From Tree-Model Pathway")
+        #pylab.suptitle("From Tree-Model Pathway")
         pylab.show()
 
     sim.end()

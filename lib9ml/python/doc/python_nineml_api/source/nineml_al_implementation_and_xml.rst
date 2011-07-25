@@ -59,7 +59,7 @@ Components can move between Regimes via transitions. There are 2 ways of
 triggering a transition:
 
 * By a condition of the state variables, for example :math:`X>Y`.
-* By an `InputEvent` on a port. (Discussed further in XX).
+* By an `InputEvent` on a port. 
 
 When a transition is triggered; three things can happen:
 
@@ -68,10 +68,9 @@ When a transition is triggered; three things can happen:
   component will move into *regime1*.
 
 * `StateAssignments` can take place, for example, :math:`X=0`
-* The component can send `OutputEvents` (Discussed further in XX)
+* The component can send `OutputEvents` 
 
 During a transition, multiple StateAssignments and `OutputEvents` can occur.
-(For more on the resolution of Transition's, see XX)
 
 
 
@@ -128,7 +127,7 @@ Events
 
 As well as being able to communicate continuous values, components are also able
 to emit and receive `Event` s. Events are discrete notifications that are transmitted 
-over EventPorts (Discussed in section XX). Since EventPorts have names, saying
+over EventPorts.  Since EventPorts have names, saying
 that we transmit a 'event1' for example would mean transmitting an event on
 the EventPort called 'event1'. Events can be used to signal action
 potentials firing for example. 
@@ -217,31 +216,3 @@ EventPorts:
 
 
 
-Advanced Topics
-----------------
-
-Transition Resolution Order
-############################
-
-.. todo::
-
-    This
-
-
-Techniques, tips and tricks:
------------------------------
-
-Conductance Based synapses
-##########################
-
-.. todo::
-    This
-
-
-
-Example Transition Graphs of simple components:
------------------------------------------------
-
-
-.. todo::
-    This

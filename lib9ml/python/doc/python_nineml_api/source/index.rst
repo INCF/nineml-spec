@@ -64,7 +64,10 @@ their dynamics. If we were to implement this naively, we could potentially
 copy and paste the same code 15 times, *for each simulator*. By factoring out
 basic functionality, we make our workflow much more manageable.
 
-There is more about the NineML design and specification :doc:`here</src_rst/overview/nineml_overview>` 
+
+.. comment::
+
+    There is more about the NineML design and specification :doc:`here</src_rst/overview/nineml_overview>` 
 
 
 
@@ -87,9 +90,6 @@ Python NineML
 
 Python-NineML is the python implementation of the NineML specification.
 
-.. todo::
-    
-    Status of the python NineML Libraries
 
 
 .. toctree::

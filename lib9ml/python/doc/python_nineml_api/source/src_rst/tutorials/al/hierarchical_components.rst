@@ -14,10 +14,6 @@ previously, or by creating 3 components; the iaf component and 2 synapses, and
 then creating a larger component out of them by specifying internal
 connectivity.
 
-.. todo::
-    
-    What would the combined code look like, example of why separating can be
-    good.
 
 
 Building larger components out of smaller components has several advantages:
@@ -29,7 +25,7 @@ Building larger components out of smaller components has several advantages:
 
 
 
-We look at the IAF with 2 synapse example in more detail. Figure XX shows a
+We look at the IAF with 2 synapse example in more detail. The following figure shows a
 cartoon of an iaf neuron with a refractory period. Orange boxes denote regimes,
 yellow ovals denote transitions and the ports are shown on the right-hand-side.
 Parameters have been omitted.
@@ -50,10 +46,6 @@ The corresponding code to generate this component is::
 
     r2 = al.Regime( name = "refractoryregime",
                     time_derivatives = ["dV/dt = 0"],
-                                        transitions = [ al.On("t >= tspike + taurefrac",
-                                                                to="subthresholdregime") ],
-                                        )
-
     iaf = al.ComponentClass( 
                             name = "iaf",
                             dynamics = al.Dynamics( regimes = [r1,r2] ),

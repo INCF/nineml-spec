@@ -81,8 +81,7 @@ any time, the component will be in a single 'regime', and it is possible to
 move between regimes.  for example, an integrate-and-fire neuron with an
 explicit refractory period could be modelled as a component with two regimes, a
 default regime, where injected current affects membrane voltage, where and a
-second *refractory* regime where the voltage is fixed to a certain value. This
-will be further discussed in XX.
+second *refractory* regime where the voltage is fixed to a certain value. 
 
 For this model, the differential-equations governing the state variables never
 change, so we only need a single regime.
@@ -210,7 +209,6 @@ would create the port as::
 
 See the docs for `AnalogPort` for more information.
 
-See XX [HH example] for examples of Reduce-Ports in action.
 
 
 
@@ -245,16 +243,3 @@ Depending on what is being specified, we specify the mathematics slightly differ
 
 
 
-
-
-Shorthands for Construction
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. todo::
-
-    * Port mode -> aliases curry classes
-    * Inference of parameters
-
-
-Pseudo Code for Simulation:
-~~~~~~~~~~~~~~~~~~~~~~~~~~~

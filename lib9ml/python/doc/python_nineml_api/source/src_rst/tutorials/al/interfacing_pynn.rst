@@ -35,9 +35,6 @@ are using the NEURON backend, this internally takes care of creating and
 compiling the relevant mod-file for the simulation, and if we are using the NEST
 back-end, it will automatically create the relevant module. 
 
-.. note::
-    
-    See example XX for more about how to use NineML with NEURON.
 
 The interface to NineML is consistent across back-ends; using with pyNN/Neuron
 or pyNN/NEST, the code will look like this ::
