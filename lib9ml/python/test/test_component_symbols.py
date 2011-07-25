@@ -9,7 +9,7 @@ class ComponentSymbolsTestCase(unittest.TestCase):
     def test_basic(self):
 
         bound = ['q']
-        parameters = ['a','b','c','d','theta','w']
+        parameters = ['a','b','c','d','theta','w','Isyn']
         in_ports = ['Isyn']
         #out_ports = ['spike']
         state_vars = ["V","U"]

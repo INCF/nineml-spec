@@ -5,7 +5,7 @@ import re
 import nineml.abstraction_layer as nineml
 
 # (expr, (lhs,op,rhs))
-ODEs = [("dA_x/dt = -A/tau_r",("A_x","t","-A/tau_r")),
+TimeDerivatives = [("dA_x/dt = -A/tau_r",("A_x","t","-A/tau_r")),
         ("  dB/dt=-B/tau_d",("B","t","-B/tau_d"))]
 
 Assignments = [("gB = 1/(1 + mg_conc*eta*exp(-1*gamma*V))",("gB","1/(1 + mg_conc*eta*exp(-1*gamma*V))")),
@@ -20,7 +20,7 @@ Inplace = [("Isyn+=g*(E_rev-V)",("Isyn","+=","g*(E_rev-V)")),
            (" dA/=dt", ("dA","/=","dt"))]
 
 
-all_good = Inplace+Assignments+ODEs
+all_good = Inplace+Assignments+TimeDerivatives
 
 all_bad = ["B / = 1.45",
            " "]
@@ -36,7 +36,7 @@ class E2OTestCase(unittest.TestCase):
     def test_donothing(self):
         """ Check that expr_to_obj leaves objects alone"""
         
-        for t in ODEs:
+        for t in TimeDerivatives:
             o = nineml.expr_to_obj(t[0])
             assert o == nineml.expr_to_obj(o)
 
@@ -51,12 +51,12 @@ class E2OTestCase(unittest.TestCase):
 
     def test_odes(self):
 
-        for t in ODEs:
+        for t in TimeDerivatives:
             o = nineml.expr_to_obj(t[0])
 
             dep_var, indep_var, rhs = t[1]
 
-            assert isinstance(o,nineml.ODE)
+            assert isinstance(o,nineml.TimeDerivative)
 
             assert o.rhs == rhs
             assert o.dependent_variable == dep_var
@@ -78,7 +78,7 @@ class E2OTestCase(unittest.TestCase):
 
             lhs, rhs = t[1]
 
-            assert isinstance(o,nineml.Assignment)
+            assert isinstance(o,nineml.StateAssignment)
 
             assert o.expr == rhs
             assert o.to == lhs

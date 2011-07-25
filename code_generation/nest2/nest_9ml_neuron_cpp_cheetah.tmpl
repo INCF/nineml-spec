@@ -141,7 +141,9 @@ nest_nineml::$model.nest_classname::State_::State_(const Parameters_& p)
     ${p.symbol}(${p.initial_value}), // $p.unit
 #end for
     regime_(${model.initial_regime})
-  {}
+  {
+    printf("State_() [A] - regime = %d", this->regime_ );    
+  }
 
 /* ---------------------------------------------------------------- 
  * Parameter and state extractions and manipulation functions
@@ -199,6 +201,20 @@ void nest_nineml::$model.nest_classname::State_::set(const DictionaryDatum& d, c
   // TODO/FUTURE: handle 9ml state_var restrictions
 
   //TODO: set regime?
+
+  /*
+  double d_regime;
+  updateValue<double>(d, $mynames::Regime9ML, d_regime);
+  printf("State_::set() [A] Regime: %d\n", regime_);
+  regime_ = nest_nineml::$model.nest_classname::Regimes(d_regime); 
+  printf("State_::set() [B] Regime: %d\n", regime_);
+  
+  // Check the Regime is a valid Regime:
+  if( regime_ <= INF_REGIME || regime_ >= SUP_REGIME )
+  {
+      throw std::runtime_error("Setting Regime to an invalid value");
+  }
+  */
 
 }
 
@@ -325,8 +341,9 @@ void nest_nineml::$model.nest_classname::update(nest::Time const& origin,
                                    const nest::long_t from_step, 
                                    const nest::long_t to_step)
 {
-
+    
   Regimes target_regime = S_.regime_;
+    
 
   const double h  = nest::Time::get_resolution().get_ms(); 
   double t;
@@ -345,11 +362,32 @@ void nest_nineml::$model.nest_classname::update(nest::Time const& origin,
     // (those upon entry to the loop) on right hand sides everywhere
 
     // state update as per regime, then transitions
+
+    if( S_.regime_ <= INF_REGIME || S_.regime_ >= SUP_REGIME  )
+    {
+        char* prefix = "${model.nest_classname}::update -";
+        const int buffsize = 1000;
+        char buffer[buffsize];
+        sprintf( buffer, "%s %d", prefix, S_.regime_);
+
+        throw std::runtime_error(buffer);
+    }
     switch (S_.regime_) {
 
     // TODO: synapses
 
+    case INF_REGIME:
+        printf("ERROR IN INF_REGIME");
+        S_.regime_ = REGIME3;
+        break;
+
+    case SUP_REGIME:
+        printf("ERROR IN INF_REGIME");
+        S_.regime_ = REGIME3;
+        break;
+
     #for $r in $model.regimes
+
 
     case $r.symbol :
       

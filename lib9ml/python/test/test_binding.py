@@ -5,7 +5,7 @@ import nineml.abstraction_layer as nineml
 import os, tempfile
 
 # [expr, vars, functions]
-bindings = [["q := -A/tau_r", "q",()],
+aliases = [["q := -A/tau_r", "q",()],
             ["q(v,w) := v*w/10", "q", ("v","w")],
             ["alpha_n(V) := -0.01*(V+55)/(exp(-(V+55)/10) - 1)","alpha_n",("V",)],
             ["beta_n(V) := 0.125*exp(-(V+65)/80)","beta_n",("V",)],
@@ -15,49 +15,49 @@ bindings = [["q := -A/tau_r", "q",()],
             ["gk(n) := gkbar*n*n*n*n","gk",("n",)]]
              
 
-not_bindings = ["dn/dt = (ninf(V)-n)/ntau(V)",
+not_aliases = ["dn/dt = (ninf(V)-n)/ntau(V)",
                 "il = gl*(V - el)",
                 "ik = gk(n)*(V - ek)",
                 "dV/dt = (ina + ik + il + Isyn)/C"]
                 
 
-class BindingLhsParseTestCase(unittest.TestCase):
+class AliasLhsParseTestCase(unittest.TestCase):
 
-    def test_binding_func_arg_parse(self):
+    def test_alias_func_arg_parse(self):
 
-        for b in bindings:
-            assert nineml.Binding.match(b[0])
-            symbol,args,rhs = nineml.Binding.pre_parse(b[0])
+        for b in aliases:
+            assert nineml.Alias.match(b[0])
+            symbol,args,rhs = nineml.Alias.pre_parse(b[0])
             assert symbol == b[1]
             #print args, b[2]
             assert args == b[2]
 
     def test_negative_matches(self):
 
-        for nb in not_bindings:
-            assert not nineml.Binding.match(nb)
+        for nb in not_aliases:
+            assert not nineml.Alias.match(nb)
 
 
-    def test_failed_bindings(self):
+    def test_failed_aliases(self):
 
         # these should work
-        b = nineml.Binding("func(x,y)","x**2 + y")
-        b = nineml.Binding("f","10")
+        b = nineml.Alias("func(x,y)","x**2 + y")
+        b = nineml.Alias("f","10")
 
         # func symbol in func arg
-        self.assertRaises(ValueError, nineml.Binding, "func(func,x)","x**2 + func")
+        self.assertRaises(ValueError, nineml.Alias, "func(func,x)","x**2 + func")
 
         # self reference
-        self.assertRaises(ValueError, nineml.Binding, "f", "x**2 + f")
+        self.assertRaises(ValueError, nineml.Alias, "f", "x**2 + f")
 
         # redefining math symbols
-        self.assertRaises(ValueError, nineml.Binding, "e","10")
+        self.assertRaises(ValueError, nineml.Alias, "e","10")
         
 
 
 def suite():
 
-    suite = unittest.makeSuite(BindingLhsParseTestCase,'test')
+    suite = unittest.makeSuite(AliasLhsParseTestCase,'test')
     return suite
 
 if __name__ == "__main__":

@@ -17,15 +17,15 @@ class ExpressionsTestCase(unittest.TestCase):
         assert pfx_c == "PRE_x>10 & pi < 3 & exp(pi,PRE_y)==1"
         assert isinstance(pfx_c, str) 
 
-        b = Binding("ntau(V)","1/(q10*(alpha_n(V) + beta_n(V)))")
+        b = Alias("ntau(V)","1/(q10*(alpha_n(V) + beta_n(V)))")
         pfx_b = b.prefix("PRE_")
         assert pfx_b == "PRE_ntau(V) := 1/(PRE_q10*(PRE_alpha_n(V) + PRE_beta_n(V)))"
 
-        ode = ODE("V","t","(ina + ik + il + Isyn)/C")
-        pfx_ode = ode.prefix("PRE_")
+        time_derivative = TimeDerivative("V","t","(ina + ik + il + Isyn)/C")
+        pfx_ode = time_derivative.prefix("PRE_")
         assert pfx_ode == "dPRE_V/dt = (PRE_ina + PRE_ik + PRE_il + PRE_Isyn)/PRE_C"
 
-        a = Assignment("U","gk(n)*(V - ek)")
+        a = StateAssignment("U","gk(n)*(V - ek)")
         pfx_a = a.prefix("PRE_")
         assert pfx_a == "PRE_U = PRE_gk(PRE_n)*(PRE_V - PRE_ek)"
 
@@ -53,9 +53,9 @@ class ExpressionsTestCase(unittest.TestCase):
         expr = c.rhs_name_transform(name_map)
         assert expr == "S_.X>10 & pi < 3 & exp(pi,S_.Y)==1"
         
-        ode = ODE("V","t","(g_L*(E_L-V) + ina + ik + il + Isyn)/C")
+        time_derivative = TimeDerivative("V","t","(g_L*(E_L-V) + ina + ik + il + Isyn)/C")
         name_map = {'V':'S_.VM'}
-        expr = ode.rhs_name_transform(name_map)
+        expr = time_derivative.rhs_name_transform(name_map)
         assert expr == "(g_L*(E_L-S_.VM) + ina + ik + il + Isyn)/C"
 
         # TODO more tests for other expr types here

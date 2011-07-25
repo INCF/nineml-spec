@@ -65,12 +65,12 @@ class CheetahTestCase(unittest.TestCase):
 
     def test_raise(self):
 
-        t = Template("#raise TypeError, 'expected ODE or Assignment class'")
+        t = Template("#raise TypeError, 'expected TimeDerivative or StateAssignment class'")
 
         try:
             s = str(t)
         except TypeError as e:
-            assert e.args[0] == 'expected ODE or Assignment class'
+            assert e.args[0] == 'expected TimeDerivative or StateAssignment class'
 
 
     def test_dynamic_contructs(self):

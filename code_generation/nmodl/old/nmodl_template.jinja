@@ -1,0 +1,163 @@
+TITLE Spiking node generated from the 9ML file {{input_filename}} using 9ml2nmodl.py version {{version}}
+
+
+NEURON {
+  POINT_PROCESS {{ component.name|replace('-', '_') }}
+  RANGE regime
+  
+  {%- for var in component.state_variables %} 
+  RANGE {{ var.name }}
+  {%- endfor %}
+
+  {%- for p in component.parameters %}
+  RANGE {{ p.name }} 
+  {%- endfor %}
+
+  {%- for var in component.state_variables %} 
+  RANGE {{ var.name }}
+  {%- endfor %}
+
+  {%- for alias in component.aliases  %}
+  RANGE {{ alias.lhs }}
+  {%- endfor %}
+
+}
+
+CONSTANT {
+  SPIKE = 0
+  INIT = 1
+
+  {%- for regime in component.regimes %}
+  {{ regime.label }} = {{ regime.flag }}
+  {%- endfor %}
+
+  {%- for channel in channels %}
+  {{ channel }} = {{ loop.index0 }}
+  {%- endfor %}
+}
+
+
+
+INITIAL {
+
+  {%- for var in component.state_variables %}
+  {{ var.name }} = 0
+  {%- endfor %}
+
+  regime = {{ initial_regime }}
+  net_send(0, INIT)
+}
+
+PARAMETER {
+  {%- for p in component.parameters %}
+  {{ p.name }} = 1
+  {%- endfor %}
+}
+
+STATE { 
+    {%- for var in component.state_variables %} 
+    {{ var.name }}
+    {%- endfor %}
+
+	{%- if weights_as_states %}
+	{{ weight_variables.values()|join(' ') }} 
+	{%- endif %}
+
+
+}
+
+ASSIGNED {
+  regime
+
+  {%- for alias in component.aliases  %}
+  {{ alias.lhs }}
+  {%- endfor %}
+    
+}
+
+BREAKPOINT {
+  SOLVE states METHOD derivimplicit
+
+  {%- for alias in component.aliases %}
+  {{ alias.lhs  }} = {{ alias.rhs }}
+  {%- endfor %}
+
+}
+
+DERIVATIVE states {
+  {%- for var in component.state_variables %}
+    {{ var.name }}' = deriv_{{ var.name }}({{ deriv_func_args(component, var.name)|join(', ') }})
+  {%- endfor %}
+}
+
+{% for var in component.state_variables %}
+FUNCTION deriv_{{ var.name }}({{ deriv_func_args(component, var.name)|join(', ') }}) {
+  {%- for regime in component.regimes %}
+  if (regime=={{ regime.label }}) {
+    deriv_{{ var.name }} = {{ ode_for(regime, var).rhs }}
+  }
+  {%- endfor %}
+}
+{%- endfor %}
+
+
+
+NET_RECEIVE(w, channel) {
+
+  {# printf("Received event with weight %f on channel %f at %f\n", w, channel, t) #}
+
+
+  INITIAL {
+    : stop channel being set to 0 by default
+  }
+  if (flag == SPIKE) {
+    printf("Received spike with weight %f on channel %f at %f\n", w, channel, t)
+    {%- for regime in component.regimes %}
+    if (regime == {{ regime.label }}) {
+      {%- for on_event in regime.on_events %}
+
+      {%- set channel = get_on_event_channel(on_event,component) %}
+      if (channel == {{ channel }}) {
+      		printf("  Resolved to channel {{on_event.channel_ }} \n" )
+        {% if weight_variables %}
+        {{ get_weight_variable(channel, weight_variables) }} = w
+        {% endif %}
+        {%- for sa in on_event.state_assignments %}
+        {{ sa.lhs }} = {{ sa.rhs }}
+        {%- endfor %}
+        {%- for node in on_event.event_outputs %}
+
+        {{ as_expr(node) }}
+        
+        {%- endfor %}
+      }
+      {%- endfor %}
+    }
+    {%- endfor %}
+  } else if (flag == INIT) {
+
+    {%- for regime in component.regimes %}
+    {%- for transition in regime.on_conditions %} 
+    WATCH ({{transition.trigger.rhs|replace('=','')}}) {{ transition.target_regime.flag }}
+    {%- endfor %}
+    {%- endfor %}
+
+  {%- for regime in component.regimes %}
+  {%- for transition in regime.on_conditions %}
+  } else if (regime == {{regime.label }} && flag == {{ transition.target_regime.label }} ) {
+    {# printf("\nChanging Regime from %ld to %ld", regime, flag ) #}
+    printf("\nt=%fChanging Regime from {{regime.name}} to {{transition.target_regime.name}}",t )
+    regime = flag
+    
+    {%- for node in transition.event_outputs %}
+    net_event(t)
+    {%- endfor %}
+
+    {%- for sa in transition.state_assignments %}
+    {{ sa.lhs }} = {{ sa.rhs }}
+    {%- endfor %}
+
+  {%- endfor %}
+  {%- endfor %}
+  }
+}

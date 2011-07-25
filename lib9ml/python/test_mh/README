@@ -1,0 +1,14 @@
+
+Testing
+-------
+
+tests can be run with 'nosetests'
+
+The unit tests are in a hierachy similar to the package, in unit/nineml_test
+
+To run tests on the 'component' module for example, use the command:
+
+nosetests unit/nineml_test/abstraction_layer/component/
+
+
+

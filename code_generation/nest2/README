@@ -4,8 +4,13 @@ Generate and Build the 9ML iaf_cond_exp_9ml neuron model for NEST
 Dependencies:
 
 * NEST requires a "ListRingBuffer" patch, or a very latest 
-SVN revision (As of April 6th, 2011).  Contact Eilif Muller 
+SVN revision (As of April 6th, 2011).  Copy the ring_buffer.* files 
+in the sub-dir nest_patch to <NEST_SRC>/nestkernel (overriting the files
+there)
+
+Contact Eilif Muller 
 for more details.
+
 
 * Cheetah python teplating system 
   Ubuntu:
@@ -18,7 +23,7 @@ python concept1.py
 
 # Build mymodule for NEST
 cd nest_model
-./boostrap.sh
+./bootsrap.sh
 mkdir build
 cd build
 ../configure --with-nest=/opt/nest2/bin/nest-config

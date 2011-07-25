@@ -1,19 +1,19 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <NineML xmlns="http://nineml.org/9ML/0.1"
-    xmlns:comodl="CoModL"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://nineml.org/9ML/0.1 NineML_v0.2.xsd">
 
-  <ComponentClass name="izhikevichCell" xmlns="CoModL">
+  <ComponentClass name="izhikevichCellNew">
 
     <Parameter name="a" dimension='none'/>
     <Parameter name="c" dimension='none'/>
     <Parameter name="b" dimension='none'/>
     <Parameter name="d" dimension='none'/>
     <Parameter name="theta" dimension='voltage'/>
+    <Parameter name='iinj_constant' dimension='none'/>
 
     <!-- AnalogPort or Exposure?? -->
-    <AnalogPort name="iSyn" mode='reduce' dimension='current'/>
+    <AnalogPort name="iSyn" mode='reduce' reduce_op='+' dimension='current'/>
     <AnalogPort name="U" mode="send" dimension='none'/>
     <AnalogPort name="V" mode="send" dimension='voltage'/>
     <EventPort name="spikeOutput" mode="send"/>
@@ -25,6 +25,10 @@
         <StateVariable name="V" dimension="voltage"/>
         <StateVariable name="U" dimension="none"/> 
           
+        <Alias name='rv'>
+            <MathInline>V*U</MathInline>
+        </Alias>
+
         <Regime name="subthresholdRegime">
             
               
@@ -34,7 +38,7 @@
             <MathInline>a*(b*V - U)</MathInline>
           </TimeDerivative>
           <TimeDerivative variable="V">
-            <MathInline>0.04*V*V + 5*V + 140.0 - U + iSyn</MathInline>
+            <MathInline>0.04*V*V + 5*V + 140.0 - U + iSyn + iinj_constant</MathInline>
           </TimeDerivative>
 
           

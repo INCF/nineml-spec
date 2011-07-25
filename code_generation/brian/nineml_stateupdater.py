@@ -10,8 +10,8 @@ def regime_equations(regime, level=1, **kwargs):
     for e in regime.equations:
         # TODO: add units to nineml to remove the
         # __time_factor__ hack
-        # insert __time_factor__ for ODEs on rhs
-        if isinstance(e, nineml.ODE):
+        # insert __time_factor__ for TimeDerivatives on rhs
+        if isinstance(e, nineml.TimeDerivative):
             eqn = '%s = (%s)/__time_factor__' % (e.lhs,e.rhs,)
         # TODO: handling units
         eqns.append(eqn+' : 1.')
@@ -217,7 +217,7 @@ class ComponentStateUpdater(brian.stateupdater.StateUpdater):
         self.sub_up_map = {}
         self.regime2id_map = {}
         for i,r in enumerate(self.regimes):
-            # check if the regime has ODEs for brian to solve
+            # check if the regime has TimeDerivatives for brian to solve
             if list(r.odes):
                 regime_updater_cls = DERegimeStateUpdater
             else:

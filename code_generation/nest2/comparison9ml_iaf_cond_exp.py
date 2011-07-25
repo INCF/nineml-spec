@@ -6,6 +6,13 @@
 # See: README for the build process for the "MyModule" required
 # by nest.Install below which contains iaf_cond_exp_9ml
 
+
+import os
+os.environ['LD_LIBRARY_PATH']=os.environ['LD_LIBRARY_PATH']+ ':/home/hull/src/nineml-svn-model-tree/code_generation/nest2/nest_model/build/.libs'
+
+for k,v in os.environ.iteritems():
+    print k,v
+
 import nest
 nest.Install("mymodule")
 import numpy
@@ -126,19 +133,22 @@ t = data["times"]
 g_in = data["g_in"]
 g_in_9ml = data_9ml["g_in"]
 
+g_ex = data["g_ex"]
+g_ex_9ml = data_9ml["g_ex"]
+
 v = data["V_m"]
 v_9ml = data_9ml["V_m"]
 
 regime = data_9ml["Regime9ML"]
 
 
-
-subplot(211)
+from pylab import *
+subplot(311)
 plot(t,regime,'r-')
 ylabel('regime')
 axis([0, 500,0.0,3.0])
 
-subplot(212)
+subplot(312)
 plot(t,v,'g-',lw=4, label='iaf_cond_exp')
 plot(t,v_9ml,'r-',lw=1.5,label='iaf_cond_exp_9ml')
 xlabel("time [ms]")
@@ -146,4 +156,8 @@ ylabel("voltage [mV]")
 axis([0, 500,-72, -55])
 legend()
 
-
+subplot(313)
+plot(t,g_ex_9ml,'r-',lw=1.5,label='iaf_cond_exp_9ml-gEx')
+xlabel("time [ms]")
+legend()
+show()
