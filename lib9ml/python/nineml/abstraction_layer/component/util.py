@@ -97,6 +97,29 @@ class MathUtil(object):
 
 
 
+    @classmethod
+    def rename_function( cls, expr, orig_func_name, new_func_expr):
+        """ This method allows us to subsitute function call names, and
+        rearrange parameters
+        For example, for neuron, we want to  remap
+        randn(x,y) to normrand(x,y)
+
+        in this case:
+        
+        orig_func_name = 'randn'
+        new_func_expr = 'norm_rand(\\1,\\2)'
+
+        """
+        #\w = [a-zA-Z0-9_]
+
+       
+        regex = r"""%s\( ([^,) ]*) \s* (?: , \s* ([^, )]*) )* \s* \)"""%orig_func_name
+        r = re.compile( regex, re.VERBOSE )
+        new_expr = r.sub( new_func_expr, expr)
+
+        
+        return new_expr
+
     @classmethod 
     def get_rhs_substituted(cls, expr_obj, namemap ):
         expr = expr_obj.rhs

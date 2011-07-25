@@ -97,7 +97,7 @@ class CalcCond(Parser):
     t_COMMA   = r','
 
     def t_LFUNC(self,t):
-        r'[a-zA-Z_][a-zA-Z0-9_]*[ ]*\('
+        r'[a-zA-Z_][a-zA-Z0-9_.]*[ ]*\('
         return t
         
     def t_NAME(self,t):
@@ -219,7 +219,7 @@ def cond_parse(conditional):
     calc = CalcCond()
     return calc.parse(conditional)
     
-if __name__ == '__main__':
-    calc = CalcCond()
-    p = calc.parse("q > 1 / (( 1 + mg_conc * eta *  exp ( -1 * gamma*V))")
-    print p
+#if __name__ == '__main__':
+#    calc = CalcCond()
+#    p = calc.parse("q > 1 / (( 1 + mg_conc * eta *  exp ( -1 * gamma*V))")
+#    print p

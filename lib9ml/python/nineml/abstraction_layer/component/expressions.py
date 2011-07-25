@@ -93,31 +93,40 @@ class Expression(object):
 
         
 
+    def rhs_atoms_in_namespace(self, namespace ):
+        atoms = set()
+        for a in self.rhs_atoms:
+            ns, func = nineml.maths.func_namespace_split(a)
+            if ns == namespace:
+                atoms.add(func)
+        return atoms
+
         
 
-    @property
-    def rhs_missing_functions(self):
-        """ yield names of functions in the RHS which are not in the math
-        namespace"""
-        raise NineMLRuntimeError()
-        from nineml.maths import is_builtin_math_function
-        for func in self.rhs_funcs:
-            if not is_builtin_math_function(func):
-                raise NineMLRuntimeError('Unexpected Missing Function: %s'%func)
-                yield func
+    #@property
+    #def rhs_missing_functions(self):
+    #    """ yield names of functions in the RHS which are not in the math
+    #    namespace"""
+    #    raise NineMLRuntimeError()
+    #    from nineml.maths import is_builtin_math_function
+    #    for func in self.rhs_funcs:
+    #        if not is_builtin_math_function(func):
+    #            raise NineMLRuntimeError('Unexpected Missing Function: %s'%func)
+    #            yield func
 
 
 
-    
-    def rhs_has_missing_functions(self):
-        """ returns True if at least 1 function on the RHS is not in the math
-        namespace"""
-        from nineml.maths import is_builtin_math_function
-        for func in self.rhs_funcs:
-            if not is_builtin_math_function(func):
-                raise NineMLRuntimeError('Unexpected Missing Function: %s'%func)
-                return True
-        return False
+    #
+    #def rhs_has_missing_functions(self):
+    #    assert False
+    #    """ returns True if at least 1 function on the RHS is not in the math
+    #    namespace"""
+    #    from nineml.maths import is_builtin_math_function
+    #    for func in self.rhs_funcs:
+    #        if not is_builtin_math_function(func):
+    #            raise NineMLRuntimeError('Unexpected Missing Function: %s'%func)
+    #            return True
+    #    return False
 
 
 

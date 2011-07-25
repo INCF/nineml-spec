@@ -7,5 +7,5 @@ libninemlnrn:
 	ln -s libninemlnrn.so.1.0.1 libninemlnrn.so.1
 
 clean:
-	rm -f libninemlnrn.so.1.0.1 libninemlnrn.so libninemlnrn.so.1
+	rm -f libninemlnrn.so.1.0.1 libninemlnrn.so libninemlnrn.so.1 nineml.o
 

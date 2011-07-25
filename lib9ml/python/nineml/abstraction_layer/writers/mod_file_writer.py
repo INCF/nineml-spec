@@ -14,7 +14,9 @@ class ModFileWriter(object):
 
         cwd = os.getcwd()
         os.chdir( directory )
+        print 'Compile_modfiles:', os.getcwd()
 
+        
         try:
             os.system('nrnivmodl')
         finally:

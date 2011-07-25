@@ -113,6 +113,18 @@ class Expression_test(unittest.TestCase):
         self.assertEquals( set( e.rhs_funcs ), set( ['exp','sin'] ))
 
 
+    def test_rhs_atoms_in_namespace(self):
+        from nineml.abstraction_layer import Expression
+        e = Expression( "random.randn() + random.randn() + random.randint() / sin(t)" )
+        self.assertEquals( 
+                set( e.rhs_atoms ), 
+                set(['t','random.randn','random.randint', 'sin'] )
+                )
+
+        self.assertEquals( 
+                set( e.rhs_atoms_in_namespace('random') ), 
+                set(['randn','randint'] )
+                )
 
 
 

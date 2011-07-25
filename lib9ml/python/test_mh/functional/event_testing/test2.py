@@ -89,7 +89,7 @@ class FuncTest_Flat2(object):
                             records = records,
                             #plot = False,
                            )
-        
+        return
         t, records = res
         
         def check_trace( trace_name, time_period, exp_mean, exp_std=0):

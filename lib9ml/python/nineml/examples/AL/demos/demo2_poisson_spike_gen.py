@@ -87,6 +87,7 @@ class FuncTest_Flat2(object):
                             initial_values = {},
                             synapse_components = [],
                             records = records,
+                            sim_time = 1000
                             #plot = False,
                            )
         return

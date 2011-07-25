@@ -70,9 +70,7 @@ class Parser(object):
             raise NineMLMathParseError, str(e)+" Expression was: '%s'" % expr
 
         # remove names from the math_namespace
-        #from nineml.maths
         self.names = set(self.names)
-        #self.names.difference_update(math_namespace.namespace)
         self.names.difference_update( nineml.maths.get_builtin_symbols() )
 
         return self.names, set(self.funcs)
@@ -98,7 +96,7 @@ class CalcExpr(Parser):
     t_LPAREN  = r'\('
     t_RPAREN  = r'\)'
     t_NAME    = r'[a-zA-Z_][a-zA-Z0-9_]*'
-    t_LFUNC    = r'[a-zA-Z_][a-zA-Z0-9_]*[ ]*\('
+    t_LFUNC    = r'[a-zA-Z_][a-zA-Z0-9_.]*[ ]*\('
     t_COMMA   = r','
 
 

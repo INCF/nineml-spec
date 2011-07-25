@@ -348,6 +348,10 @@ class LocationMgr(object):
                 "lib9ml/python/nineml/examples/AL/components_done/" )
 
     @classmethod
+    def getNRNIVMODLNINEMLDir(cls):
+        return join_norm( cls.getRootDir(), "lib9ml/python/nrnivmodl_libs" )
+
+    @classmethod
     def getTmpDir(cls):
         if not Exists(cls.temp_dir):
             raise NineMLRuntimeError("tmp_dir does not exist:%s"%cls.tmp_dir)
@@ -368,7 +372,7 @@ class LocationMgr(object):
 class Settings(object):
     enable_component_validation = True
 
-    enable_nmodl_gsl = False
+    enable_nmodl_gsl = True
 
 
 def check_list_contain_same_items(lst1, lst2, desc1="", desc2="", ignore=[],
