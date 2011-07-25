@@ -1,6 +1,0 @@
-nineml.utility.expect_single
-============================
-
-.. currentmodule:: nineml
-
-.. automethod:: utility.expect_single

@@ -1,6 +1,0 @@
-nineml.utility.flatten_first_level
-==================================
-
-.. currentmodule:: nineml
-
-.. automethod:: utility.flatten_first_level
