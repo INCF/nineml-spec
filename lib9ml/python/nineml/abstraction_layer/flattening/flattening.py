@@ -343,10 +343,7 @@ class ComponentFlattener(object):
         
 
         # ONLY ANALOG PORTS
-        print 'TESTING CODE NEEDS TO REMOVED!'
         portconnections = [pc for pc in portconnections if pc[0].get_local_name() in new_analog_ports] 
-
-
 
 
         # A. Handle Receive Ports:
