@@ -345,7 +345,7 @@ class LocationMgr(object):
     @classmethod
     def getComponentDir(cls):
         return join_norm( cls.getRootDir(),
-                "lib9ml/python/examples/AL/components_done/" )
+                "lib9ml/python/nineml/examples/AL/components_done/" )
 
     @classmethod
     def getTmpDir(cls):
