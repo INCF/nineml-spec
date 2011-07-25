@@ -2,7 +2,10 @@
 Testing
 -------
 
-tests can be run with 'nosetests'
+Unit Tests
+~~~~~~~~~~
+
+Unit tests can be run with 'nosetests'
 
 The unit tests are in a hierachy similar to the package, in unit/nineml_test
 
@@ -11,4 +14,10 @@ To run tests on the 'component' module for example, use the command:
 nosetests unit/nineml_test/abstraction_layer/component/
 
 
+Functional Tests
+~~~~~~~~~~~~~~~~
+Functional tests look at the output of simulations; in particular NEURON simulations. 
+Since Python-Neuron struggles with repeat calls to NEURON it is difficult to run functional
+tests using nose. Therefore the tests need to run manually from the commandline. 
+This needs to be improved....
 

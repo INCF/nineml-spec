@@ -30,12 +30,11 @@ FIRST_REGIME_FLAG = 1001
 tmpl_contents = """
 
 VERBATIM
-extern double nineml_gsl_normal(double m, double s);
-extern double nineml_gsl_uniform(double a, double b);
-extern double nineml_gsl_binomial(double p, int n);
-extern double nineml_gsl_exponential(double mu);
-extern double nineml_gsl_poisson(double mu);
-
+extern double nineml_gsl_normal(double, double);
+extern double nineml_gsl_uniform(double, double);
+extern double nineml_gsl_binomial(double, int);
+extern double nineml_gsl_exponential(double);
+extern double nineml_gsl_poisson(double);
 ENDVERBATIM
 
 TITLE Spiking node generated from the 9ML file $input_filename using 9ml2nmodl.py version $version
