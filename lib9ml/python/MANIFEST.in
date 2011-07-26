@@ -1,3 +1,8 @@
 include distribute_setup.py
-include nineml/examples
-exclude nineml/abstraction_layer/graphs.py
+prune nineml/examples
+graft nineml/examples/AL/components_done
+graft nineml/examples/AL/demos
+graft nineml/examples/AL/doc_tutorials
+graft nineml/examples/UL
+prune nineml/.deprecated
+recursive-exclude * .gitignore
