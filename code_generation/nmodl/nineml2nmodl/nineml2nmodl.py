@@ -466,7 +466,7 @@ def get_weight_variable(channel, weight_variables):
 ninemlnrn_libfile = 'libninemlnrn.so'
 
 def get_ninemlnrnlibdir():
-    file_loc = os.path.dirname( __file__ )
+    file_loc = os.path.dirname(os.path.realpath( __file__ ))
     libdir = os.path.join( file_loc, '../lib/ninemlnrn' )
     libdir = os.path.normpath(libdir)
     return libdir

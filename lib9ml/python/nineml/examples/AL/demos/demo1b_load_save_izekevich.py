@@ -28,7 +28,7 @@ parameters = nineml.al.flattening.ComponentFlattener.flatten_namespace_dict({
               'b': 0.2, 
               'c': -65, 
               'd': 8, 
-              'iinj_constant': 5.0,
+              'iinj_constant': 50.0,
               })
 
 res = std_pynn_simulation( test_component = iz,
