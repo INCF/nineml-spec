@@ -337,11 +337,14 @@ class LocationMgr(object):
         rootDir = join_norm( localDir, "../../../../") 
         return rootDir
 
+    def getPythonPackageRootDir(cls):
+        return  join_norm( realpath ( dirname( __file__ ) ), '../' )
+
 
     @classmethod
     def getComponentDir(cls):
-        localDir = realpath ( dirname( __file__ ) ) 
-        return join_norm( localDir, "../",  "examples/AL/components_done/" ) 
+        #localDir = realpath ( dirname( __file__ ) ) 
+        return join_norm( cls.getPythonPackageRootDir(),  "examples/AL/components_done/" ) 
 
     @classmethod
     def getTmpDir(cls):
