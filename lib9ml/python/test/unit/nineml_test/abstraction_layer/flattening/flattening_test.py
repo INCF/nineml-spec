@@ -641,6 +641,7 @@ class ComponentFlattener_test(unittest.TestCase):
 
 
     def test_event_resolution(self):
+        pass
         #pass 
         ## DONE IN FUNCTIONAL TESTS INSTEAD:
         #
