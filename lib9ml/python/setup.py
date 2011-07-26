@@ -27,7 +27,7 @@ setup(
     package_data = {'nineml': ['examples/AL/demos/*.py', "examples/AL/components_done/*.py"]},
     #packages = find_packages(),
     author = "Andrew P. Davison, Eilif Muller, Mike Hull", # add your name here if you contribute to the code
-    author_email = "andrewpdavison@gmail.com",
+    author_email = "nineml-users@incf.org",
     description = "A tool for reading, writing and generally working with 9ML files.",
     long_description = open("README").read(),
     license = "BSD 3 License",
