@@ -1,7 +1,7 @@
 Python lib9ml is licensed under the "BSD 3 License":
 
 
-Copyright (C) 2011 Andrew Davison and Eilif Muller. All Rights Reserved.
+Copyright (C) 2011 Authors (see AUTHORS.txt). All Rights Reserved.
 
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions
