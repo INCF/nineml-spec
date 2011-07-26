@@ -6,7 +6,7 @@ analysis.
 # This is to make 'join' available in other modules:
 from os.path import join as Join
 from os.path import exists as Exists
-
+import os
 
 from os.path import dirname, normpath
 import sys
@@ -335,12 +335,11 @@ class LocationMgr(object):
     @classmethod
     def getRootDir(cls):
         localDir = dirname( __file__ )
+        localDir = os.path.realpath(localDir)
+
         rootDir = join_norm( localDir, "../../../../") 
         return rootDir
 
-    @classmethod
-    def getCatalogDir(cls):
-        return join_norm( cls.getRootDir(), "catalog/" )
 
     @classmethod
     def getComponentDir(cls):
@@ -348,31 +347,22 @@ class LocationMgr(object):
                 "lib9ml/python/nineml/examples/AL/components_done/" )
 
     @classmethod
-    def getNRNIVMODLNINEMLDir(cls):
-        return join_norm( cls.getRootDir(), "lib9ml/python/nrnivmodl_libs" )
-
-    @classmethod
     def getTmpDir(cls):
         if not Exists(cls.temp_dir):
             raise NineMLRuntimeError("tmp_dir does not exist:%s"%cls.tmp_dir)
         return cls.temp_dir + '/'
 
+    # For developers:
     @classmethod
-    def StdAppendToPath(cls):
-        if LocationMgr.std_append_to_path_called:
-            return 
-        root = cls.getRootDir()
-        sys.path.append(Join(root, "lib9ml/python/examples/AL"))
-        sys.path.append(Join(root, "code_generation/nmodl"))     
-        sys.path.append(Join(root, "code_generation/nest2"))     
-        LocationMgr.std_append_to_path_called = True
-
+    def getCatalogDir(cls):
+        return join_norm( cls.getRootDir(), "catalog/" )
 
 
 class Settings(object):
     enable_component_validation = True
 
     enable_nmodl_gsl = True
+    use_developer_path = False
 
 
 def check_list_contain_same_items(lst1, lst2, desc1="", desc2="", ignore=[],

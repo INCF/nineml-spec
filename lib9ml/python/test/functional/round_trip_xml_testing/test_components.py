@@ -100,7 +100,7 @@ def test_write_mod(testable_component):
     component = testable_component()
 
     from nineml.utility import LocationMgr
-    LocationMgr.StdAppendToPath()
+    #LocationMgr.StdAppendToPath()
     component_modifiers.ComponentModifier.close_all_reduce_ports(component=component) 
 
     print '  -- Writing Component to .mod'

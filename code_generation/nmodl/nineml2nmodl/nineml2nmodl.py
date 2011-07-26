@@ -248,7 +248,7 @@ NET_RECEIVE(w, channel) {
   else if (flag == $transition.flag) {
 
     first_round_fired = 0
-    printf("\\nt=%f In Regime $regime.name Event With Flag: %d", t, flag )
+    printf("\\nt=%f In Regime $regime.name Event With Flag: %f", t, flag )
     printf("\\nt=%f Changing Regime from $regime.name to $transition.target_regime.name via $transition.flag", t )
     regime = $transition.target_regime.flag
     
