@@ -6,9 +6,8 @@ analysis.
 # This is to make 'join' available in other modules:
 from os.path import join as Join
 from os.path import exists as Exists
-import os
 
-from os.path import dirname, normpath
+from os.path import dirname, normpath, realpath
 import sys
 
 import itertools
@@ -334,17 +333,15 @@ class LocationMgr(object):
         
     @classmethod
     def getRootDir(cls):
-        localDir = dirname( __file__ )
-        localDir = os.path.realpath(localDir)
-
+        localDir = realpath ( dirname( __file__ ) ) 
         rootDir = join_norm( localDir, "../../../../") 
         return rootDir
 
 
     @classmethod
     def getComponentDir(cls):
-        return join_norm( cls.getRootDir(),
-                "lib9ml/python/nineml/examples/AL/components_done/" )
+        localDir = realpath ( dirname( __file__ ) ) 
+        return join_norm( localDir, "../",  "examples/AL/components_done/" ) 
 
     @classmethod
     def getTmpDir(cls):
