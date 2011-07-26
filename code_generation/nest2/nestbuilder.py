@@ -201,8 +201,13 @@ class NestModel(object):
         # back sub binds
         self.binds = []
 
+        # flatten names .->_
+        flat_default_value_dict = {}
+        for key,value in default_value_dict.iteritems():
+            flat_default_value_dict[key.replace('.','_')] = value
+
         # make NestParameters
-        self.parameters = [NestParameter(param.name, default_value_dict[param.name], self) for param in component.parameters]
+        self.parameters = [NestParameter(param.name, flat_default_value_dict[param.name], self) for param in component.parameters]
 
         # make NestStateVars
         self.state_vars = [NestStateVar(sv.name, initial_value_dict[sv.name], self) for sv in component.state_variables]

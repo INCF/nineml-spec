@@ -202,19 +202,19 @@ void nest_nineml::$model.nest_classname::State_::set(const DictionaryDatum& d, c
 
   //TODO: set regime?
 
-  /*
-  double d_regime;
-  updateValue<double>(d, $mynames::Regime9ML, d_regime);
-  printf("State_::set() [A] Regime: %d\n", regime_);
-  regime_ = nest_nineml::$model.nest_classname::Regimes(d_regime); 
-  printf("State_::set() [B] Regime: %d\n", regime_);
+  if (d->known($mynames::Regime9ML)) {
+    double d_regime;
+    updateValue<double>(d, $mynames::Regime9ML, d_regime);
+    printf("State_::set() [A] Regime: %d (%f)\n", regime_, d_regime);
+    regime_ = nest_nineml::$model.nest_classname::Regimes(d_regime); 
+    printf("State_::set() [B] Regime: %d\n", regime_);
   
-  // Check the Regime is a valid Regime:
-  if( regime_ <= INF_REGIME || regime_ >= SUP_REGIME )
-  {
+    // Check the Regime is a valid Regime:
+    if( regime_ <= INF_REGIME || regime_ >= SUP_REGIME )
+    {
       throw std::runtime_error("Setting Regime to an invalid value");
+    }
   }
-  */
 
 }
 
@@ -377,13 +377,13 @@ void nest_nineml::$model.nest_classname::update(nest::Time const& origin,
     // TODO: synapses
 
     case INF_REGIME:
-        printf("ERROR IN INF_REGIME");
-        S_.regime_ = REGIME3;
+        printf("ERROR: IN INF_REGIME, RESETTING TO INTIAL REGIME");
+        S_.regime_ = $model.initial_regime;
         break;
 
     case SUP_REGIME:
-        printf("ERROR IN INF_REGIME");
-        S_.regime_ = REGIME3;
+        printf("ERROR: IN INF_REGIME, RESETTING TO INTIAL REGIME");
+        S_.regime_ = $model.initial_regime;
         break;
 
     #for $r in $model.regimes
