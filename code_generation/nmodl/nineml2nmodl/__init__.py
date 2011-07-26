@@ -5,6 +5,6 @@ Copyright Andrew P. Davison, 2010-2011 # if you edit this file, add your name he
 """
 
 
-from nineml2nmodl import write_nmodl, write_nmodldirect
+from nineml2nmodl import write_nmodl, write_nmodldirect, call_nrnivmodl
 
 

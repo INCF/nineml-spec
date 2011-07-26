@@ -461,6 +461,27 @@ def get_weight_variable(channel, weight_variables):
 
     
 
+
+
+ninemlnrn_libfile = 'libninemlnrn.so'
+
+def get_ninemlnrnlibdir():
+    file_loc = os.path.dirname( __file__ )
+    libdir = os.path.join( file_loc, '../lib/ninemlnrn' )
+    libdir = os.path.normpath(libdir)
+    return libdir
+
+
+def get_ninemlnrnlibfile():
+    libfilefull = '%s/%s'%(get_ninemlnrnlibdir(),ninemlnrn_libfile) 
+    return libfilefull
+
+
+
+
+
+
+
 def build_context(component, weight_variables, input_filename="[Unknown-Filename]", hierarchical_mode=False):
     """
     Return a dictionary that will be used to render the NMODL template.
@@ -498,17 +519,17 @@ def build_context(component, weight_variables, input_filename="[Unknown-Filename
     rand = NeuronExprRandomBuilder()
     rand.visit(component)
     
+
     if rand.has_random_functions():
-        libfile = 'libninemlnrn.so'
-        libdir = nineml.utility.LocationMgr.getNRNIVMODLNINEMLDir() 
-        libfilefull = '%s/%s'%(libdir,libfile) 
+        libfilefull = get_ninemlnrnlibfile()
+        libdir = get_ninemlnrnlibdir()
         print 'LibFileFull', libfilefull
         if not os.path.exists( libfilefull ):
             err = 'Random Library Proxy not built: %s.\nRun make in %s'%(libfilefull, libdir) 
             raise NineMLRuntimeError(err)
     
         LD_LIB_PATH = 'LD_LIBRARY_PATH'
-        err = " *** WARNING CAN'T FIND %s in LD_LIBRARY_PATH, THERE MAY BE A PROBLEM USING RANDOM FUNCTIONS"%libdir
+        err = " *** WARNING CAN'T FIND %s in LD_LIBRARY_PATH\nTHERE MAY BE A PROBLEM USING RANDOM FUNCTIONS"%libdir
         if not LD_LIB_PATH in os.environ:
             raise NineMLRuntimeError(err)
         else:
@@ -567,6 +588,21 @@ def write_nmodldirect(component, mod_filename, weight_variables={},hierarchical_
         f.write( Template( tmpl_contents, context).respond() )
      
     
+
+import subprocess
+def call_nrnivmodl():
+
+    import nineml
+    if nineml.utility.Settings.enable_nmodl_gsl:
+        flgs = ["-L%s"% get_ninemlnrnlibdir(), "-lninemlnrn -lgsl -lgslcblas"]
+        subprocess.check_call(['nrnivmodl','-loadflags','"%s"'%(' '.join(flgs) ) ] )
+    else:
+        subprocess.check_call(['nrnivmodl',] )
+
+
+
+
+
 
 if __name__ == "__main__":
     import sys
