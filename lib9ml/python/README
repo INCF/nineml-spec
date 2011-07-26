@@ -1,8 +1,20 @@
-Installation:
+======
+NineML
+======
 
-python setup.py install
+`nineml` is a Python library for reading, writing, validating and manipulating
+models defined in the 9ML language (http://nineml.incf.org).
+
+Installation
+------------
+
+:: 
+  
+  python setup.py install
 
 
-Dependencies:
+Dependencies
+------------
 
-lxml - see http://codespeak.net/lxml/
+* lxml - see http://codespeak.net/lxml/
+* ply
