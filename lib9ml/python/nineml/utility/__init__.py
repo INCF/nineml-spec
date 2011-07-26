@@ -337,6 +337,7 @@ class LocationMgr(object):
         rootDir = join_norm( localDir, "../../../../") 
         return rootDir
 
+    @classmethod
     def getPythonPackageRootDir(cls):
         return  join_norm( realpath ( dirname( __file__ ) ), '../' )
 
