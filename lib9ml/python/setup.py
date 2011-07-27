@@ -4,11 +4,12 @@
 from distribute_setup import use_setuptools
 use_setuptools()
 from setuptools import setup, find_packages
-from nineml.__init__ import __version__
+#from nineml.__init__ import __version__
 
 setup(
     name = "9ML",
-    version = __version__,
+    #version = __version__,
+    version = "0.1.0",
     packages = ['nineml',
                 'nineml.abstraction_layer',
                 'nineml.abstraction_layer.component',
