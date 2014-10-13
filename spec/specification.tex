@@ -143,7 +143,7 @@ float=tbfh}
 \vspace{0.5cm}
 \noindent{\large INCF Task Force on Multi-Scale Modeling}\\
 \vspace{0.5cm}
-\noindent{\large Version: 0.1}
+\noindent{\large Version: 0.10}
 \end{center}
 
 \vspace*{0.75cm}
@@ -156,14 +156,15 @@ float=tbfh}
 
 {\bf Editors: }
 \noindent
-\begin{itemize}
 \begin{small}
+\begin{itemize}
 \item Anatoli Gorchetchnikov
 \item Ivan Raikov
 \item Mike Hull
 \item Yann Le Franc
-\end{small}
+\item Thomas Close
 \end{itemize}
+\end{small}
 
 
 \begin{footnotesize}
@@ -255,7 +256,7 @@ At the current stage of development, the following concepts of spiking neuron
 network modeling can be fully or partially described:
 
 \begin{enumerate}
-\item spiking neurons
+\item spiking neurons \textbf{(what about non-spiking neurones??)}
 \item synapses
 \begin{enumerate}
 \item Post-synaptic membrane current mechanisms
@@ -894,7 +895,7 @@ User Layer through an object of type {\tt Definition}.
 Component \\
 \hline
 \hline
-{\em label}: {\tt String} \\
+{\em name}: {\tt String} \\
 \hline
 {\em definition}: \{{\tt Definition}$|${\tt Reference}\}\\
 \hline
@@ -992,7 +993,7 @@ Abstraction Layer \Parameter definition.
 Property \\
 \hline
 \hline
-{\em label}: {\tt String} \\
+{\em name}: {\tt String} \\
 \hline
 {\em value}: {\tt Quantity} \\
 \hline
@@ -1059,11 +1060,160 @@ component.
 Reference \\
 \hline
 \hline
-{\em label}: {\tt String} \\
+{\em name}: {\tt String} \\
 \hline
 \end{tabular}
 \end{table}
 
+\subsection{Population}
+
+Population elements define sets of neuron components of the same class. The size of the set is specified by the {\tt number} attribute. The properties of the neuron components can be constant across the population, randomly distributed, individually specified or as a function of neuron index.  
+
+\begin{table}[htb]
+\center
+\begin{tabular}{|c|}
+\hline
+\hline
+Population \\
+\hline
+\hline
+{\em name}: {\tt String} \\
+\hline
+{\em prototype}: {\tt Component->Spiking Neuron} \\
+\hline
+{\em number}: {\tt Integer}\\
+\hline
+{\em note}: {\tt \{String|URL\} (optional)} \\
+\hline
+\end{tabular}
+\end{table}
+
+\newpage
+
+\subsection{Projection}
+\label{projections}
+
+Projections define the connectivity between two populations, the post-synaptic response of the connections and the plasticity rules that modulate the post-synaptic response. Synaptic components are connected to the port  connected to a event or analog 
+
+\begin{table}[htb]
+\center
+\begin{tabular}{|c|}
+\hline
+\hline
+Projection \\
+\hline
+\hline
+{\em name}: {\tt String} \\
+\hline
+{\em source}: {\tt Population} \\
+\hline
+{\em destination}: {\tt Population} \\
+\hline
+{\em connection-rule}: {\tt Component->Connection Rule} \\
+\hline
+{\em post-synaptic-response}: {\tt PostSynapticResponse} \\
+\hline
+{\em plasticity}: {\tt Plasticity} \\
+\hline
+{\em note}: \{{\tt String}$|${\tt URL}\} (optional)\\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{PostSynapticResponse}
+\label{postsynapticresponse}
+
+\begin{table}[htb]
+\center
+\begin{tabular}{|c|}
+\hline
+\hline
+PostSynapticResponse \\
+\hline
+\hline
+{\em prototype}: {\tt Component->Post-Synaptic Response} \\
+\hline
+\colorbox{issuecolor}{\parbox{0.4\linewidth}
+{\center Set of {\tt PortConnection} objects}} \\
+\hline
+\end{tabular}
+\end{table}
+
+
+\subsection{Plasticity}
+\label{plasticity}
+
+\begin{table}[htb]
+\center
+\begin{tabular}{|c|}
+\hline
+\hline
+PostSynapticResponse \\
+\hline
+\hline
+{\em plasticity}: {\tt Component->Plasticity} (optional) \\
+\hline
+\colorbox{issuecolor}{\parbox{0.4\linewidth}
+{\center Set of {\tt PortConnection} objects}} \\
+\hline
+\end{tabular}
+\end{table}
+
+%
+%
+%\subsection{PostSynapticResponse Component}
+%\label{PostSynapticResponse}
+%
+%PostSynapticResponse defines the effect imposed on the
+%post-synaptic cell dynamics by triggering the synaptic input and the input and output ports. 
+%\textit{(Removed: This definition includes only the shape of this effect and does not include the
+%exact magnitude of the effect)}. The magnitude is described separately through
+%plasticity rules and synaptic weights in section \ref{plasticity}. Note
+%though that the units of the effect are defined here and synaptic weights in
+%plasticity nodes are left dimensionless.
+%
+%\begin{table}[htb]
+%\center
+%\begin{tabular}{|c|}
+%\hline
+%\hline
+%PostSynapticResponse \\
+%\hline
+%\hline
+%{\em prototype}: {\tt Component->PSR} \\
+%\hline
+%{\em port}: {\tt AnalogPort} \\
+%\hline
+%\end{tabular}
+%\end{table}
+%
+%\subsection{Plasticity Component}
+%\label{plasticity}
+%
+%Plasticity components handle the synaptic weight and its possible
+%modification. Note that synaptic weight is a dimensionless quantity and
+%as such always have units of the predefined empty {\tt Dimension}. This
+%is done to allow same plasticity rules to operate on
+%different types of postsynaptic responses. Synaptic weight defined in the
+%plasticity component determines only the magnitude of the response, the
+%shape and physical properties are defined in the corresponding post-synaptic
+%response node (section \ref{secSynapse}).
+%
+%\begin{table}[htb]
+%\center
+%\begin{tabular}{|c|}
+%\hline
+%\hline
+%Placticity\\
+%\hline
+%\hline
+%{\em name}: {\tt String} \\
+%\hline
+%{\em prototype}: {\tt Component->Plasticity} \\
+%\hline
+%\end{tabular}
+%\end{table}
+%
 \newpage
 \appendix
 
