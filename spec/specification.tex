@@ -381,7 +381,6 @@ ComponentClass \\
 \end{tabular}
 \end{table}
 
-
 The main building block of the Object Model is the \ComponentClass.
 The \ComponentClass object is intended to package together a collection of
 objects that relate to the definition of a model (cells, synapses, synaptic
@@ -391,11 +390,16 @@ model, such as neuron model for instance, belong in a single \ComponentClass.
 A \ComponentClass can be used to represent either a specific model of neuron or a
 composite model, including synaptic mechanisms (as in the second example
 provided in the Appendix for example) as long as the algebra is correct.
-A \ComponentClass is composed of a \Dynamics block and \Interfaces, as shown
+A \ComponentClass is composed of:
+\begin{itemize}
+\item \nmlClass{Parameter}s for the \nmlClass{ComponentClass}
+\item An unordered collection of \nmlClass{AnalogSendPort}, \nmlClass{AnalogReceivePort} and \nmlClass{AnalogReducePort}s. Each \nmlClass{AnalogSendPort}s publishes a state variable or derived value and each \nmlClass{AnalogReceivePort}s consumes a state variable or derived value published from elsewhere. \nmlClass{AnalogReducePort}s consume a variable number of published state variables and/or derived values and applies an operator that reduces the incoming ports to a single value.
+\item  a \Dynamics block and \Interfaces, as shown
 in Figure~\ref{fig:EX1_RegimeGraph}. The \Dynamic block represent the internal
 dynamic of the model while the \Interface block allows the \ComponentClass to
 communicate with other instantiations of the \ComponentClass and with the User
 Layer.
+\end{itemize}
 
 \begin{figure}[htb!]
 \center
@@ -403,6 +407,7 @@ Layer.
 \protect\caption{ComponentClass Overview (Simple)}
 \label{fig:EX1_RegimeGraph}
 \end{figure}
+
 
 \subsection{Dynamics}
 
@@ -542,10 +547,6 @@ propagated when the \nmlClass{Regime} is active.
 \item a set of \TimeDerivative, one for each \StateVariable
 of the \ComponentClass, which define how the \StateVariable
 evolve over time in the form $\frac{dx_{i}}{dt} = f(x\_0, ..., x\_i, t)$.
-\item \nmlClass{Parameter}s for the \nmlClass{Regime}
-\item An unordered collection of \nmlClass{AnalogPort}s which publish state
-variables (type=send), or consume state variables published from elsewhere
-(type=recv, or type=reduce).
 \item The independent variable must be shared between the collection
 of \nmlClass{StateVariable}s and their propagators in a \Regime.
 \end{itemize}
