@@ -30,8 +30,7 @@
 
 \def\filedate{2014/08/10}
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{sbmlpkgspec}[\filedate\space SBML Level 3
-Package Specification Style]
+\ProvidesClass{ninemlspec}[\filedate\space NineML Specification Style]
 
 %% ----------------------------------------------------------------------------
 %% Package references and options.
@@ -279,6 +278,8 @@ Package Specification Style]
 %% ----------------------------------------------------------------------------
 
 % Local color definitions.
+
+\definecolor{INCFBlue}{rgb}{0.0,0.59,1.0}
 
 \definecolor{sbmlblue}{rgb}{0.07,0.50,0.78}
 \definecolor{sbmlgray}{gray}{0.7}
@@ -934,7 +935,7 @@ Package Specification Style]
 \newcommand{\mSymbolName}{star\xspace}
 
 % Spacing adjustments when using the symbols inside regular 'description' env.
-% Note: *not* used in \sbmlrule below.
+% Note: *not* used in \ninemlrule below.
 
 \newcommand{\vsp}{\hspace*{4pt}}
 \newcommand{\csp}{\hspace*{6.25pt}}
@@ -942,13 +943,13 @@ Package Specification Style]
 
 % Now the actual user commands for validation rules.
 
-\newcommand{\sbmlrule}[3]{\begin{enumerate}[labelwidth=8em,leftmargin=10em,align=left]
+\newcommand{\ninemlrule}[3]{\begin{enumerate}[labelwidth=8em,leftmargin=10em,align=left]
     \item[\textbf{\textsf{#1}}~~#2] #3
   \end{enumerate}}
 
-\newcommand{\validRule}[2]      {\sbmlrule{#1}{\vSymbol}{#2}}
-\newcommand{\consistencyRule}[2]{\sbmlrule{#1}{\cSymbol}{#2}}
-\newcommand{\modelingRule}[2]   {\sbmlrule{#1}{\mSymbol}{#2}}
+\newcommand{\validRule}[2]      {\ninemlrule{#1}{\vSymbol}{#2}}
+\newcommand{\consistencyRule}[2]{\ninemlrule{#1}{\cSymbol}{#2}}
+\newcommand{\modelingRule}[2]   {\ninemlrule{#1}{\mSymbol}{#2}}
 
 
 % Code examples.
@@ -1008,13 +1009,13 @@ Package Specification Style]
 % \RequirePackage[textsize=scriptsize]{todonotes}
 %
 % \if@draftspec
-%   \newcommand{\sbmlshownotes}{}
+%   \newcommand{\ninemlshownotes}{}
 % \else
-%   \newcommand{\sbmlshownotes}{disable}
+%   \newcommand{\ninemlshownotes}{disable}
 % \fi
 %
 % \newcommand{\draftnote}[1]{\todo[backgroundcolor=lightyellow,%
-%  bordercolor=lightgray,linecolor=mediumgray,\sbmlshownotes]{\textit{#1}}}
+%  bordercolor=lightgray,linecolor=mediumgray,\ninemlshownotes]{\textit{#1}}}
 
 \newcommand{\draftnoteInternal}[1]{\mbox{}\marginpar{\hspace{0pt}\fcolorbox{Gold}{lightyellow}
     {\scriptsize\begin{minipage}[t]{0.65in}\raggedright\textit{#1}\end{minipage}}}}
@@ -1131,56 +1132,6 @@ Package Specification Style]
 \newcommand{\dblquote}    {\verb|"|} %"
 
 
-% Here we list common SBML entities, to get consistent font & appearance.
-
-\newcommand{\AlgebraicRule}{\textbf{\class{AlgebraicRule}}\xspace}
-\newcommand{\Annotation}{\textbf{\class{Annotation}}\xspace}
-\newcommand{\AssignmentRule}{\textbf{\class{AssignmentRule}}\xspace}
-\newcommand{\Compartment}{\textbf{\class{Compartment}}\xspace}
-\newcommand{\Constraint}{\textbf{\class{Constraint}}\xspace}
-\newcommand{\Delay}{\textbf{\class{Delay}}\xspace}
-\newcommand{\EventAssignment}{\textbf{\class{EventAssignment}}\xspace}
-\newcommand{\Event}{\textbf{\class{Event}}\xspace}
-\newcommand{\FunctionDefinition}{\textbf{\class{FunctionDefinition}}\xspace}
-\newcommand{\InitialAssignment}{\textbf{\class{InitialAssignment}}\xspace}
-\newcommand{\KineticLaw}{\textbf{\class{KineticLaw}}\xspace}
-\newcommand{\ListOfCompartments}{\textbf{\class{ListOfCompartments}}\xspace}
-\newcommand{\ListOfConstraints}{\textbf{\class{ListOfConstraints}}\xspace}
-\newcommand{\ListOfEventAssignments}{\textbf{\class{ListOfEventAssignments}}\xspace}
-\newcommand{\ListOfEvents}{\textbf{\class{ListOfEvents}}\xspace}
-\newcommand{\ListOfFunctionDefinitions}{\textbf{\class{ListOfFunctionDefinitions}}\xspace}
-\newcommand{\ListOfInitialAssignments}{\textbf{\class{ListOfInitialAssignments}}\xspace}
-\newcommand{\ListOfLocalParameters}{\textbf{\class{ListOfLocalParameters}}\xspace}
-\newcommand{\ListOfModifierSpeciesReferences}{\textbf{\class{ListOfModifierSpeciesReferences}}\xspace}
-\newcommand{\ListOfPackages}{\textbf{\class{ListOfPackages}}\xspace}
-\newcommand{\ListOfParameters}{\textbf{\class{ListOfParameters}}\xspace}
-\newcommand{\ListOfReactions}{\textbf{\class{ListOfReactions}}\xspace}
-\newcommand{\ListOfRules}{\textbf{\class{ListOfRules}}\xspace}
-\newcommand{\ListOfSpeciesReferences}{\textbf{\class{ListOfSpeciesReferences}}\xspace}
-\newcommand{\ListOfSpecies}{\textbf{\class{ListOfSpecies}}\xspace}
-\newcommand{\ListOfUnitDefinitions}{\textbf{\class{ListOfUnitDefinitions}}\xspace}
-\newcommand{\ListOfUnits}{\textbf{\class{ListOfUnits}}\xspace}
-\newcommand{\ListOf}{\class{ListOf\rule{0.3in}{0.5pt}}\xspace}
-\newcommand{\LocalParameter}{\textbf{\class{LocalParameter}}\xspace}
-\newcommand{\Message}{\textbf{\class{Message}}\xspace}
-\newcommand{\Model}{\textbf{\class{Model}}\xspace}
-\newcommand{\ModifierSpeciesReference}{\textbf{\class{ModifierSpeciesReference}}\xspace}
-\newcommand{\Notes}{\textbf{\class{Notes}}\xspace}
-\newcommand{\Package}{\textbf{\class{Package}}\xspace}
-\newcommand{\Parameter}{\textbf{\class{Parameter}}\xspace}
-\newcommand{\Priority}{\textbf{\class{Priority}}\xspace}
-\newcommand{\RateRule}{\textbf{\class{RateRule}}\xspace}
-\newcommand{\Reaction}{\textbf{\class{Reaction}}\xspace}
-\newcommand{\Rule}{\textbf{\class{Rule}}\xspace}
-\newcommand{\SBML}{\textbf{\class{SBML}}\xspace}
-\newcommand{\SBase}{\textbf{\abstractclass{SBase}}\xspace}
-\newcommand{\SimpleSpeciesReference}{\textbf{\class{SimpleSpeciesReference}}\xspace}
-\newcommand{\SpeciesReference}{\textbf{\class{SpeciesReference}}\xspace}
-\newcommand{\Species}{\textbf{\class{Species}}\xspace}
-\newcommand{\StoichiometryMath}{\textbf{\class{StoichiometryMath}}\xspace}
-\newcommand{\Trigger}{\textbf{\class{Trigger}}\xspace}
-\newcommand{\UnitDefinition}{\textbf{\class{UnitDefinition}}\xspace}
-\newcommand{\Unit}{\textbf{\class{Unit}}\xspace}
 
 
 % 

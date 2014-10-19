@@ -16,15 +16,67 @@
 %% in the file named "LICENSE.txt" included with this software distribution.
 %% ============================================================================
 
+% Here we list common SBML entities, to get consistent font & appearance.
+
+\newcommand{\AlgebraicRule}{\textbf{\class{AlgebraicRule}}\xspace}
+\newcommand{\Annotation}{\textbf{\class{Annotation}}\xspace}
+\newcommand{\AssignmentRule}{\textbf{\class{AssignmentRule}}\xspace}
+\newcommand{\Compartment}{\textbf{\class{Compartment}}\xspace}
+\newcommand{\Constraint}{\textbf{\class{Constraint}}\xspace}
+\newcommand{\Delay}{\textbf{\class{Delay}}\xspace}
+\newcommand{\EventAssignment}{\textbf{\class{EventAssignment}}\xspace}
+\newcommand{\Event}{\textbf{\class{Event}}\xspace}
+\newcommand{\FunctionDefinition}{\textbf{\class{FunctionDefinition}}\xspace}
+\newcommand{\InitialAssignment}{\textbf{\class{InitialAssignment}}\xspace}
+\newcommand{\KineticLaw}{\textbf{\class{KineticLaw}}\xspace}
+\newcommand{\ListOfCompartments}{\textbf{\class{ListOfCompartments}}\xspace}
+\newcommand{\ListOfConstraints}{\textbf{\class{ListOfConstraints}}\xspace}
+\newcommand{\ListOfEventAssignments}{\textbf{\class{ListOfEventAssignments}}\xspace}
+\newcommand{\ListOfEvents}{\textbf{\class{ListOfEvents}}\xspace}
+\newcommand{\ListOfFunctionDefinitions}{\textbf{\class{ListOfFunctionDefinitions}}\xspace}
+\newcommand{\ListOfInitialAssignments}{\textbf{\class{ListOfInitialAssignments}}\xspace}
+\newcommand{\ListOfLocalParameters}{\textbf{\class{ListOfLocalParameters}}\xspace}
+\newcommand{\ListOfModifierSpeciesReferences}{\textbf{\class{ListOfModifierSpeciesReferences}}\xspace}
+\newcommand{\ListOfPackages}{\textbf{\class{ListOfPackages}}\xspace}
+\newcommand{\ListOfParameters}{\textbf{\class{ListOfParameters}}\xspace}
+\newcommand{\ListOfReactions}{\textbf{\class{ListOfReactions}}\xspace}
+\newcommand{\ListOfRules}{\textbf{\class{ListOfRules}}\xspace}
+\newcommand{\ListOfSpeciesReferences}{\textbf{\class{ListOfSpeciesReferences}}\xspace}
+\newcommand{\ListOfSpecies}{\textbf{\class{ListOfSpecies}}\xspace}
+\newcommand{\ListOfUnitDefinitions}{\textbf{\class{ListOfUnitDefinitions}}\xspace}
+\newcommand{\ListOfUnits}{\textbf{\class{ListOfUnits}}\xspace}
+\newcommand{\ListOf}{\class{ListOf\rule{0.3in}{0.5pt}}\xspace}
+\newcommand{\LocalParameter}{\textbf{\class{LocalParameter}}\xspace}
+\newcommand{\Message}{\textbf{\class{Message}}\xspace}
+\newcommand{\Model}{\textbf{\class{Model}}\xspace}
+\newcommand{\ModifierSpeciesReference}{\textbf{\class{ModifierSpeciesReference}}\xspace}
+\newcommand{\Notes}{\textbf{\class{Notes}}\xspace}
+\newcommand{\Package}{\textbf{\class{Package}}\xspace}
+\newcommand{\Parameter}{\textbf{\class{Parameter}}\xspace}
+\newcommand{\Priority}{\textbf{\class{Priority}}\xspace}
+\newcommand{\RateRule}{\textbf{\class{RateRule}}\xspace}
+\newcommand{\Reaction}{\textbf{\class{Reaction}}\xspace}
+\newcommand{\Rule}{\textbf{\class{Rule}}\xspace}
+\newcommand{\SBML}{\textbf{\class{SBML}}\xspace}
+\newcommand{\SBase}{\textbf{\abstractclass{SBase}}\xspace}
+\newcommand{\SimpleSpeciesReference}{\textbf{\class{SimpleSpeciesReference}}\xspace}
+\newcommand{\SpeciesReference}{\textbf{\class{SpeciesReference}}\xspace}
+\newcommand{\Species}{\textbf{\class{Species}}\xspace}
+\newcommand{\StoichiometryMath}{\textbf{\class{StoichiometryMath}}\xspace}
+\newcommand{\Trigger}{\textbf{\class{Trigger}}\xspace}
+\newcommand{\UnitDefinition}{\textbf{\class{UnitDefinition}}\xspace}
+\newcommand{\Unit}{\textbf{\class{Unit}}\xspace}
+
+
 % Macros just for this document:
 
-\newcommand{\sbmlpkg}{\texorpdfstring{%
+\newcommand{\ninemlpkg}{\texorpdfstring{%
     \textls[-25]{\textsc{SBMLPkgSpec}}}{%
     \textsc{SBMLPkgSpec}}\xspace}
-\newcommand{\sbmlpkghead}{\texorpdfstring{%
+\newcommand{\ninemlpkghead}{\texorpdfstring{%
     \textls[-50]{\textsc{SBMLPkgSpec}}}{%
     \textsc{SBMLPkgSpec}}\xspace}
-\newcommand{\sbmlpkgfile}{\literalFont{sbmlpkgspec.cls}\xspace}
+\newcommand{\ninemlpkgfile}{\literalFont{sbmlpkgspec.cls}\xspace}
 \newcommand{\latex}{\LaTeX{}\xspace}
 \newcommand{\tex}{\TeX{}\xspace}
 \newcommand{\distURL}{http://sourceforge.net/projects/sbml/files/specifications/tex}
@@ -55,7 +107,7 @@
 \packageVersion{Version 1.6.0}
 \packageVersionDate{10 August 2014}
 
-\title{\sbmlpkghead: A \latex Class for SBML Level~3
+\title{\ninemlpkghead: A \latex Class for SBML Level~3
   \texorpdfstring{\\[3pt]}{}\mbox{Package Specification Documents}}
 
 \author{Michael Hucka\\[0.25em]
@@ -73,25 +125,25 @@
 \section{Introduction}
 % -----------------------------------------------------------------------------
 
-The \sbmlpkg document class for \latex provides a standard format for SBML
+The \ninemlpkg document class for \latex provides a standard format for SBML
 Level~3 \emph{package specification} documents.  In this document, I explain
-how to use \sbmlpkg.  I assume readers are familiar with \latex.  (There are
+how to use \ninemlpkg.  I assume readers are familiar with \latex.  (There are
 many tutorials and books available on \latex, and readers should have no
 trouble finding resources if needed.)
 
-The document before you is itself formatted using the \sbmlpkg class, with a
+The document before you is itself formatted using the \ninemlpkg class, with a
 minor change to omit some SBML Level~3 package-specific text normally placed
 on the front page.  (For example, the front page of this document does not
 announce it is an ``SBML Level 3 Package Specification''.)  In other
 respects, ``what you see is what you get''---this is the appearance of an
 SBML Level~3 package specification document when it is formatted with
-\sbmlpkg.
+\ninemlpkg.
 
 
 \subsection{Prerequisites and installation}
 
 \tab{where} lists the Internet locations from where you may obtain
-\sbmlpkg. The class itself consists of one file, \sbmlpkgfile, and a
+\ninemlpkg. The class itself consists of one file, \ninemlpkgfile, and a
 subdirectory named ``\texttt{logos}''.  It also comes with some accompanying
 documentation (specifically, the file you are reading, along with the source
 files used to produce it).
@@ -106,26 +158,26 @@ files used to produce it).
     Source tree (SVN)    & \url{\srcURL}\\
     \bottomrule
   \end{edtable}
-  \caption{Where to find \sbmlpkg on the Internet.}
+  \caption{Where to find \ninemlpkg on the Internet.}
   \label{where}
 \end{table}
 
-The use of \sbmlpkg should require only a recent and relatively complete
+The use of \ninemlpkg should require only a recent and relatively complete
 installation of \LaTeXe.  I developed and tested this document class with the
 TeX Live 2011 distribution on a Mac~OS~X 10.6.x system, and it is has been
 reported to work with TeX Live on Windows and Ubuntu Linux.  (For Ubuntu,
 make sure to install the following packages: ``\texttt{texlive}'',
 ``\texttt{texlive-latex-extra}'', ``\texttt{texlive-humantities}'', and
-``\texttt{texlive-fonts-extra}''.)  To use \sbmlpkg, you will need to inform
-your copy of \latex where to find the file \sbmlpkgfile and its accompanying
+``\texttt{texlive-fonts-extra}''.)  To use \ninemlpkg, you will need to inform
+your copy of \latex where to find the file \ninemlpkgfile and its accompanying
 subdirectory ``\texttt{logos''}.  This can be done in a variety of ways.
 Here are two common ones:
 
 \begin{itemize}
 
 \item \emph{Per-document installation}.  This is arguably the simplest
-  approach.  Download \sbmlpkg from a distribution site (see \tab{where}),
-  copy the contents (specifically, \sbmlpkgfile and the folder named
+  approach.  Download \ninemlpkg from a distribution site (see \tab{where}),
+  copy the contents (specifically, \ninemlpkgfile and the folder named
   ``\texttt{logos}'') to the folder where you keep the other files for the
   SBML Level~3 package specification you are authoring, and you are done.
   The next time you run \latex in that folder (assuming you declare the
@@ -133,7 +185,7 @@ Here are two common ones:
   file in the current directory and be on its merry way.
 
 \item \emph{``Central'' installation}.  In this approach, you install
-  \sbmlpkgfile in a folder where you keep other \latex class files, and
+  \ninemlpkgfile in a folder where you keep other \latex class files, and
   configure your copy of \latex to find things there.  Configuring a \tex
   system in this way on Unix-type systems (Linux, etc.)\ usually requires
   setting the environment variable \texttt{TEXINPUTS} and possibly others.
@@ -149,23 +201,23 @@ Some paragraphs \notice in this document include a hand pointer in the
 left margin (illustrated at the left).  These are meant to call attention
 to paragraphs containing significant points that may be too easily missed
 during the first reading.  Readers may wish to revisit those paragraphs
-once they are actually using \sbmlpkg in practice.
+once they are actually using \ninemlpkg in practice.
 
 
 \subsection{Where to send bug reports and feedback}
 
-Please report problems you encounter with \sbmlpkg.  You can contact the
+Please report problems you encounter with \ninemlpkg.  You can contact the
 author directly, at the email address given on the cover page, or you can
 file a bug report using the tracker at \url{http://sbml.org/issue-tracker}.
 
 
 % -----------------------------------------------------------------------------
-\section{Creating documents with \sbmlpkghead}
+\section{Creating documents with \ninemlpkghead}
 \label{usage}
 % -----------------------------------------------------------------------------
 
 This section provides a summary of the main features and capabilities of
-\sbmlpkg, and serves as a guide to getting started with this \latex class.
+\ninemlpkg, and serves as a guide to getting started with this \latex class.
 
 
 \subsection{Basic document structure}
@@ -199,9 +251,9 @@ file.
 \end{document}
 \end{example}
 
-The fragment above illustrates the general structure expected by \sbmlpkg.
+The fragment above illustrates the general structure expected by \ninemlpkg.
 First, several commands all beginning with the characters \cmd{package} set
-various internal variables that are used by \sbmlpkg to produce the final
+various internal variables that are used by \ninemlpkg to produce the final
 package specification document.  For example, there is a title for the
 package (\cmd{packageTitle\{\}}), a version number for the package
 (\cmd{packageVersion\{\}}), and more.  Next, the author is declared.  After
@@ -221,13 +273,13 @@ in it.  Here is an example of how to use this option:
 \documentclass[draftspec]{sbmlpkgspec}
 \end{example}
 
-Not shown here, but useful to know, is that \sbmlpkg also provides a command
+Not shown here, but useful to know, is that \ninemlpkg also provides a command
 for putting a prominent notice on the front page.  Writing
 \cmd{frontNotice\{}\emph{text}\texttt{\}} will put \emph{text} in the middle
 of the front page, in red.  It is useful for warning readers of your document
 about known issues, for example if the document is a work in progress.
 
-\sbmlpkg does not define special commands for formatting author information
+\ninemlpkg does not define special commands for formatting author information
 beyond the \cmd{author} command (which is actually a standard \latex command
 from the \texttt{article} document class).  It does, however, provide the
 command \cmd{mailto}, which is designed to turn email addresses into
@@ -250,11 +302,11 @@ package specification document:
   \end{tabular}}
 \end{example}
 
-A final point about \sbmlpkg is worth mentioning right at the outset.  When
+A final point about \ninemlpkg is worth mentioning right at the outset.  When
 you run \latex (typically using the \texttt{pdflatex} variant) and look at
 the output, you will often find that section references, page references, and
 line numbers do not get refreshed correctly after one invocation of the
-command.  With \sbmlpkg, you will typically have to run the command not
+command.  With \ninemlpkg, you will typically have to run the command not
 twice, but \notice \emph{three} times, to get the correct, final numbers,
 because it uses the \texttt{varioref} package.  This is typically not a
 problem during actual writing; the edit-run-preview cycle is such that you
@@ -270,7 +322,7 @@ references look wrong, run it again.
 \subsection{Tables and figures}
 \label{about-tables}
 
-\sbmlpkg preloads the \latex \texttt{graphicx} and \texttt{xcolor}
+\ninemlpkg preloads the \latex \texttt{graphicx} and \texttt{xcolor}
 packages, giving authors immediate access to the functionality of these
 extensions without having to include them manually.  For example, if you
 had an illustration in a file named ``\texttt{example.pdf}'', the following
@@ -290,7 +342,7 @@ graphics files.  Please refer to its documentation for help on how to use
 it fully.
 
 To produce pleasing-looking documents, I suggest you create your figures
-using 8~point Helvetica for the text font.  \sbmlpkg redefines figures and
+using 8~point Helvetica for the text font.  \ninemlpkg redefines figures and
 tables to use Helvetica as the font family and an 8~point size by default, so
 creating figures with matching characteristics will lead to more
 consistent-looking documents.  The stylistic choices here were made not
@@ -301,7 +353,7 @@ part by consideration of the tools available to authors.  In particular, it
 is today common to find online drawing tools that offer Helvetica (or at
 least the similar-looking, albeit inferior, Arial) as a font choice.
 
-\sbmlpkg also preloads the \texttt{booktabs} package.  This provides
+\ninemlpkg also preloads the \texttt{booktabs} package.  This provides
 \cmd{toprule}, \cmd{midrule} and \cmd{bottomrule} (among others), which can
 be used to produce attractive tables.  The following text is what produced
 \fig{where}:
@@ -318,13 +370,13 @@ be used to produce attractive tables.  The following text is what produced
     Source tree (SVN)    & \url{\srcURL} \\
     \bottomrule                                % From booktabs -- generates line at bottom
   \end{edtable}
-  \caption{Where to find \sbmlpkg on the Internet.}
+  \caption{Where to find \ninemlpkg on the Internet.}
   \label{where}
 \end{table}
 \end{example}
 
 In the case of long tables, readability is often enhanced by adding a
-background color to every other row.  Once again, \sbmlpkg preloads a
+background color to every other row.  Once again, \ninemlpkg preloads a
 \latex package (in this case, \texttt{xcolor} with the \texttt{[table]}
 option) that provides a convenient facility for automatically coloring
 alternate rows in a table.  Although many variations are possible, for
@@ -348,13 +400,13 @@ which was produced using the following sequence:
 \end{table}
 \end{example}
   
-Note \notice that tables are \emph{not} defined by \sbmlpkg to use
+Note \notice that tables are \emph{not} defined by \ninemlpkg to use
 alternate-row background coloring by default, because in some situations
 (such as short tables, or tables containing color), alternate row coloring is
 unnecessary and distracting.  You must add the \cmd{rowcolors} command
 manually, where it's appropriate.
 
-Finally, \sbmlpkg redefines the table and figure environments to place
+Finally, \ninemlpkg redefines the table and figure environments to place
 contents inside a \latex \texttt{centering} environment, causing the content
 to be centered on the page.  You do not need to add centering commands
 yourself.
@@ -395,12 +447,12 @@ references.
     \bottomrule
   \end{edtable}
   \caption{Commands for referring to figures and other entities in an
-    \sbmlpkg document.  Use the commands with an argument consisting of the
+    \ninemlpkg document.  Use the commands with an argument consisting of the
     label being referenced.  For example: \cmd{fig\{myfig\}}.}
   \label{ref-commands}
 \end{table}
 
-The \sbmlpkg class also defines starred versions of the commands, that is,
+The \ninemlpkg class also defines starred versions of the commands, that is,
 \texttt{\textbackslash fig*\{}\emph{label\,}\texttt{\}},
 \texttt{\textbackslash tab*\{}\emph{label\,}\texttt{\}},
 \texttt{\textbackslash sec*\{}\emph{label\,}\texttt{\}}, and
@@ -433,8 +485,8 @@ items.  These can be figures, sections, etc.
 In the example of \sec{about-tables}, you may have noticed the use of the
 command \cmd{url\{\}}.  That command comes as part of the \latex
 \texttt{hyperref} package, and like the other packages mentioned in this
-section, it is also preloaded by \sbmlpkg.  It provides a number of
-facilities that are used to implement features of \sbmlpkg.  \tab{hyperref}
+section, it is also preloaded by \ninemlpkg.  It provides a number of
+facilities that are used to implement features of \ninemlpkg.  \tab{hyperref}
 lists some commands you may find useful in writing SBML specification
 documents.
 
@@ -467,7 +519,7 @@ accomplishing this for SBML package specifications.  The first is to use
     texttt\{}\emph{text}\texttt{\}}} command.  This causes ``\emph{text}'' to
 be output in a fixed-width font, like so: ``\texttt{text}''.
 
-The second method is to use an environment defined by \sbmlpkg and
+The second method is to use an environment defined by \ninemlpkg and
 implemented using the \latex package \texttt{listings}.  This environment is
 called \texttt{example}.  Wrapping any text with \cmd{begin\{example\}} and
 \cmd{end\{example\}} will cause the text to be output by itself with a gray
@@ -490,7 +542,7 @@ vertical bar is defined as the escape character for the \texttt{example}
 environment.
 
 Finally, for those cases when it is more convenient to put the example
-contents in a separate file, \sbmlpkg provides the command
+contents in a separate file, \ninemlpkg provides the command
 \mbox{\cmd{exampleFile\{}\emph{file}\texttt{\}}}.  It will insert the
 contents of \emph{file} at the point where it is invoked in the text, and
 format the contents in the same style as the \texttt{example} environment.
@@ -498,10 +550,10 @@ format the contents in the same style as the \texttt{example} environment.
 
 \subsection{Color}
 
-To increase consistency between SBML specification documents, \sbmlpkg
+To increase consistency between SBML specification documents, \ninemlpkg
 defines custom color names that may be used with commands such as
 \texttt{color}, \texttt{colorbox}, etc.  \tab{colors} lists these color
-names.  Some of the colors in \tab*{colors} are used by \sbmlpkg itself, for
+names.  Some of the colors in \tab*{colors} are used by \ninemlpkg itself, for
 design elements such as section dividers and background colors.  Others
 sometimes prove useful in different contexts of a specification document, and
 still others are colors that were used in past SBML documentation and are
@@ -509,11 +561,11 @@ retained in case they prove useful again in the future.
 
 When \notice a specification document is a revision of a previous document,
 it is the convention in SBML documentation to indicate text changes by
-coloring them in red.  For this purpose, \sbmlpkg defines a command and an
+coloring them in red.  For this purpose, \ninemlpkg defines a command and an
 environment.  The command \mbox{\texttt{\textbackslash
     changed\{}\emph{text}\texttt{\}}} causes \emph{text} to be written in red
 (or more precisely, the color named \val{sbmlchangedcolor}, which is defined
-by \sbmlpkg as a maroon red), \changed{like this}.  It can be used for long
+by \ninemlpkg as a maroon red), \changed{like this}.  It can be used for long
 stretches of text and include embedded spaces and formatting
 commands. Alternatively, for coloring even longer stretches of text and
 multiple paragraphs, you may prefer to use the environment
@@ -545,7 +597,7 @@ multiple paragraphs, you may prefer to use the environment
     \texttt{verylightyellow}	& \drawcol{verylightyellow}	& red = 0.97	& blue = 0.95	& green = 0.85 \\
     \bottomrule
   \end{edtable}
-  \caption{Color names defined by \sbmlpkg.  These names may be used in
+  \caption{Color names defined by \ninemlpkg.  These names may be used in
     addition to the names of colors defined by the \latex package
     \texttt{xcolor}.}
   \label{colors}
@@ -556,7 +608,7 @@ the section \emph{numbers} of all sections after the inserted text will end
 up changed even if the text of those sections is unchanged.  This produces
 misleading results: section $X.Y$ may appear in both the old and new versions
 of a document, but may not have the same content because the old $X.Y$ became
-$X.(Y+1)$ in the new version.  For this situation, \sbmlpkg defines special
+$X.(Y+1)$ in the new version.  For this situation, \ninemlpkg defines special
 sectioning commands that format only the section numbers in red, leaving the
 rest of the heading unchanged.  The commands have the suffix
 \texttt{Changed}, e.g., \mbox{\texttt{\textbackslash
@@ -581,14 +633,14 @@ technically possible to hyperlink from SBML package documents to specific
 parts within an external PDF file located somewhere on the Internet, the
 result is more confusing and annoying than helpful.
 
-\sbmlpkg therefore defines two sets of commands: one set predefines each of
+\ninemlpkg therefore defines two sets of commands: one set predefines each of
 the SBML Level~3 Core object names, but without hyperlinking, and the second
 set lets package authors define new object names, with hyperlinking.  The
 result is that references to Core SBML objects are displayed in black and
 without linking, while package objects appear in blue, as hyperlinks.  The
 linking is implemented using the standard \latex \texttt{hyperref} package.
 
-In addition to these commands, \sbmlpkg provides other commands for
+In addition to these commands, \ninemlpkg provides other commands for
 typesetting primitive type names (such as \primtype{SId}, \primtype{double},
 and so on) and other entities and XML fragments.  They are described in
 \vrefrange{primtype}{formatting-xml}.  The need for using these occurs
@@ -668,7 +720,7 @@ character) to be typed beyond the name of the object itself.
 
 When an SBML package specification document defines new object classes, it is
 useful to make all mentions of the class name be hyperlinks to the class
-definition in the document.  To this end, \sbmlpkg provides commands that can
+definition in the document.  To this end, \ninemlpkg provides commands that can
 be used to create new \latex commands to define hyperlinked name references.
 The purpose of these commands is to let package authors define commands of
 the form \cmd{\emph{ObjectName}} that print the name of the class and
@@ -718,7 +770,7 @@ Sometimes \notice it is desirable to write the names of object classes
 \emph{without} introducing hyperlinks.  A common situation is when mentioning
 the names of the object classes or types in section headings.  In these
 situations, instead of using the \cmd{ObjectName} commands, you may use the
-following commands provided by \sbmlpkg:
+following commands provided by \ninemlpkg:
 
 \begin{description}[font=\normalfont\ttfamily,style=nextline]
 
@@ -750,7 +802,7 @@ authors should use the \cmd{primtype} and \cmd{primtypeNC} commands:
 
 \item[\cmd{primtype\{\emph{name}\}}] Typesets the name of a primitive data
   type \emph{name}.  SBML Level~3 Core also defines and uses a number of
-  primitive data types, but these do not have separate commands in \sbmlpkg.
+  primitive data types, but these do not have separate commands in \ninemlpkg.
   Instead, they should be written using the command
   \mbox{\cmd{primtype\{\emph{type}\}}}, where \emph{type} is one of the
   following names:
@@ -806,7 +858,7 @@ nor when the invocation of \cmd{primtypeNC} occurs as the first thing in a
 \label{formatting-xml}
 
 In addition to formatting the names of SBML object classes and primitive
-data types, \sbmlpkg provides commands for formatting text meant to be
+data types, \ninemlpkg provides commands for formatting text meant to be
 literal examples of XML.  These special commands are provided so in-text
 descriptions of XML constructs can be formatted in a way and attractive
 way:
@@ -842,7 +894,7 @@ for longer content; for those cases, use the \texttt{example} environment
 \subsection{Line numbers}
 \label{about-lineno}
 
-\sbmlpkg preloads the \latex package \texttt{lineno} and configures it to
+\ninemlpkg preloads the \latex package \texttt{lineno} and configures it to
 produce the line numbers in the right column of every page.  The numbers are
 important for specification documents because they allow discussion and bug
 reports to refer to specific portions of the text.  Crucially, lists of
@@ -885,7 +937,7 @@ condition \emph{must} be true, or a rule states that it \emph{should} be
 true.  Rules of the former kind are SBML validation rules---a model encoded
 in SBML must conform to all of them in order to be considered valid.  Rules
 of the latter kind are consistency rules.  To help highlight these
-differences, the SBML specification documents and \sbmlpkg provide commands
+differences, the SBML specification documents and \ninemlpkg provide commands
 to format the three kinds of rules, with three different symbols:
 
 \begin{description}
@@ -912,7 +964,7 @@ to format the three kinds of rules, with three different symbols:
 
 \end{description}
 
-\sbmlpkg defines three commands for writing these rules in SBML package
+\ninemlpkg defines three commands for writing these rules in SBML package
 specifications documents:
 
 \begin{description}[font=\normalfont\ttfamily,style=nextline]
@@ -937,7 +989,7 @@ end of the document.
 
 Sometimes it is useful to flag content in a document to draw readers'
 attention to it.  It is also sometimes useful during the development of a
-document to be able to leave coments for coauthors and readers.  \sbmlpkg
+document to be able to leave coments for coauthors and readers.  \ninemlpkg
 provides a few commands for these purposes.
 
 \begin{description}[font=\normalfont\ttfamily,style=nextline]
@@ -971,20 +1023,20 @@ document.
 
 
 % -----------------------------------------------------------------------------
-% \section{What \sbmlpkg provides: a concise reference}
-\section{Additional features of \sbmlpkghead}
+% \section{What \ninemlpkg provides: a concise reference}
+\section{Additional features of \ninemlpkghead}
 \label{provides}
 % -----------------------------------------------------------------------------
 
-% This section describes the commands and features provided by \sbmlpkg.
+% This section describes the commands and features provided by \ninemlpkg.
 
-This section describes some additional aspects of \sbmlpkg.
+This section describes some additional aspects of \ninemlpkg.
 
 
-\subsection{Options understood by \sbmlpkghead}
+\subsection{Options understood by \ninemlpkghead}
 \label{pkg-options}
 
-A number of options may be given to \sbmlpkg in the \cmd{documentclass}
+A number of options may be given to \ninemlpkg in the \cmd{documentclass}
 command that begins a document.  Here follows a complete list:
 
 \begin{description}[font=\normalfont\ttfamily\color{black},style=nextline]
@@ -999,7 +1051,7 @@ command that begins a document.  Here follows a complete list:
   front page and ``(DRAFT)'' in the footers to be omitted.  It is the
   opposite of the \texttt{draftspec} option.
 
-\item[toc] (Default) This option causes \sbmlpkg to include a table of
+\item[toc] (Default) This option causes \ninemlpkg to include a table of
   contents as the second page of the document.  Whether the table has one
   wide column or two narrow columns is then controlled by the options
   \texttt{twocolumntoc} and \texttt{singlecolumntoc}, described below.
@@ -1007,9 +1059,9 @@ command that begins a document.  Here follows a complete list:
 \item[notoc] This option causes the table of contents to be omitted.  (It
   is unclear under what circumstances one would want to omit the table of
   contents, but since some other \latex classes include this feature,
-  \sbmlpkg follows suit.)
+  \ninemlpkg follows suit.)
 
-\item[twocolumntoc] This option causes \sbmlpkg to produce a two-column table
+\item[twocolumntoc] This option causes \ninemlpkg to produce a two-column table
   of contents rather than the default one-column version.  (That is, unless
   the \texttt{notoc} option is also given, in which case, no table of
   contents is produced.)  This is useful when a document is long, with many
@@ -1020,7 +1072,7 @@ command that begins a document.  Here follows a complete list:
   examine whether you can shorten your section titles.)
 
 \item[singlecolumntoc] (Default) This option is the opposite of
-  \texttt{twocolumntoc}; it causes \sbmlpkg to produce a single column table
+  \texttt{twocolumntoc}; it causes \ninemlpkg to produce a single column table
   of contents as the second page of the document.  (Again, if \texttt{notoc}
   is also given, then no table of contents is produced at all.)
 
@@ -1028,7 +1080,7 @@ command that begins a document.  Here follows a complete list:
 
 
 
-% \subsection{Commands defined by \sbmlpkg}
+% \subsection{Commands defined by \ninemlpkg}
 % \label{cmds-defined}
 
 % notice
@@ -1036,16 +1088,16 @@ command that begins a document.  Here follows a complete list:
 % package* commands
 
 
-\subsection{Notable \latex packages preloaded by \sbmlpkghead}
+\subsection{Notable \latex packages preloaded by \ninemlpkghead}
 \label{included-classes}
 
-As mentioned above, \sbmlpkg preloads many common \latex packages.  Some are
-used to implement the features of \sbmlpkg itself; others are preloaded so
-that authors do not have to load them explicitly.  Knowing what \sbmlpkg
+As mentioned above, \ninemlpkg preloads many common \latex packages.  Some are
+used to implement the features of \ninemlpkg itself; others are preloaded so
+that authors do not have to load them explicitly.  Knowing what \ninemlpkg
 provides upfront also makes it easier to explain how to write SBML
 specification documents.
 
-The following is a list of the \latex packages preloaded by \sbmlpkg.  It is
+The following is a list of the \latex packages preloaded by \ninemlpkg.  It is
 beyond the scope of this document to explain their features and capabilities
 in detail; readers are urged to consult the documentation for each one to
 learn more about them.  Documentation is available at CTAN
@@ -1055,15 +1107,15 @@ learn more about them.  Documentation is available at CTAN
 \begin{itemize}
 
 \item \texttt{amssymb}: This package defines many symbols and special
-  characters.  In \sbmlpkg, it is used to get the symbols defined by the
+  characters.  In \ninemlpkg, it is used to get the symbols defined by the
   validation rule commands \cmd{validRule}, \cmd{consistencyRule} and
   \cmd{modelingRule} described in \sec{validation-rules}.
 
 \clearpage
 
 \item \texttt{amsmath}: This package defines many additional symbols and
-  macros for mathematics.  It is not actually used in \sbmlpkg, but it is
-  popular, and to make it work properly in combination with \sbmlpkg, some
+  macros for mathematics.  It is not actually used in \ninemlpkg, but it is
+  popular, and to make it work properly in combination with \ninemlpkg, some
   corrections to delimiter sizes need to be introduced.  Therefore,
   \texttt{amsmath} is included too.
 
@@ -1090,19 +1142,19 @@ learn more about them.  Documentation is available at CTAN
   external graphics files in \latex documents. 
 
 \item \texttt{hyperref}: Mentioned in \sec{hyperlinks}, this package defines
-  commands for creating hyperlinks within and between documents.  \sbmlpkg
+  commands for creating hyperlinks within and between documents.  \ninemlpkg
   uses it to define commands such as \cmd{fig} and \cmd{tab}.
 
-\item \texttt{lineno}: Used by \sbmlpkg to implement line numbers on the
+\item \texttt{lineno}: Used by \ninemlpkg to implement line numbers on the
   page.  As mentioned in \sec{about-lineno}, not all line numbering can be
   accomplished completely without user intervention; in some cases, authors
   must add special commands to get line numbers into content on the page.
 
-\item \texttt{listings}: Used by \sbmlpkg to implement the \texttt{example}
+\item \texttt{listings}: Used by \ninemlpkg to implement the \texttt{example}
   environment and \cmd{exampleFile} command.
 
 \item \texttt{multicol}: This provides an environment for putting multiple
-  columns of text on a page.  In \sbmlpkg, it is used to produce two-column
+  columns of text on a page.  In \ninemlpkg, it is used to produce two-column
   table of contents when the \texttt{[twocolumntoc]} option is given as
   described in \sec{pkg-options}.
 
@@ -1126,7 +1178,7 @@ learn more about them.  Documentation is available at CTAN
   page'' or ``on page 27'' when the corresponding \cmd{label} is not on the
   same page.  (The way that the page references are generated requires
   multiple passes of running \latex, which is one of the reasons why using
-  \sbmlpkg requires 2--3 runs of \latex to generate final cross-references.)
+  \ninemlpkg requires 2--3 runs of \latex to generate final cross-references.)
 
 \item \texttt{varwidth}: This defines a \texttt{varwidth} environment that
   acts much like \texttt{minipage}, but produces output with a width that is
@@ -1155,7 +1207,7 @@ learn more about them.  Documentation is available at CTAN
 
 
 
-% \subsection{Other potentially useful \latex classes \emph{not} preloaded by \sbmlpkg}
+% \subsection{Other potentially useful \latex classes \emph{not} preloaded by \ninemlpkg}
 
 % There are \emph{many} \latex classes available in the world.  It would be
 % impossible to do them all justice here, but authors may find some of the
