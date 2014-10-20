@@ -765,98 +765,6 @@ to more general cases where the independent variable can be anything (space
 for example)
 
 \FloatBarrier
-\subsection{Alias}
-\label{sec:Alias}
-
-An alias corresponds to an intermediate variable allowing to store an
-information and to reuse it at different places in the definition of
-the dynamics.
-
-\textbf{Aliases} are motivated from two problems:
-
-\begin{itemize}
-\item {\bf substitution}: rather than writing long expressions for functions of
-\StateVariable, we can define an \Alias once. For example, we can define chains
-of {\Alias}es:
-%
-\begin{lstlisting}
-m_alpha = (alphaA+alphaB*V)/(alphaC+exp((alphaD+V/alphaE)))
-m_beta = (betaA+betaB*V)/(betaC+exp((betaD+V/betaE)))
-minf = m_alpha/(m_alpha+m_beta)
-mtau = 1./(m_alpha+m_beta)
-dm/dt = (1/C)*(minf-m)/mtau
-\end{lstlisting}
-
-In this case, $m_{alpha}$, $m_{beta}$, $minf$ and $mtau$ are all
-alias definitions. There is no reason we couldn't expand our $dm/dt$
-description out to eliminate these intermediate {\Alias}es, but the expression
-would be very long and difficult to read.
-
-\item {\bf Accessing intermediate variable}: if we would like to communicate a
-value other than a simple \StateVariable to another \ComponentClass. For
-example, if we have a component representing a
-neuron, which has an internal \StateVariable, 'V', we may be interested in
-transmitting a current, for example $i=g*(E-V)$.
-
-\end{itemize}
-
-\note{\Alias is defined in the Dynamics, \emph{not} in the
-\Regime. This means that aliases are the same across all regimes.}
-
-
-\begin{table}[hb]
-  \begin{edtable}{tabular}{llr}
-    \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Alias Structure}}}\\
-    \toprule
-    \em{Attribute name} & \em{Type} & \em{Required} \\
-    \midrule
-    name & label & yes\\
-    \midrule
-    \em{Element type} & \em{Multiplicity} & \em{Required} \\
-    \midrule
-    \MathInline & singleton & yes \\ 
-    \bottomrule
-  \end{edtable}
-\end{table}
-
-\FloatBarrier
-\subsection{MathInline}
-\label{sec:MathInline}
-
-\begin{table}[hb]
-  \begin{edtable}{tabular}{lr}
-    \toprule
-    \multicolumn{2}{c}{\parbox{0.55\linewidth}{\center\textbf{MathInline Structure}}}\\
-    \toprule
-    \em{Text} & \em{Required} \\
-    \midrule
-    maths-expression & yes\\
-    \bottomrule
-  \end{edtable}
-\end{table}
-
-\FloatBarrier
-\subsection{StateAssignment}
-\label{sec:StateAssignment}
-
-\begin{table}[hb]
-  \begin{edtable}{tabular}{llr}
-    \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{StateAssignment Structure}}}\\
-    \toprule
-    \em{Attribute name} & \em{Type} & \em{Required} \\
-    \midrule
-    name & label & yes\\
-    \midrule
-    \em{Element type} & \em{Multiplicity} & \em{Required} \\
-    \midrule
-    \MathInline & singleton & yes \\ 
-    \bottomrule
-  \end{edtable}
-\end{table}
-
-\FloatBarrier
 \subsection{TimeDerivative}
 \label{sec:TimeDerivative}
 
@@ -877,8 +785,31 @@ transmitting a current, for example $i=g*(E-V)$.
 \end{table}
 
 \FloatBarrier
+\subsection{OnEvent}
+\label{sec:OnEvent}
+
+An OnEvent block is activated when the dynamics component receives an event from published from an external component.
+
+%\vspace*{-0.25ex}
+%\begin{table}[hb]
+%  \begin{edtable}{tabular}{llr}
+%    \toprule
+%    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{OnEvent Structure}}}\\
+%    \toprule
+%    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+%    \midrule
+%    \Transition & singleton & no \\    
+%    \StateAssignment & set & no\\
+%    \EventOut & set & no\\
+%    \bottomrule
+%  \end{edtable}
+%\end{table}
+
+\FloatBarrier
 \subsection{OnCondition}
 \label{sec:OnCondition}
+
+An OnCondition block is activated when the condition in the \Trigger block is met.
 
 \vspace*{-0.25ex}
 \begin{table}[hb]
@@ -921,27 +852,10 @@ would be preferable for the implementation to produce an error message
 to the user.
 
 \FloatBarrier
-\subsection{OnEvent}
-\label{sec:OnEvent}
-
-\vspace*{-0.25ex}
-\begin{table}[hb]
-  \begin{edtable}{tabular}{llr}
-    \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{OnEvent Structure}}}\\
-    \toprule
-    \em{Element type} & \em{Multiplicity} & \em{Required} \\
-    \midrule
-    \Transition & singleton & no \\    
-    \StateAssignment & set & no\\
-    \EventOut & set & no\\
-    \bottomrule
-  \end{edtable}
-\end{table}
-
-\FloatBarrier
 \subsection{Trigger}
 \label{sec:Trigger}
+
+The trigger block defines the condition on which the \OnCondition block is activiated.
 
 \begin{table}[hb]
   \begin{edtable}{tabular}{llr}
@@ -959,6 +873,8 @@ to the user.
 \FloatBarrier
 \subsection{Transition}
 \label{sec:Transition}
+
+{\Transition}s define the transition between \Regime blocks.
 
 \begin{table}[hb]
   \begin{edtable}{tabular}{llr}
@@ -1045,8 +961,10 @@ triggers the {\Transition}
   \end{edtable}
 \end{table}
 
+\FloatBarrier
 \subsection{Annotation}
 \label{sec:Annotation}
+
 
 \begin{table}[hb]
   \begin{edtable}{tabular}{llr}
@@ -1059,6 +977,161 @@ triggers the {\Transition}
     \bottomrule
   \end{edtable}
 \end{table}
+
+
+\FloatBarrier
+\subsection{Alias}
+\label{sec:Alias}
+
+\note{\Alias is defined in the Dynamics, \emph{not} in the
+\Regime. This means that aliases are the same across all regimes.}
+
+An alias corresponds to an intermediate variable allowing to store an
+information and to reuse it at different places in the definition of
+the dynamics.
+
+\textbf{Aliases} are motivated from two problems:
+
+\begin{itemize}
+\item {\bf substitution}: rather than writing long expressions for functions of
+\StateVariable, we can define an \Alias once. For example, we can define chains
+of {\Alias}es:
+%
+\begin{lstlisting}
+m_alpha = (alphaA+alphaB*V)/(alphaC+exp((alphaD+V/alphaE)))
+m_beta = (betaA+betaB*V)/(betaC+exp((betaD+V/betaE)))
+minf = m_alpha/(m_alpha+m_beta)
+mtau = 1./(m_alpha+m_beta)
+dm/dt = (1/C)*(minf-m)/mtau
+\end{lstlisting}
+
+In this case, $m_{alpha}$, $m_{beta}$, $minf$ and $mtau$ are all
+alias definitions. There is no reason we couldn't expand our $dm/dt$
+description out to eliminate these intermediate {\Alias}es, but the expression
+would be very long and difficult to read.
+
+\item {\bf Accessing intermediate variable}: if we would like to communicate a
+value other than a simple \StateVariable to another \ComponentClass. For
+example, if we have a component representing a
+neuron, which has an internal \StateVariable, 'V', we may be interested in
+transmitting a current, for example $i=g*(E-V)$.
+
+\end{itemize}
+
+\begin{table}[hb]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Alias Structure}}}\\
+    \toprule
+    \em{Attribute name} & \em{Type} & \em{Required} \\
+    \midrule
+    name & label & yes\\
+    \midrule
+    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \midrule
+    \MathInline & singleton & yes \\ 
+    \bottomrule
+  \end{edtable}
+\end{table}
+
+\FloatBarrier
+\subsection{MathInline}
+\label{sec:MathInline}
+
+\begin{table}[hb]
+  \begin{edtable}{tabular}{lr}
+    \toprule
+    \multicolumn{2}{c}{\parbox{0.55\linewidth}{\center\textbf{MathInline Structure}}}\\
+    \toprule
+    \em{Text} & \em{Required} \\
+    \midrule
+    maths-expression & yes\\
+    \bottomrule
+  \end{edtable}
+\end{table}
+
+
+A block used to specify mathematical expressions. The expression is expected to
+be in \texttt{C} style and given as text. MathML support is planned in future versions of NineML
+
+Depending on the context; MathInline blocks should return an expression that
+evaluates to either a \verb|Boolean| (when used as the trigger for
+{\OnCondition}s) or a \verb|floating-point| number ( when used  as a
+right-hand-side for  {\Alias}es, {\TimeDerivative}s \& {\StateAssignment}s).
+
+The following operators are supported, with the same precedence levels as ANSI
+C89. All
+numbers/variables are assumed to be \verb|floating-point| numbers, not integers.
+
+\begin{itemize}
+\item Arithmetic operators
+\begin{itemize}
+\item Addition \verb|+|
+\item Subtraction \verb|-|
+\item Division \verb|/|
+\item Multiplication \verb|*|
+\end{itemize}
+
+\item Relational operators
+\begin{itemize}
+\item Greater than \verb|>|
+\item Greater than equal \verb|>=|
+\item Lesser than \verb|<|
+\item Lesser than equal \verb|<=|
+\end{itemize}
+
+Logical operators
+\begin{itemize}
+\item Logical And: \verb|&&|
+\item Logical Or:  \verb+||+
+\item Logical Not: \verb|!|
+\end{itemize}
+
+\end{itemize}
+
+The following symbols are built in, and cannot be redefined:
+\begin{itemize}
+\item pi
+\item e
+\end{itemize}
+
+
+The following functions are built in, and cannot be redefined:
+\begin{itemize}
+\item \verb|exp(x)|
+\item \verb|sin(x)|
+\item \verb|cos(x)|
+\item \verb|log(x)|
+\item \verb|log10(x)|
+\item \verb|pow(x)|
+\item \verb|sinh(x)|
+\item \verb|cosh(x)|
+\item \verb|tanh(x)|
+\item \verb|sqrt(x)|
+\item \verb|atan(x)|
+\item \verb|asin(x)|
+\item \verb|acos(x)|
+\item \verb|asinh(x)|
+\item \verb|acosh(x)|
+\item \verb|atanh(x)|
+\item \verb|atan2(x)|
+\item \verb|ceil(x)|
+\item \verb|floor(x)|
+\end{itemize}
+
+These functions take the same parameters and are defined as per ANSI C89.
+
+The following random distributions are available, through the \verb|random|
+namespace,
+although their use is only allowed within \StateAssignment blocks:
+
+\begin{itemize}
+\item \verb|random.uniform|
+\item \verb|random.normal|
+\item \verb|random.binomial(N,P)|
+\item \verb|random.poisson(L)|
+\item \verb|random.exponential(L)|
+\end{itemize}
 
 \newpage
 
@@ -1749,88 +1822,6 @@ event over)
 \item Child Elements: \texttt{None}
 \end{itemize}
 
-A block used to specify mathematical expressions. The expression is expected to
-be in \texttt{C} style and given as text. In future versions of NineML, we will
-support \verb|<MathML>| blocks too.
-
-Depending on the context; MathInline blocks should return an expression that
-evaluates to either a \verb|Boolean| (when used as the trigger for
-{\OnCondition}s) or a \verb|floating-point| number ( when used  as a
-right-hand-side for  {\Alias}es, {\TimeDerivative}s \& {\StateAssignment}s).
-
-The following operators are supported, with the same precedence levels as ANSI
-C89. All
-numbers/variables are assumed to be \verb|floating-point| numbers, not integers.
-
-\begin{itemize}
-\item Arithmetic operators
-\begin{itemize}
-\item Addition \verb|+|
-\item Subtraction \verb|-|
-\item Division \verb|/|
-\item Multiplication \verb|*|
-\end{itemize}
-
-\item Relational operators
-\begin{itemize}
-\item Greater than \verb|>|
-\item Greater than equal \verb|>=|
-\item Lesser than \verb|<|
-\item Lesser than equal \verb|<=|
-\end{itemize}
-
-Logical operators
-\begin{itemize}
-\item Logical And: \verb|&&|
-\item Logical Or:  \verb+||+
-\item Logical Not: \verb|!|
-\end{itemize}
-
-\end{itemize}
-
-The following symbols are built in, and cannot be redefined:
-\begin{itemize}
-\item pi
-\item e
-\end{itemize}
-
-
-The following functions are built in, and cannot be redefined:
-\begin{itemize}
-\item \verb|exp(x)|
-\item \verb|sin(x)|
-\item \verb|cos(x)|
-\item \verb|log(x)|
-\item \verb|log10(x)|
-\item \verb|pow(x)|
-\item \verb|sinh(x)|
-\item \verb|cosh(x)|
-\item \verb|tanh(x)|
-\item \verb|sqrt(x)|
-\item \verb|atan(x)|
-\item \verb|asin(x)|
-\item \verb|acos(x)|
-\item \verb|asinh(x)|
-\item \verb|acosh(x)|
-\item \verb|atanh(x)|
-\item \verb|atan2(x)|
-\item \verb|ceil(x)|
-\item \verb|floor(x)|
-\end{itemize}
-
-These functions take the same parameters and are defined as per ANSI C89.
-
-The following random distributions are available, through the \verb|random|
-namespace,
-although their use is only allowed within \StateAssignment blocks:
-
-\begin{itemize}
-\item \verb|random.uniform|
-\item \verb|random.normal|
-\item \verb|random.binomial(N,P)|
-\item \verb|random.poisson(L)|
-\item \verb|random.exponential(L)|
-\end{itemize}
 
 \pagebreak
 
