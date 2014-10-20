@@ -20,6 +20,8 @@
 
 % Define all Element classes
 
+\newcommand{\Units}{\defRef{\textbf{\class{Units}}\xspace}{sec:Units}}
+\newcommand{\UnitDimension}{\defRef{\textbf{\class{UnitDimension}}\xspace}{sec:UnitDimension}}
 \newcommand{\ComponentClass}{\defRef{\textbf{\class{ComponentClass}}\xspace}{sec:ComponentClass}}
 \newcommand{\Dynamics}{\defRef{\defRef{\textbf{\class{Dynamics}}\xspace}{sec:Dynamics}}{sec:Dynamics}}
 \newcommand{\RandomDistribution}{\defRef{\textbf{\class{RandomDistribution}}\xspace}{sec:RandomDistribution}}
@@ -155,7 +157,7 @@
 \vspace*{0.25cm}
 \noindent{
 
-{\Large\bf Authors: }
+{\Large\bf Editors: }
 \begin{itemize}
 \item Ivan Raikov
 \item Thomas G. Close
@@ -332,6 +334,13 @@ as rich types with a numerical factor and exponents for each of the
 base dimensions. They are independent of the particular choice of
 units by which they are assigned.
 
+\subsection{Units}
+\label{sec:Units}
+
+
+\subsection{UnitDimension}
+\label{sec:UnitDimension}
+
 \section{Abstraction Layer}
 \label{AbstractionL}
 
@@ -415,9 +424,9 @@ Layer.
 \end{figure}
 
 \subsubsection{Name attribute}
-\label{sec:ComponentClassName}
+Each \ComponentClass requires a \textit{name} attribute. This name should be a valid identifier in the \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 standard} and uniquely identify the {\ComponentClass} in current the scope.
 
-
+\FloatBarrier
 \subsection{Parameter}
 \label{sec:Parameter}
 
@@ -451,44 +460,57 @@ of these parameters, then use the User Layer to provide parameters to
 create different neurons. By definition, Parameters are set at the
 start of the simulation, and remain constant throughout.
 
+
+\subsubsection{Name attribute}
+Each \Parameter requires a \textit{name} attribute. This name should be a valid identifier in the \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 standard} and uniquely identify the {\Parameter} from the collection of ports and parameters in the \ComponentClass interface.
+
+
+\subsubsection{Dimension attribute}
+Each \Parameter requires a \textit{dimension} attribute. This attribute specifies the dimension of the units of the quantity that is expected to be passed to the \Parameter and should refer to the name of a \UnitDimension element in the global scope.
+
 \FloatBarrier
 \subsection{AnalogSendPort}
 \label{sec:AnalogSendPort}
 
 AnalogSendPorts allow variables within the current component to be exposed to externally
 
-\vspace*{-0.25ex}
-\begin{table}[hb]
-  \begin{edtable}{tabular}{llr}
-    \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{AnalogSendPort Structure}}}\\
-    \toprule
-    \em{Attribute name} & \em{Type} & \em{Required} \\
-    \midrule
-    name & label & yes\\
-    dimension & name:UnitDimension & yes\\
-    \bottomrule
-  \end{edtable}
-\end{table}
+%\begin{table}[hb]
+%  \begin{edtable}{tabular}{llr}
+%    \toprule
+%    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{AnalogSendPort Structure}}}\\
+%    \toprule
+%    \em{Attribute name} & \em{Type} & \em{Required} \\
+%    \midrule
+%    name & label & yes\\
+%    dimension & name:UnitDimension & yes\\
+%    \bottomrule
+%  \end{edtable}
+%\end{table}
+
+
+\subsubsection{Name attribute}
+Each \AnalogSendPort requires a \textit{name} attribute. This name should be a valid identifier in the \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 standard} and uniquely identify the {\AnalogSendPort} from the collection of ports and parameters in the \ComponentClass interface.
 
 \subsection{AnalogReceivePort}
 \label{sec:AnalogReceivePort}
 
 AnalogSendPorts allow variables that have been published externally to be used within the current component
 
-\vspace*{-0.25ex}
-\begin{table}[hb]
-  \begin{edtable}{tabular}{llr}
-    \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{AnalogReceivePort Structure}}}\\
-    \toprule
-    \em{Attribute name} & \em{Type} & \em{Required} \\
-    \midrule
-    name & label & yes\\
-    dimension & name:UnitDimension & yes\\
-    \bottomrule
-  \end{edtable}
-\end{table}
+%\begin{table}[hb]
+%  \begin{edtable}{tabular}{llr}
+%    \toprule
+%    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{AnalogReceivePort Structure}}}\\
+%    \toprule
+%    \em{Attribute name} & \em{Type} & \em{Required} \\
+%    \midrule
+%    name & label & yes\\
+%    dimension & name:UnitDimension & yes\\
+%    \bottomrule
+%  \end{edtable}
+%\end{table}
+
+\subsubsection{Name attribute}
+Each \AnalogReceivePort requires a \textit{name} attribute. This name should be a valid identifier in the \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 standard} and uniquely identify the {\AnalogReceivePort} from the collection of ports and parameters in the \ComponentClass interface.
 
 \FloatBarrier
 \subsection{AnalogReducePort}
@@ -496,20 +518,19 @@ AnalogSendPorts allow variables that have been published externally to be used w
 
 test
 
-\vspace*{-0.25ex}
-\begin{table}[hb]
-  \begin{edtable}{tabular}{llr}
-    \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{AnalogReducePort Structure}}}\\
-    \toprule
-    \em{Attribute name} & \em{Type} & \em{Required} \\
-    \midrule
-    name & label & yes\\
-    dimension & name:UnitDimension & yes\\
-    operator & \lq\lq{}+\rq\rq{} | \lq\lq{}*\rq\rq{} & yes \\
-    \bottomrule
-  \end{edtable}
-\end{table}
+%\begin{table}[hb]
+%  \begin{edtable}{tabular}{llr}
+%    \toprule
+%    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{AnalogReducePort Structure}}}\\
+%    \toprule
+%    \em{Attribute name} & \em{Type} & \em{Required} \\
+%    \midrule
+%    name & label & yes\\
+%    dimension & name:UnitDimension & yes\\
+%    operator & \lq\lq{}+\rq\rq{} | \lq\lq{}*\rq\rq{} & yes \\
+%    \bottomrule
+%  \end{edtable}
+%\end{table}
 
 
 AnalogPorts transmit and receive continuous values, either \Alias
@@ -537,58 +558,65 @@ simply need to connect the SendPorts containing the currents of these
 to change our original \ComponentClass definitions.
 \end{itemize}
 
+\subsubsection{Name attribute}
+Each \AnalogSendPort requires a \textit{name} attribute. This name should be a valid identifier in the \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 standard} and uniquely identify the {\AnalogSendPort} in current the \ComponentClass.
+
 \FloatBarrier
 \subsection{EventSendPort}
 \label{sec:EventSendPort}
 
 test
 
-\vspace*{-0.25ex}
-\begin{table}[hb]
-  \begin{edtable}{tabular}{llr}
-    \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{EventSendPort Structure}}}\\
-    \toprule
-    \em{Attribute name} & \em{Type} & \em{Required} \\
-    \midrule
-    name & label & yes\\
-    \bottomrule
-  \end{edtable}
-\end{table}
+%\vspace*{-0.25ex}
+%\begin{table}[hb]
+%  \begin{edtable}{tabular}{llr}
+%    \toprule
+%    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{EventSendPort Structure}}}\\
+%    \toprule
+%    \em{Attribute name} & \em{Type} & \em{Required} \\
+%    \midrule
+%    name & label & yes\\
+%    \bottomrule
+%  \end{edtable}
+%\end{table}
+
+\subsubsection{Name attribute}
+Each \AnalogSendPort requires a \textit{name} attribute. This name should be a valid identifier in the \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 standard} and uniquely identify the {\AnalogSendPort} in current the \ComponentClass.
 
 \FloatBarrier
 \subsection{EventReceivePort}
 \label{sec:EventReceivePort}
 
-\vspace*{-0.25ex}
-\begin{table}[hb]
-  \begin{edtable}{tabular}{llr}
-    \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{EventReceivePort Structure}}}\\
-    \toprule
-    \em{Attribute name} & \em{Type} & \em{Required} \\
-    \midrule
-    name & label & yes\\
-    \bottomrule
-  \end{edtable}
-\end{table}
+%\begin{table}[hb]
+%  \begin{edtable}{tabular}{llr}
+%    \toprule
+%    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{EventReceivePort Structure}}}\\
+%    \toprule
+%    \em{Attribute name} & \em{Type} & \em{Required} \\
+%    \midrule
+%    name & label & yes\\
+%    \bottomrule
+%  \end{edtable}
+%\end{table}
+
+\subsubsection{Name attribute}
+Each \AnalogSendPort requires a \textit{name} attribute. This name should be a valid identifier in the \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 standard} and uniquely identify the {\AnalogSendPort} in current the \ComponentClass.
 
 \FloatBarrier
 \subsection{EventReducePort}
 \label{sec:EventReducePort}
 
-\vspace*{-0.25ex}
-\begin{table}[hb]
-  \begin{edtable}{tabular}{llr}
-    \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{EventReducePort Structure}}}\\
-    \toprule
-    \em{Attribute name} & \em{Type} & \em{Required} \\
-    \midrule
-    name & label & yes\\
-    \bottomrule
-  \end{edtable}
-\end{table}
+%\begin{table}[hb]
+%  \begin{edtable}{tabular}{llr}
+%    \toprule
+%    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{EventReducePort Structure}}}\\
+%    \toprule
+%    \em{Attribute name} & \em{Type} & \em{Required} \\
+%    \midrule
+%    name & label & yes\\
+%    \bottomrule
+%  \end{edtable}
+%\end{table}
 
 Event ports transmit discrete events. They are useful for example in
 simulation of integrate-and-fire neurons to notify {\ComponentClass}es about neuron's
@@ -606,6 +634,10 @@ For example, a synapse component may have a \AnalogReceivePort connected to the
 presynaptic neurons \AnalogSendPort port. When the presynaptic neuron fires;
 it delivers an event to the synapse, which could cause it to produce current
 flow in a post-synaptic neuron.
+
+
+\subsubsection{Name attribute}
+Each \AnalogSendPort requires a \textit{name} attribute. This name should be a valid identifier in the \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 standard} and uniquely identify the {\AnalogSendPort} in current the \ComponentClass.
 
 \FloatBarrier
 \subsection{Dynamics}
@@ -669,36 +701,35 @@ these regimes, and the state variables will evolve accordingly.
 \subsection{RandomDistribution}
 \label{sec:RandomDistribution}
 
-\vspace*{-0.25ex}
-\begin{table}[hb]
-  \begin{edtable}{tabular}{llr}
-    \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{RandomDistribution Structure}}}\\
-    \toprule
-    \em{Element type} & \em{Multiplicity} & \em{Required} \\
-    \midrule
-    \Alias & set & no \\ 
-    \bottomrule
-  \end{edtable}
-\end{table}
+%\begin{table}[hb]
+%  \begin{edtable}{tabular}{llr}
+%    \toprule
+%    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{RandomDistribution Structure}}}\\
+%    \toprule
+%    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+%    \midrule
+%    \Alias & set & no \\ 
+%    \bottomrule
+%  \end{edtable}
+%\end{table}
 
 \FloatBarrier
 \subsection{StateVariable}
 \label{sec:StateVariable}
 
-\vspace*{-0.25ex}
-\begin{table}[hb]
-  \begin{edtable}{tabular}{llr}
-    \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{StateVariable Structure}}}\\
-    \toprule
-    \em{Attribute name} & \em{Type} & \em{Required} \\
-    \midrule
-    name & label & yes\\
-    dimension & name:UnitDimension & yes\\
-    \bottomrule
-  \end{edtable}
-\end{table}
+%\vspace*{-0.25ex}
+%\begin{table}[hb]
+%  \begin{edtable}{tabular}{llr}
+%    \toprule
+%    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{StateVariable Structure}}}\\
+%    \toprule
+%    \em{Attribute name} & \em{Type} & \em{Required} \\
+%    \midrule
+%    name & label & yes\\
+%    dimension & name:UnitDimension & yes\\
+%    \bottomrule
+%  \end{edtable}
+%\end{table}
 
 The internal state of a component is defined by a set of \StateVariable
 -- variables that can change either continuously or discontinuously as a
@@ -720,24 +751,23 @@ $X = X + 1$.
 \subsection{Regime}
 \label{sec:Regime}
 
-\vspace*{-0.25ex}
-\begin{table}[hb]
-  \begin{edtable}{tabular}{llr}
-    \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Regime Structure}}}\\
-    \toprule
-    \em{Attribute name} & \em{Type} & \em{Required} \\
-    \midrule
-    name & label & yes\\
-    \midrule
-    \em{Element type} & \em{Multiplicity} & \em{Required} \\
-    \midrule
-    \TimeDerivative & set & no \\ 
-    \OnCondition & set & no\\
-    \OnEvent & set & no\\
-    \bottomrule
-  \end{edtable}
-\end{table}
+%\begin{table}[hb]
+%  \begin{edtable}{tabular}{llr}
+%    \toprule
+%    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Regime Structure}}}\\
+%    \toprule
+%    \em{Attribute name} & \em{Type} & \em{Required} \\
+%    \midrule
+%    name & label & yes\\
+%    \midrule
+%    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+%    \midrule
+%    \TimeDerivative & set & no \\ 
+%    \OnCondition & set & no\\
+%    \OnEvent & set & no\\
+%    \bottomrule
+%  \end{edtable}
+%\end{table}
 
 A \Regime is defined in NineML as a system of ODEs in time
 on \StateVariable.  As such, \Regime defines how the {\StateVariable}s
@@ -962,24 +992,6 @@ triggers the {\Transition}
 \end{table}
 
 \FloatBarrier
-\subsection{Annotation}
-\label{sec:Annotation}
-
-
-\begin{table}[hb]
-  \begin{edtable}{tabular}{llr}
-    \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{EventOut Structure}}}\\
-    \toprule
-    \em{Element type} & \em{Multiplicity} & \em{Required} \\
-    \midrule
-    * & set & no\\
-    \bottomrule
-  \end{edtable}
-\end{table}
-
-
-\FloatBarrier
 \subsection{Alias}
 \label{sec:Alias}
 
@@ -1132,6 +1144,26 @@ although their use is only allowed within \StateAssignment blocks:
 \item \verb|random.poisson(L)|
 \item \verb|random.exponential(L)|
 \end{itemize}
+
+
+\FloatBarrier
+\subsection{Annotation}
+\label{sec:Annotation}
+
+
+\begin{table}[hb]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{EventOut Structure}}}\\
+    \toprule
+    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \midrule
+    * & set & no\\
+    \bottomrule
+  \end{edtable}
+\end{table}
+
+
 
 \newpage
 
