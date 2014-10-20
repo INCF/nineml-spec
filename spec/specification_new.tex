@@ -1,7 +1,7 @@
 \documentclass[draftspec]{ninemlspec}
 \usepackage{microtype}
 \usepackage{multirow}
-\usepackage{colortbl}
+\usepackage[section]{placeins}
 
 %% ============================================================================
 %% Description:  Documentation for sbmlpkgspec.cls
@@ -23,15 +23,14 @@
 \newcommand{\ComponentClass}{\defRef{\textbf{\class{ComponentClass}}\xspace}{sec:ComponentClass}}
 \newcommand{\Dynamics}{\defRef{\defRef{\textbf{\class{Dynamics}}\xspace}{sec:Dynamics}}{sec:Dynamics}}
 \newcommand{\RandomDistribution}{\defRef{\textbf{\class{RandomDistribution}}\xspace}{sec:RandomDistribution}}
-\newcommand{\MathInline}{\defRef{\tt{Dynamics}}{sec:MathInline}}
-\newcommand{\Interface}{\defRef{\textbf{\class{Interface}}\xspace}{sec:Interface}}
+\newcommand{\MathInline}{\defRef{\textbf{\class{MathInline}}\xspace}{sec:MathInline}}
 \newcommand{\StateVariable}{\defRef{\textbf{\class{StateVariable}}\xspace}{sec:StateVariable}}
 \newcommand{\StateAssignment}{\defRef{\textbf{\class{StateAssignment}}\xspace}{sec:StateAssignment}}
 \newcommand{\TimeDerivative}{\defRef{\textbf{\class{TimeDerivative}}\xspace}{sec:TimeDerivative}}
 \newcommand{\Alias}{\defRef{\textbf{\class{Alias}}\xspace}{sec:Alias}}
 \newcommand{\Regime}{\defRef{\textbf{\class{Regime}}\xspace}{sec:Regime}}
 \newcommand{\Transition}{\defRef{\textbf{\class{Transition}}\xspace}{sec:Transition}}
-\newcommand{\Trigger}{\defRef{\tt{Trigger}}{sec:Trigger}}
+\newcommand{\Trigger}{\defRef{\textbf{\class{Trigger}}\xspace}{sec:Trigger}}
 \newcommand{\EventOut}{\defRef{\textbf{\class{EventOut}}\xspace}{sec:EventOut}}
 \newcommand{\OnEvent}{\defRef{\textbf{\class{OnEvent}}\xspace}{sec:OnEvent}}
 \newcommand{\OnCondition}{\defRef{\textbf{\class{OnCondition}}\xspace}{sec:OnCondition}}
@@ -42,29 +41,6 @@
 \newcommand{\AnalogReducePort}{\defRef{\textbf{\class{AnalogReducePort}}\xspace}{sec:AnalogReducePort}}
 \newcommand{\EventReceivePort}{\defRef{\textbf{\class{EventReceivePort}}\xspace}{sec:EventReceivePort}}
 \newcommand{\EventReducePort}{\defRef{\textbf{\class{EventReducePort}}\xspace}{sec:EventReducePort}}
-
-%\newcommand{\ComponentClass}{\defRef{\textbf{\class{ComponentClass}}\xspace}{sec:ComponentClass}}
-%\newcommand{\Dynamics}{\defRef{\defRef{\textbf{\class{Dynamics}}\xspace}{sec:Dynamics}}{sec:Dynamics}}
-%\newcommand{\RandomDistribution}{\defRef{\textbf{\class{RandomDistribution}}\xspace}{sec:RandomDistribution}}
-%\newcommand{\MathInline}{\defRef{\tt{Dynamics}}{sec:MathInline}}
-%\newcommand{\Interface}{\defRef{\textbf{\class{Interface}}\xspace}{sec:Interface}}
-%\newcommand{\StateVariable}{\defRef{\textbf{\class{StateVariable}}\xspace}{sec:StateVariable}}
-%\newcommand{\StateAssignment}{\defRef{\textbf{\class{StateAssignment}}\xspace}{sec:StateAssignment}}
-%\newcommand{\TimeDerivative}{\defRef{\textbf{\class{TimeDerivative}}\xspace}{sec:TimeDerivative}}
-%\newcommand{\Alias}{\defRef{\textbf{\class{Alias}}\xspace}{sec:Alias}}
-%\newcommand{\Regime}{\defRef{\textbf{\class{Regime}}\xspace}{sec:Regime}}
-%\newcommand{\Transition}{\defRef{\textbf{\class{Transition}}\xspace}{sec:Transition}}
-%\newcommand{\Trigger}{\defRef{\tt{Trigger}}{sec:Trigger}}
-%\newcommand{\EventOut}{\defRef{\textbf{\class{EventOut}}\xspace}{sec:EventOut}}
-%\newcommand{\OnEvent}{\defRef{\textbf{\class{OnEvent}}\xspace}{sec:OnEvent}}
-%\newcommand{\OnCondition}{\defRef{\textbf{\class{OnCondition}}\xspace}{sec:OnCondition}}
-%\newcommand{\Parameter}{\defRef{\textbf{\class{Parameter}}\xspace}{sec:Parameter}}
-%\newcommand{\AnalogSendPort}{\defRef{\textbf{\class{AnalogSendPort}}\xspace}{sec:AnalogSendPort}}
-%\newcommand{\EventSendPort}{\defRef{\textbf{\class{EventSendPort}}\xspace}{sec:EventSendPort}}
-%\newcommand{\AnalogReceivePort}{\defRef{\textbf{\class{AnalogReceivePort}}\xspace}{sec:AnalogReceivePort}}
-%\newcommand{\AnalogReducePort}{\defRef{\textbf{\class{AnalogReducePort}}\xspace}{sec:AnalogReducePort}}
-%\newcommand{\EventReceivePort}{\defRef{\textbf{\class{EventReceivePort}}\xspace}{sec:EventReceivePort}}
-%\newcommand{\EventReducePort}{\defRef{\textbf{\class{EventReducePort}}\xspace}{sec:EventReducePort}}
 
 
 % Old macros
@@ -356,7 +332,7 @@ as rich types with a numerical factor and exponents for each of the
 base dimensions. They are independent of the particular choice of
 units by which they are assigned.
 
-\section{Abstraction Layer: Core Concepts }
+\section{Abstraction Layer}
 \label{AbstractionL}
 
 The Abstraction Layer aims at providing general concepts to represent the
@@ -370,13 +346,13 @@ plasticity, ...)
 
 \vspace*{-0.25ex}
 \begin{table}[hb]
-  \begin{edtable}{tabular}{lrr}
+  \begin{edtable}{tabular}{llr}
     \toprule
     \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{ComponentClass Structure}}}\\
     \toprule
     \em{Attribute name} & \em{Type} & \em{Required} \\
     \midrule
-    name & string & yes\\
+    name & label & yes\\
     \midrule
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
@@ -402,13 +378,31 @@ A \textbf{\class{ComponentClass}} can be used to represent either a specific mod
 composite model, including synaptic mechanisms (as in the second example
 provided in the Appendix for example) as long as the algebra is correct.
 
+
+The interface is the \emph{external} view of the \ComponentClass that defines
+what inputs and outputs the component exposes to other {\ComponentClass}es and the
+parameters that can be set for the \ComponentClass. The interface consists of
+instances of ports and \Parameter.
+
+As well as being able to specify the communication of continuous values,
+{\ComponentClass}es are also able to specify the emission and the reception
+of events. Events are discrete notifications
+that are transmitted over event ports. Since
+Event ports have names, saying that we transmit `event1' for example
+would mean transmitting an event on the EventPort called `event1'. Events
+can be used for example to signal action potentials firing.
+
+Ports allow instantiations of {\ComponentClass}es to communicate between each
+other during a simulation.
+There are six sub-classes of port objects: {\AnalogSendPort}, \AnalogReceivePort, \AnalogReducePort, \EventSendPort, \EventReceivePort and \EventReducePort
+
 A \ComponentClass is composed of:
 \begin{itemize}
-\item \nmlClass{Parameter}s for the \ComponentClass
-\item An unordered collection of \nmlClass{AnalogSendPort}, \nmlClass{AnalogReceivePort} and \nmlClass{AnalogReducePort}s. Each \nmlClass{AnalogSendPort}s publishes a state variable or derived value and each \nmlClass{AnalogReceivePort}s consumes a state variable or derived value published from elsewhere. \nmlClass{AnalogReducePort}s consume a variable number of published state variables and/or derived values and applies an operator that reduces the incoming ports to a single value.
-\item  a \Dynamics block and {\Interface}s, as shown
+\item {\Parameter}s for the \ComponentClass
+\item An unordered collection of {\AnalogSendPort}, {\AnalogReceivePort} and {\AnalogReducePort}s. Each {\AnalogSendPort}s publishes a state variable or derived value and each {\AnalogReceivePort}s consumes a state variable or derived value published from elsewhere. {\AnalogReducePort}s consume a variable number of published state variables and/or derived values and applies an operator that reduces the incoming ports to a single value.
+\item  a \Dynamics block and {Interface}s, as shown
 in Figure~\ref{fig:EX1_RegimeGraph}. The \Dynamics block represent the internal
-dynamic of the model while the \Interface block allows the \ComponentClass to
+dynamic of the model while the Interface block allows the \ComponentClass to
 communicate with other instantiations of the \ComponentClass and with the User
 Layer.
 \end{itemize}
@@ -420,31 +414,217 @@ Layer.
 \label{fig:EX1_RegimeGraph}
 \end{figure}
 
+\subsubsection{Name attribute}
+\label{sec:ComponentClassName}
+
+
 \subsection{Parameter}
 \label{sec:Parameter}
 
-\subsection{Dynamics}
+Parameters correspond to a placeholder for a numerical value with
+dimension (this value can also be defined as dimensionless).
 
-
-\begin{table}[htb]
-\center
-\begin{tabular}{|c|}
-\hline
-\hline
-Dynamics \\
-\hline \\
-\colorbox{issuecolor}{\parbox{0.4\linewidth}
-{\center Set of {\tt StateVariable} objects}} \\
-\hline
-\colorbox{issuecolor}{\parbox{0.4\linewidth}
-{\center Set of {\tt Regime} objects}} \\
-\hline
-\colorbox{issuecolor}{\parbox{0.4\linewidth}
-{\center Set of {\tt Alias} objects}} \\
-\hline
-\end{tabular}
+\vspace*{-0.25ex}
+\begin{table}[hb]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Parameter Structure}}}\\
+    \toprule
+    \em{Attribute name} & \em{Type} & \em{Required} \\
+    \midrule
+    name & label & yes\\
+    dimension & name:UnitDimension & yes\\
+    \bottomrule
+  \end{edtable}
 \end{table}
 
+It defines particular aspects of the model, such as the firing threshold,
+reset voltage, the
+decay time constant of a synapse model.  The instantiation of
+Parameters at the Abstraction Layer level allow us to define the
+dynamics of a general component.  It is then possible to instantiate
+several variants of this component by attributing different values for
+the {\Parameter}s, in the User Layer.  For example, if we are building
+an integrate-and-fire neuron, we can specify that the Reset-Voltage
+and the Firing-Threshold are parameters, write our dynamics in terms
+of these parameters, then use the User Layer to provide parameters to
+create different neurons. By definition, Parameters are set at the
+start of the simulation, and remain constant throughout.
+
+\FloatBarrier
+\subsection{AnalogSendPort}
+\label{sec:AnalogSendPort}
+
+AnalogSendPorts allow variables within the current component to be exposed to externally
+
+\vspace*{-0.25ex}
+\begin{table}[hb]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{AnalogSendPort Structure}}}\\
+    \toprule
+    \em{Attribute name} & \em{Type} & \em{Required} \\
+    \midrule
+    name & label & yes\\
+    dimension & name:UnitDimension & yes\\
+    \bottomrule
+  \end{edtable}
+\end{table}
+
+\subsection{AnalogReceivePort}
+\label{sec:AnalogReceivePort}
+
+AnalogSendPorts allow variables that have been published externally to be used within the current component
+
+\vspace*{-0.25ex}
+\begin{table}[hb]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{AnalogReceivePort Structure}}}\\
+    \toprule
+    \em{Attribute name} & \em{Type} & \em{Required} \\
+    \midrule
+    name & label & yes\\
+    dimension & name:UnitDimension & yes\\
+    \bottomrule
+  \end{edtable}
+\end{table}
+
+\FloatBarrier
+\subsection{AnalogReducePort}
+\label{sec:AnalogReducePort}
+
+test
+
+\vspace*{-0.25ex}
+\begin{table}[hb]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{AnalogReducePort Structure}}}\\
+    \toprule
+    \em{Attribute name} & \em{Type} & \em{Required} \\
+    \midrule
+    name & label & yes\\
+    dimension & name:UnitDimension & yes\\
+    operator & \lq\lq{}+\rq\rq{} | \lq\lq{}*\rq\rq{} & yes \\
+    \bottomrule
+  \end{edtable}
+\end{table}
+
+
+AnalogPorts transmit and receive continuous values, either \Alias
+or \StateVariable. Analog port can have 3 modes:
+\begin{itemize}
+\item \AnalogSendPort - transmit data originating in this \ComponentClass which can
+be read by other {\ComponentClass}es.
+\item \AnalogReceivePort - receive data from another {\ComponentClass}es \AnalogSendPort
+port. Each \AnalogReceivePort can be connected to \emph{one} \AnalogSendPort.
+\item \ReducePort - receive data from multiple \AnalogSendPort. These
+differ from \AnalogReceivePort in that they can be connected to multiple
+\AnalogSendPort. \AnalogReducePort take an additional operator,
+{\tt reduce\_op}, which specifies how the data from multiple \AnalogSendPort
+should be combined to produce a single value. Currently, the
+only supported operations is $+$, which sums the inputs.
+The motivation for \AnalogReducePort is that it allows us to make our
+\ComponentClass definitions more general. For example, if we are defining a
+neuron, would define a \AnalogReducePort called {\tt InjectedCurrent}.
+This allows us to write the membrane equation for that neuron as
+$dV/dt = (1/C) * InjectedCurrents$.
+
+Then, when we connect this neuron to synapses, current-clamps, etc, we
+simply need to connect the SendPorts containing the currents of these
+{\ComponentClass}es onto the {\tt InjectedCurrent} reduce-port, without having
+to change our original \ComponentClass definitions.
+\end{itemize}
+
+\FloatBarrier
+\subsection{EventSendPort}
+\label{sec:EventSendPort}
+
+test
+
+\vspace*{-0.25ex}
+\begin{table}[hb]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{EventSendPort Structure}}}\\
+    \toprule
+    \em{Attribute name} & \em{Type} & \em{Required} \\
+    \midrule
+    name & label & yes\\
+    \bottomrule
+  \end{edtable}
+\end{table}
+
+\FloatBarrier
+\subsection{EventReceivePort}
+\label{sec:EventReceivePort}
+
+\vspace*{-0.25ex}
+\begin{table}[hb]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{EventReceivePort Structure}}}\\
+    \toprule
+    \em{Attribute name} & \em{Type} & \em{Required} \\
+    \midrule
+    name & label & yes\\
+    \bottomrule
+  \end{edtable}
+\end{table}
+
+\FloatBarrier
+\subsection{EventReducePort}
+\label{sec:EventReducePort}
+
+\vspace*{-0.25ex}
+\begin{table}[hb]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{EventReducePort Structure}}}\\
+    \toprule
+    \em{Attribute name} & \em{Type} & \em{Required} \\
+    \midrule
+    name & label & yes\\
+    \bottomrule
+  \end{edtable}
+\end{table}
+
+Event ports transmit discrete events. They are useful for example in
+simulation of integrate-and-fire neurons to notify {\ComponentClass}es about neuron's
+spiking. Event ports only have 2 modes:
+
+\begin{itemize}
+\item \AnalogSendPort - transmit events originating in this \ComponentClass which can be
+read by
+other {\ComponentClass}es
+\item \AnalogReceivePort - receive events from another \ComponentClass \AnalogSendPort port.
+Each recv port can be connected to \emph{multiple} \AnalogSendPort.
+\end{itemize}
+
+For example, a synapse component may have a \AnalogReceivePort connected to the
+presynaptic neurons \AnalogSendPort port. When the presynaptic neuron fires;
+it delivers an event to the synapse, which could cause it to produce current
+flow in a post-synaptic neuron.
+
+\FloatBarrier
+\subsection{Dynamics}
+\label{sec:Dynamics}
+
+\vspace*{-0.25ex}
+\begin{table}[hb]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Dynamics Structure}}}\\
+    \toprule
+    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \midrule
+    \StateVariable & set & no \\ 
+    \Regime & set & yes\\
+    \Alias & set & no\\
+    \bottomrule
+  \end{edtable}
+\end{table}
 
 The \Dynamics block represents the \emph{internal} mechanisms
 governing the behaviour of the component.  For most of the models
@@ -486,30 +666,45 @@ An example dynamics in Figure~\ref{SimpleRegimeGraph} has three {\StateVariable}
 \emph{regime2} and \emph{regime3}. At any time, a component will be in one of
 these regimes, and the state variables will evolve accordingly.
 
-\subsubsection{StateVariable}
-\label{state-var}
+\subsection{RandomDistribution}
+\label{sec:RandomDistribution}
+
+\vspace*{-0.25ex}
+\begin{table}[hb]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{RandomDistribution Structure}}}\\
+    \toprule
+    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \midrule
+    \Alias & set & no \\ 
+    \bottomrule
+  \end{edtable}
+\end{table}
+
+\FloatBarrier
+\subsection{StateVariable}
+\label{sec:StateVariable}
+
+\vspace*{-0.25ex}
+\begin{table}[hb]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{StateVariable Structure}}}\\
+    \toprule
+    \em{Attribute name} & \em{Type} & \em{Required} \\
+    \midrule
+    name & label & yes\\
+    dimension & name:UnitDimension & yes\\
+    \bottomrule
+  \end{edtable}
+\end{table}
 
 The internal state of a component is defined by a set of \StateVariable
 -- variables that can change either continuously or discontinuously as a
 function of time.
 
-\begin{table}[htb]
-\center
-\begin{tabular}{|c|}
-\hline
-\hline
-StateVariable \\
-\hline
-\hline
-{\em name}: {\tt String} \\
-\hline
-{\em dimension}: {\tt Dimension} \\
-\hline
-\end{tabular}
-\end{table}
-
 The \StateVariable changes happen in two ways:
-%
 \begin{quote}
 \begin{itemize}
 \item continuously through \textbf{TimeDerivatives} (in {\Regime}s),
@@ -521,32 +716,28 @@ $X = X + 1$.
 \end{itemize}
 \end{quote}
 
-\subsubsection{Regime}
-\label{regime}
+\FloatBarrier
+\subsection{Regime}
+\label{sec:Regime}
 
-
-\begin{table}[htb]
-\center
-\begin{tabular}{|c|}
-\hline
-\hline
-Regime \\
-\hline
-\hline
-{\em name}: {\tt String} \\
-\hline
-\colorbox{issuecolor}{\parbox{0.4\linewidth}
-{\center Set of {\tt TimeDerivative} objects}} \\
-\hline
-\colorbox{issuecolor}{\parbox{0.4\linewidth}
-{\center Set of {\tt OnCondition} objects}} \\
-\hline
-\colorbox{issuecolor}{\parbox{0.4\linewidth}
-{\center Set of {\tt OnEvent} objects}} \\
-\hline
-\end{tabular}
+\vspace*{-0.25ex}
+\begin{table}[hb]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Regime Structure}}}\\
+    \toprule
+    \em{Attribute name} & \em{Type} & \em{Required} \\
+    \midrule
+    name & label & yes\\
+    \midrule
+    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \midrule
+    \TimeDerivative & set & no \\ 
+    \OnCondition & set & no\\
+    \OnEvent & set & no\\
+    \bottomrule
+  \end{edtable}
 \end{table}
-
 
 A \Regime is defined in NineML as a system of ODEs in time
 on \StateVariable.  As such, \Regime defines how the {\StateVariable}s
@@ -556,16 +747,16 @@ the \Regime is complete, it should have defined the following
 properties:
 
 \begin{itemize}
-\item An unordered collection of \nmlClass{StateVariable}s which are
-propagated when the \nmlClass{Regime} is active.
+\item An unordered collection of {\StateVariable}s which are
+propagated when the {\Regime} is active.
 \item a set of \TimeDerivative, one for each \StateVariable
 of the \ComponentClass, which define how the \StateVariable
 evolve over time in the form $\frac{dx_{i}}{dt} = f(x\_0, ..., x\_i, t)$.
 \item The independent variable must be shared between the collection
-of \nmlClass{StateVariable}s and their propagators in a \Regime.
+of {\StateVariable}s and their propagators in a \Regime.
 \end{itemize}
 
-\note{If a \nmlClass{TimeDerivative} for a \StateVariable is not defined
+\note{If a {\TimeDerivative} for a \StateVariable is not defined
 in a \Regime, it is assumed to be zero.}
 
 It is important to note that, at the current stage of development, we are only
@@ -573,126 +764,29 @@ considering "Temporal regimes". In the future, the concept could be extended
 to more general cases where the independent variable can be anything (space
 for example)
 
-\subsubsection{OnCondition}
+\FloatBarrier
+\subsection{Alias}
+\label{sec:Alias}
 
-\nmlClass{OnCondition}s are the mathematical expressions which define
-when a \nmlClass{Transition} should be triggered.
-\nmlClass{OnCondition}s are any arbitrary combination of \emph{Logical
-Operations} (and, or, noop, etc.) on the
-result of any arbitrary combination of \emph{Relational Operations}
-($>$,$<$,$==$,$<=$,$>=$, etc.) on
-\nmlClass{StateVariable}s. At any given time in the \nmlClass{Regime},
-the \nmlClass{OnCondition} expression then evaluates to True or False
-{\tt Boolean} result. For example, the following are valid
-\nmlClass{OnCondition}s
-
-\begin{verbatim}
-x>10
-x>10 & y<20
-x>exp(-cos(y)) | y<sin(t)+5
-x==15
-\end{verbatim}
-
-\begin{table}[htb]
-\center
-\begin{tabular}{|c|}
-\hline
-\hline
-OnCondition \\
-\hline
-\hline
-{\em trigger}: {\tt Trigger} \\
-\hline
-\colorbox{issuecolor}{\parbox{0.4\linewidth}
-{\center Set of {\tt StateAssignment} objects}} \\
-\hline
-\colorbox{issuecolor}{\parbox{0.4\linewidth}
-{\center Set of {\tt EventOut} objects}} \\
-\hline
-\end{tabular}
+\begin{table}[hb]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Alias Structure}}}\\
+    \toprule
+    \em{Attribute name} & \em{Type} & \em{Required} \\
+    \midrule
+    name & label & yes\\
+    \midrule
+    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \midrule
+    \MathInline & singleton & yes \\ 
+    \bottomrule
+  \end{edtable}
 \end{table}
-
-A \nmlClass{OnCondition} which persistently evaluates to True violates
-the definition that \nmlClass{Transition}s should have vanishing
-temporal extent, and the behaviour for this case is undefined, but it
-would be preferable for the implementation to produce an error message
-to the user.
-
-\subsubsection{Transition}
-\label{transition}
-
-Movement between several instances of \Regime happens via \Transition.
-A \nmlClass{Transition} is defined in NineML as having
-a source and target \nmlClass{Regime}, where the target
-\nmlClass{Regime} can be the same as the source (For example \emph{t5}
-in Figure~\ref{SimpleRegimeGraph}). There are two types of \Transition:
-
-\begin{itemize}
-\item An \OnCondition function of the \StateVariable, for
-example $X > Y$.
-\item An \OnEvent on an input from an \EventReceivePort. (See section~\ref{port}).
-\end{itemize}
-
-\begin{table}[htb]
-\center
-\begin{tabular}{|c|}
-\hline
-\hline
-Transition \\
-\hline
-\hline
-{\em source}: {\tt Regime} \\
-\hline
-{\em target}: {\tt Regime} \\
-\hline
-\end{tabular}
-\end{table}
-
-During either type of transition three things can happen:
-\begin{itemize}
-\item The component can change regime. For example, in figure 2, if
-the component is in \emph{regime3}, and the trigger for \emph{t3} is
-satisfied, then the component will move into \emph{regime1}.
-\item \textbf{StateAssignment}s can take place, for example, $X=0$
-\item The component can send \EventOut
-\end{itemize}
-
-During a transition, multiple \StateAssignment and \EventOut can occur.
-(For more on the resolution of \nmlClass{Transition}s see Appendix
-section~\ref{resolution})
-
-\nmlClass{Transition}s have a vanishing temporal extent (i.e. they are
-event-like). Once construction of a \nmlClass{Transition} is complete, it
-should have defined the following properties:
-\begin{itemize}
-\item The \nmlClass{Condition} or \nmlClass{EventPort(mode=recv)} which
-triggers the \nmlClass{Transition}
-\item A set of \StateAssignment and \EventOut objects
-\item The label of the source \nmlClass{Regime}, and the label of the target
-\nmlClass{Regime}, which may be the same as the source \nmlClass{Regime}.
-\end{itemize}
-
-\subsubsection{Aliases}
-\label{alias}
 
 An alias corresponds to an intermediate variable allowing to store an
 information and to reuse it at different places in the definition of
 the dynamics.
-
-\begin{table}[htb]
-\center
-\begin{tabular}{|c|}
-\hline
-\hline
-Alias \\
-\hline
-\hline
-{\em name}: {\tt String} \\
-\hline
-{\em rhs}: {\tt MathInline} \\
-\hline
-\end{tabular}
-\end{table}
 
 \textbf{Aliases} are motivated from two problems:
 
@@ -701,14 +795,13 @@ Alias \\
 \StateVariable, we can define an \Alias once. For example, we can define chains
 of {\Alias}es:
 %
-\begin{quote}{\ttfamily \raggedright \noindent
-m\_alpha~=~(alphaA~+~alphaB*V)~/~(~alphaC~+~exp((alphaD+V/alphaE))~)\\
-m\_beta~=~~(betaA~+~betaB*V)~/~(~betaC~+~exp((betaD+V/betaE))~)\\
-minf~=~m\_alpha~/~(m\_alpha~+~m\_beta)\\
-mtau~=~1./(m\_alpha+m\_beta)\\
-dm/dt~=~(1/C)~*~(minf-m)/mtau
-}
-\end{quote}
+\begin{lstlisting}
+m_alpha = (alphaA+alphaB*V)/(alphaC+exp((alphaD+V/alphaE)))
+m_beta = (betaA+betaB*V)/(betaC+exp((betaD+V/betaE)))
+minf = m_alpha/(m_alpha+m_beta)
+mtau = 1./(m_alpha+m_beta)
+dm/dt = (1/C)*(minf-m)/mtau
+\end{lstlisting}
 
 In this case, $m_{alpha}$, $m_{beta}$, $minf$ and $mtau$ are all
 alias definitions. There is no reason we couldn't expand our $dm/dt$
@@ -726,168 +819,249 @@ transmitting a current, for example $i=g*(E-V)$.
 \note{\Alias is defined in the Dynamics, \emph{not} in the
 \Regime. This means that aliases are the same across all regimes.}
 
-\subsection{Interfaces}
+\FloatBarrier
+\subsection{MathInline}
+\label{sec:MathInline}
 
-\begin{table}[htb]
-\center
-\begin{tabular}{|c|}
-\hline
-\hline
-Interface \\
-\hline
-\colorbox{issuecolor}{\parbox{0.4\linewidth}
-{\center Set of {\tt Parameter} objects}} \\
-\hline
-\colorbox{issuecolor}{\parbox{0.4\linewidth}
-{\center Set of {\tt Port} objects}} \\
-\hline
-\end{tabular}
+\begin{table}[hb]
+  \begin{edtable}{tabular}{lr}
+    \toprule
+    \multicolumn{2}{c}{\parbox{0.55\linewidth}{\center\textbf{MathInline Structure}}}\\
+    \toprule
+    \em{Text} & \em{Required} \\
+    \midrule
+    maths-expression & yes\\
+    \bottomrule
+  \end{edtable}
+\end{table}
+
+\FloatBarrier
+\subsection{StateAssignment}
+\label{sec:StateAssignment}
+
+\begin{table}[hb]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{StateAssignment Structure}}}\\
+    \toprule
+    \em{Attribute name} & \em{Type} & \em{Required} \\
+    \midrule
+    name & label & yes\\
+    \midrule
+    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \midrule
+    \MathInline & singleton & yes \\ 
+    \bottomrule
+  \end{edtable}
+\end{table}
+
+\FloatBarrier
+\subsection{TimeDerivative}
+\label{sec:TimeDerivative}
+
+\begin{table}[hb]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{TimeDerivative Structure}}}\\
+    \toprule
+    \em{Attribute name} & \em{Type} & \em{Required} \\
+    \midrule
+    variable & name:StateVariable & yes\\
+    \midrule
+    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \midrule
+    \MathInline & singleton & yes \\ 
+    \bottomrule
+  \end{edtable}
+\end{table}
+
+\FloatBarrier
+\subsection{OnCondition}
+\label{sec:OnCondition}
+
+\vspace*{-0.25ex}
+\begin{table}[hb]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{OnCondition Structure}}}\\
+    \toprule
+    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \midrule
+    \Trigger & singleton & yes \\
+    \Transition & singleton & no \\
+    \StateAssignment & set & no\\
+    \EventOut & set & no\\
+    \bottomrule
+  \end{edtable}
+\end{table}
+
+{\OnCondition}s are the mathematical expressions which define
+when a {\Transition} should be triggered.
+{\OnCondition}s are any arbitrary combination of \emph{Logical
+Operations} (and, or, noop, etc.) on the
+result of any arbitrary combination of \emph{Relational Operations}
+($>$,$<$,$==$,$<=$,$>=$, etc.) on
+{\StateVariable}s. At any given time in the {\Regime},
+the {\OnCondition} expression then evaluates to True or False
+{\tt Boolean} result. For example, the following are valid
+{\OnCondition}s
+
+\begin{lstlisting}
+x>10
+x>10 & y<20
+x>exp(-cos(y)) | y<sin(t)+5\,
+x==15
+\end{lstlisting}
+
+A {\OnCondition} which persistently evaluates to True violates
+the definition that {\Transition}s should have vanishing
+temporal extent, and the behaviour for this case is undefined, but it
+would be preferable for the implementation to produce an error message
+to the user.
+
+\FloatBarrier
+\subsection{OnEvent}
+\label{sec:OnEvent}
+
+\vspace*{-0.25ex}
+\begin{table}[hb]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{OnEvent Structure}}}\\
+    \toprule
+    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \midrule
+    \Transition & singleton & no \\    
+    \StateAssignment & set & no\\
+    \EventOut & set & no\\
+    \bottomrule
+  \end{edtable}
+\end{table}
+
+\FloatBarrier
+\subsection{Trigger}
+\label{sec:Trigger}
+
+\begin{table}[hb]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Trigger Structure}}}\\
+    \toprule
+    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \midrule
+    \MathInline & singleton & yes \\ 
+    \bottomrule
+  \end{edtable}
 \end{table}
 
 
-The interface is the \emph{external} view of the \ComponentClass that defines
-what inputs and outputs the component exposes to other {\ComponentClass}es and the
-parameters that can be set for the \ComponentClass. The interface consists of
-instances of ports and \Parameter.
+\FloatBarrier
+\subsection{Transition}
+\label{sec:Transition}
 
-As well as being able to specify the communication of continuous values,
-{\ComponentClass}es are also able to specify the emission and the reception
-of events. Events are discrete notifications
-that are transmitted over event ports. Since
-Event ports have names, saying that we transmit `event1' for example
-would mean transmitting an event on the EventPort called `event1'. Events
-can be used for example to signal action potentials firing.
-
-\subsubsection{Parameter}
-\label{parameters}
-
-Parameters correspond to a placeholder for a numerical value with
-dimension (this value can also be defined as dimensionless).
-
-\begin{table}[htb]
-\center
-\begin{tabular}{|c|}
-\hline
-\hline
-Parameter \\
-\hline
-\hline
-{\em name}: {\tt String} \\
-\hline
-{\em dimension}: {\tt Dimension} \\
-\hline
-\end{tabular}
+\begin{table}[hb]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Transition Structure}}}\\
+    \toprule
+    \em{Attribute name} & \em{Type} & \em{Required} \\
+    \midrule
+    to & name:Regime & yes\\
+    \bottomrule
+  \end{edtable}
 \end{table}
 
-It defines particular aspects of the model, such as the firing threshold,
-reset voltage, the
-decay time constant of a synapse model.  The instantiation of
-Parameters at the Abstraction Layer level allow us to define the
-dynamics of a general component.  It is then possible to instantiate
-several variants of this component by attributing different values for
-the {\Parameter}s, in the User Layer.  For example, if we are building
-an integrate-and-fire neuron, we can specify that the Reset-Voltage
-and the Firing-Threshold are parameters, write our dynamics in terms
-of these parameters, then use the User Layer to provide parameters to
-create different neurons. By definition, Parameters are set at the
-start of the simulation, and remain constant throughout.
+Movement between several instances of \Regime happens via \Transition.
+A {\Transition} is defined in NineML as having
+a source and target {\Regime}, where the target
+{\Regime} can be the same as the source (For example \emph{t5}
+in Figure~\ref{SimpleRegimeGraph}). There are two types of \Transition:
 
-
-\subsubsection{Port}
-\label{port}
-
-Ports allow instantiations of {\ComponentClass}es to communicate between each
-other during a simulation.
-There are two sub-classes of \nmlClass{Port} objects: \nmlClass{AnalogPort}
-and \nmlClass{EventPort}, and each can have different modes.
-
-\paragraph{AnalogPort}
-
-
-\begin{table}[htb]
-\center
-\begin{tabular}{|c|}
-\hline
-\hline
-AnalogPort \\
-\hline
-\hline
-{\em name}: {\tt String} \\
-\hline
-{\em mode}: {\tt PortMode} \\
-\hline
-{\em dimension}: {\tt Dimension} \\
-\hline
-{\em reduce\_op}: {\tt ArithOp} option \\
-\hline
-\end{tabular}
-\end{table}
-
-
-AnalogPorts transmit and receive continuous values, either \Alias
-or \StateVariable. Analog port can have 3 modes:
 \begin{itemize}
-\item \SendPort - transmit data originating in this \ComponentClass which can
-be read by other {\ComponentClass}es.
-\item \RecvPort - receive data from another {\ComponentClass}es \SendPort
-port. Each \RecvPort can be connected to \emph{one} \SendPort.
-\item \ReducePort - receive data from multiple \SendPorts. These
-differ from \RecvPorts in that they can be connected to multiple
-\SendPort. \ReducePorts take an additional operator,
-{\tt reduce\_op}, which specifies how the data from multiple \SendPorts
-should be combined to produce a single value. Currently, the
-only supported operations is $+$, which sums the inputs.
-The motivation for \ReducePort is that it allows us to make our
-\ComponentClass definitions more general. For example, if we are defining a
-neuron, would define a \ReducePort called {\tt InjectedCurrent}.
-This allows us to write the membrane equation for that neuron as
-$dV/dt = (1/C) * InjectedCurrents$.
-
-Then, when we connect this neuron to synapses, current-clamps, etc, we
-simply need to connect the SendPorts containing the currents of these
-{\ComponentClass}es onto the {\tt InjectedCurrent} reduce-port, without having
-to change our original \ComponentClass definitions.
+\item An \OnCondition function of the \StateVariable, for
+example $X > Y$.
+\item An \OnEvent on an input from an \EventReceivePort. (See section~\ref{port}).
 \end{itemize}
 
-\paragraph{EventPort}
-
-Event ports transmit discrete events. They are useful for example in
-simulation of integrate-and-fire neurons to notify {\ComponentClass}es about neuron's
-spiking. Event ports only have 2 modes:
-
+During either type of transition three things can happen:
 \begin{itemize}
-\item \SendPort - transmit events originating in this \ComponentClass which can be
-read by
-other {\ComponentClass}es
-\item \RecvPort - receive events from another \ComponentClass \SendPort port.
-Each recv port can be connected to \emph{multiple} \SendPorts.
+\item The component can change regime. For example, in figure 2, if
+the component is in \emph{regime3}, and the trigger for \emph{t3} is
+satisfied, then the component will move into \emph{regime1}.
+\item \textbf{StateAssignment}s can take place, for example, $X=0$
+\item The component can send \EventOut
 \end{itemize}
 
-\begin{table}[htb]
-\center
-\begin{tabular}{|c|}
-\hline
-\hline
-EventPort \\
-\hline
-\hline
-{\em name}: {\tt String} \\
-\hline
-{\em mode}: {\tt PortMode} \\
-\hline
-{\em dimension}: {\tt Dimension} \\
-\hline
-\end{tabular}
+During a transition, multiple \StateAssignment and \EventOut can occur.
+(For more on the resolution of {\Transition}s see Appendix
+section~\ref{resolution})
+
+{\Transition}s have a vanishing temporal extent (i.e. they are
+event-like). Once construction of a {\Transition} is complete, it
+should have defined the following properties:
+\begin{itemize}
+\item The {\OnCondition} or {\EventReceivePort} which
+triggers the {\Transition}
+\item A set of \StateAssignment and \EventOut objects
+\item The label of the source {\Regime}, and the label of the target
+{\Regime}, which may be the same as the source {\Regime}.
+\end{itemize}
+
+
+\FloatBarrier
+\subsection{StateAssignment}
+\label{sec:StateAssignment}
+
+\begin{table}[hb]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{StateAssignment Structure}}}\\
+    \toprule
+    \em{Attribute name} & \em{Type} & \em{Required} \\
+    \midrule
+    variable & name:StateVariable & yes\\
+    \midrule
+    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \midrule
+    \MathInline & singleton & yes \\     
+    \bottomrule
+  \end{edtable}
 \end{table}
 
-For example, a synapse component may have a \RecvPort connected to the
-presynaptic neurons \SendPort port. When the presynaptic neuron fires;
-it delivers an event to the synapse, which could cause it to produce current
-flow in a post-synaptic neuron.
+\FloatBarrier
+\subsection{EventOut}
+\label{sec:EventOut}
+
+\begin{table}[hb]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{EventOut Structure}}}\\
+    \toprule
+    \em{Attribute name} & \em{Type} & \em{Required} \\
+    \midrule
+    port & name:EventSendPort & yes\\
+    \bottomrule
+  \end{edtable}
+\end{table}
+
+\subsection{Annotation}
+\label{sec:Annotation}
+
+\begin{table}[hb]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{EventOut Structure}}}\\
+    \toprule
+    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \midrule
+    * & set & no\\
+    \bottomrule
+  \end{edtable}
+\end{table}
 
 \newpage
 
-\section{User Layer: Core Concepts}
+\section{User Layer}
 \label{UserL}
 
 \subsection{Component}
