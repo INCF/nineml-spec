@@ -862,20 +862,20 @@ Each \OnEvent requires a \textit{port} attribute. This should refer to the name 
 
 An OnCondition block is activated when the condition in the \Trigger block is met.
 
-%\begin{table}[hb]
-%  \begin{edtable}{tabular}{llr}
-%    \toprule
-%    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{OnCondition Structure}}}\\
-%    \toprule
-%    \em{Element type} & \em{Multiplicity} & \em{Required} \\
-%    \midrule
-%    \Trigger & singleton & yes \\
-%    \Transition & singleton & no \\
-%    \StateAssignment & set & no\\
-%    \EventOut & set & no\\
-%    \bottomrule
-%  \end{edtable}
-%\end{table}
+\begin{table}[hb]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{OnCondition Structure}}}\\
+    \toprule
+    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \midrule
+    \Trigger & singleton & yes \\
+    \Transition & singleton & no \\
+    \StateAssignment & set & no\\
+    \EventOut & set & no\\
+    \bottomrule
+  \end{edtable}
+\end{table}
 
 {\OnCondition}s are the mathematical expressions which define
 when a {\Transition} should be triggered.
@@ -926,17 +926,17 @@ The trigger block defines the condition on which the \OnCondition block is activ
 
 {\Transition}s define the transition between \Regime blocks.
 
-%\begin{table}[hb]
-%  \begin{edtable}{tabular}{llr}
-%    \toprule
-%    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Transition Structure}}}\\
-%    \toprule
-%    \em{Attribute name} & \em{Type} & \em{Required} \\
-%    \midrule
-%    to & name:Regime & yes\\
-%    \bottomrule
-%  \end{edtable}
-%\end{table}
+\begin{table}[hb]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Transition Structure}}}\\
+    \toprule
+    \em{Attribute name} & \em{Type} & \em{Required} \\
+    \midrule
+    to & name:Regime & yes\\
+    \bottomrule
+  \end{edtable}
+\end{table}
 
 Movement between several instances of \Regime happens via \Transition.
 A {\Transition} is defined in NineML as having
@@ -974,26 +974,32 @@ triggers the {\Transition}
 {\Regime}, which may be the same as the source {\Regime}.
 \end{itemize}
 
+\subsubsection{To attribute}
+Each \Transition requires a \textit{to} attribute. This should refer to the name of a \Regime element in the \ComponentClass.
 
 \FloatBarrier
 \subsection{StateAssignment}
 \label{sec:StateAssignment}
 
-%\begin{table}[hb]
-%  \begin{edtable}{tabular}{llr}
-%    \toprule
-%    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{StateAssignment Structure}}}\\
-%    \toprule
-%    \em{Attribute name} & \em{Type} & \em{Required} \\
-%    \midrule
-%    variable & name:StateVariable & yes\\
-%    \midrule
-%    \em{Element type} & \em{Multiplicity} & \em{Required} \\
-%    \midrule
-%    \MathInline & singleton & yes \\     
-%    \bottomrule
-%  \end{edtable}
-%\end{table}
+\begin{table}[hb]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{StateAssignment Structure}}}\\
+    \toprule
+    \em{Attribute name} & \em{Type} & \em{Required} \\
+    \midrule
+    variable & name:StateVariable & yes\\
+    \midrule
+    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \midrule
+    \MathInline & singleton & yes \\     
+    \bottomrule
+  \end{edtable}
+\end{table}
+
+\subsubsection{variable attribute}
+Each \StateAssignment requires a \textit{variable} attribute. This should refer to the name of a \StateVariable in the \ComponentClass. Only one \StateAssignment is allow per \textit{variable} in each \OnEvent or \OnCondition block.
+
 
 \FloatBarrier
 \subsection{EventOut}
@@ -1010,6 +1016,10 @@ triggers the {\Transition}
 %    \bottomrule
 %  \end{edtable}
 %\end{table}
+
+\subsubsection{Port attribute}
+Each \OnEvent requires a \textit{port} attribute. This should refer to the name of an \EventSendPort in the \ComponentClass interface.
+
 
 \FloatBarrier
 \subsection{Alias}
