@@ -1,5 +1,7 @@
 \documentclass[draftspec]{ninemlspec}
 \usepackage{microtype}
+\usepackage{multirow}
+\usepackage{colortbl}
 
 %% ============================================================================
 %% Description:  Documentation for sbmlpkgspec.cls
@@ -18,61 +20,11 @@
 
 %
 
-% Here we list common SBML entities, to get consistent font & appearance.
-
-\newcommand{\AlgebraicRule}{\textbf{\class{AlgebraicRule}}\xspace}
-\newcommand{\Annotation}{\textbf{\class{Annotation}}\xspace}
-\newcommand{\AssignmentRule}{\textbf{\class{AssignmentRule}}\xspace}
-\newcommand{\Compartment}{\textbf{\class{Compartment}}\xspace}
-\newcommand{\Constraint}{\textbf{\class{Constraint}}\xspace}
-\newcommand{\Delay}{\textbf{\class{Delay}}\xspace}
-\newcommand{\EventAssignment}{\textbf{\class{EventAssignment}}\xspace}
-%\newcommand{\Event}{\textbf{\class{Event}}\xspace}
-\newcommand{\FunctionDefinition}{\textbf{\class{FunctionDefinition}}\xspace}
-\newcommand{\InitialAssignment}{\textbf{\class{InitialAssignment}}\xspace}
-\newcommand{\KineticLaw}{\textbf{\class{KineticLaw}}\xspace}
-\newcommand{\ListOfCompartments}{\textbf{\class{ListOfCompartments}}\xspace}
-\newcommand{\ListOfConstraints}{\textbf{\class{ListOfConstraints}}\xspace}
-\newcommand{\ListOfEventAssignments}{\textbf{\class{ListOfEventAssignments}}\xspace}
-\newcommand{\ListOfEvents}{\textbf{\class{ListOfEvents}}\xspace}
-\newcommand{\ListOfFunctionDefinitions}{\textbf{\class{ListOfFunctionDefinitions}}\xspace}
-\newcommand{\ListOfInitialAssignments}{\textbf{\class{ListOfInitialAssignments}}\xspace}
-\newcommand{\ListOfLocalParameters}{\textbf{\class{ListOfLocalParameters}}\xspace}
-\newcommand{\ListOfModifierSpeciesReferences}{\textbf{\class{ListOfModifierSpeciesReferences}}\xspace}
-\newcommand{\ListOfPackages}{\textbf{\class{ListOfPackages}}\xspace}
-\newcommand{\ListOfParameters}{\textbf{\class{ListOfParameters}}\xspace}
-\newcommand{\ListOfReactions}{\textbf{\class{ListOfReactions}}\xspace}
-\newcommand{\ListOfRules}{\textbf{\class{ListOfRules}}\xspace}
-\newcommand{\ListOfSpeciesReferences}{\textbf{\class{ListOfSpeciesReferences}}\xspace}
-\newcommand{\ListOfSpecies}{\textbf{\class{ListOfSpecies}}\xspace}
-\newcommand{\ListOfUnitDefinitions}{\textbf{\class{ListOfUnitDefinitions}}\xspace}
-\newcommand{\ListOfUnits}{\textbf{\class{ListOfUnits}}\xspace}
-\newcommand{\ListOf}{\class{ListOf\rule{0.3in}{0.5pt}}\xspace}
-\newcommand{\LocalParameter}{\textbf{\class{LocalParameter}}\xspace}
-\newcommand{\Message}{\textbf{\class{Message}}\xspace}
-\newcommand{\Model}{\textbf{\class{Model}}\xspace}
-\newcommand{\ModifierSpeciesReference}{\textbf{\class{ModifierSpeciesReference}}\xspace}
-\newcommand{\Notes}{\textbf{\class{Notes}}\xspace}
-\newcommand{\Package}{\textbf{\class{Package}}\xspace}
-%\newcommand{\Parameter}{\textbf{\class{Parameter}}\xspace}
-\newcommand{\Priority}{\textbf{\class{Priority}}\xspace}
-\newcommand{\RateRule}{\textbf{\class{RateRule}}\xspace}
-\newcommand{\Reaction}{\textbf{\class{Reaction}}\xspace}
-\newcommand{\Rule}{\textbf{\class{Rule}}\xspace}
-\newcommand{\SBML}{\textbf{\class{SBML}}\xspace}
-\newcommand{\SBase}{\textbf{\abstractclass{SBase}}\xspace}
-\newcommand{\SimpleSpeciesReference}{\textbf{\class{SimpleSpeciesReference}}\xspace}
-\newcommand{\SpeciesReference}{\textbf{\class{SpeciesReference}}\xspace}
-\newcommand{\Species}{\textbf{\class{Species}}\xspace}
-\newcommand{\StoichiometryMath}{\textbf{\class{StoichiometryMath}}\xspace}
-%\newcommand{\Trigger}{\textbf{\class{Trigger}}\xspace}
-\newcommand{\UnitDefinition}{\textbf{\class{UnitDefinition}}\xspace}
-\newcommand{\Unit}{\textbf{\class{Unit}}\xspace}
-
-\newcommand{\ComponentClass}{\textbf{\class{ComponentClass}}\xspace}
+\newcommand{\ComponentClass}{\defRef{\textbf{\class{ComponentClass}}\xspace}{sec:ComponentClass}}
 \newcommand{\ComponentClasses}{\textbf{\class{ComponentClass}}es\xspace}
 \newcommand{\Dynamics}{\textbf{\class{Dynamics}}\xspace}
-\newcommand{\Dynamic}{\textbf{\class{Dynamic}}\xspace}
+\newcommand{\RandomDistribution}{\textbf{\class{RandomDistribution}}\xspace}
+\newcommand{\Dynamic}{\textbf{\class{Dynamics}}\xspace}
 \newcommand{\MathInline}{\tt{Dynamics}}
 \newcommand{\Interface}{\textbf{\class{Interface}}\xspace}
 \newcommand{\Interfaces}{\textbf{\class{Interface}}s\xspace}
@@ -105,7 +57,7 @@
 \newcommand{\Parameters}{\textbf{\class{Parameter}}s\xspace}
 \newcommand{\OutputEvent}{\textbf{\class{OutputEvent}}\xspace}
 \newcommand{\OutputEvents}{\textbf{\class{OutputEvent}}s\xspace}
-\newcommand{\AnalogSendPort}{\textbf{\class{EventSendPort}}\xspace}
+\newcommand{\AnalogSendPort}{\textbf{\class{AnalogSendPort}}\xspace}
 \newcommand{\EventSendPort}{\textbf{\class{EventSendPort}}\xspace}
 \newcommand{\AnalogReceivePort}{\textbf{\class{AnalogReceivePort}}\xspace}
 \newcommand{\AnalogReducePort}{\textbf{\class{AnalogReducePort}}\xspace}
@@ -418,35 +370,45 @@ defining the dynamics of the different types of models composing a network
 plasticity, ...)
 
 \subsection{ComponentClass}
+\label{sec:ComponentClass}
 
-\begin{table}[htb]
-\center
-\begin{tabular}{|c|}
-\hline
-\hline
-ComponentClass \\
-\hline \\
-\colorbox{issuecolor}{\parbox{0.4\linewidth}
-{\center {\tt Dynamics} object}} \\
-\hline
-\colorbox{issuecolor}{\parbox{0.4\linewidth}
-{\center {\tt Interface} object}} \\
-\hline
-\end{tabular}
+\vspace*{-0.25ex}
+\begin{table}[hb]
+  \begin{edtable}{tabular}{lrr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{ComponentClass Structure}}}\\
+    \toprule
+    \em{Attribute name} & \em{Type} & \em{Required} \\
+    \midrule
+    name & string & yes\\
+    \midrule
+    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \midrule
+    \Parameter & set & no \\ 
+    \AnalogSendPort & set & no\\
+    \AnalogReceivePort & set & no\\
+    \AnalogReducePort & set & no \\ 
+    \EventSendPort & set & no\\    
+    \EventReceivePort & set & no\\    
+    \EventReducePort & set & no\\
+    \Dynamics | \RandomDistribution & singleton & yes \\
+    \bottomrule
+  \end{edtable}
 \end{table}
 
-The main building block of the Object Model is the \ComponentClass.
-The \ComponentClass object is intended to package together a collection of
+The main building block of the Abstraction Layer is the \textbf{\class{ComponentClass}}.
+The \textbf{\class{ComponentClass}} object is intended to package together a collection of
 objects that relate to the definition of a model (cells, synapses, synaptic
 plasticity rules, random spike trains, inputs, ...).
 All equations and event declarations that are part of particular entity
-model, such as neuron model for instance, belong in a single \ComponentClass.
-A \ComponentClass can be used to represent either a specific model of neuron or a
+model, such as neuron model for instance, belong in a single \textbf{\class{ComponentClass}}.
+A \textbf{\class{ComponentClass}} can be used to represent either a specific model of neuron or a
 composite model, including synaptic mechanisms (as in the second example
 provided in the Appendix for example) as long as the algebra is correct.
+
 A \ComponentClass is composed of:
 \begin{itemize}
-\item \nmlClass{Parameter}s for the \nmlClass{ComponentClass}
+\item \nmlClass{Parameter}s for the \ComponentClass
 \item An unordered collection of \nmlClass{AnalogSendPort}, \nmlClass{AnalogReceivePort} and \nmlClass{AnalogReducePort}s. Each \nmlClass{AnalogSendPort}s publishes a state variable or derived value and each \nmlClass{AnalogReceivePort}s consumes a state variable or derived value published from elsewhere. \nmlClass{AnalogReducePort}s consume a variable number of published state variables and/or derived values and applies an operator that reduces the incoming ports to a single value.
 \item  a \Dynamics block and \Interfaces, as shown
 in Figure~\ref{fig:EX1_RegimeGraph}. The \Dynamic block represent the internal

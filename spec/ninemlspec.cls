@@ -133,8 +133,8 @@
     bookmarksnumbered=true]{hyperref}
   \else
     \RequirePackage[pdftex,breaklinks=true,colorlinks=true,
-    pdfhighlight=/O,linkcolor={sbmlblue},citecolor={sbmlblue},
-    urlcolor={sbmlblue},anchorcolor={sbmlblue},bookmarksnumbered]{hyperref}
+    pdfhighlight=/O,linkcolor={ninemlblue},citecolor={ninemlblue},
+    urlcolor={ninemlblue},anchorcolor={ninemlblue},bookmarksnumbered]{hyperref}
   \fi
 
   % Although it may seem like we wouldn't need to load xcolor if
@@ -281,9 +281,9 @@
 
 \definecolor{INCFBlue}{rgb}{0.0,0.59,1.0}
 
-\definecolor{sbmlblue}{rgb}{0.07,0.50,0.78}
-\definecolor{sbmlgray}{gray}{0.7}
-\definecolor{sbmlrowgray}{gray}{0.96}
+\definecolor{ninemlblue}{rgb}{0.07,0.50,0.78}
+\definecolor{ninemlgray}{gray}{0.7}
+\definecolor{ninemlrowgray}{gray}{0.96}
 \definecolor{extremelylightgray}{gray}{0.97}
 \definecolor{veryverylightgray}{gray}{0.95}
 \definecolor{verylightgray}{gray}{0.9}
@@ -709,8 +709,8 @@
 \renewcommand{\section}{\@startsection%
   {section}{1}{0pt \@plus 1ex}{-3.5ex \@plus -2ex \@minus -.2ex}%
   {1.2ex}{\clearpage\thispagestyle{footeronly}%
-    \hspace*{-24.25pt}\color{sbmlgray}{\rule[1.8em]{6.84in}{0.6em}}\color{sbmlnormaltextcolor}%
-    \hspace*{-6.84in}\color{sbmlgray}{\rule[-0.8em]{6.84in}{0.1em}}\color{sbmlnormaltextcolor}%
+    \hspace*{-24.25pt}\color{ninemlgray}{\rule[1.8em]{6.84in}{0.6em}}\color{sbmlnormaltextcolor}%
+    \hspace*{-6.84in}\color{ninemlgray}{\rule[-0.8em]{6.84in}{0.1em}}\color{sbmlnormaltextcolor}%
     \noindent\normalfont\LARGE\bfseries\sffamily\hspace*{-6.84in}}}
 
 \newcommand{\sectionChanged}[1]{%
@@ -774,7 +774,7 @@
 
 \newcommand{\sectionspecial}{\@startsection%
   {section}{1}{0pt}{-1.8ex \@plus -1ex \@minus -.2ex}%
-  {0.8ex}{\hspace*{-41.1pt}\colorbox{sbmlgray}{\hspace*{6.99in}}\nopagebreak\\%
+  {0.8ex}{\hspace*{-41.1pt}\colorbox{ninemlgray}{\hspace*{6.99in}}\nopagebreak\\%
   \hspace*{-20pt}\normalfont\Large\bfseries\sffamily}}
 
 % The following is a modified version of the macro from article.cls.
@@ -962,7 +962,7 @@
     columns=fullflexible,%
     keepspaces=true,%
     backgroundcolor=\color{veryverylightgray},%
-    rulecolor=\color{sbmlgray},%
+    rulecolor=\color{ninemlgray},%
     frame=single,%
     numberstyle=\tiny\sffamily,%
     basicstyle=\small\ttfamily\color{black},%
