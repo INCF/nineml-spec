@@ -18,57 +18,53 @@
 %% in the file named "LICENSE.txt" included with this software distribution.
 %% ============================================================================
 
-%
+% Define all Element classes
 
 \newcommand{\ComponentClass}{\defRef{\textbf{\class{ComponentClass}}\xspace}{sec:ComponentClass}}
-\newcommand{\ComponentClasses}{\textbf{\class{ComponentClass}}es\xspace}
-\newcommand{\Dynamics}{\textbf{\class{Dynamics}}\xspace}
-\newcommand{\RandomDistribution}{\textbf{\class{RandomDistribution}}\xspace}
-\newcommand{\Dynamic}{\textbf{\class{Dynamics}}\xspace}
-\newcommand{\MathInline}{\tt{Dynamics}}
-\newcommand{\Interface}{\textbf{\class{Interface}}\xspace}
-\newcommand{\Interfaces}{\textbf{\class{Interface}}s\xspace}
-\newcommand{\StateVariable}{\textbf{\class{StateVariable}}\xspace}
-\newcommand{\StateVariables}{\textbf{\class{StateVariable}}s\xspace}
-\newcommand{\StateAssignment}{\textbf{\class{StateAssignment}}\xspace}
-\newcommand{\StateAssignments}{\textbf{\class{StateAssignment}}s\xspace}
-\newcommand{\TimeDerivative}{\textbf{\class{TimeDerivative}}\xspace}
-\newcommand{\TimeDerivatives}{\textbf{\class{TimeDerivative}}s\xspace}
-\newcommand{\Alias}{\textbf{\class{Alias}}\xspace}
-\newcommand{\Aliases}{\textbf{\class{Alias}}es\xspace}
-\newcommand{\AnalogPort}{\textbf{\class{AnalogPort}}\xspace}
-\newcommand{\AnalogPorts}{\textbf{\class{AnalogPort}}s\xspace}
-\newcommand{\EventPort}{\textbf{\class{EventPort}}\xspace}
-\newcommand{\EventPorts}{\textbf{\class{EventPort}}s\xspace}
-\newcommand{\Port}{\textbf{\class{Port}}\xspace}
-\newcommand{\Ports}{\textbf{\class{Port}}s\xspace}
-\newcommand{\Event}{\textbf{\class{Event}}\xspace}
-\newcommand{\Events}{\textbf{\class{Event}}s\xspace}
-\newcommand{\Regime}{\textbf{\class{Regime}}\xspace}
-\newcommand{\Regimes}{\textbf{\class{Regime}}s\xspace}
-\newcommand{\Transition}{\textbf{\class{Transition}}\xspace}
-\newcommand{\Transitions}{\textbf{\class{Transition}}s\xspace}
-\newcommand{\Trigger}{\tt{Trigger}}
-\newcommand{\OnEvent}{\textbf{\class{OnEvent}}\xspace}
-\newcommand{\OnEvents}{\textbf{\class{OnEvent}}s\xspace}
-\newcommand{\OnCondition}{\textbf{\class{OnCondition}}\xspace}
-\newcommand{\OnConditions}{\textbf{\class{OnCondition}}s\xspace}
-\newcommand{\Parameter}{\textbf{\class{Parameter}}\xspace}
-\newcommand{\Parameters}{\textbf{\class{Parameter}}s\xspace}
-\newcommand{\OutputEvent}{\textbf{\class{OutputEvent}}\xspace}
-\newcommand{\OutputEvents}{\textbf{\class{OutputEvent}}s\xspace}
-\newcommand{\AnalogSendPort}{\textbf{\class{AnalogSendPort}}\xspace}
-\newcommand{\EventSendPort}{\textbf{\class{EventSendPort}}\xspace}
-\newcommand{\AnalogReceivePort}{\textbf{\class{AnalogReceivePort}}\xspace}
-\newcommand{\AnalogReducePort}{\textbf{\class{AnalogReducePort}}\xspace}
-\newcommand{\AnalogSendPorts}{\textbf{\class{AnalogSendPorts}}\xspace}
-\newcommand{\AnalogReceivePorts}{\textbf{\class{AnalogReceivePorts}}\xspace}
-\newcommand{\AnalogReducePorts}{\textbf{\class{AnalogReducePorts}}\xspace}
-\newcommand{\EventReceivePort}{\textbf{\class{EventReceivePort}}\xspace}
-\newcommand{\EventReducePort}{\textbf{\class{EventReducePort}}\xspace}
-\newcommand{\EventSendPorts}{\textbf{\class{EventSendPorts}}\xspace}
-\newcommand{\EventReceivePorts}{\textbf{\class{EventReceivePorts}}\xspace}
-\newcommand{\EventReducePorts}{\textbf{\class{EventReducePorts}}\xspace}
+\newcommand{\Dynamics}{\defRef{\defRef{\textbf{\class{Dynamics}}\xspace}{sec:Dynamics}}{sec:Dynamics}}
+\newcommand{\RandomDistribution}{\defRef{\textbf{\class{RandomDistribution}}\xspace}{sec:RandomDistribution}}
+\newcommand{\MathInline}{\defRef{\tt{Dynamics}}{sec:MathInline}}
+\newcommand{\Interface}{\defRef{\textbf{\class{Interface}}\xspace}{sec:Interface}}
+\newcommand{\StateVariable}{\defRef{\textbf{\class{StateVariable}}\xspace}{sec:StateVariable}}
+\newcommand{\StateAssignment}{\defRef{\textbf{\class{StateAssignment}}\xspace}{sec:StateAssignment}}
+\newcommand{\TimeDerivative}{\defRef{\textbf{\class{TimeDerivative}}\xspace}{sec:TimeDerivative}}
+\newcommand{\Alias}{\defRef{\textbf{\class{Alias}}\xspace}{sec:Alias}}
+\newcommand{\Regime}{\defRef{\textbf{\class{Regime}}\xspace}{sec:Regime}}
+\newcommand{\Transition}{\defRef{\textbf{\class{Transition}}\xspace}{sec:Transition}}
+\newcommand{\Trigger}{\defRef{\tt{Trigger}}{sec:Trigger}}
+\newcommand{\EventOut}{\defRef{\textbf{\class{EventOut}}\xspace}{sec:EventOut}}
+\newcommand{\OnEvent}{\defRef{\textbf{\class{OnEvent}}\xspace}{sec:OnEvent}}
+\newcommand{\OnCondition}{\defRef{\textbf{\class{OnCondition}}\xspace}{sec:OnCondition}}
+\newcommand{\Parameter}{\defRef{\textbf{\class{Parameter}}\xspace}{sec:Parameter}}
+\newcommand{\AnalogSendPort}{\defRef{\textbf{\class{AnalogSendPort}}\xspace}{sec:AnalogSendPort}}
+\newcommand{\EventSendPort}{\defRef{\textbf{\class{EventSendPort}}\xspace}{sec:EventSendPort}}
+\newcommand{\AnalogReceivePort}{\defRef{\textbf{\class{AnalogReceivePort}}\xspace}{sec:AnalogReceivePort}}
+\newcommand{\AnalogReducePort}{\defRef{\textbf{\class{AnalogReducePort}}\xspace}{sec:AnalogReducePort}}
+\newcommand{\EventReceivePort}{\defRef{\textbf{\class{EventReceivePort}}\xspace}{sec:EventReceivePort}}
+\newcommand{\EventReducePort}{\defRef{\textbf{\class{EventReducePort}}\xspace}{sec:EventReducePort}}
+
+%\newcommand{\ComponentClass}{\defRef{\textbf{\class{ComponentClass}}\xspace}{sec:ComponentClass}}
+%\newcommand{\Dynamics}{\defRef{\defRef{\textbf{\class{Dynamics}}\xspace}{sec:Dynamics}}{sec:Dynamics}}
+%\newcommand{\RandomDistribution}{\defRef{\textbf{\class{RandomDistribution}}\xspace}{sec:RandomDistribution}}
+%\newcommand{\MathInline}{\defRef{\tt{Dynamics}}{sec:MathInline}}
+%\newcommand{\Interface}{\defRef{\textbf{\class{Interface}}\xspace}{sec:Interface}}
+%\newcommand{\StateVariable}{\defRef{\textbf{\class{StateVariable}}\xspace}{sec:StateVariable}}
+%\newcommand{\StateAssignment}{\defRef{\textbf{\class{StateAssignment}}\xspace}{sec:StateAssignment}}
+%\newcommand{\TimeDerivative}{\defRef{\textbf{\class{TimeDerivative}}\xspace}{sec:TimeDerivative}}
+%\newcommand{\Alias}{\defRef{\textbf{\class{Alias}}\xspace}{sec:Alias}}
+%\newcommand{\Regime}{\defRef{\textbf{\class{Regime}}\xspace}{sec:Regime}}
+%\newcommand{\Transition}{\defRef{\textbf{\class{Transition}}\xspace}{sec:Transition}}
+%\newcommand{\Trigger}{\defRef{\tt{Trigger}}{sec:Trigger}}
+%\newcommand{\EventOut}{\defRef{\textbf{\class{EventOut}}\xspace}{sec:EventOut}}
+%\newcommand{\OnEvent}{\defRef{\textbf{\class{OnEvent}}\xspace}{sec:OnEvent}}
+%\newcommand{\OnCondition}{\defRef{\textbf{\class{OnCondition}}\xspace}{sec:OnCondition}}
+%\newcommand{\Parameter}{\defRef{\textbf{\class{Parameter}}\xspace}{sec:Parameter}}
+%\newcommand{\AnalogSendPort}{\defRef{\textbf{\class{AnalogSendPort}}\xspace}{sec:AnalogSendPort}}
+%\newcommand{\EventSendPort}{\defRef{\textbf{\class{EventSendPort}}\xspace}{sec:EventSendPort}}
+%\newcommand{\AnalogReceivePort}{\defRef{\textbf{\class{AnalogReceivePort}}\xspace}{sec:AnalogReceivePort}}
+%\newcommand{\AnalogReducePort}{\defRef{\textbf{\class{AnalogReducePort}}\xspace}{sec:AnalogReducePort}}
+%\newcommand{\EventReceivePort}{\defRef{\textbf{\class{EventReceivePort}}\xspace}{sec:EventReceivePort}}
+%\newcommand{\EventReducePort}{\defRef{\textbf{\class{EventReducePort}}\xspace}{sec:EventReducePort}}
 
 
 % Old macros
@@ -410,8 +406,8 @@ A \ComponentClass is composed of:
 \begin{itemize}
 \item \nmlClass{Parameter}s for the \ComponentClass
 \item An unordered collection of \nmlClass{AnalogSendPort}, \nmlClass{AnalogReceivePort} and \nmlClass{AnalogReducePort}s. Each \nmlClass{AnalogSendPort}s publishes a state variable or derived value and each \nmlClass{AnalogReceivePort}s consumes a state variable or derived value published from elsewhere. \nmlClass{AnalogReducePort}s consume a variable number of published state variables and/or derived values and applies an operator that reduces the incoming ports to a single value.
-\item  a \Dynamics block and \Interfaces, as shown
-in Figure~\ref{fig:EX1_RegimeGraph}. The \Dynamic block represent the internal
+\item  a \Dynamics block and {\Interface}s, as shown
+in Figure~\ref{fig:EX1_RegimeGraph}. The \Dynamics block represent the internal
 dynamic of the model while the \Interface block allows the \ComponentClass to
 communicate with other instantiations of the \ComponentClass and with the User
 Layer.
@@ -424,6 +420,8 @@ Layer.
 \label{fig:EX1_RegimeGraph}
 \end{figure}
 
+\subsection{Parameter}
+\label{sec:Parameter}
 
 \subsection{Dynamics}
 
@@ -451,7 +449,7 @@ Dynamics \\
 The \Dynamics block represents the \emph{internal} mechanisms
 governing the behaviour of the component.  For most of the models
 these dynamics are non-linear, presenting transitions between
-different regimes at particular values of one or different \StateVariables.
+different regimes at particular values of one or different {\StateVariable}s.
 To create a representation that include both simple
 dynamics and non-linear dynamics, the \Dynamics block can contains the
 following concepts:
@@ -483,8 +481,8 @@ it is in through \Transition.
 \label{SimpleRegimeGraph}
 \end{figure}
 
-An example dynamics in Figure~\ref{SimpleRegimeGraph} has three \StateVariables,
-\emph{X,Y} and \emph{Z}, and a state graph with three \Regimes, \emph{regime1},
+An example dynamics in Figure~\ref{SimpleRegimeGraph} has three {\StateVariable}s,
+\emph{X,Y} and \emph{Z}, and a state graph with three {\Regime}s, \emph{regime1},
 \emph{regime2} and \emph{regime3}. At any time, a component will be in one of
 these regimes, and the state variables will evolve accordingly.
 
@@ -514,8 +512,8 @@ The \StateVariable changes happen in two ways:
 %
 \begin{quote}
 \begin{itemize}
-\item continuously through \textbf{TimeDerivatives} (in \Regimes),
-which define the \StateVariables evolution over time, for example
+\item continuously through \textbf{TimeDerivatives} (in {\Regime}s),
+which define the {\StateVariable}s evolution over time, for example
 $dX/dt=1-X$.
 \item discretely through \StateAssignment (in \Transition),
 which make discrete changes to a \StateVariable value, for example
@@ -551,8 +549,8 @@ Regime \\
 
 
 A \Regime is defined in NineML as a system of ODEs in time
-on \StateVariable.  As such, \Regime defines how the \StateVariables
-change (propagate in time) between subsequent \Transitions. \Regime is
+on \StateVariable.  As such, \Regime defines how the {\StateVariable}s
+change (propagate in time) between subsequent {\Transition}s. \Regime is
 defined to have non-vanishing temporal extent. Once construction of
 the \Regime is complete, it should have defined the following
 properties:
@@ -632,7 +630,7 @@ in Figure~\ref{SimpleRegimeGraph}). There are two types of \Transition:
 \begin{itemize}
 \item An \OnCondition function of the \StateVariable, for
 example $X > Y$.
-\item An \OnEvent on an input from \EventPort. (See section~\ref{port}).
+\item An \OnEvent on an input from an \EventReceivePort. (See section~\ref{port}).
 \end{itemize}
 
 \begin{table}[htb]
@@ -656,10 +654,10 @@ During either type of transition three things can happen:
 the component is in \emph{regime3}, and the trigger for \emph{t3} is
 satisfied, then the component will move into \emph{regime1}.
 \item \textbf{StateAssignment}s can take place, for example, $X=0$
-\item The component can send \OutputEvent
+\item The component can send \EventOut
 \end{itemize}
 
-During a transition, multiple \StateAssignment and \OutputEvent can occur.
+During a transition, multiple \StateAssignment and \EventOut can occur.
 (For more on the resolution of \nmlClass{Transition}s see Appendix
 section~\ref{resolution})
 
@@ -669,7 +667,7 @@ should have defined the following properties:
 \begin{itemize}
 \item The \nmlClass{Condition} or \nmlClass{EventPort(mode=recv)} which
 triggers the \nmlClass{Transition}
-\item A set of \StateAssignment and \OutputEvent objects
+\item A set of \StateAssignment and \EventOut objects
 \item The label of the source \nmlClass{Regime}, and the label of the target
 \nmlClass{Regime}, which may be the same as the source \nmlClass{Regime}.
 \end{itemize}
@@ -701,7 +699,7 @@ Alias \\
 \begin{itemize}
 \item {\bf substitution}: rather than writing long expressions for functions of
 \StateVariable, we can define an \Alias once. For example, we can define chains
-of \Aliases:
+of {\Alias}es:
 %
 \begin{quote}{\ttfamily \raggedright \noindent
 m\_alpha~=~(alphaA~+~alphaB*V)~/~(~alphaC~+~exp((alphaD+V/alphaE))~)\\
@@ -714,7 +712,7 @@ dm/dt~=~(1/C)~*~(minf-m)/mtau
 
 In this case, $m_{alpha}$, $m_{beta}$, $minf$ and $mtau$ are all
 alias definitions. There is no reason we couldn't expand our $dm/dt$
-description out to eliminate these intermediate \Aliases, but the expression
+description out to eliminate these intermediate {\Alias}es, but the expression
 would be very long and difficult to read.
 
 \item {\bf Accessing intermediate variable}: if we would like to communicate a
@@ -748,16 +746,15 @@ Interface \\
 
 
 The interface is the \emph{external} view of the \ComponentClass that defines
-what inputs and outputs the component exposes to other \ComponentClasses and the
+what inputs and outputs the component exposes to other {\ComponentClass}es and the
 parameters that can be set for the \ComponentClass. The interface consists of
-instances of \Port (section~\ref{port}) and \Parameter
-(section~\ref{parameters}).
+instances of ports and \Parameter.
 
 As well as being able to specify the communication of continuous values,
-\ComponentClasses are also able to specify the emission and the reception
-of \Events. Events are discrete notifications
-that are transmitted over \EventPorts (section~\ref{port}). Since
-\EventPorts have names, saying that we transmit `event1' for example
+{\ComponentClass}es are also able to specify the emission and the reception
+of events. Events are discrete notifications
+that are transmitted over event ports. Since
+Event ports have names, saying that we transmit `event1' for example
 would mean transmitting an event on the EventPort called `event1'. Events
 can be used for example to signal action potentials firing.
 
@@ -788,7 +785,7 @@ decay time constant of a synapse model.  The instantiation of
 Parameters at the Abstraction Layer level allow us to define the
 dynamics of a general component.  It is then possible to instantiate
 several variants of this component by attributing different values for
-the \Parameters, in the User Layer.  For example, if we are building
+the {\Parameter}s, in the User Layer.  For example, if we are building
 an integrate-and-fire neuron, we can specify that the Reset-Voltage
 and the Firing-Threshold are parameters, write our dynamics in terms
 of these parameters, then use the User Layer to provide parameters to
@@ -799,7 +796,7 @@ start of the simulation, and remain constant throughout.
 \subsubsection{Port}
 \label{port}
 
-Ports allow instantiations of \ComponentClasses to communicate between each
+Ports allow instantiations of {\ComponentClass}es to communicate between each
 other during a simulation.
 There are two sub-classes of \nmlClass{Port} objects: \nmlClass{AnalogPort}
 and \nmlClass{EventPort}, and each can have different modes.
@@ -828,11 +825,11 @@ AnalogPort \\
 
 
 AnalogPorts transmit and receive continuous values, either \Alias
-or \StateVariable. \AnalogPort can have 3 modes:
+or \StateVariable. Analog port can have 3 modes:
 \begin{itemize}
 \item \SendPort - transmit data originating in this \ComponentClass which can
-be read by other \ComponentClasses.
-\item \RecvPort - receive data from another \ComponentClasses \SendPort
+be read by other {\ComponentClass}es.
+\item \RecvPort - receive data from another {\ComponentClass}es \SendPort
 port. Each \RecvPort can be connected to \emph{one} \SendPort.
 \item \ReducePort - receive data from multiple \SendPorts. These
 differ from \RecvPorts in that they can be connected to multiple
@@ -848,20 +845,20 @@ $dV/dt = (1/C) * InjectedCurrents$.
 
 Then, when we connect this neuron to synapses, current-clamps, etc, we
 simply need to connect the SendPorts containing the currents of these
-\ComponentClasses onto the {\tt InjectedCurrent} reduce-port, without having
+{\ComponentClass}es onto the {\tt InjectedCurrent} reduce-port, without having
 to change our original \ComponentClass definitions.
 \end{itemize}
 
 \paragraph{EventPort}
 
 Event ports transmit discrete events. They are useful for example in
-simulation of integrate-and-fire neurons to notify \ComponentClasses about neuron's
+simulation of integrate-and-fire neurons to notify {\ComponentClass}es about neuron's
 spiking. Event ports only have 2 modes:
 
 \begin{itemize}
 \item \SendPort - transmit events originating in this \ComponentClass which can be
 read by
-other \ComponentClasses
+other {\ComponentClass}es
 \item \RecvPort - receive events from another \ComponentClass \SendPort port.
 Each recv port can be connected to \emph{multiple} \SendPorts.
 \end{itemize}
@@ -1266,8 +1263,8 @@ This tag starts an abstraction layer component definition.
 %
 \begin{itemize}
 \item \Parameter {[}0+{]}
-\item \AnalogPort{[}0+{]}
-\item \EventPort {[}0+{]}
+\item AnalogPort{[}0+{]}
+\item EventPort {[}0+{]}
 \item \Dynamics  {[}1{]}
 \end{itemize}
 
@@ -1583,8 +1580,8 @@ support \verb|<MathML>| blocks too.
 
 Depending on the context; MathInline blocks should return an expression that
 evaluates to either a \verb|Boolean| (when used as the trigger for
-\OnConditions) or a \verb|floating-point| number ( when used  as a
-right-hand-side for  \Aliases, \TimeDerivatives \& \StateAssignments).
+{\OnCondition}s) or a \verb|floating-point| number ( when used  as a
+right-hand-side for  {\Alias}es, {\TimeDerivative}s \& {\StateAssignment}s).
 
 The following operators are supported, with the same precedence levels as ANSI
 C89. All
@@ -1917,10 +1914,10 @@ contains the syntax to import external files.
 \noindent
 In this first example, we are describing how to represent the Izhikevich model using the NineML Object Model, described above.
 The model is composed of single \ComponentClass, containing a single \Regime, $subthresholdRegime$ and two
-\StateVariables, $U$ \& $V$.
+{\StateVariable}s, $U$ \& $V$.
 
 \noindent
-The \TimeDerivatives are defined for the Regime as:
+The {\TimeDerivative}s are defined for the Regime as:
 
 \begin{align}
 \frac{dV}{dt} &= 0.04*V*V + 5*V + 140.0 - U + iSyn + iinj\_constant   \\
@@ -1929,8 +1926,8 @@ The \TimeDerivatives are defined for the Regime as:
 
 \noindent
 The \ComponentClass has a single \Transition, is triggered when $V>theta$. When
-triggered, It causes an \Event called $spikeOutput$ to be emitted, and two
-\StateAssignments to be made:
+triggered, It causes an Event called $spikeOutput$ to be emitted, and two
+{\StateAssignment}s to be made:
 \begin{align}
 U &\leftarrow U + d \\
 V &\leftarrow c
@@ -2143,15 +2140,15 @@ In both Regimes, the synapses dynamics evolve as:
 \frac{d(cobaExcit\_g)}{dt} = - \frac{cobaExcit\_g}{cobaExcit\_tau}
 \end{eqnarray}
 \noindent
-The neuron has 2 \EventPorts, $iaf\_spikeoutput$ is a send port, which sends
+The neuron has 2 EventPorts, $iaf\_spikeoutput$ is a send port, which sends
 events when the neuron fires, and $cobaExcit\_spikeinput$ is a recv port,
 which tells the attached synapse that it should `fire'.
 \noindent
-The neuron has 4 \Transitions, 2 \OnEvents  and 2 \OnConditions.
+The neuron has 4 {\Transition}s, 2 {\OnEvent}s  and 2 {\OnCondition}s.
 Two of the Transitions are triggered by $cobaExcit\_spikeinput$ events, which
 cause the conductance of the synapse to increase by an amount $q$, These
 happen in both Regimes.
-The other \OnConditions:
+The other {\OnCondition}s:
 \begin{itemize}
 \item One is triggered the voltage being above threshold, which moves the
 component from $RegularRegime$ to $RefractoryRegime$, sets V to the
@@ -2393,9 +2390,9 @@ Implementations do not need to implement this algorithm but should produce
 the same behaviours.
 
 A {\tt TransitionResolutionBlock} represents an instant in time. It begins
-before any \Transitions occur and ends after each component has moved
+before any {\Transition}s occur and ends after each component has moved
 into its new \Regime, all \textbf{StateAssignments} have been executed
-and all \Events generated and resolved in the system.
+and all Events generated and resolved in the system.
 
 \subsection{Serial Implementation of Transition Resolution}
 
@@ -2407,8 +2404,8 @@ $R^{t}_{n}$.
 
 \noindent From \Regime $R^{t}_{n}$, there are:
 \begin{itemize}
-\item OnEvent \Transitions $OnEv^{t}_{n} = \{ ... \}$
-\item OnCondition \Transitions $OnCond^{t}_{n} = \{ ... \}$
+\item OnEvent {\Transition}s $OnEv^{t}_{n} = \{ ... \}$
+\item OnCondition {\Transition}s $OnCond^{t}_{n} = \{ ... \}$
 \end{itemize}
 
 \newcommand{\send}[0]{\texttt{send} }
@@ -2421,7 +2418,7 @@ has:
 \item \recv EventPorts \textsl{EvRecv = \{$EvRecv_{n,1,}$, $EvRecv_{n,2,}$, ... \}}
 \end{itemize}
 
-\noindent \EventPort connections are stored in a a map,
+\noindent EventPort connections are stored in a a map,
 \textsl{EvPortConnections}, which maps EvSend to a list of EvRecv ports. i.e.,
 
 \textsl{\{EvSend $\rightarrow$ [EvRecv,EvRecv,..,EvRecv], EvSend $\rightarrow$
