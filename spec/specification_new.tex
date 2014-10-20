@@ -768,22 +768,6 @@ for example)
 \subsection{Alias}
 \label{sec:Alias}
 
-\begin{table}[hb]
-  \begin{edtable}{tabular}{llr}
-    \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Alias Structure}}}\\
-    \toprule
-    \em{Attribute name} & \em{Type} & \em{Required} \\
-    \midrule
-    name & label & yes\\
-    \midrule
-    \em{Element type} & \em{Multiplicity} & \em{Required} \\
-    \midrule
-    \MathInline & singleton & yes \\ 
-    \bottomrule
-  \end{edtable}
-\end{table}
-
 An alias corresponds to an intermediate variable allowing to store an
 information and to reuse it at different places in the definition of
 the dynamics.
@@ -818,6 +802,23 @@ transmitting a current, for example $i=g*(E-V)$.
 
 \note{\Alias is defined in the Dynamics, \emph{not} in the
 \Regime. This means that aliases are the same across all regimes.}
+
+
+\begin{table}[hb]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Alias Structure}}}\\
+    \toprule
+    \em{Attribute name} & \em{Type} & \em{Required} \\
+    \midrule
+    name & label & yes\\
+    \midrule
+    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \midrule
+    \MathInline & singleton & yes \\ 
+    \bottomrule
+  \end{edtable}
+\end{table}
 
 \FloatBarrier
 \subsection{MathInline}
@@ -909,7 +910,7 @@ the {\OnCondition} expression then evaluates to True or False
 \begin{lstlisting}
 x>10
 x>10 & y<20
-x>exp(-cos(y)) | y<sin(t)+5\,
+x>exp(-cos(y)) | y<sin(t)+5
 x==15
 \end{lstlisting}
 
