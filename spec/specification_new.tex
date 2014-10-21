@@ -1,7 +1,7 @@
 \documentclass[draftspec]{ninemlspec}
 \usepackage{microtype}
 \usepackage{multirow}
-\usepackage[section]{placeins}
+\usepackage{float}
 
 %% ============================================================================
 %% Description:  Documentation for sbmlpkgspec.cls
@@ -28,9 +28,9 @@
 \newcommand{\ConnectionRule}{\defRef{\textbf{\class{ConnectionRule}}\xspace}{sec:ConnectionRule}}
 \newcommand{\AllToAll}{\defRef{\textbf{\class{AllToAll}}\xspace}{sec:AllToAll}}
 \newcommand{\OneToOne}{\defRef{\textbf{\class{OneToOne}}\xspace}{sec:OneToOne}}
-\newcommand{\Probabilistic}{\defRef{\textbf{\class{Probabilistic}}\xspace}{sec:Probabilistic}}
+\newcommand{\ProbabilisticConnectivity}{\defRef{\textbf{\class{ProbabilisticConnectivity}}\xspace}{sec:ProbabilisticConnectivity}}
 \newcommand{\ConnectionProbability}{\defRef{\textbf{\class{ConnectionProbability}}\xspace}{sec:ConnectionProbability}}
-\newcommand{\ExplicitList}{\defRef{\textbf{\class{ExplicitList}}\xspace}{sec:ExplicitList}}
+\newcommand{\ExplicitConnectionList}{\defRef{\textbf{\class{ExplicitConnectionList}}\xspace}{sec:ExplicitConnectionList}}
 \newcommand{\MathInline}{\defRef{\textbf{\class{MathInline}}\xspace}{sec:MathInline}}
 \newcommand{\StateVariable}{\defRef{\textbf{\class{StateVariable}}\xspace}{sec:StateVariable}}
 \newcommand{\StateAssignment}{\defRef{\textbf{\class{StateAssignment}}\xspace}{sec:StateAssignment}}
@@ -56,11 +56,17 @@
 \newcommand{\Component}{\defRef{\textbf{\class{Component}}\xspace}{sec:Component}}
 \newcommand{\Property}{\defRef{\textbf{\class{Property}}\xspace}{sec:Property}}
 \newcommand{\Quantity}{\defRef{\textbf{\class{Quantity}}\xspace}{sec:Quantity}}
+\newcommand{\HomogenousValue}{\defRef{\textbf{\class{HomogenousValue}}\xspace}{sec:HomogenousValue}}
+\newcommand{\RandomlyDistributedValues}{\defRef{\textbf{\class{RandomlyDistributedValues}}\xspace}{sec:RandomlyDistributedValues}}
+\newcommand{\ExternalValueList}{\defRef{\textbf{\class{ExternalValueList}}\xspace}{sec:ExternalValueList}}
+\newcommand{\ValueList}{\defRef{\textbf{\class{ValueList}}\xspace}{sec:ValueList}}
+\newcommand{\ListHeader}{\defRef{\textbf{\class{ListHeader}}\xspace}{sec:ListHeader}}
+\newcommand{\ListRow}{\defRef{\textbf{\class{ListRow}}\xspace}{sec:ListRow}}
+\newcommand{\ListColumn}{\defRef{\textbf{\class{ListColumn}}\xspace}{sec:ListColumn}}
 \newcommand{\Definition}{\defRef{\textbf{\class{Definition}}\xspace}{sec:Definition}}
 \newcommand{\Prototype}{\defRef{\textbf{\class{Prototype}}\xspace}{sec:Prototype}}
 \newcommand{\Reference}{\defRef{\textbf{\class{Reference}}\xspace}{sec:Reference}}
 \newcommand{\CellType}{\defRef{\textbf{\class{CellType}}\xspace}{sec:CellType}}
-\newcommand{\DataReference}{\defRef{\textbf{\class{DataReference}}\xspace}{sec:DataReference}}
 \newcommand{\Population}{\defRef{\textbf{\class{Population}}\xspace}{sec:Population}}
 \newcommand{\Projection}{\defRef{\textbf{\class{Projection}}\xspace}{sec:Projection}}
 \newcommand{\PostSynapticResponse}{\defRef{\textbf{\class{PostSynapticResponse}}\xspace}{sec:PostSynapticResponse}}
@@ -339,7 +345,7 @@ This document presents the current NineML specifications and consists of:
 
 {\Annotation}s elements are provided to add semantic information about the model. They can be included within any NineML element. Likewise, any elements are allowed to be included within {\Annotation}s. However, for adding semantic structure to the model it is recommended to use the \href{http://www.w3.org/RDF/}{Resource Description Framework (RDF)}.
 
-\begin{table}[hb]
+\begin{table}[H]
   \begin{edtable}{tabular}{llr}
     \toprule
     \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Annotation Structure}}}\\
@@ -402,7 +408,7 @@ plasticity, ...)
 \subsection{ComponentClass}
 \label{sec:ComponentClass}
 
-\begin{table}[hb]
+\begin{table}[H]
   \begin{edtable}{tabular}{llr}
     \toprule
     \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{ComponentClass Structure}}}\\
@@ -464,12 +470,12 @@ communicate with other instantiations of the \ComponentClass and with the User
 Layer.
 \end{itemize}
 
-%\begin{figure}[htb]
-%\center
-%\includegraphics[width=8cm]{figures/component_simple.pdf}
-%\protect\caption{ComponentClass Overview (Simple)}
-%\label{fig:EX1_RegimeGraph}
-%\end{figure}
+\begin{figure}[htb]
+\center
+\includegraphics[width=8cm]{figures/component_simple.pdf}
+\protect\caption{ComponentClass Overview (Simple)}
+\label{fig:EX1_RegimeGraph}
+\end{figure}
 
 \subsubsection{Name attribute}
 Each \ComponentClass requires a \textit{name} attribute. This name should be a valid identifier in the \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 standard} and uniquely identify the {\ComponentClass} in current the scope.
@@ -480,7 +486,7 @@ Each \ComponentClass requires a \textit{name} attribute. This name should be a v
 Parameters correspond to a placeholder for a numerical value with
 dimension (this value can also be defined as dimensionless).
 
-\begin{table}[hb]
+\begin{table}[H]
   \begin{edtable}{tabular}{llr}
     \toprule
     \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Parameter Structure}}}\\
@@ -513,13 +519,13 @@ Each \Parameter requires a \textit{name} attribute. This name should be a valid 
 \subsubsection{Dimension attribute}
 Each \Parameter requires a \textit{dimension} attribute. This attribute specifies the dimension of the units of the quantity that is expected to be passed to the \Parameter and should refer to the name of a \UnitDimension element in the global scope.
 
-\FloatBarrier
+%\FloatBarrier
 \subsection{AnalogSendPort}
 \label{sec:AnalogSendPort}
 
 {\AnalogSendPort}s of variables from the current component to be published externally to be read by other {\ComponentClass}es. Each {\AnalogSendPort} can be connected to multiple {\AnalogReceivePort}s and {\AnalogReducePort}s.
 
-\begin{table}[hb]
+\begin{table}[H]
   \begin{edtable}{tabular}{llr}
     \toprule
     \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{AnalogSendPort Structure}}}\\
@@ -545,7 +551,7 @@ Each \Parameter requires a \textit{dimension} attribute. This attribute specifie
 
 {\AnalogReceivePort}s allow variables that have been published externally to be used within the current component. Each \AnalogReceivePort can be connected to \emph{one} \AnalogSendPort.
 
-\begin{table}[hb]
+\begin{table}[H]
   \begin{edtable}{tabular}{llr}
     \toprule
     \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{AnalogReceivePort Structure}}}\\
@@ -564,11 +570,11 @@ Each \AnalogReceivePort requires a \textit{name} attribute. This name should be 
 \subsubsection{Dimension attribute}
 Each \Parameter requires a \textit{dimension} attribute. This attribute specifies the dimension of the units of the quantity that is expected to be passed to the \Parameter and should refer to the name of a \UnitDimension element in the global scope.
 
-\FloatBarrier
+%\FloatBarrier
 \subsection{AnalogReducePort}
 \label{sec:AnalogReducePort}
 
-\begin{table}[hb]
+\begin{table}[H]
   \begin{edtable}{tabular}{llr}
     \toprule
     \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{AnalogReducePort Structure}}}\\
@@ -592,13 +598,13 @@ should be combined to produce a single value. Currently, the
 only supported operations are \lq\lq{}$+$\rq\rq{} and \lq\lq{}$*$\rq\rq{}, which sum and multiply the inputs respectively.
 The motivation for \AnalogReducePort is that it allows us to make our
 \ComponentClass definitions more general. For example, if we are defining a
-neuron, would define a \AnalogReducePort called {\tt InjectedCurrent}.
+neuron, would define a \AnalogReducePort called \emph{InjectedCurrent}.
 This allows us to write the membrane equation for that neuron as
 $dV/dt = (1/C) * InjectedCurrents$.
 
 Then, when we connect this neuron to synapses, current-clamps, etc, we
 simply need to connect the SendPorts containing the currents of these
-{\ComponentClass}es onto the {\tt InjectedCurrent} reduce-port, without having
+{\ComponentClass}es onto the \emph{InjectedCurrent} reduce-port, without having
 to change our original \ComponentClass definitions.
 
 \subsubsection{Name attribute}
@@ -616,11 +622,11 @@ Each \AnalogReducePort requires a \textit{operator} attribute. The operator \lq\
 
 will take all of the electrical currents that have been connected to it via {\AnalogSendPort}s and sum them together to get the total current passing through the membrane.
 
-\FloatBarrier
+%\FloatBarrier
 \subsection{EventSendPort}
 \label{sec:EventSendPort}
 
-\begin{table}[hb]
+\begin{table}[H]
   \begin{edtable}{tabular}{llr}
     \toprule
     \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{EventSendPort Structure}}}\\
@@ -635,40 +641,40 @@ will take all of the electrical currents that have been connected to it via {\An
 \subsubsection{Name attribute}
 Each \EventSendPort requires a \textit{name} attribute. This name should be a valid identifier in the \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 standard} and uniquely identify the {\EventSendPort} from all other elements in the \ComponentClass.
 
-\FloatBarrier
+%\FloatBarrier
 \subsection{EventReceivePort}
 \label{sec:EventReceivePort}
 
-%\begin{table}[hb]
-%  \begin{edtable}{tabular}{llr}
-%    \toprule
-%    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{EventReceivePort Structure}}}\\
-%    \toprule
-%    \em{Attribute name} & \em{Type} & \em{Required} \\
-%    \midrule
-%    name & ANSI C89 Identifier & yes\\
-%    \bottomrule
-%  \end{edtable}
-%\end{table}
+\begin{table}[H]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{EventReceivePort Structure}}}\\
+    \toprule
+    \em{Attribute name} & \em{Type} & \em{Required} \\
+    \midrule
+    name & ANSI C89 Identifier & yes\\
+    \bottomrule
+  \end{edtable}
+\end{table}
 
 \subsubsection{Name attribute}
 Each \EventReceivePort requires a \textit{name} attribute. This name should be a valid identifier in the \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 standard} and uniquely identify the {\EventReceivePort} from all other elements in the \ComponentClass.
 
-\FloatBarrier
+%\FloatBarrier
 \subsection{EventReducePort}
 \label{sec:EventReducePort}
 %
-%\begin{table}[hb]
-%  \begin{edtable}{tabular}{llr}
-%    \toprule
-%    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{EventReducePort Structure}}}\\
-%    \toprule
-%    \em{Attribute name} & \em{Type} & \em{Required} \\
-%    \midrule
-%    name & ANSI C89 Identifier & yes\\
-%    \bottomrule
-%  \end{edtable}
-%\end{table}
+\begin{table}[H]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{EventReducePort Structure}}}\\
+    \toprule
+    \em{Attribute name} & \em{Type} & \em{Required} \\
+    \midrule
+    name & ANSI C89 Identifier & yes\\
+    \bottomrule
+  \end{edtable}
+\end{table}
 
 Event ports transmit discrete events. They are useful for example in
 simulation of integrate-and-fire neurons to notify {\ComponentClass}es about neuron's
@@ -691,23 +697,23 @@ flow in a post-synaptic neuron.
 \subsubsection{Name attribute}
 Each \EventReducePort requires a \textit{name} attribute. This name should be a valid identifier in the \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 standard} and uniquely identify the {\EventReducePort} from all other elements in the \ComponentClass.
 
-\FloatBarrier
+%\FloatBarrier
 \subsection{Dynamics}
 \label{sec:Dynamics}
 
-%\begin{table}[hb]
-%  \begin{edtable}{tabular}{llr}
-%    \toprule
-%    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Dynamics Structure}}}\\
-%    \toprule
-%    \em{Element type} & \em{Multiplicity} & \em{Required} \\
-%    \midrule
-%    \StateVariable & set & no \\ 
-%    \Regime & set & yes\\
-%    \Alias & set & no\\
-%    \bottomrule
-%  \end{edtable}
-%\end{table}
+\begin{table}[H]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Dynamics Structure}}}\\
+    \toprule
+    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \midrule
+    \StateVariable & set & no \\ 
+    \Regime & set & yes\\
+    \Alias & set & no\\
+    \bottomrule
+  \end{edtable}
+\end{table}
 
 The \Dynamics block represents the \emph{internal} mechanisms
 governing the behaviour of the component.  For most of the models
@@ -749,37 +755,37 @@ An example dynamics in Figure~\ref{SimpleRegimeGraph} has three {\StateVariable}
 \emph{regime2} and \emph{regime3}. At any time, a component will be in one of
 these regimes, and the state variables will evolve accordingly.
 
-%\subsection{RandomDistribution}
-%\label{sec:RandomDistribution}
-%
-%\begin{table}[hb]
-%  \begin{edtable}{tabular}{llr}
-%    \toprule
-%    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{RandomDistribution Structure}}}\\
-%    \toprule
-%    \em{Element type} & \em{Multiplicity} & \em{Required} \\
-%    \midrule
-%    \Alias & set & no \\ 
-%    \bottomrule
-%  \end{edtable}
-%\end{table}
+\subsection{RandomDistribution}
+\label{sec:RandomDistribution}
 
-\FloatBarrier
+\begin{table}[H]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{RandomDistribution Structure}}}\\
+    \toprule
+    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \midrule
+    \Alias & set & no \\ 
+    \bottomrule
+  \end{edtable}
+\end{table}
+
+%\FloatBarrier
 \subsection{StateVariable}
 \label{sec:StateVariable}
 
-%\begin{table}[hb]
-%  \begin{edtable}{tabular}{llr}
-%    \toprule
-%    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{StateVariable Structure}}}\\
-%    \toprule
-%    \em{Attribute name} & \em{Type} & \em{Required} \\
-%    \midrule
-%    name & ANSI C89 Identifier & yes\\
-%    dimension & name:UnitDimension & yes\\
-%    \bottomrule
-%  \end{edtable}
-%\end{table}
+\begin{table}[H]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{StateVariable Structure}}}\\
+    \toprule
+    \em{Attribute name} & \em{Type} & \em{Required} \\
+    \midrule
+    name & ANSI C89 Identifier & yes\\
+    dimension & name:UnitDimension & yes\\
+    \bottomrule
+  \end{edtable}
+\end{table}
 
 The internal state of a component is defined by a set of \StateVariable
 -- variables that can change either continuously or discontinuously as a
@@ -803,11 +809,11 @@ Each \StateVariable requires a \textit{name} attribute. This name should be a va
 \subsubsection{Dimension attribute}
 Each \StateVariable requires a \textit{dimension} attribute. This attribute specifies the dimension of the units of the quantities that \StateVariable is expected to be initialised and updated with and should refer to the name of a \UnitDimension element in the global scope.
 
-\FloatBarrier
+%\FloatBarrier
 \subsection{Regime}
 \label{sec:Regime}
 
-\begin{table}[hb]
+\begin{table}[H]
   \begin{edtable}{tabular}{llr}
     \toprule
     \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Regime Structure}}}\\
@@ -853,11 +859,11 @@ for example)
 \subsubsection{Name attribute}
 Each \Regime requires a \textit{name} attribute. This name should be a valid identifier in the \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 standard} and uniquely identify the {\Regime} from all other elements in the \ComponentClass.
 
-\FloatBarrier
+%\FloatBarrier
 \subsection{TimeDerivative}
 \label{sec:TimeDerivative}
 
-\begin{table}[hb]
+\begin{table}[H]
   \begin{edtable}{tabular}{llr}
     \toprule
     \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{TimeDerivative Structure}}}\\
@@ -876,14 +882,14 @@ Each \Regime requires a \textit{name} attribute. This name should be a valid ide
 \subsubsection{Variable attribute}
 Each \TimeDerivative requires a \textit{variable} attribute. This should refer to the name of a \StateVariable in the \ComponentClass. Only one \TimeDerivative is allow per \textit{variable} in each \Regime.
 
-\FloatBarrier
+%\FloatBarrier
 \subsection{OnEvent}
 \label{sec:OnEvent}
 
 An OnEvent block is activated when the dynamics component receives an event from published from an external component.
 
 \vspace*{-0.25ex}
-\begin{table}[hb]
+\begin{table}[H]
   \begin{edtable}{tabular}{llr}
     \toprule
     \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{OnEvent Structure}}}\\
@@ -904,13 +910,13 @@ An OnEvent block is activated when the dynamics component receives an event from
 \subsubsection{Port attribute}
 Each \OnEvent requires a \textit{port} attribute. This should refer to the name of an \EventReceivePort or an \EventReducePort in the \ComponentClass interface.
 
-\FloatBarrier
+%\FloatBarrier
 \subsection{OnCondition}
 \label{sec:OnCondition}
 
 An OnCondition block is activated when the condition in the \Trigger block is met.
 
-\begin{table}[hb]
+\begin{table}[H]
   \begin{edtable}{tabular}{llr}
     \toprule
     \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{OnCondition Structure}}}\\
@@ -949,32 +955,32 @@ temporal extent, and the behaviour for this case is undefined, but it
 would be preferable for the implementation to produce an error message
 to the user.
 
-\FloatBarrier
+%\FloatBarrier
 \subsection{Trigger}
 \label{sec:Trigger}
 
 The trigger block defines the condition on which the \OnCondition block is activiated.
 
-%\begin{table}[hb]
-%  \begin{edtable}{tabular}{llr}
-%    \toprule
-%    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Trigger Structure}}}\\
-%    \toprule
-%    \em{Element type} & \em{Multiplicity} & \em{Required} \\
-%    \midrule
-%    \MathInline & singleton & yes \\ 
-%    \bottomrule
-%  \end{edtable}
-%\end{table}
+\begin{table}[H]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Trigger Structure}}}\\
+    \toprule
+    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \midrule
+    \MathInline & singleton & yes \\ 
+    \bottomrule
+  \end{edtable}
+\end{table}
 
 
-\FloatBarrier
+%\FloatBarrier
 \subsection{Transition}
 \label{sec:Transition}
 
 {\Transition}s define the transition between \Regime blocks.
 
-\begin{table}[hb]
+\begin{table}[H]
   \begin{edtable}{tabular}{llr}
     \toprule
     \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Transition Structure}}}\\
@@ -1025,11 +1031,11 @@ triggers the {\Transition}
 \subsubsection{To attribute}
 Each \Transition requires a \textit{to} attribute. This should refer to the name of a \Regime element in the \ComponentClass.
 
-\FloatBarrier
+%\FloatBarrier
 \subsection{StateAssignment}
 \label{sec:StateAssignment}
 
-\begin{table}[hb]
+\begin{table}[H]
   \begin{edtable}{tabular}{llr}
     \toprule
     \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{StateAssignment Structure}}}\\
@@ -1049,11 +1055,11 @@ Each \Transition requires a \textit{to} attribute. This should refer to the name
 Each \StateAssignment requires a \textit{variable} attribute. This should refer to the name of a \StateVariable in the \ComponentClass. Only one \StateAssignment is allow per \textit{variable} in each \OnEvent or \OnCondition block.
 
 
-\FloatBarrier
+%\FloatBarrier
 \subsection{EventOut}
 \label{sec:EventOut}
 
-\begin{table}[hb]
+\begin{table}[H]
   \begin{edtable}{tabular}{llr}
     \toprule
     \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{EventOut Structure}}}\\
@@ -1069,12 +1075,12 @@ Each \StateAssignment requires a \textit{variable} attribute. This should refer 
 Each \OnEvent requires a \textit{port} attribute. This should refer to the name of an \EventSendPort in the \ComponentClass interface.
 
 
-\FloatBarrier
+%\FloatBarrier
 \subsection{Alias}
 \label{sec:Alias}
 
 
-\begin{table}[hb]
+\begin{table}[H]
   \begin{edtable}{tabular}{llr}
     \toprule
     \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Alias Structure}}}\\
@@ -1129,21 +1135,21 @@ transmitting a current, for example $i=g*(E-V)$.
 \subsubsection{Name attribute}
 Each \Alias requires a \textit{name} attribute. This name should be a valid identifier in the \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 standard} and uniquely identify the {\Alias} from all other elements in the \ComponentClass.
 
-\FloatBarrier
+%\FloatBarrier
 \subsection{MathInline}
 \label{sec:MathInline}
 
-%\begin{table}[hb]
-%  \begin{edtable}{tabular}{lr}
-%    \toprule
-%    \multicolumn{2}{c}{\parbox{0.55\linewidth}{\center\textbf{MathInline Structure}}}\\
-%    \toprule
-%    \em{Text} & \em{Required} \\
-%    \midrule
-%    maths-expression & yes\\
-%    \bottomrule
-%  \end{edtable}
-%\end{table}
+\begin{table}[H]
+  \begin{edtable}{tabular}{lr}
+    \toprule
+    \multicolumn{2}{c}{\parbox{0.55\linewidth}{\center\textbf{MathInline Structure}}}\\
+    \toprule
+    \em{Text} & \em{Required} \\
+    \midrule
+    maths-expression & yes\\
+    \bottomrule
+  \end{edtable}
+\end{table}
 
 
 A block used to specify mathematical expressions. The expression is expected to
@@ -1228,23 +1234,28 @@ although their use is only allowed within \StateAssignment blocks:
 \item \verb|random.exponential(L)|
 \end{itemize}
 
-\FloatBarrier
+%\FloatBarrier
+\subsection{RandomDistribution}
+\label{sec:RandomDistribution}
+
+
+%\FloatBarrier
 \subsection{ConnectionRule}
 \label{sec:ConnectionRule}
 
-\begin{table}[hb]
+\begin{table}[H]
   \begin{edtable}{tabular}{llr}
     \toprule
     \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{ConnectionRule Structure}}}\\
     \toprule
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
-    \AllToAll | \OneToOne | \Probabilistic | \ExplicitList & singleton & yes\\
+    \AllToAll | \OneToOne | \ProbabilisticConnectivity | \ExplicitConnectionList & singleton & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
 
-In Version 1.0 of the NineML standard, connection rules must be one of four built-in types, \AllToAll, \OneToOne, \Probabilistic or \ExplicitList. In future versions, extensions 
+In Version 1.0 of the NineML standard, connection rules must be one of four built-in types, \AllToAll, \OneToOne, \ProbabilisticConnectivity or \ExplicitConnectionList. In future versions, extensions 
 are planned to this framework to allow richer connectivity rules.
 
 \subsection{AllToAll}
@@ -1261,13 +1272,13 @@ Each cell in the source population is connected to the cell in the destination p
 
 \note{\OneToOne has no attributes or child-elements}
 
-\subsection{Probabilistic}
-\label{sec:Probabilistic}
+\subsection{ProbabilisticConnectivity}
+\label{sec:ProbabilisticConnectivity}
 
-\begin{table}[hb]
+\begin{table}[H]
   \begin{edtable}{tabular}{llr}
     \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Probabilistic Structure}}}\\
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{ProbabilisticConnectivity Structure}}}\\
     \toprule
     \em{Attribute name} & \em{Type} & \em{Required} \\
     \midrule
@@ -1280,15 +1291,15 @@ All cells in the source population are connected to cells in the destination pop
 
 \subsubsection{probability attribute}
 
-Each \Probabilistic element requires a \textit{probability} attribute. This attribute should refer to a name of a dimensionless \Parameter in the enclosing \ComponentClass. The properties supplied to this parameter should either be a homogeneous value or a $M{\times}N$ list of probabilities where $M$ and $N$ are the size of the source and destination populations respectively.
+Each \ProbabilisticConnectivity element requires a \textit{probability} attribute. This attribute should refer to a name of a dimensionless \Parameter in the enclosing \ComponentClass. The properties supplied to this parameter should either be a homogeneous value or a $M{\times}N$ list of probabilities where $M$ and $N$ are the size of the source and destination populations respectively.
 
-\subsection{ExplicitList}
-\label{sec:ExplicitList}
+\subsection{ExplicitConnectionList}
+\label{sec:ExplicitConnectionList}
 
-\begin{table}[hb]
+\begin{table}[H]
   \begin{edtable}{tabular}{llr}
     \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Probabilistic Structure}}}\\
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{ProbabilisticConnectivity Structure}}}\\
     \toprule
     \em{Attribute name} & \em{Type} & \em{Required} \\
     \midrule
@@ -1302,11 +1313,11 @@ Cells in the source population are connected to cells in the destination populat
 
 \subsubsection{Source-indices attribute}
 
-Each \ExplicitList element requires a \textit{source-indices} attribute. This attribute should refer to a name of a dimensionless \Parameter in the enclosing \ComponentClass. The properties supplied to this parameter should be a list drawn from the set $\{1,\ldots,M\}$ where $M$ is the size of the source population and be the same length as the property supplied to the \textit{target-indices} parameter.
+Each \ExplicitConnectionList element requires a \textit{source-indices} attribute. This attribute should refer to a name of a dimensionless \Parameter in the enclosing \ComponentClass. The properties supplied to this parameter should be a list drawn from the set $\{1,\ldots,M\}$ where $M$ is the size of the source population and be the same length as the property supplied to the \textit{target-indices} parameter.
 
 \subsubsection{Target-indices attribute}
 
-Each \ExplicitList element requires a \textit{target-indices} attribute. This attribute should refer to a name of a dimensionless \Parameter in the enclosing \ComponentClass. The properties supplied to this parameter should be a list drawn from the set $\{1,\ldots,N\}$ where $N$ is the size of the source population and be the same length as the property supplied to the \textit{source-indices} parameter.
+Each \ExplicitConnectionList element requires a \textit{target-indices} attribute. This attribute should refer to a name of a dimensionless \Parameter in the enclosing \ComponentClass. The properties supplied to this parameter should be a list drawn from the set $\{1,\ldots,N\}$ where $N$ is the size of the source population and be the same length as the property supplied to the \textit{source-indices} parameter.
 
 \newpage
 
@@ -1314,8 +1325,9 @@ Each \ExplicitList element requires a \textit{target-indices} attribute. This at
 \label{UserL}
 
 \subsection{Component}
+\label{sec:Component}
 
-\begin{table}[hb]
+\begin{table}[H]
   \begin{edtable}{tabular}{llr}
     \toprule
     \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Component Structure}}}\\
@@ -1336,10 +1348,10 @@ The basic building block of NineML User Layer is called component. In the
 User Layer description component is a reference to a \ComponentClass
 object defined in the Abstraction Layer. Abstraction Layer defines the
 mathematics of the component and this definition is then referred in the
-User Layer through an object of type {\tt Definition}.
+User Layer through an object of type \Definition.
 
-In addition to the {\tt Definition} object, the component encapsulates
-user-given ID or label, and a set of {\tt Property} objects. The composition
+In addition to the \Definition object, the component encapsulates
+user-given ID or label, and a set of \Property objects. The composition
 of this set of properties is defined in the Abstraction Layer (or externally)
 and instantiated in the User Layer description of component. The mapping
 between mathematical description of the object in the abstraction
@@ -1365,28 +1377,121 @@ can create mappings directly between the reference to a definition in the
 User Layer description of the component and the intrinsic simulator code
 that implements the same mathematics.
 
+\subsection{Definition}
+\label{sec:Definition}
+
+All constructs in the User Layer have their mathematical or algorithmical
+definitions in the Abstraction Layer. Definition is an object that
+establishes a link between User Layer component and Abstraction Layer
+\ComponentClass. The initial version of NineML allows to put references
+to external (including user space Abstraction Layer) definitions.
+
+\begin{table}[H]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Definition Structure}}}\\
+    \toprule
+    \em{Attribute name} & \em{Type} & \em{Required} \\
+    \midrule
+    url & \href{http://en.wikipedia.org/wiki/Uniform_resource_locator}{URL} & yes\\
+    \midrule
+    \em{Text} & \; & \em{Required} \\
+    \midrule
+    name:ComponentClass & \; & no \\ 
+    \bottomrule
+  \end{edtable}
+\end{table}
+
+Language in the above diagram will be set to ``NineML'' for any Abstraction
+Layer definition and to some other value for temporary simulator-specific
+definitions. Due to this mechanism
+NineML is flexible enough to allow representation of concepts that do not
+yet exist, as it is developed to serve the forefront of research.
+It is the choice of a simulator developer to support external definitions
+during initial stage of NineML development. Future maturation of NineML shall
+eliminate the need to support simulator-specific definitions and include new
+concepts only as user space Abstraction Layer definitions.
+
+\subsection{Prototype}
+\label{sec:Prototype}
+
+\begin{table}[H]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Prototype Structure}}}\\
+    \toprule
+    \em{Attribute name} & \em{Type} & \em{Required} \\
+    \midrule
+    url & \href{http://en.wikipedia.org/wiki/Uniform_resource_locator}{URL} & yes\\
+    \midrule
+    \em{Text} & \; & \em{Required} \\
+    \midrule
+    name:Component & \; & no \\ 
+    \bottomrule
+  \end{edtable}
+\end{table}
+
+\Prototype is a User Layer object that can replace \Definition object
+in situations where user needs to reuse the same definition for multiple
+instances of objects. In this case the first instance shall be described using
+\Definition and the rest can use the first one through \Reference.
+Label in the \Reference must match a label in a previously defined
+component.
+
+\subsection{Property}
+\label{sec:Property}
+
+Property is a User Layer object that instantiates values in simple
+Abstraction Layer \Parameter and combines described in the quantity object
+and a label. The label should match the corresponding label in the
+Abstraction Layer \Parameter definition.
+
+\begin{table}[H]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Property Structure}}}\\
+    \toprule
+    \em{Attribute name} & \em{Type} & \em{Required} \\
+    \midrule
+    name & name:Parameter & yes\\
+    \midrule
+    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \midrule
+    \Quantity & singleton & yes \\ 
+    \bottomrule
+  \end{edtable}
+\end{table}
+
+The user can set the value of the property and (when applicable for the data
+type, e.g. \Quantity) the units of measurement. These units are also
+checked against the dimensionality of the corresponding property definition
+in the Abstraction Layer.
+
+User can add short notes to each property description similar to notes
+described above for components.
+
 \subsection{Quantity}
 \label{sec:Quantity}
 
 Quantity is a compound data type object that encapsulates a numerical value
-and a unit of measurements. Unit has to be of one of the {\tt Unit} type.
+and a unit of measurements. Unit has to be of one of the \Units type.
 Any numeric quantity in the language (except counters) has to be of this type,
-dimensionless quantities shall use predefined empty {\tt Unit}.
+dimensionless quantities shall use predefined empty \Units.
 
-\begin{table}[htb]
-\center
-\begin{tabular}{|c|}
-\hline
-\hline
-Quantity \\
-\hline
-\hline
-{\em unit}: {\tt Unit} \\
-\hline
-{\em value}: \{{\tt Number}$|${\tt Function}$|$%
-{\tt Component->Random Distribution}\} \\
-\hline
-\end{tabular}
+\begin{table}[H]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Quantity Structure}}}\\
+    \toprule
+    \em{Attribute name} & \em{Type} & \em{Required} \\
+    \midrule
+    units & name:Units & no\\
+    \midrule
+    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \midrule
+    \HomogenousValue | \Component->\RandomDistribution | \ValueList | \ExternalValueList & singleton & yes \\
+    \bottomrule
+  \end{edtable}
 \end{table}
 
 There are two kinds of quantities: values of the first kind are given to the
@@ -1406,97 +1511,63 @@ this case User Layer description of the quantities includes a
 reference to a random distribution component instead of a numeric
 value.  Other quantities might be calculated according to some
 function dependent on some other quantities. These can be defined
-through the type {\tt Function} by including inline Abstraction Layer
+through the type Functionby including inline Abstraction Layer
 definitions or MathML.
 
-\subsection{Property}
-\label{sec:Property}
+\subsection{HomogenousValue}
+\label{sec:HomogenousValue}
 
-Property is a User Layer object that instantiates values in simple
-Abstraction Layer \Parameter and combines described in the quantity object
-and a label. The label should match the corresponding label in the
-Abstraction Layer \Parameter definition.
-
-\begin{table}[htb]
-\center
-\begin{tabular}{|c|}
-\hline
-\hline
-Property \\
-\hline
-\hline
-{\em name}: {\tt String} \\
-\hline
-{\em value}: {\tt Quantity} \\
-\hline
-{\em note}: \{{\tt String}$|${\tt URL}\} (optional)\\
-\hline
-\end{tabular}
+\begin{table}[H]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{HomogenousValue Structure}}}\\
+    \toprule
+    \em{Text} & \; & \em{Required} \\
+    \midrule
+    numeric-value & \; & yes \\ 
+    \bottomrule
+  \end{edtable}
 \end{table}
 
-The user can set the value of the property and (when applicable for the data
-type, e.g. {\tt Quantity}) the units of measurement. These units are also
-checked against the dimensionality of the corresponding property definition
-in the Abstraction Layer.
+\subsection{ValueList}
+\label{sec:ValueList}
 
-User can add short notes to each property description similar to notes
-described above for components.
-
-\subsection{Definition}
-\label{sec:Definition}
-
-All constructs in the User Layer have their mathematical or algorithmical
-definitions in the Abstraction Layer. Definition is an object that
-establishes a link between User Layer component and Abstraction Layer
-\ComponentClass. The initial version of NineML allows to put references
-to external (including user space Abstraction Layer) definitions.
-
-\begin{table}[htb]
-\center
-\begin{tabular}{|c|}
-\hline
-\hline
-Definition \\
-\hline
-\hline
-{\em language}: {\tt String} \\
-\hline
-{\em link}: {\tt URL}\\
-\hline
-\end{tabular}
+\begin{table}[H]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Property Structure}}}\\
+    \toprule
+    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \midrule
+    \ListHeader & singleton & yes \\
+    \ListRow & set & no \\
+    \bottomrule
+  \end{edtable}
 \end{table}
 
-Language in the above diagram will be set to ``NineML'' for any Abstraction
-Layer definition and to some other value for temporary simulator-specific
-definitions. Due to this mechanism
-NineML is flexible enough to allow representation of concepts that do not
-yet exist, as it is developed to serve the forefront of research.
-It is the choice of a simulator developer to support external definitions
-during initial stage of NineML development. Future maturation of NineML shall
-eliminate the need to support simulator-specific definitions and include new
-concepts only as user space Abstraction Layer definitions.
+\subsection{ListHeader}
+\label{sec:ListHeader}
 
-\subsection{Prototype}
-\label{sec:Prototype}
+\subsection{ListRow}
+\label{sec:ListRow}
 
-\Prototype is a User Layer object that can replace \Definition object
-in situations where user needs to reuse the same definition for multiple
-instances of objects. In this case the first instance shall be described using
-\Definition and the rest can use the first one through \Reference.
-Label in the \Reference must match a label in a previously defined
-component.
+\subsection{ListColumn}
+\label{sec:ListColumn}
 
-\begin{table}[htb]
-\center
-\begin{tabular}{|c|}
-\hline
-\hline
-Reference \\
-\hline
-\hline
-{\em name}: {\tt String} \\
-\hline
-\end{tabular}
+\subsection{ExternalValueList}
+\label{sec:ExternalValueList}
+
+\begin{table}[H]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Property Structure}}}\\
+    \toprule
+    \em{Attribute name} & \em{Type} & \em{Required} \\
+    \midrule
+    url & \href{http://en.wikipedia.org/wiki/Uniform_resource_locator}{URL} & yes\\
+    mimetype & \href{http://en.wikipedia.org/wiki/Internet_media_type}{MIME type}  & yes\\    
+    \bottomrule
+  \end{edtable}
 \end{table}
 
 \subsection{Population}
@@ -1627,7 +1698,7 @@ PostSynapticResponse \\
 %
 %Plasticity components handle the synaptic weight and its possible
 %modification. Note that synaptic weight is a dimensionless quantity and
-%as such always have units of the predefined empty {\tt Dimension}. This
+%as such always have units of the predefined empty \UnitDimension. This
 %is done to allow same plasticity rules to operate on
 %different types of postsynaptic responses. Synaptic weight defined in the
 %plasticity component determines only the magnitude of the response, the
@@ -1886,7 +1957,7 @@ Parameters.
 causes this transition to occur)
 \item \StateAssignment {[}0+{]} (The state assignments that should occur when
 this transition is triggered)
-\item {\tt EventOut} {[}0+{]} (The events that should be sent when this
+\item \EventOut {[}0+{]} (The events that should be sent when this
 transition is triggered)
 \end{itemize}
 \end{itemize}
@@ -1915,7 +1986,7 @@ transition
 \begin{itemize}
 \item \StateAssignment {[}0+{]} (The state assignments that should occur when
 this transition is triggered)
-\item {\tt EventOut} {[}0+{]} (The events that should be sent when this
+\item \EventOut {[}0+{]} (The events that should be sent when this
 transition is triggered)
 \end{itemize}
 \end{itemize}
@@ -2113,8 +2184,8 @@ This tag specifies a list of properties in the interface of the component
 \item Attributes:
 %
 \begin{itemize}
-\item \verb|name| {[}Required{]} Has to match a name of a {\tt Parameter}
-or a {\tt StateVariable} in corresponding Abstraction Layer definition
+\item \verb|name| {[}Required{]} Has to match a name of a \Parameter
+or a \StateVariable in corresponding Abstraction Layer definition
 \end{itemize}
 
 \item Child Elements:
