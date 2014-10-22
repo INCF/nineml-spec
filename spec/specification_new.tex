@@ -526,7 +526,7 @@ dimension (this value can also be defined as dimensionless).
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
     name & \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 identifier} & yes\\
-    dimension & name:UnitDimension & yes\\
+    dimension & name:\UnitDimension & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
@@ -565,7 +565,7 @@ Each \Parameter requires a \textit{dimension} attribute. This attribute specifie
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
     name & \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 identifier} & yes\\
-    dimension & name:UnitDimension & yes\\
+    dimension & name:\UnitDimension & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
@@ -591,7 +591,7 @@ Each \Parameter requires a \textit{dimension} attribute. This attribute specifie
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
     name & \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 identifier} & yes\\
-    dimension & name:UnitDimension & yes\\
+    dimension & name:\UnitDimension & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
@@ -614,7 +614,7 @@ Each \Parameter requires a \textit{dimension} attribute. This attribute specifie
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
     name & \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 identifier} & yes\\
-    dimension & name:UnitDimension & yes\\
+    dimension & name:\UnitDimension & yes\\
     operator & \lq\lq{}+\rq\rq{} | \lq\lq{}*\rq\rq{} & yes \\
     \bottomrule
   \end{edtable}
@@ -798,7 +798,7 @@ these regimes, and the state variables will evolve accordingly.
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
     name & \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 identifier} & yes\\
-    dimension & name:UnitDimension & yes\\
+    dimension & name:\UnitDimension & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
@@ -886,7 +886,7 @@ Each \Regime requires a \textit{name} attribute. This name should be a valid ide
     \toprule
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
-    variable & name:StateVariable & yes\\
+    variable & name:\StateVariable & yes\\
     \midrule
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
@@ -912,7 +912,7 @@ An OnEvent block is activated when the dynamics component receives an event from
     \toprule
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
-    port & name:EventReceivePort | name:EventReducePort & yes\\
+    port & name:\EventReceivePort | name:\EventReducePort & yes\\
     \midrule
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
@@ -1003,7 +1003,7 @@ The trigger block defines the condition on which the \OnCondition block is activ
     \toprule
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
-    to & name:Regime & yes\\
+    to & name:\Regime & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
@@ -1058,7 +1058,7 @@ Each \Transition requires a \textit{to} attribute. This should refer to the name
     \toprule
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
-    variable & name:StateVariable & yes\\
+    variable & name:\StateVariable & yes\\
     \midrule
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
@@ -1082,7 +1082,7 @@ Each \StateAssignment requires a \textit{variable} attribute. This should refer 
     \toprule
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
-    port & name:EventSendPort & yes\\
+    port & name:\EventSendPort & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
@@ -1323,7 +1323,7 @@ Each cell in the source population is connected to the cell in the destination p
     \toprule
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
-    probability & name:Parameter & yes\\
+    probability & name:\Parameter & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
@@ -1344,8 +1344,8 @@ Each \ProbabilisticConnectivity element requires a \textit{probability} attribut
     \toprule
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
-    source-indices & name:Parameter & yes\\
-    target-indices & name:Parameter & yes\\
+    source-indices & name:\Parameter & yes\\
+    target-indices & name:\Parameter & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
@@ -1495,7 +1495,7 @@ If the prototype \Component is in the current file or there is more than one \Co
     \toprule
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
-    name & name:Parameter & yes\\
+    name & name:\Parameter & yes\\
     \midrule
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
@@ -1534,7 +1534,7 @@ element here, partly because then we would need to come up with a different name
     \toprule
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
-    units & name:Units & no\\
+    units & name:\Units & no\\
     \midrule
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
@@ -1871,8 +1871,8 @@ response node (section \ref{secSynapse}).
     \toprule
      \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
-    sender & name:[AnalogSendPort|EventSendPort] & yes\\    
-    receiver & name:[AnalogReceivePort|EventReceivePort|AnalogReducePort|EventReducePort] & yes\\
+    sender & name:[ \AnalogSendPort | \EventSendPort] & yes\\    
+    receiver & name:[ \AnalogReceivePort | \EventReceivePort | \AnalogReducePort | \EventReducePort] & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
@@ -1893,8 +1893,8 @@ Each \FromSource element requires a \textit{receiver} attribute. This should ref
     \toprule
      \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
-    sender & name:[AnalogSendPort|EventSendPort] & yes\\    
-    receiver & name:[AnalogReceivePort|EventReceivePort|AnalogReducePort|EventReducePort] & yes\\
+    sender & name:[ \AnalogSendPort | \EventSendPort] & yes\\    
+    receiver & name:[ \AnalogReceivePort | \EventReceivePort | \AnalogReducePort | \EventReducePort] & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
@@ -1916,8 +1916,8 @@ Each \FromDestination element requires a \textit{receiver} attribute. This shoul
     \toprule
      \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
-    sender & name:[AnalogSendPort|EventSendPort] & yes\\    
-    receiver & name:[AnalogReceivePort|EventReceivePort|AnalogReducePort|EventReducePort] & yes\\
+    sender & name:[ \AnalogSendPort | \EventSendPort] & yes\\    
+    receiver & name:[ \AnalogReceivePort | \EventReceivePort | \AnalogReducePort | \EventReducePort] & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
@@ -1939,8 +1939,8 @@ Each \FromPlasticity element requires a \textit{receiver} attribute. This should
     \toprule
      \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
-    sender & name:[AnalogSendPort|EventSendPort] & yes\\    
-    receiver & name:[AnalogReceivePort|EventReceivePort|AnalogReducePort|EventReducePort] & yes\\
+    sender & name:[ \AnalogSendPort | \EventSendPort] & yes\\    
+    receiver & name:[ \AnalogReceivePort | \EventReceivePort | \AnalogReducePort | \EventReducePort] & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
