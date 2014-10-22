@@ -1699,7 +1699,7 @@ Any valid numeric value, including shorthand scientific notation e.g. 1e-5 ($1\t
 \end{table}
 
 \subsubsection{Index attribute}
-%The \textit{index} attribute specifies the index of the \ValueListRow in the \ValueList. It must be non-negative, unique amongst the set of \ValueListRow{}@index in the list, and the set of indices must be contiguous.
+The \textit{index} attribute specifies the index of the \ValueListRow in the \ValueList. It must be non-negative, unique amongst the set of \ValueListRow{}@index in the list, and the set of indices must be contiguous for a single \ValueList.
 
 \note{This preserves the order non-specific nature of elements in NineML}
 
@@ -2121,7 +2121,7 @@ The name of the User Layer element to be referenced should be included in the bo
 \end{table}
 
 \subsubsection{Index attribute}
-%Each \Item requires a \textit{index} attribute. This attribute specifies the order in which the {\Population}s in the \Set are concatenated and thereby the indices of the cells within the combined \Set. Each \textit{index} must be non-negative, unique amongst the set of \Item{}@index enclosed in the \Concatenate element, and the set of indices must be contiguous.
+Each \Item requires a \textit{index} attribute. This attribute specifies the order in which the {\Population}s in the \Set are concatenated and thereby the indices of the cells within the combined \Set. Each \textit{index} must be non-negative, unique amongst the set of \Item{}@index enclosed in the \Concatenate element, and the set of indices must be contiguous for a single \Concatenate element.
 
 \note{This preserves the order non-specific nature of elements in NineML}
 
