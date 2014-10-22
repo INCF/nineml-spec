@@ -779,7 +779,7 @@ Each \EventReducePort requires a \textit{name} attribute. This name should be a 
 \subsection{Dynamics}
 \label{sec:Dynamics}
 
-\draftnote{Are {\Regime}s required? Could you have a component that simply consists of an \Alias?}
+\draftnote{Are {\Regime}s required? Could you have a component that simply consists of aliases?}
 \begin{table}[H]
   \begin{edtable}{tabular}{llr}
     \toprule
@@ -1655,6 +1655,9 @@ The \textit{units} attribute specifies the units of the quantity and should refe
   \end{edtable}
 \end{table}
 
+\subsubsection{Text format}
+Any valid numeric value, including shorthand scientific notation e.g. 1e-5 ($1\times10^{-5}$).
+
 \subsection{ValueList}
 \label{sec:ValueList}
 
@@ -1697,7 +1700,7 @@ The \textit{index} attribute specifies the index of the \ValueListRow in the \Va
 \note{This preserves the order non-specific nature of elements in NineML}
 
 \subsubsection{Text format}
-A numeric value.
+Any valid numeric value, including shorthand scientific notation e.g. 1e-5 ($1\times10^{-5}$).
 
 \subsection{ExternalValueList}
 \label{sec:ExternalValueList}
@@ -1828,8 +1831,6 @@ Each \Projection requires a \textit{name} attribute. This name should be a valid
 \subsection{Source}
 \label{sec:Source}
 
-\draftnote{For consistency with the \Cell element, part of me wants to enforce the use of the \Reference element without a url attribute to refer to populations in the same file, although another part finds this unnecessarily verbose (theoretically then the population could be defined within the projection although I don\rq{}t know when you would want to do this in practice). }
-
 \begin{table}[H]
   \begin{edtable}{tabular}{llr}
     \toprule
@@ -1837,20 +1838,13 @@ Each \Projection requires a \textit{name} attribute. This name should be a valid
     \toprule
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
-    \Reference->\Population | \Reference->\Set & singleton & no \\
+    \Reference->\Population | \Reference->\Set & singleton & yes \\
     \FromDestination & set & no \\
     \FromPlasticity & set & no \\
     \FromResponse & set & no \\
-    \midrule
-    \em{Text format} & \; & \em{Required} \\
-    \midrule \relax
-    [\Population| \Set{}]@name & \; & if \Reference is not provided\\
     \bottomrule
   \end{edtable}
 \end{table}
-
-\subsubsection{Text format}
-If the source \Population is in the same file as the \Projection element it should be referenced by name in the text of the \Source element (otherwise a \Reference element should be used).
 
 \subsection{Destination}
 \label{sec:Destination}
@@ -1864,20 +1858,13 @@ If the source \Population is in the same file as the \Projection element it shou
     \toprule
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
-    \Reference->\Population | \Reference->\Set & singleton & no \\
+    \Reference->\Population | \Reference->\Set & singleton & yes \\
     \FromSource & set & no \\
     \FromPlasticity & set & no \\
     \FromResponse & set & no \\    
-    \midrule
-    \em{Text format} & \; & \em{Required} \\
-    \midrule \relax
-    [\Population| \Set{}]@name & \; & if \Reference is not provided\\
     \bottomrule
   \end{edtable}
 \end{table}
-
-\subsubsection{Text format}
-If the destination \Population is in the same file as the \Projection element it should be referenced by name in the text of the \Destination element (otherwise a \Reference element should be used).
 
 \subsection{Response}
 \label{sec:Response}
@@ -2062,11 +2049,11 @@ Each \FromResponse element requires a \textit{receiver} attribute. This should r
     \toprule
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
-    url &  \href{http://en.wikipedia.org/wiki/Uniform_resource_locator}{URL}  & yes\\
+    url &  \href{http://en.wikipedia.org/wiki/Uniform_resource_locator}{URL}  & no\\
     \midrule
     \em{Text format} & \; & \em{Required} \\
     \midrule
-    *@name & \; & no\\
+    *@name & \; & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
@@ -2075,8 +2062,7 @@ Each \FromResponse element requires a \textit{receiver} attribute. This should r
 The \textit{url} attribute specifies a \href{http://en.wikipedia.org/wiki/Uniform_resource_locator}{Uniform Resource Locator (URL)} for the file which contains the User Layer element to be referenced.
 
 \subsubsection{Text format}
-\draftnote{Again, I am not sure it is a good idea to make this optional (see note for \Definition)}
-If there is more than one named User Layer element in the file referenced by the \textit{url} then the name of the element must be provided in the body of the text.
+The name of the User Layer element to be referenced should be included in the body of the \Reference element.
 
 \newpage
 \subsection{Set}
@@ -2750,9 +2736,9 @@ Figure~\ref{ParallelisingTransitions}.
 
 \section{Acknowledgments}
 
-%This work was made possible by grant R01 GM070923 from the NIH National
-%Institute of General Medical Sciences (USA) for continued development and
-%support of SBML and related software infrastructure.
+This work was made possible by grant R01 GM070923 from the NIH National
+Institute of General Medical Sciences (USA) for continued development and
+support of SBML and related software infrastructure.
 
 
 \clearpage
