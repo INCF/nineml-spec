@@ -1,4 +1,7 @@
-%% Filename:     sbmlpkgspec.cls                         -*- mode: latex -*-
+%% Filename:     ninemlspec.cls                         -*- mode: latex -*-
+%%
+%% Slightly modified from:
+%%
 %% Description:  LaTeX style file for SBML Level 3 package specifications
 %% Author(s):    Michael Hucka <mhucka@caltech.edu>
 %% Organization: California Institute of Technology
