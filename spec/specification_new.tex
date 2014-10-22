@@ -397,6 +397,56 @@ as rich types with a numerical factor and exponents for each of the
 base dimensions. They are independent of the particular choice of
 units by which they are assigned.
 
+
+\subsection{UnitDimension}
+\label{sec:UnitDimension}
+
+\draftnote{This the LEMS format (which is very similar to a format I found in an old version of the NineML spec), I personally would favour more descriptive attributes (and changing Dimension to UnitDimension)
+ but it is probably not worth changing it, especially as these will almost always be referenced from a catalog file, thoughts?}
+\begin{table}[H]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{UnitDimension Structure}}}\\
+    \toprule
+    \em{Attribute name} & \em{Type/Format} & \em{Required} \\
+    \midrule
+    name & \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 identifier} & yes\\
+    m & \primtype{integer} & no\\
+    l & \primtype{integer} & no\\
+    t & \primtype{integer} & no\\
+    i & \primtype{integer} & no\\
+    n & \primtype{integer} & no\\
+    k & \primtype{integer} & no\\
+    ? & \primtype{integer} & no\\
+    \bottomrule
+  \end{edtable}
+\end{table}
+
+\subsubsection{Name attribute}
+Each \UnitDimension requires a \textit{name} attribute. This name should be a valid identifier in the \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 standard} and uniquely identify the {\UnitDimension} in current the scope.
+
+\subsubsection{m attribute}
+The \textit{m} attribute specifies the power of the mass dimension in the \UnitDimension. If omitted it the power is one.
+
+\subsubsection{l attribute}
+The \textit{l} attribute specifies the power of the length dimension in the \UnitDimension. If omitted it the power is one.
+
+\subsubsection{t attribute}
+The \textit{t} attribute specifies the power of the time dimension in the \UnitDimension. If omitted it the power is one.
+
+\subsubsection{i attribute}
+The \textit{i} attribute specifies the power of the current dimension in the \UnitDimension. If omitted it the power is one.
+
+\subsubsection{n attribute}
+The \textit{n} attribute specifies the power of the amount-of-substance dimension in the \UnitDimension. If omitted it the power is one.
+
+\subsubsection{k attribute}
+The \textit{k} attribute specifies the power of the temperature dimension in the \UnitDimension. If omitted it the power is one.
+
+\subsubsection{? attribute}
+\draftnote{I can\rq{}t find the luminous intensity abbreviation}
+The \textit{?} attribute specifies the power of the luminous-intensity dimension in the \UnitDimension. If omitted it the power is one.
+
 \subsection{Units}
 \label{sec:Units}
 
@@ -407,26 +457,21 @@ units by which they are assigned.
     \toprule
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
-    name & \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 identifier} & yes\\
-    dimension & name:\UnitDimension & yes\\
+    symbol & \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 identifier} & yes\\
+    dimension & \UnitDimension{}@name & yes\\
+    powTen & \primtype{integer} & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
 
-\subsection{UnitDimension}
-\label{sec:UnitDimension}
+\subsubsection{Symbol attribute}
+Each \Units requires a \textit{symbol} attribute. This name should be a valid identifier in the \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 standard} and uniquely identify the {\Units} in current the scope.
 
-\begin{table}[H]
-  \begin{edtable}{tabular}{llr}
-    \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{UnitDimension Structure}}}\\
-    \toprule
-    \em{Attribute name} & \em{Type/Format} & \em{Required} \\
-    \midrule
-    name & \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 identifier} & yes\\
-    \bottomrule
-  \end{edtable}
-\end{table}
+\subsubsection{Dimension attribute}
+Each \Units requires a \textit{dimension} attribute. This attribute specifies the dimension of the units and should refer to the name of a \UnitDimension element in the global scope.
+
+\subsubsection{PowTen attribute}
+Each \Units requires a \textit{powTen} attribute. This attribute specifies the relative scale of the units compared to the equivalent SI units in powers of ten.
 
 \section{Abstraction Layer}
 \label{AbstractionL}
@@ -526,7 +571,7 @@ dimension (this value can also be defined as dimensionless).
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
     name & \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 identifier} & yes\\
-    dimension & name:\UnitDimension & yes\\
+    dimension & \UnitDimension{}@name & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
@@ -565,7 +610,7 @@ Each \Parameter requires a \textit{dimension} attribute. This attribute specifie
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
     name & \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 identifier} & yes\\
-    dimension & name:\UnitDimension & yes\\
+    dimension & \UnitDimension{}@name & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
@@ -591,7 +636,7 @@ Each \Parameter requires a \textit{dimension} attribute. This attribute specifie
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
     name & \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 identifier} & yes\\
-    dimension & name:\UnitDimension & yes\\
+    dimension & \UnitDimension{}@name & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
@@ -614,7 +659,7 @@ Each \Parameter requires a \textit{dimension} attribute. This attribute specifie
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
     name & \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 identifier} & yes\\
-    dimension & name:\UnitDimension & yes\\
+    dimension & \UnitDimension{}@name & yes\\
     operator & \lq\lq{}+\rq\rq{} | \lq\lq{}*\rq\rq{} & yes \\
     \bottomrule
   \end{edtable}
@@ -798,7 +843,7 @@ these regimes, and the state variables will evolve accordingly.
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
     name & \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 identifier} & yes\\
-    dimension & name:\UnitDimension & yes\\
+    dimension & \UnitDimension{}@name & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
@@ -886,7 +931,7 @@ Each \Regime requires a \textit{name} attribute. This name should be a valid ide
     \toprule
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
-    variable & name:\StateVariable & yes\\
+    variable & \StateVariable{}@name & yes\\
     \midrule
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
@@ -912,7 +957,7 @@ An OnEvent block is activated when the dynamics component receives an event from
     \toprule
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
-    port & name:\EventReceivePort | name:\EventReducePort & yes\\
+    port & [\EventReceivePort | \EventReducePort{}]@name & yes\\
     \midrule
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
@@ -1003,7 +1048,7 @@ The trigger block defines the condition on which the \OnCondition block is activ
     \toprule
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
-    to & name:\Regime & yes\\
+    to & \Regime{}@name & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
@@ -1058,7 +1103,7 @@ Each \Transition requires a \textit{to} attribute. This should refer to the name
     \toprule
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
-    variable & name:\StateVariable & yes\\
+    variable & \StateVariable{}@name & yes\\
     \midrule
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
@@ -1082,7 +1127,7 @@ Each \StateAssignment requires a \textit{variable} attribute. This should refer 
     \toprule
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
-    port & name:\EventSendPort & yes\\
+    port & \EventSendPort{}@name & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
@@ -1160,7 +1205,7 @@ Each \Alias requires a \textit{name} attribute. This name should be a valid iden
     \toprule
     \em{Description of text} & \em{Required} \\
     \midrule
-    maths-expression & yes\\
+    Inline mathematical expression & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
@@ -1323,7 +1368,7 @@ Each cell in the source population is connected to the cell in the destination p
     \toprule
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
-    probability & name:\Parameter & yes\\
+    probability & \Parameter{}@name & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
@@ -1344,8 +1389,8 @@ Each \ProbabilisticConnectivity element requires a \textit{probability} attribut
     \toprule
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
-    source-indices & name:\Parameter & yes\\
-    target-indices & name:\Parameter & yes\\
+    source-indices & \Parameter{}@name & yes\\
+    target-indices & \Parameter{}@name & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
@@ -1435,7 +1480,7 @@ Each \Component requires a \textit{name} attribute. This name should be a valid 
     \midrule
     \em{Text format} & \; & \em{Required} \\
     \midrule
-    name:ComponentClass & \; & no \\ 
+    \ComponentClass{}@name & \; & no \\ 
     \bottomrule
   \end{edtable}
 \end{table}
@@ -1467,7 +1512,7 @@ If the referenced \ComponentClass is in the current file or there is more than o
     \midrule
     \em{Text format} & \; & \em{Required} \\
     \midrule
-    name:Component & \; & no \\ 
+    \Component{}@name & \; & no \\ 
     \bottomrule
   \end{edtable}
 \end{table}
@@ -1495,7 +1540,7 @@ If the prototype \Component is in the current file or there is more than one \Co
     \toprule
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
-    name & name:\Parameter & yes\\
+    name & \Parameter{}@name & yes\\
     \midrule
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
@@ -1534,7 +1579,7 @@ element here, partly because then we would need to come up with a different name
     \toprule
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
-    units & name:\Units & no\\
+    units & \Units{}@symbol & no\\
     \midrule
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
@@ -1578,7 +1623,7 @@ The \textit{units} attribute specifies the units of the quantity and should refe
     \toprule
     \em{Text format} & \; & \em{Required} \\
     \midrule
-    numeric value & \; & yes \\ 
+    Numeric value & \; & yes \\ 
     \bottomrule
   \end{edtable}
 \end{table}
@@ -1614,7 +1659,7 @@ The \textit{units} attribute specifies the units of the quantity and should refe
     \midrule
     \em{Text format} & \; & \em{Required} \\
     \midrule
-    numeric value & \; & yes\\
+    Numeric value & \; & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
@@ -1641,7 +1686,7 @@ A numeric value.
     \midrule
     url & \href{http://en.wikipedia.org/wiki/Uniform_resource_locator}{URL} & yes\\
     mimetype & \href{http://en.wikipedia.org/wiki/Internet_media_type}{MIME type}  & yes\\
-    column-name & data column name in external file & no\\    
+    column-name & Data column name in external file & no\\    
     \bottomrule
   \end{edtable}
 \end{table}
@@ -1871,8 +1916,8 @@ response node (section \ref{secSynapse}).
     \toprule
      \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
-    sender & name:[ \AnalogSendPort | \EventSendPort] & yes\\    
-    receiver & name:[ \AnalogReceivePort | \EventReceivePort | \AnalogReducePort | \EventReducePort] & yes\\
+    sender & [\AnalogSendPort | \EventSendPort{}]@name & yes\\    
+    receiver & [\AnalogReceivePort | \EventReceivePort | \AnalogReducePort | \EventReducePort{}]@name & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
@@ -1893,8 +1938,8 @@ Each \FromSource element requires a \textit{receiver} attribute. This should ref
     \toprule
      \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
-    sender & name:[ \AnalogSendPort | \EventSendPort] & yes\\    
-    receiver & name:[ \AnalogReceivePort | \EventReceivePort | \AnalogReducePort | \EventReducePort] & yes\\
+    sender & [\AnalogSendPort | \EventSendPort{}]@name & yes\\    
+    receiver & [\AnalogReceivePort | \EventReceivePort | \AnalogReducePort | \EventReducePort{}]@name & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
@@ -1916,8 +1961,8 @@ Each \FromDestination element requires a \textit{receiver} attribute. This shoul
     \toprule
      \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
-    sender & name:[ \AnalogSendPort | \EventSendPort] & yes\\    
-    receiver & name:[ \AnalogReceivePort | \EventReceivePort | \AnalogReducePort | \EventReducePort] & yes\\
+    sender & [\AnalogSendPort | \EventSendPort{}]@name & yes\\    
+    receiver & [\AnalogReceivePort | \EventReceivePort | \AnalogReducePort | \EventReducePort{}]@name & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
@@ -1939,8 +1984,8 @@ Each \FromPlasticity element requires a \textit{receiver} attribute. This should
     \toprule
      \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
-    sender & name:[ \AnalogSendPort | \EventSendPort] & yes\\    
-    receiver & name:[ \AnalogReceivePort | \EventReceivePort | \AnalogReducePort | \EventReducePort] & yes\\
+    sender & [\AnalogSendPort | \EventSendPort{}]@name & yes\\    
+    receiver & [\AnalogReceivePort | \EventReceivePort | \AnalogReducePort | \EventReducePort{}]@name & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
@@ -1995,7 +2040,7 @@ Each \FromResponse element requires a \textit{receiver} attribute. This should r
     \midrule
     \em{Text format} & \; & \em{Required} \\
     \midrule
-    name:* & \; & no\\
+    *@name & \; & no\\
     \bottomrule
   \end{edtable}
 \end{table}
