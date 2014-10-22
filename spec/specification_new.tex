@@ -20,8 +20,8 @@
 
 % Define Abstraction Layer element references
 
-\newcommand{\Units}{\defRef{\textbf{\class{Units}}\xspace}{sec:Units}}
-\newcommand{\UnitDimension}{\defRef{\textbf{\class{UnitDimension}}\xspace}{sec:UnitDimension}}
+\newcommand{\Unit}{\defRef{\textbf{\class{Unit}}\xspace}{sec:Unit}}
+\newcommand{\Dimension}{\defRef{\textbf{\class{Dimension}}\xspace}{sec:Dimension}}
 \newcommand{\ComponentClass}{\defRef{\textbf{\class{ComponentClass}}\xspace}{sec:ComponentClass}}
 \newcommand{\Dynamics}{\defRef{\defRef{\textbf{\class{Dynamics}}\xspace}{sec:Dynamics}}{sec:Dynamics}}
 \newcommand{\RandomDistribution}{\defRef{\textbf{\class{RandomDistribution}}\xspace}{sec:RandomDistribution}}
@@ -79,8 +79,9 @@
 \newcommand{\FromDestination}{\defRef{\textbf{\class{FromDestination}}\xspace}{sec:FromDestination}}
 \newcommand{\FromPlasticity}{\defRef{\textbf{\class{FromPlasticity}}\xspace}{sec:FromPlasticity}}
 \newcommand{\FromResponse}{\defRef{\textbf{\class{FromResponse}}\xspace}{sec:FromResponse}}
-
-
+\newcommand{\Set}{\defRef{\textbf{\class{Set}}\xspace}{sec:Set}}
+\newcommand{\Concatenate}{\defRef{\textbf{\class{Concatenate}}\xspace}{sec:Concatenate}}
+\newcommand{\Item}{\defRef{\textbf{\class{Item}}\xspace}{sec:Item}}
 
 % Old macros
 
@@ -270,8 +271,9 @@ method.
 At the current stage of development, the following concepts of spiking neuron
 network modeling can be fully or partially described:
 
+\draftnote{what about non-spiking neurons and potentially glial cells?}
 \begin{enumerate}
-\item spiking neurons \textbf{(what about non-spiking neurones??)}
+\item spiking neurons
 \item synapses
 \begin{enumerate}
 \item Post-synaptic membrane current mechanisms
@@ -365,7 +367,7 @@ This document presents the current NineML specifications and consists of:
   \end{edtable}
 \end{table}
 
-\section{Units and Dimensions in NineML}
+\section{Unit and Dimensions in NineML}
 \label{sec:dimensions}
 
 \noindent
@@ -385,7 +387,7 @@ which has the same dimensionality but a different multiplier. For example,
 typical units for a quantity with dimensionality voltage include
 milliVolts (multiplier = $10^{-3}$), microVolts (multiplier = $10^{-6}$)
 and Volts (multiplier = 1).  To express a dimensional quantity both a
-numerical factor and a unit are required. Units can be expressed in a NineML
+numerical factor and a unit are required. Unit can be expressed in a NineML
 file with the "unit" element, defined at the User Layer level or imported
 from a specific XML file, describing a set of units.
 
@@ -398,15 +400,14 @@ base dimensions. They are independent of the particular choice of
 units by which they are assigned.
 
 
-\subsection{UnitDimension}
-\label{sec:UnitDimension}
+\subsection{Dimension}
+\label{sec:Dimension}
 
-\draftnote{This the LEMS format (which is very similar to a format I found in an old version of the NineML spec), I personally would favour more descriptive attributes (and changing Dimension to UnitDimension)
- but it is probably not worth changing it, especially as these will almost always be referenced from a catalog file, thoughts?}
+\draftnote{This the LEMS format (which is very similar to a format I found in an old version of the NineML spec). I personally would favour more descriptive attributes and changing Dimension to UnitDimension but I think this format should be fine}
 \begin{table}[H]
   \begin{edtable}{tabular}{llr}
     \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{UnitDimension Structure}}}\\
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Dimension Structure}}}\\
     \toprule
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
@@ -423,55 +424,55 @@ units by which they are assigned.
 \end{table}
 
 \subsubsection{Name attribute}
-Each \UnitDimension requires a \textit{name} attribute. This name should be a valid identifier in the \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 standard} and uniquely identify the {\UnitDimension} in current the scope.
+Each \Dimension requires a \textit{name} attribute. This name should be a valid identifier in the \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 standard} and uniquely identify the {\Dimension} in current the scope.
 
 \subsubsection{m attribute}
-The \textit{m} attribute specifies the power of the mass dimension in the \UnitDimension. If omitted it the power is one.
+The \textit{m} attribute specifies the power of the mass dimension in the \Dimension. If omitted it the power is one.
 
 \subsubsection{l attribute}
-The \textit{l} attribute specifies the power of the length dimension in the \UnitDimension. If omitted it the power is one.
+The \textit{l} attribute specifies the power of the length dimension in the \Dimension. If omitted it the power is one.
 
 \subsubsection{t attribute}
-The \textit{t} attribute specifies the power of the time dimension in the \UnitDimension. If omitted it the power is one.
+The \textit{t} attribute specifies the power of the time dimension in the \Dimension. If omitted it the power is one.
 
 \subsubsection{i attribute}
-The \textit{i} attribute specifies the power of the current dimension in the \UnitDimension. If omitted it the power is one.
+The \textit{i} attribute specifies the power of the current dimension in the \Dimension. If omitted it the power is one.
 
 \subsubsection{n attribute}
-The \textit{n} attribute specifies the power of the amount-of-substance dimension in the \UnitDimension. If omitted it the power is one.
+The \textit{n} attribute specifies the power of the amount-of-substance dimension in the \Dimension. If omitted it the power is one.
 
 \subsubsection{k attribute}
-The \textit{k} attribute specifies the power of the temperature dimension in the \UnitDimension. If omitted it the power is one.
+The \textit{k} attribute specifies the power of the temperature dimension in the \Dimension. If omitted it the power is one.
 
 \subsubsection{? attribute}
-\draftnote{I can\rq{}t find the luminous intensity abbreviation}
-The \textit{?} attribute specifies the power of the luminous-intensity dimension in the \UnitDimension. If omitted it the power is one.
+\draftnote{I can\rq{}t find the luminous intensity abbreviation in the NeuroML specs}
+The \textit{?} attribute specifies the power of the luminous-intensity dimension in the \Dimension. If omitted it the power is one.
 
-\subsection{Units}
-\label{sec:Units}
+\subsection{Unit}
+\label{sec:Unit}
 
 \begin{table}[H]
   \begin{edtable}{tabular}{llr}
     \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Units Structure}}}\\
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Unit Structure}}}\\
     \toprule
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
     symbol & \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 identifier} & yes\\
-    dimension & \UnitDimension{}@name & yes\\
+    dimension & \Dimension{}@name & yes\\
     powTen & \primtype{integer} & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
 
 \subsubsection{Symbol attribute}
-Each \Units requires a \textit{symbol} attribute. This name should be a valid identifier in the \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 standard} and uniquely identify the {\Units} in current the scope.
+Each \Unit requires a \textit{symbol} attribute. This name should be a valid identifier in the \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 standard} and uniquely identify the {\Unit} in current the scope.
 
 \subsubsection{Dimension attribute}
-Each \Units requires a \textit{dimension} attribute. This attribute specifies the dimension of the units and should refer to the name of a \UnitDimension element in the global scope.
+Each \Unit requires a \textit{dimension} attribute. This attribute specifies the dimension of the units and should refer to the name of a \Dimension element in the global scope.
 
 \subsubsection{PowTen attribute}
-Each \Units requires a \textit{powTen} attribute. This attribute specifies the relative scale of the units compared to the equivalent SI units in powers of ten.
+Each \Unit requires a \textit{powTen} attribute. This attribute specifies the relative scale of the units compared to the equivalent SI units in powers of ten.
 
 \section{Abstraction Layer}
 \label{AbstractionL}
@@ -571,7 +572,7 @@ dimension (this value can also be defined as dimensionless).
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
     name & \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 identifier} & yes\\
-    dimension & \UnitDimension{}@name & yes\\
+    dimension & \Dimension{}@name & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
@@ -594,7 +595,7 @@ start of the simulation, and remain constant throughout.
 Each \Parameter requires a \textit{name} attribute. This name should be a valid identifier in the \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 standard} and uniquely identify the {\Parameter} from all other elements in the \ComponentClass.
 
 \subsubsection{Dimension attribute}
-Each \Parameter requires a \textit{dimension} attribute. This attribute specifies the dimension of the units of the quantity that is expected to be passed to the \Parameter and should refer to the name of a \UnitDimension element in the global scope.
+Each \Parameter requires a \textit{dimension} attribute. This attribute specifies the dimension of the units of the quantity that is expected to be passed to the \Parameter and should refer to the name of a \Dimension element in the global scope.
 
 
 \subsection{AnalogSendPort}
@@ -610,7 +611,7 @@ Each \Parameter requires a \textit{dimension} attribute. This attribute specifie
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
     name & \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 identifier} & yes\\
-    dimension & \UnitDimension{}@name & yes\\
+    dimension & \Dimension{}@name & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
@@ -620,7 +621,7 @@ Each \AnalogSendPort requires a \textit{name} attribute. This name should be a v
 
 
 \subsubsection{Dimension attribute}
-Each \Parameter requires a \textit{dimension} attribute. This attribute specifies the dimension of the units of the quantity that is expected to be passed to the \Parameter and should refer to the name of a \UnitDimension element in the global scope.
+Each \Parameter requires a \textit{dimension} attribute. This attribute specifies the dimension of the units of the quantity that is expected to be passed to the \Parameter and should refer to the name of a \Dimension element in the global scope.
 
 
 \subsection{AnalogReceivePort}
@@ -636,7 +637,7 @@ Each \Parameter requires a \textit{dimension} attribute. This attribute specifie
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
     name & \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 identifier} & yes\\
-    dimension & \UnitDimension{}@name & yes\\
+    dimension & \Dimension{}@name & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
@@ -645,7 +646,7 @@ Each \Parameter requires a \textit{dimension} attribute. This attribute specifie
 Each \AnalogReceivePort requires a \textit{name} attribute. This name should be a valid identifier in the \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 standard} and uniquely identify the {\AnalogReceivePort} from all other elements in the \ComponentClass.
 
 \subsubsection{Dimension attribute}
-Each \Parameter requires a \textit{dimension} attribute. This attribute specifies the dimension of the units of the quantity that is expected to be passed to the \Parameter and should refer to the name of a \UnitDimension element in the global scope.
+Each \Parameter requires a \textit{dimension} attribute. This attribute specifies the dimension of the units of the quantity that is expected to be passed to the \Parameter and should refer to the name of a \Dimension element in the global scope.
 
 
 \subsection{AnalogReducePort}
@@ -659,8 +660,8 @@ Each \Parameter requires a \textit{dimension} attribute. This attribute specifie
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
     name & \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 identifier} & yes\\
-    dimension & \UnitDimension{}@name & yes\\
-    operator & \lq\lq{}+\rq\rq{} | \lq\lq{}*\rq\rq{} & yes \\
+    dimension & \Dimension{}@name & yes\\
+    operator & \textit{+} | \textit{*} & yes \\
     \bottomrule
   \end{edtable}
 \end{table}
@@ -688,7 +689,7 @@ to change our original \ComponentClass definitions.
 Each \AnalogReducePort requires a \textit{name} attribute. This name should be a valid identifier in the \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 standard} and uniquely identify the {\AnalogReducePort} from all other elements in the \ComponentClass.
 
 \subsubsection{Dimension attribute}
-Each \AnalogReducePort requires a \textit{dimension} attribute. This attribute specifies the dimension of the units of the quantity that is expected to be passed to the \AnalogReducePort and should refer to the name of a \UnitDimension element in the global scope.
+Each \AnalogReducePort requires a \textit{dimension} attribute. This attribute specifies the dimension of the units of the quantity that is expected to be passed to the \AnalogReducePort and should refer to the name of a \Dimension element in the global scope.
 
 \subsubsection{Operator attribute}
 Each \AnalogReducePort requires a \textit{operator} attribute. The operator \lq\lq{}reduces\rq\rq{} the connected inputs to a single value at each time point. For example the following port,
@@ -740,7 +741,7 @@ Each \EventReceivePort requires a \textit{name} attribute. This name should be a
 
 \subsection{EventReducePort}
 \label{sec:EventReducePort}
-%
+\draftnote{Is there a point of having an \EventReducePort, could multiple send ports just be connected to any \EventReceivePort?}
 \begin{table}[H]
   \begin{edtable}{tabular}{llr}
     \toprule
@@ -774,10 +775,11 @@ flow in a post-synaptic neuron.
 \subsubsection{Name attribute}
 Each \EventReducePort requires a \textit{name} attribute. This name should be a valid identifier in the \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 standard} and uniquely identify the {\EventReducePort} from all other elements in the \ComponentClass.
 
-
+\newpage
 \subsection{Dynamics}
 \label{sec:Dynamics}
 
+\draftnote{Are {\Regime}s required? Could you have a component that simply consists of an \Alias?}
 \begin{table}[H]
   \begin{edtable}{tabular}{llr}
     \toprule
@@ -791,6 +793,7 @@ Each \EventReducePort requires a \textit{name} attribute. This name should be a 
     \bottomrule
   \end{edtable}
 \end{table}
+
 
 The \Dynamics block represents the \emph{internal} mechanisms
 governing the behaviour of the component.  For most of the models
@@ -843,7 +846,7 @@ these regimes, and the state variables will evolve accordingly.
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
     name & \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 identifier} & yes\\
-    dimension & \UnitDimension{}@name & yes\\
+    dimension & \Dimension{}@name & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
@@ -868,7 +871,7 @@ $X = X + 1$.
 Each \StateVariable requires a \textit{name} attribute. This name should be a valid identifier in the \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 standard} and uniquely identify the {\StateVariable} from all other elements in the \ComponentClass.
 
 \subsubsection{Dimension attribute}
-Each \StateVariable requires a \textit{dimension} attribute. This attribute specifies the dimension of the units of the quantities that \StateVariable is expected to be initialised and updated with and should refer to the name of a \UnitDimension element in the global scope.
+Each \StateVariable requires a \textit{dimension} attribute. This attribute specifies the dimension of the units of the quantities that \StateVariable is expected to be initialised and updated with and should refer to the name of a \Dimension element in the global scope.
 
 
 \subsection{Regime}
@@ -1293,41 +1296,10 @@ although their use is only allowed within \StateAssignment blocks:
 \item \verb|random.exponential(L)|
 \end{itemize}
 
-
-\subsection{RandomDistribution}
-\label{sec:RandomDistribution}
-
-\begin{table}[H]
-  \begin{edtable}{tabular}{llr}
-    \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{ConnectionRule Structure}}}\\
-    \toprule
-    \em{Element type} & \em{Multiplicity} & \em{Required} \\
-    \midrule
-    \BuiltInDistribution & singleton & yes\\
-    \bottomrule
-  \end{edtable}
-\end{table}
-
-\subsection{BuiltInDistribution}
-\label{sec:BuiltInDistribution}
-
-
-\begin{table}[H]
-  \begin{edtable}{tabular}{llr}
-    \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{ProbabilisticConnectivity Structure}}}\\
-    \toprule
-    \em{Attribute name} & \em{Type/Format} & \em{Required} \\
-    \midrule
-    uncertml &  \href{http://en.wikipedia.org/wiki/Uniform_resource_locator}{URL}  & yes\\
-    \bottomrule
-  \end{edtable}
-\end{table}
-
-
 \subsection{ConnectionRule}
 \label{sec:ConnectionRule}
+
+\draftnote{writing this up I thought it was a bit weird that the parameters in the component interface were \lq\lq{}magically\rq\rq{} connected up with the right parameters in the built-in connection rule. Therefore I have introduced a new element for each built-in type, which have attributes that will explicitly link to the parameter names. Since these will only be defined once I didn\rq{}t see the harm in this.}
 
 \begin{table}[H]
   \begin{edtable}{tabular}{llr}
@@ -1360,6 +1332,8 @@ Each cell in the source population is connected to the cell in the destination p
 
 \subsection{ProbabilisticConnectivity}
 \label{sec:ProbabilisticConnectivity}
+
+\draftnote{Looking forward to version 2 I was thinking that this connectivity rule would make a nice target for many \lq\lq{}extended\rq\rq{} connection rule schemes. I don\rq{}t quite like the format of the value list I have come up with though, so if you would prefer to take it out and introduce something else in Version 2 that is okay.}
 
 \begin{table}[H]
   \begin{edtable}{tabular}{llr}
@@ -1404,6 +1378,59 @@ Each \ExplicitConnectionList element requires a \textit{source-indices} attribut
 \subsubsection{Target-indices attribute}
 
 Each \ExplicitConnectionList element requires a \textit{target-indices} attribute. This attribute should refer to a name of a dimensionless \Parameter in the enclosing \ComponentClass. The properties supplied to this parameter should be a \ValueList or \ExternalValueList drawn from the set $\{1,\ldots,N\}$ where $N$ is the size of the source population and be the same length as the property supplied to the \textit{source-indices} parameter.
+
+
+\subsection{RandomDistribution}
+\label{sec:RandomDistribution}
+
+\begin{table}[H]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{ConnectionRule Structure}}}\\
+    \toprule
+    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \midrule
+    *Distribution & singleton & yes\\
+    \bottomrule
+  \end{edtable}
+\end{table}
+
+
+\subsection{NormalDistribution}
+\label{sec:NormalDistribution}
+
+\draftnote{I thought that we should probably be specific for the built-in random distributions that are required in 9ML implementations. Going through \href{http://www.uncertml.org/}{http://www.uncertml.org/} I have picked out the ones that I suspect will be most useful to start off with. Are there any others you think I should include (or just all of them)?}
+
+\subsection{LogNormalDistribution}
+\label{sec:LogNormalDistribution}
+
+\subsection{GammaDistribution}
+\label{sec:GammaDistribution}
+
+\subsection{InverseGammaDistribution}
+\label{sec:InverseGammaDistribution}
+
+\subsection{PoissonDistribution}
+\label{sec:PoissonDistribution}
+
+\subsection{InverseGammaDistribution}
+\label{sec:InverseGammaDistribution}
+
+\subsection{CauchyDistribution}
+\label{sec:CauchyDistribution}
+
+\subsection{ExponentialDistribution}
+\label{sec:ExponentialDistribution}
+
+\subsection{LaplaceDistribution}
+\label{sec:LaplaceDistribution}
+
+\subsection{BetaDistribution}
+\label{sec:BetaDistribution}
+
+\subsection{UniformDistribution}
+\label{sec:UniformDistribution}
+
 
 \newpage
 
@@ -1567,9 +1594,9 @@ Each \Property requires a \textit{name} attribute. This should refer to the name
 \label{sec:Quantity}
 
 Quantity is a compound data type object that encapsulates a numerical value
-and a unit of measurements. Unit has to be of one of the \Units type.
+and a unit of measurements. Unit has to be of one of the \Unit type.
 Any numeric quantity in the language (except counters) has to be of this type,
-dimensionless quantities shall use predefined empty \Units.
+dimensionless quantities shall use predefined empty \Unit.
 \draftnote{I have moved the \Component->\RandomDistribution outside of the a \lq\lq{}RandomDistribution\rq\rq{}
 element here, partly because then we would need to come up with a different name for it, and partly as it doesn\rq{}t seem necessary}
 \begin{table}[H]
@@ -1579,7 +1606,7 @@ element here, partly because then we would need to come up with a different name
     \toprule
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
-    units & \Units{}@symbol & no\\
+    units & \Unit{}@symbol & no\\
     \midrule
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
@@ -1608,8 +1635,8 @@ function dependent on some other quantities. These can be defined
 through the type Functionby including inline Abstraction Layer
 definitions or MathML.
 
-\subsubsection{Units attribute}
-The \textit{units} attribute specifies the units of the quantity and should refer to the name of a \Units element in the global scope. If it is omitted then the quantity is considered to be dimensionless.
+\subsubsection{Unit attribute}
+The \textit{units} attribute specifies the units of the quantity and should refer to the name of a \Unit element in the global scope. If it is omitted then the quantity is considered to be dimensionless.
 
 
 \subsection{HomogeneousValue}
@@ -1667,7 +1694,7 @@ The \textit{units} attribute specifies the units of the quantity and should refe
 \subsubsection{Index attribute}
 The \textit{index} attribute specifies the index of the \ValueListRow in the \ValueList.
 
-\note{This preserves the non-order specific nature of elements in NineML}
+\note{This preserves the order non-specific nature of elements in NineML}
 
 \subsubsection{Text format}
 A numeric value.
@@ -1699,19 +1726,17 @@ The \textit{mimetype} attribute specifies the data format for the external value
 
 \draftnote{What do you think of these descriptions? I am a bit hazy on the structure of HDF5 could someone clean up my description?}
 \begin{itemize}
-\item \lstinline|application/vnd.nineml.valuelist.text| - an ASCII text file with a single row of white-space separated column names, followed by arbitrarily many white-space separated data rows of numeric values. Each numeric value is associated with the column name of the same column index and therefore the number of items in each row must be the same.
+\item \lstinline|application/vnd.nineml.valuelist.text| - an ASCII text file with a single row of white-space separated column names, followed by arbitrarily many white-space separated data rows of numeric values. Each numeric value is associated with the column name corresponding to the same index the along the row. Therefore, the number of items in each row must be the same.
 \item \lstinline|application/vnd.nineml.valuelist.hdf5| - a \href{http://www.hdfgroup.org/HDF5/}{HDF5} data file containing a single level of named members of \primtype{array->float} or \primtype{array->int} type.
 \end{itemize}
 %\tracingall
 
 \subsubsection{Column-name attribute}
-\draftnote{Again, should we require column names to be provided to avoid problems if second columns are added later?}
+\draftnote{Again, should we require column names to be provided to avoid problems if a second columns is added later?}
 If there is more than one data column in the external file then the \textit{column-name} attribute must be provided to specify which column is referenced.
 
 \subsection{Population}
 \label{sec:Population}
-
-Population elements define sets of neuron components of the same class. The size of the set is specified by the {\tt number} attribute. The properties of the neuron components can be constant across the population, randomly distributed, individually specified or as a function of neuron index.  
 
 \begin{table}[H]
   \begin{edtable}{tabular}{llr}
@@ -1730,6 +1755,7 @@ Population elements define sets of neuron components of the same class. The size
   \end{edtable}
 \end{table}
 
+Population elements define sets of neuron components of the same class. The size of the set is specified by the {\tt number} attribute. The properties of the neuron components can be constant across the population, randomly distributed, individually specified or as a function of neuron index.  
 
 \subsubsection{Name attribute}
 Each \Population requires a \textit{name} attribute. This name should be a valid identifier in the \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 standard} and uniquely identify the {\Population} from all other elements in the global scope.
@@ -1811,14 +1837,14 @@ Each \Projection requires a \textit{name} attribute. This name should be a valid
     \toprule
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
-    \Reference->\Population & singleton & no \\
+    \Reference->\Population | \Reference->\Set & singleton & no \\
     \FromDestination & set & no \\
     \FromPlasticity & set & no \\
     \FromResponse & set & no \\
     \midrule
     \em{Text format} & \; & \em{Required} \\
-    \midrule
-    name:Population & \; & if \Reference is not provided\\
+    \midrule \relax
+    [\Population| \Set{}]@name & \; & if \Reference is not provided\\
     \bottomrule
   \end{edtable}
 \end{table}
@@ -1838,14 +1864,14 @@ If the source \Population is in the same file as the \Projection element it shou
     \toprule
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
-    \Reference->\Population & singleton & no \\
+    \Reference->\Population | \Reference->\Set & singleton & no \\
     \FromSource & set & no \\
     \FromPlasticity & set & no \\
     \FromResponse & set & no \\    
     \midrule
     \em{Text format} & \; & \em{Required} \\
-    \midrule
-    name:Population & \; & if \Reference is not provided\\
+    \midrule \relax
+    [\Population| \Set{}]@name & \; & if \Reference is not provided\\
     \bottomrule
   \end{edtable}
 \end{table}
@@ -1899,7 +1925,7 @@ plasticity nodes are left dimensionless.
 
 Plasticity components handle the synaptic weight and its possible
 modification. Note that synaptic weight is a dimensionless quantity and
-as such always have units of the predefined empty \UnitDimension. This
+as such always have units of the predefined empty \Dimension. This
 is done to allow same plasticity rules to operate on
 different types of postsynaptic responses. Synaptic weight defined in the
 plasticity component determines only the magnitude of the response, the
@@ -2051,6 +2077,63 @@ The \textit{url} attribute specifies a \href{http://en.wikipedia.org/wiki/Unifor
 \subsubsection{Text format}
 \draftnote{Again, I am not sure it is a good idea to make this optional (see note for \Definition)}
 If there is more than one named User Layer element in the file referenced by the \textit{url} then the name of the element must be provided in the body of the text.
+
+\newpage
+\subsection{Set}
+\label{sec:Set}
+
+\draftnote{Set doesn\rq{}t seem to be the right name considering we are trying to conserve cell indices}
+
+\begin{table}[H]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Set Structure}}}\\
+    \toprule
+    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \midrule
+    \Concatenate & singleton & yes \\ 
+    \bottomrule
+  \end{edtable}
+\end{table}
+
+\subsection{Concatenate}
+\label{sec:Concatenate}
+
+\begin{table}[H]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Concatenate Structure}}}\\
+    \toprule
+    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \midrule
+    \Item & set & yes \\ 
+    \bottomrule
+  \end{edtable}
+\end{table}
+
+\subsection{Item}
+\label{sec:Item}
+
+\begin{table}[H]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Item Structure}}}\\
+    \toprule
+    \em{Attribute name} & \em{Type/Format} & \em{Required} \\
+    \midrule
+    index & \primtype{integer} & yes\\
+    \midrule
+    \em{Text format} & \; & \em{Required} \\
+    \midrule \relax
+    [\Population | \Set{}]@name & \; & yes\\
+    \bottomrule
+  \end{edtable}
+\end{table}
+
+\subsubsection{Index attribute}
+Each \Item requires a \textit{index} attribute. This attribute specifies the order in which the {\Population}s in the \Set are concatenated and thereby the indices of the cells within the combined \Set.
+
+\note{This preserves the order non-specific nature of elements in NineML}
 
 \newpage
 \appendix
