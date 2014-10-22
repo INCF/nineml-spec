@@ -353,8 +353,6 @@ This document presents the current NineML specifications and consists of:
 \subsection{Annotation}
 \label{sec:Annotation}
 
-{\Annotation}s elements are provided to add semantic information about the model. They can be included within any NineML element. Likewise, any elements are allowed to be included within {\Annotation}s. However, for adding semantic structure to the model it is recommended to use the \href{http://www.w3.org/RDF/}{Resource Description Framework (RDF)}.
-
 \begin{table}[H]
   \begin{edtable}{tabular}{llr}
     \toprule
@@ -366,6 +364,12 @@ This document presents the current NineML specifications and consists of:
     \bottomrule
   \end{edtable}
 \end{table}
+
+{\Annotation}s elements are provided to add semantic information about the model. They can be included within any NineML element. Likewise, any elements are allowed to be included within {\Annotation}s. In order to be compliant with the NineML specification any tool handling NineML descriptions must preserve all existing annotations, except where a user explicitly edits/deletes them.
+
+\draftnote{Should we make it mandatory to use RDF? It would probably greatly improve its value if all NineML files were using the same system for annotations (see GitHub \#23)}
+
+For adding semantic structure to the model it is recommended to use the \href{http://www.w3.org/RDF/}{Resource Description Framework  (RDF)}. 
 
 \section{Unit and Dimensions in NineML}
 \label{sec:dimensions}
@@ -403,7 +407,7 @@ units by which they are assigned.
 \subsection{Dimension}
 \label{sec:Dimension}
 
-\draftnote{This the LEMS format (which is very similar to a format I found in an old version of the NineML spec). I personally would favour more descriptive attributes and changing Dimension to UnitDimension but I think this format should be fine}
+\draftnote{This the LEMS format (which is very similar to a format I found in an old version of the NineML spec). I personally would favour more descriptive attributes and changing Dimension to UnitDimension but I think this format should be fine (see GitHub \#32)}
 \begin{table}[H]
   \begin{edtable}{tabular}{llr}
     \toprule
@@ -1661,7 +1665,7 @@ Any valid numeric value, including shorthand scientific notation e.g. 1e-5 ($1\t
 \subsection{ValueList}
 \label{sec:ValueList}
 
-\draftnote{I thought that \ValueList and \ValueListRow would be sufficient to provide the XML version explicit lists for demonstration purposes}
+\draftnote{I thought that \ValueList and \ValueListRow would be sufficient to provide the XML version explicit lists for demonstration purposes (see GitHub \#21)}
 
 \begin{table}[H]
   \begin{edtable}{tabular}{llr}
@@ -1695,7 +1699,7 @@ Any valid numeric value, including shorthand scientific notation e.g. 1e-5 ($1\t
 \end{table}
 
 \subsubsection{Index attribute}
-The \textit{index} attribute specifies the index of the \ValueListRow in the \ValueList.
+%The \textit{index} attribute specifies the index of the \ValueListRow in the \ValueList. It must be non-negative, unique amongst the set of \ValueListRow{}@index in the list, and the set of indices must be contiguous.
 
 \note{This preserves the order non-specific nature of elements in NineML}
 
@@ -2068,7 +2072,7 @@ The name of the User Layer element to be referenced should be included in the bo
 \subsection{Set}
 \label{sec:Set}
 
-\draftnote{Set doesn\rq{}t seem to be the right name considering we are trying to conserve cell indices}
+\draftnote{Set doesn\rq{}t seem to be the right name considering we are trying to conserve cell indices (see GitHub \#34)}
 
 \begin{table}[H]
   \begin{edtable}{tabular}{llr}
@@ -2117,7 +2121,7 @@ The name of the User Layer element to be referenced should be included in the bo
 \end{table}
 
 \subsubsection{Index attribute}
-Each \Item requires a \textit{index} attribute. This attribute specifies the order in which the {\Population}s in the \Set are concatenated and thereby the indices of the cells within the combined \Set.
+%Each \Item requires a \textit{index} attribute. This attribute specifies the order in which the {\Population}s in the \Set are concatenated and thereby the indices of the cells within the combined \Set. Each \textit{index} must be non-negative, unique amongst the set of \Item{}@index enclosed in the \Concatenate element, and the set of indices must be contiguous.
 
 \note{This preserves the order non-specific nature of elements in NineML}
 
