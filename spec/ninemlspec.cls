@@ -283,7 +283,6 @@
 % Local color definitions.
 
 \definecolor{INCFBlue}{rgb}{0.0,0.59,1.0}
-
 \definecolor{ninemlblue}{rgb}{0.07,0.50,0.78}
 \definecolor{ninemlgray}{gray}{0.7}
 \definecolor{ninemlrowgray}{gray}{0.96}
@@ -1029,6 +1028,27 @@
   \newcommand{\draftnote}[1]{}
 \fi
 
+% Notes and issues
+
+\newcommand{\issue}[1]{%
+\begin{center}
+\colorbox{verylightgray}{\parbox{0.8\linewidth}{\textbf{Issue:} #1}}
+\end{center}%
+}
+
+\newcommand{\note}[1]{%
+\begin{center}
+\vspace*{0.1cm}
+\colorbox{verylightgray}{\parbox{0.8\linewidth}{\textbf{Note:} #1}}
+\vspace*{0.3cm}
+\end{center}%
+}
+
+\newcommand{\suggestion}[2]{%
+\begin{center}
+\colorbox{verylightgray}{\parbox{0.8\linewidth}{\textbf{#1:} #2}}
+\end{center}%
+}
 
 % Line numbered environments.
 
