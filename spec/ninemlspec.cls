@@ -1040,7 +1040,7 @@
 \begin{center}
 \vspace*{0.1cm}
 \colorbox{verylightgray}{\parbox{0.8\linewidth}{\textbf{Note:} #1}}
-\vspace*{0.3cm}
+\vspace*{0.25cm}
 \end{center}%
 }
 
