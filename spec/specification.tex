@@ -1347,7 +1347,7 @@ Each \ExplicitConnectionList element requires a \textit{target-indices} attribut
 \begin{table}[H]
   \begin{edtable}{tabular}{llr}
     \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{ConnectionRule Structure}}}\\
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{RandomDistribution Structure}}}\\
     \toprule
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
@@ -1558,7 +1558,7 @@ Quantity is a compound data type object that encapsulates a numerical value
 and a unit of measurements. Unit has to be of one of the \Unit type.
 Any numeric quantity in the language (except counters) has to be of this type,
 dimensionless quantities shall use predefined empty \Unit.
-\draftnote{I have moved the \Component{}$>$\RandomDistribution outside of the a \lq\lq{}RandomDistribution\rq\rq{}
+\draftnote{I have moved the \Component{}\withelem\RandomDistribution outside of the a \lq\lq{}RandomDistribution\rq\rq{}
 element here, partly because then we would need to come up with a different name for it, and partly as it doesn\rq{}t seem necessary}
 \begin{table}[H]
   \begin{edtable}{tabular}{llr}
@@ -1571,7 +1571,7 @@ element here, partly because then we would need to come up with a different name
     \midrule
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
-    \HomogeneousValue | \Component{}$>$\RandomDistribution | \ValueList | \ExternalValueList & singleton & yes \\
+    \HomogeneousValue | \Component{}\withelem\RandomDistribution | \ValueList | \ExternalValueList & singleton & yes \\
     \bottomrule
   \end{edtable}
 \end{table}
@@ -1736,7 +1736,7 @@ Each \Population requires a \textit{name} attribute. This name should be a valid
     \toprule
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
-    \Component{}$>$\Dynamics | \Reference{}$\to$\Component{}$>$\Dynamics & singleton & yes \\
+    \Component{}\withelem\Dynamics | \Reference{}\pointto\Component{}\withelem\Dynamics & singleton & yes \\
     \bottomrule
   \end{edtable}
 \end{table}
@@ -1799,7 +1799,7 @@ Each \Projection requires a \textit{name} attribute. This name should be a valid
     \toprule
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
-    \Reference{}$\to$\Population | \Reference{}$\to$\Set & singleton & yes \\
+    \Reference{}\pointto\Population | \Reference{}\pointto\Set & singleton & yes \\
     \FromDestination & set & no \\
     \FromPlasticity & set & no \\
     \FromResponse & set & no \\
@@ -1815,11 +1815,11 @@ Each \Projection requires a \textit{name} attribute. This name should be a valid
 \begin{table}[H]
   \begin{edtable}{tabular}{llr}
     \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Source Structure}}}\\
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Destination Structure}}}\\
     \toprule
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
-    \Reference{}$\to$\Population | \Reference{}$\to$\Set & singleton & yes \\
+    \Reference{}\pointto\Population | \Reference{}\pointto\Set & singleton & yes \\
     \FromSource & set & no \\
     \FromPlasticity & set & no \\
     \FromResponse & set & no \\    
@@ -1837,7 +1837,7 @@ Each \Projection requires a \textit{name} attribute. This name should be a valid
     \toprule
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
-    \Component{}$>$\Dynamics | \Reference{}$\to$\Component{}$>$\Dynamics & singleton & yes \\ 
+    \Component{}\withelem\Dynamics | \Reference{}\pointto\Component{}\withelem\Dynamics & singleton & yes \\ 
     \FromSource & set & no \\
     \FromDestination & set & no \\
     \FromPlasticity & set & no \\
@@ -1863,7 +1863,7 @@ plasticity nodes are left dimensionless.
     \toprule
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
-    \Component{}$>$\Dynamics | \Reference{}$\to$\Component{}$>$\Dynamics & singleton & yes \\ 
+    \Component{}\withelem\Dynamics | \Reference{}\pointto\Component{}\withelem\Dynamics & singleton & yes \\ 
     \FromSource & set & no \\
     \FromDestination & set & no \\
     \FromResponse & set & no \\    
@@ -1897,10 +1897,10 @@ response node (section \ref{secSynapse}).
 \end{table}
 
 \subsubsection{Sender attribute}
-Each \FromSource element requires a \textit{sender} attribute. This should refer to the name of a \AnalogSendPort or \EventSendPort in the \Cell->\Component{}$>$\ComponentClass of the source population. The transmission mode of the port (i.e. \lq\lq{}analog\rq\rq{} or \lq\lq{}digital\rq\rq{}) should match that of the port referenced by the \textit{receiver} attribute.
+Each \FromSource element requires a \textit{sender} attribute. This should refer to the name of a \AnalogSendPort or \EventSendPort in the \Cell->\Component{}\withelem\ComponentClass of the source population. The transmission mode of the port (i.e. \lq\lq{}analog\rq\rq{} or \lq\lq{}digital\rq\rq{}) should match that of the port referenced by the \textit{receiver} attribute.
 
 \subsubsection{Receiver attribute}
-Each \FromSource element requires a \textit{receiver} attribute. This should refer to the name of a \AnalogReceivePort, \EventReceivePort, \AnalogReducePort or \EventReducePort in the \Component{}$>$\ComponentClass in the enclosing \Source/\Destination/\Plasticity/\Response element.  The transmission mode of the port (i.e. \lq\lq{}analog\rq\rq{} or \lq\lq{}digital\rq\rq{}) should match that of the port referenced by the \textit{sender} attribute.
+Each \FromSource element requires a \textit{receiver} attribute. This should refer to the name of a \AnalogReceivePort, \EventReceivePort, \AnalogReducePort or \EventReducePort in the \Component{}\withelem\ComponentClass in the enclosing \Source/\Destination/\Plasticity/\Response element.  The transmission mode of the port (i.e. \lq\lq{}analog\rq\rq{} or \lq\lq{}digital\rq\rq{}) should match that of the port referenced by the \textit{sender} attribute.
 
 \subsection{FromDestination}
 \label{sec:FromDestination}
@@ -1919,10 +1919,10 @@ Each \FromSource element requires a \textit{receiver} attribute. This should ref
 \end{table}
 
 \subsubsection{Sender attribute}
-Each \FromDestination element requires a \textit{sender} attribute. This should refer to the name of a \AnalogSendPort or \EventSendPort in the \Cell->\Component{}$>$\ComponentClass of the source population. The transmission mode of the port (i.e. \lq\lq{}analog\rq\rq{} or \lq\lq{}digital\rq\rq{}) should match that of the port referenced by the \textit{receiver} attribute.
+Each \FromDestination element requires a \textit{sender} attribute. This should refer to the name of a \AnalogSendPort or \EventSendPort in the \Cell->\Component{}\withelem\ComponentClass of the source population. The transmission mode of the port (i.e. \lq\lq{}analog\rq\rq{} or \lq\lq{}digital\rq\rq{}) should match that of the port referenced by the \textit{receiver} attribute.
 
 \subsubsection{Receiver attribute}
-Each \FromDestination element requires a \textit{receiver} attribute. This should refer to the name of a \AnalogReceivePort, \EventReceivePort, \AnalogReducePort or \EventReducePort in the \Component{}$>$\ComponentClass in the enclosing \Source/\Destination/\Plasticity/\Response element.  The transmission mode of the port (i.e. \lq\lq{}analog\rq\rq{} or \lq\lq{}digital\rq\rq{}) should match that of the port referenced by the \textit{sender} attribute.
+Each \FromDestination element requires a \textit{receiver} attribute. This should refer to the name of a \AnalogReceivePort, \EventReceivePort, \AnalogReducePort or \EventReducePort in the \Component{}\withelem\ComponentClass in the enclosing \Source/\Destination/\Plasticity/\Response element.  The transmission mode of the port (i.e. \lq\lq{}analog\rq\rq{} or \lq\lq{}digital\rq\rq{}) should match that of the port referenced by the \textit{sender} attribute.
 
 
 \subsection{FromPlasticity}
@@ -1942,10 +1942,10 @@ Each \FromDestination element requires a \textit{receiver} attribute. This shoul
 \end{table}
 
 \subsubsection{Sender attribute}
-Each \FromPlasticity element requires a \textit{sender} attribute. This should refer to the name of a \AnalogSendPort or \EventSendPort in the \Cell->\Component{}$>$\ComponentClass of the source population. The transmission mode of the port (i.e. \lq\lq{}analog\rq\rq{} or \lq\lq{}digital\rq\rq{}) should match that of the port referenced by the \textit{receiver} attribute.
+Each \FromPlasticity element requires a \textit{sender} attribute. This should refer to the name of a \AnalogSendPort or \EventSendPort in the \Cell->\Component{}\withelem\ComponentClass of the source population. The transmission mode of the port (i.e. \lq\lq{}analog\rq\rq{} or \lq\lq{}digital\rq\rq{}) should match that of the port referenced by the \textit{receiver} attribute.
 
 \subsubsection{Receiver attribute}
-Each \FromPlasticity element requires a \textit{receiver} attribute. This should refer to the name of a \AnalogReceivePort, \EventReceivePort, \AnalogReducePort or \EventReducePort in the \Component{}$>$\ComponentClass in the enclosing \Source/\Destination/\Plasticity/\Response element.  The transmission mode of the port (i.e. \lq\lq{}analog\rq\rq{} or \lq\lq{}digital\rq\rq{}) should match that of the port referenced by the \textit{sender} attribute.
+Each \FromPlasticity element requires a \textit{receiver} attribute. This should refer to the name of a \AnalogReceivePort, \EventReceivePort, \AnalogReducePort or \EventReducePort in the \Component{}\withelem\ComponentClass in the enclosing \Source/\Destination/\Plasticity/\Response element.  The transmission mode of the port (i.e. \lq\lq{}analog\rq\rq{} or \lq\lq{}digital\rq\rq{}) should match that of the port referenced by the \textit{sender} attribute.
 
 \subsection{FromResponse}
 \label{sec:FromResponse}
@@ -1965,10 +1965,10 @@ Each \FromPlasticity element requires a \textit{receiver} attribute. This should
 \end{table}
 
 \subsubsection{Sender attribute}
-Each \FromResponse element requires a \textit{sender} attribute. This should refer to the name of a \AnalogSendPort or \EventSendPort in the \Cell->\Component{}$>$\ComponentClass of the source population. The transmission mode of the port (i.e. \lq\lq{}analog\rq\rq{} or \lq\lq{}digital\rq\rq{}) should match that of the port referenced by the \textit{receiver} attribute.
+Each \FromResponse element requires a \textit{sender} attribute. This should refer to the name of a \AnalogSendPort or \EventSendPort in the \Cell->\Component{}\withelem\ComponentClass of the source population. The transmission mode of the port (i.e. \lq\lq{}analog\rq\rq{} or \lq\lq{}digital\rq\rq{}) should match that of the port referenced by the \textit{receiver} attribute.
 
 \subsubsection{Receiver attribute}
-Each \FromResponse element requires a \textit{receiver} attribute. This should refer to the name of a \AnalogReceivePort, \EventReceivePort, \AnalogReducePort or \EventReducePort in the \Component{}$>$\ComponentClass in the enclosing \Source/\Destination/\Plasticity/\Response element.  The transmission mode of the port (i.e. \lq\lq{}analog\rq\rq{} or \lq\lq{}digital\rq\rq{}) should match that of the port referenced by the \textit{sender} attribute.
+Each \FromResponse element requires a \textit{receiver} attribute. This should refer to the name of a \AnalogReceivePort, \EventReceivePort, \AnalogReducePort or \EventReducePort in the \Component{}\withelem\ComponentClass in the enclosing \Source/\Destination/\Plasticity/\Response element.  The transmission mode of the port (i.e. \lq\lq{}analog\rq\rq{} or \lq\lq{}digital\rq\rq{}) should match that of the port referenced by the \textit{sender} attribute.
 
 \subsection{Connectivity}
 \label{sec:Connectivity}
@@ -1980,7 +1980,7 @@ Each \FromResponse element requires a \textit{receiver} attribute. This should r
     \toprule
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
-    \Component{}$>$\ConnectionRule & singleton & yes \\ 
+    \Component{}\withelem\ConnectionRule & singleton & yes \\ 
     \bottomrule
   \end{edtable}
 \end{table}

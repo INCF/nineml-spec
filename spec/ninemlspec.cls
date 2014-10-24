@@ -936,6 +936,11 @@
 \newcommand{\mSymbol}{\textcolor{Green}{$\bigstar$}}
 \newcommand{\mSymbolName}{star\xspace}
 
+% Misc symbols
+
+\newcommand{\withelem}{{\textcolor{ninemlblue}{$\mathbf{>}$}}}
+\newcommand{\pointto}{$\to$}
+
 % Spacing adjustments when using the symbols inside regular 'description' env.
 % Note: *not* used in \ninemlrule below.
 
@@ -1094,7 +1099,7 @@
 % 
 %   "In Figure 2 on the next page, blah blah blah.  Figure 2 also blah
 %   blah blah."
-%
+%$>$
 % Note: this overrides the definition of \sec{...} from the AMS math
 % package. I decided this is likely to be acceptable to users because
 % in SBML's domain of activity, it is very unlikely that someone would
