@@ -380,7 +380,7 @@ units by which they are assigned.
     i & \primtype{integer} & no\\
     n & \primtype{integer} & no\\
     k & \primtype{integer} & no\\
-    ? & \primtype{integer} & no\\
+    j & \primtype{integer} & no\\
     \bottomrule
   \end{edtable}
 \end{table}
@@ -388,27 +388,26 @@ units by which they are assigned.
 \subsubsection{Name attribute}
 Each \Dimension requires a \textit{name} attribute. This name should be a valid identifier in the \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 standard} and uniquely identify the {\Dimension} in current the scope.
 
-\subsubsection{m attribute}
+\subsubsection{M attribute}
 The \textit{m} attribute specifies the power of the mass dimension in the \Dimension. If omitted it the power is zero.
 
-\subsubsection{l attribute}
+\subsubsection{L attribute}
 The \textit{l} attribute specifies the power of the length dimension in the \Dimension. If omitted it the power is zero.
 
-\subsubsection{t attribute}
+\subsubsection{T attribute}
 The \textit{t} attribute specifies the power of the time dimension in the \Dimension. If omitted it the power is zero.
 
-\subsubsection{i attribute}
+\subsubsection{I attribute}
 The \textit{i} attribute specifies the power of the current dimension in the \Dimension. If omitted it the power is zero.
 
-\subsubsection{n attribute}
+\subsubsection{N attribute}
 The \textit{n} attribute specifies the power of the amount-of-substance dimension in the \Dimension. If omitted it the power is zero.
 
-\subsubsection{k attribute}
+\subsubsection{K attribute}
 The \textit{k} attribute specifies the power of the temperature dimension in the \Dimension. If omitted it the power is zero.
 
-\subsubsection{? attribute}
-\draftnote{I can\rq{}t find the luminous intensity abbreviation in the NeuroML specs}
-The \textit{?} attribute specifies the power of the luminous-intensity dimension in the \Dimension. If omitted it the power is zero.
+\subsubsection{J attribute}
+The \textit{j} attribute specifies the power of the luminous-intensity dimension in the \Dimension. If omitted it the power is zero.
 
 \subsection{Unit}
 \label{sec:Unit}
@@ -422,7 +421,8 @@ The \textit{?} attribute specifies the power of the luminous-intensity dimension
     \midrule
     symbol & \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 identifier} & yes\\
     dimension & \Dimension{}@name & yes\\
-    powTen & \primtype{integer} & yes\\
+    power & \primtype{integer} & yes\\
+    offset & \primtype{float} & no\\
     \bottomrule
   \end{edtable}
 \end{table}
@@ -433,8 +433,17 @@ Each \Unit requires a \textit{symbol} attribute. This name should be a valid ide
 \subsubsection{Dimension attribute}
 Each \Unit requires a \textit{dimension} attribute. This attribute specifies the dimension of the units and should refer to the name of a \Dimension element in the global scope.
 
-\subsubsection{PowTen attribute}
-Each \Unit requires a \textit{powTen} attribute. This attribute specifies the relative scale of the units compared to the equivalent SI units in powers of ten.
+\subsubsection{Power attribute}
+Each \Unit requires a \textit{power} attribute. This attribute specifies the relative scale of the units compared to the equivalent SI units in powers of ten.
+
+\subsubsection{Offset attribute}
+A \Unit can optionally have an \textit{offset} attribute. This attribute specifies the zero offset of the unit scale. For example,
+
+\begin{lstlisting}
+<Unit name="degC" dimension="temperature" power="0" offset="273.15"/>
+\end{lstlisting}
+
+If omitted, the offset is zero.
 
 \section{Abstraction Layer}
 \label{AbstractionL}
