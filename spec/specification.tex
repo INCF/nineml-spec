@@ -53,10 +53,10 @@
 \newcommand{\Component}{\defRef{\textbf{\class{Component}}\xspace}{sec:Component}}
 \newcommand{\Property}{\defRef{\textbf{\class{Property}}\xspace}{sec:Property}}
 \newcommand{\Quantity}{\defRef{\textbf{\class{Quantity}}\xspace}{sec:Quantity}}
-\newcommand{\HomogeneousValue}{\defRef{\textbf{\class{HomogeneousValue}}\xspace}{sec:HomogeneousValue}}
-\newcommand{\ExternalValueList}{\defRef{\textbf{\class{ExternalValueList}}\xspace}{sec:ExternalValueList}}
-\newcommand{\ValueList}{\defRef{\textbf{\class{ValueList}}\xspace}{sec:ValueList}}
-\newcommand{\ValueListRow}{\defRef{\textbf{\class{ValueListRow}}\xspace}{sec:ValueListRow}}
+\newcommand{\SingleValue}{\defRef{\textbf{\class{SingleValue}}\xspace}{sec:SingleValue}}
+\newcommand{\ExternalArrayValue}{\defRef{\textbf{\class{ExternalArrayValue}}\xspace}{sec:ExternalArrayValue}}
+\newcommand{\ArrayValue}{\defRef{\textbf{\class{ArrayValue}}\xspace}{sec:ArrayValue}}
+\newcommand{\ArrayValueRow}{\defRef{\textbf{\class{ArrayValueRow}}\xspace}{sec:ArrayValueRow}}
 \newcommand{\ListColumn}{\defRef{\textbf{\class{ListColumn}}\xspace}{sec:ListColumn}}
 \newcommand{\Definition}{\defRef{\textbf{\class{Definition}}\xspace}{sec:Definition}}
 \newcommand{\Prototype}{\defRef{\textbf{\class{Prototype}}\xspace}{sec:Prototype}}
@@ -325,7 +325,7 @@ This document presents the current NineML specifications and consists of:
 
 {\Annotation}s elements are provided to add semantic information about the model. They can be included within any NineML element. Likewise, any elements are allowed to be included within {\Annotation}s. In order to be compliant with the NineML specification any tool handling NineML descriptions must preserve all existing annotations, except where a user explicitly edits/deletes them.
 
-\draftnote{Should we make it mandatory to use RDF? It would probably greatly improve its value if all NineML files were using the same system for annotations (see GitHub \#23)}
+%\draftnote{Should we make it mandatory to use RDF? It would probably greatly improve its value if all NineML files were using the same system for annotations (see GitHub \#23)}
 
 For adding semantic structure to the model it is recommended to use the \href{http://www.w3.org/RDF/}{Resource Description Framework  (RDF)}. 
 
@@ -365,7 +365,7 @@ units by which they are assigned.
 \subsection{Dimension}
 \label{sec:Dimension}
 
-\draftnote{This the LEMS format (which is very similar to a format I found in an old version of the NineML spec). I personally would favour more descriptive attributes and changing Dimension to UnitDimension but I think this format should be fine (see GitHub \#32)}
+%\draftnote{This the LEMS format (which is very similar to a format I found in an old version of the NineML spec). I personally would favour more descriptive attributes and changing Dimension to UnitDimension but I think this format should be fine (see GitHub \#32)}
 \begin{table}[H]
   \begin{edtable}{tabular}{llr}
     \toprule
@@ -649,7 +649,7 @@ The motivation for \AnalogReducePort is that it allows us to make our
 \ComponentClass definitions more general. For example, if we are defining a
 neuron, would define a \AnalogReducePort called \emph{InjectedCurrent}.
 This allows us to write the membrane equation for that neuron as
-$dV/dt = (1/C) * InjectedCurrents$.
+$dV/dt = (1/C) * InjectedCurrent$.
 
 Then, when we connect this neuron to synapses, current-clamps, etc, we
 simply need to connect the SendPorts containing the currents of these
@@ -710,21 +710,6 @@ Each \EventSendPort requires a \textit{name} attribute. This name should be a va
 Each \EventReceivePort requires a \textit{name} attribute. This name should be a valid identifier in the \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 standard} and uniquely identify the {\EventReceivePort} from all other elements in the \ComponentClass.
 
 
-\subsection{EventReducePort}
-\label{sec:EventReducePort}
-\draftnote{Is there a point of having an \EventReducePort, could multiple send ports just be connected to any \EventReceivePort?}
-\begin{table}[H]
-  \begin{edtable}{tabular}{llr}
-    \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{EventReducePort Structure}}}\\
-    \toprule
-    \em{Attribute name} & \em{Type/Format} & \em{Required} \\
-    \midrule
-    name & \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 identifier} & yes\\
-    \bottomrule
-  \end{edtable}
-\end{table}
-
 Event ports transmit discrete events. They are useful for example in
 simulation of integrate-and-fire neurons to notify {\ComponentClass}es about neuron's
 spiking. Event ports only have 2 modes:
@@ -741,10 +726,6 @@ For example, a synapse component may have a \AnalogReceivePort connected to the
 presynaptic neurons \AnalogSendPort port. When the presynaptic neuron fires;
 it delivers an event to the synapse, which could cause it to produce current
 flow in a post-synaptic neuron.
-
-
-\subsubsection{Name attribute}
-Each \EventReducePort requires a \textit{name} attribute. This name should be a valid identifier in the \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 standard} and uniquely identify the {\EventReducePort} from all other elements in the \ComponentClass.
 
 \subsection{Dynamics}
 \label{sec:Dynamics}
@@ -1194,7 +1175,7 @@ right-hand-side for  {\Alias}es, {\TimeDerivative}s \& {\StateAssignment}s).
 
 The following operators are supported, with the same precedence levels as ANSI
 C89. All
-numbers/variables are assumed to be \verb|floating-point| numbers, not integers.
+numbers/variables are assumed to be real valued numbers.
 
 \begin{itemize}
 \item Arithmetic operators
@@ -1321,7 +1302,7 @@ All cells in the source population are connected to cells in the destination pop
 
 \subsubsection{Probability attribute}
 
-Each \ProbabilisticConnectivity element requires a \textit{probability} attribute. This attribute should refer to a name of a dimensionless \Parameter in the enclosing \ComponentClass. The properties supplied to this parameter should either be a dimensionless \HomogeneousValue representing the probability of a connection between all source and destination cell pairs, or a \ValueList or \ExternalValueList of size $M{\times}N$, where $M$ and $N$ are the size of the source and destination populations respectively. In the case of the \ValueList or \ExternalValueList properties, the list represents probabilities of connections existing between the first cell in the source population with every cell in the destination population in order of their index, followed by the second cell in the source with with every cell in the destination population in order of their index and so forth for each cell in the source population.
+Each \ProbabilisticConnectivity element requires a \textit{probability} attribute. This attribute should refer to a name of a dimensionless \Parameter in the enclosing \ComponentClass. The properties supplied to this parameter should either be a dimensionless \SingleValue representing the probability of a connection between all source and destination cell pairs, or a \ArrayValue or \ExternalArrayValue of size $M{\times}N$, where $M$ and $N$ are the size of the source and destination populations respectively. In the case of the \ArrayValue or \ExternalArrayValue properties, the list represents probabilities of connections existing between the first cell in the source population with every cell in the destination population in order of their index, followed by the second cell in the source with with every cell in the destination population in order of their index and so forth for each cell in the source population.
 
 \subsection{ExplicitConnectionList}
 \label{sec:ExplicitConnectionList}
@@ -1343,11 +1324,11 @@ Cells in the source population are connected to cells in the destination populat
 
 \subsubsection{Source-indices attribute}
 
-Each \ExplicitConnectionList element requires a \textit{source-indices} attribute. This attribute should refer to a name of a dimensionless \Parameter in the enclosing \ComponentClass. The properties supplied to this parameter should be a \ValueList or \ExternalValueList drawn from the set $\{1,\ldots,M\}$ where $M$ is the size of the source population and be the same length as the property supplied to the \textit{target-indices} parameter.
+Each \ExplicitConnectionList element requires a \textit{source-indices} attribute. This attribute should refer to a name of a dimensionless \Parameter in the enclosing \ComponentClass. The properties supplied to this parameter should be a \ArrayValue or \ExternalArrayValue drawn from the set $\{1,\ldots,M\}$ where $M$ is the size of the source population and be the same length as the property supplied to the \textit{target-indices} parameter.
 
 \subsubsection{Target-indices attribute}
 
-Each \ExplicitConnectionList element requires a \textit{target-indices} attribute. This attribute should refer to a name of a dimensionless \Parameter in the enclosing \ComponentClass. The properties supplied to this parameter should be a \ValueList or \ExternalValueList drawn from the set $\{1,\ldots,N\}$ where $N$ is the size of the source population and be the same length as the property supplied to the \textit{source-indices} parameter.
+Each \ExplicitConnectionList element requires a \textit{target-indices} attribute. This attribute should refer to a name of a dimensionless \Parameter in the enclosing \ComponentClass. The properties supplied to this parameter should be a \ArrayValue or \ExternalArrayValue drawn from the set $\{1,\ldots,N\}$ where $N$ is the size of the source population and be the same length as the property supplied to the \textit{source-indices} parameter.
 
 
 \subsection{RandomDistribution}
@@ -1505,7 +1486,7 @@ If the referenced \ComponentClass is in the current file or there is more than o
     \toprule
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
-    url & \href{http://en.wikipedia.org/wiki/Uniform_resource_locator}{URL} & yes\\
+    url & \href{http://en.wikipedia.org/wiki/Uniform_resource_locator}{URL} & no\\
     \midrule
     \em{Text format} & \; & \em{Required} \\
     \midrule
@@ -1580,7 +1561,7 @@ element here, partly because then we would need to come up with a different name
     \midrule
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
-    \HomogeneousValue | \Component{}\withelem\RandomDistribution | \ValueList | \ExternalValueList & singleton & yes \\
+    \SingleValue | \Component{}\withelem\RandomDistribution | \ArrayValue | \ExternalArrayValue & singleton & yes \\
     \bottomrule
   \end{edtable}
 \end{table}
@@ -1609,10 +1590,10 @@ definitions or MathML.
 The \textit{units} attribute specifies the units of the quantity and should refer to the name of a \Unit element in the global scope. If it is omitted then the quantity is considered to be dimensionless.
 
 
-\subsection{HomogeneousValue}
-\label{sec:HomogeneousValue}
+\subsection{SingleValue}
+\label{sec:SingleValue}
 
-\draftnote{Instead of \lq\lq{}SingleValue\rq\rq{}, I thought \HomogeneousValue was a better name for this, thoughts?}
+\draftnote{Instead of \lq\lq{}SingleValue\rq\rq{}, I thought \SingleValue was a better name for this, thoughts?}
 \begin{table}[H]
   \begin{edtable}{tabular}{llr}
     \toprule
@@ -1628,30 +1609,30 @@ The \textit{units} attribute specifies the units of the quantity and should refe
 \subsubsection{Text format}
 Any valid numeric value, including shorthand scientific notation e.g. 1e-5 ($1\times10^{-5}$).
 
-\subsection{ValueList}
-\label{sec:ValueList}
+\subsection{ArrayValue}
+\label{sec:ArrayValue}
 
-\draftnote{I thought that \ValueList and \ValueListRow would be sufficient to provide the XML version explicit lists for demonstration purposes (see GitHub \#21)}
+\draftnote{I thought that \ArrayValue and \ArrayValueRow would be sufficient to provide the XML version explicit lists for demonstration purposes (see GitHub \#21)}
 
 \begin{table}[H]
   \begin{edtable}{tabular}{llr}
     \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{ValueList Structure}}}\\
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{ArrayValue Structure}}}\\
     \toprule
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
-    \ValueListRow & set & no \\
+    \ArrayValueRow & set & no \\
     \bottomrule
   \end{edtable}
 \end{table}
 
-\subsection{ValueListRow}
-\label{sec:ValueListRow}
+\subsection{ArrayValueRow}
+\label{sec:ArrayValueRow}
 
 \begin{table}[H]
   \begin{edtable}{tabular}{llr}
     \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{ValueListRow Structure}}}\\
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{ArrayValueRow Structure}}}\\
     \toprule
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
@@ -1665,22 +1646,22 @@ Any valid numeric value, including shorthand scientific notation e.g. 1e-5 ($1\t
 \end{table}
 
 \subsubsection{Index attribute}
-The \textit{index} attribute specifies the index of the \ValueListRow in the \ValueList. It must be non-negative, unique amongst the set of \ValueListRow{}@index in the list, and the set of indices must be contiguous for a single \ValueList.
+The \textit{index} attribute specifies the index of the \ArrayValueRow in the \ArrayValue. It must be non-negative, unique amongst the set of \ArrayValueRow{}@index in the list, and the set of indices must be contiguous for a single \ArrayValue.
 
 \note{This preserves the order non-specific nature of elements in NineML}
 
 \subsubsection{Text format}
 Any valid numeric value, including shorthand scientific notation e.g. 1e-5 ($1\times10^{-5}$).
 
-\subsection{ExternalValueList}
-\label{sec:ExternalValueList}
+\subsection{ExternalArrayValue}
+\label{sec:ExternalArrayValue}
 
 \draftnote{This name is different to what we discussed in the meeting, do you like it?}
 
 \begin{table}[H]
   \begin{edtable}{tabular}{llr}
     \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{ExternalValueList Structure}}}\\
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{ExternalArrayValue Structure}}}\\
     \toprule
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
