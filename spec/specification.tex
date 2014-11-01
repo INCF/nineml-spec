@@ -1,5 +1,6 @@
 \documentclass[draftspec]{ninemlspec}
 \usepackage{microtype}
+\usepackage{pbox}
 \usepackage{multirow}
 \usepackage{float}
 
@@ -75,7 +76,7 @@
 \newcommand{\FromDestination}{\defRef{\textbf{\class{FromDestination}}\xspace}{sec:FromDestination}}
 \newcommand{\FromPlasticity}{\defRef{\textbf{\class{FromPlasticity}}\xspace}{sec:FromPlasticity}}
 \newcommand{\FromResponse}{\defRef{\textbf{\class{FromResponse}}\xspace}{sec:FromResponse}}
-\newcommand{\Set}{\defRef{\textbf{\class{Set}}\xspace}{sec:Set}}
+\newcommand{\PopulationGroup}{\defRef{\textbf{\class{Set}}\xspace}{sec:Set}}
 \newcommand{\Concatenate}{\defRef{\textbf{\class{Concatenate}}\xspace}{sec:Concatenate}}
 \newcommand{\Item}{\defRef{\textbf{\class{Item}}\xspace}{sec:Item}}
 
@@ -154,6 +155,7 @@
 \vspace*{0.25cm}
 \noindent{
 
+\draftnote{This is how it is done in SBML but I am not sure if this is the best way for us}
 {\Large\bf Editors: }
 \begin{itemize}
 \item Ivan Raikov
@@ -290,6 +292,8 @@ that are instantiated in the User Layer have been kept simple for the
 user.
 
 \subsection{About this document}
+
+\draftnote{Andrew, I was thinking after your suggestion to have a section describing the general purpose of ports that it would be good to move the top sections up a level and maybe have the \lq\lq{}Abstraction Layer\rq\rq{} and \lq\lq{}User Layer\rq\rq{} as latex \lq\lq{}parts\rq\rq{} and then introduce a new layer of sections for Ports, Dynamics, ConnectionRule, RandomDistribution, etc. What do you think?}
 
 This document presents the current NineML specifications and consists of:
 \begin{enumerate}
@@ -568,6 +572,25 @@ Each \Parameter requires a \textit{name} attribute. This name should be a valid 
 \subsubsection{Dimension attribute}
 Each \Parameter requires a \textit{dimension} attribute. This attribute specifies the dimension of the units of the quantity that is expected to be passed to the \Parameter and should refer to the name of a \Dimension element in the global scope.
 
+\subsection{Ports: interfacing between components}
+
+
+Event ports transmit discrete events. They are useful for example in
+simulation of integrate-and-fire neurons to notify {\ComponentClass}es about neuron's
+spiking. Event ports only have 2 modes:
+
+\begin{itemize}
+\item \AnalogSendPort - transmit events originating in this \ComponentClass which can be
+read by
+other {\ComponentClass}es
+\item \AnalogReceivePort - receive events from another \ComponentClass \AnalogSendPort port.
+Each recv port can be connected to \emph{multiple} \AnalogSendPort.
+\end{itemize}
+
+For example, a synapse component may have a \AnalogReceivePort connected to the
+presynaptic neurons \AnalogSendPort port. When the presynaptic neuron fires;
+it delivers an event to the synapse, which could cause it to produce current
+flow in a post-synaptic neuron.
 
 \subsection{AnalogSendPort}
 \label{sec:AnalogSendPort}
@@ -589,7 +612,6 @@ Each \Parameter requires a \textit{dimension} attribute. This attribute specifie
 
 \subsubsection{Name attribute}
 Each \AnalogSendPort requires a \textit{name} attribute. This name should be a valid identifier in the \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 standard} and uniquely identify the {\AnalogSendPort} from all other elements in the \ComponentClass.
-
 
 \subsubsection{Dimension attribute}
 Each \Parameter requires a \textit{dimension} attribute. This attribute specifies the dimension of the units of the quantity that is expected to be passed to the \Parameter and should refer to the name of a \Dimension element in the global scope.
@@ -645,6 +667,7 @@ differ from \AnalogReceivePort in that they can be connected to multiple
 {\tt reduce\_op}, which specifies how the data from multiple \AnalogSendPort
 should be combined to produce a single value. Currently, the
 only supported operations are \lq\lq{}$+$\rq\rq{} and \lq\lq{}$*$\rq\rq{}, which sum and multiply the inputs respectively.
+
 The motivation for \AnalogReducePort is that it allows us to make our
 \ComponentClass definitions more general. For example, if we are defining a
 neuron, would define a \AnalogReducePort called \emph{InjectedCurrent}.
@@ -710,27 +733,9 @@ Each \EventSendPort requires a \textit{name} attribute. This name should be a va
 Each \EventReceivePort requires a \textit{name} attribute. This name should be a valid identifier in the \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 standard} and uniquely identify the {\EventReceivePort} from all other elements in the \ComponentClass.
 
 
-Event ports transmit discrete events. They are useful for example in
-simulation of integrate-and-fire neurons to notify {\ComponentClass}es about neuron's
-spiking. Event ports only have 2 modes:
-
-\begin{itemize}
-\item \AnalogSendPort - transmit events originating in this \ComponentClass which can be
-read by
-other {\ComponentClass}es
-\item \AnalogReceivePort - receive events from another \ComponentClass \AnalogSendPort port.
-Each recv port can be connected to \emph{multiple} \AnalogSendPort.
-\end{itemize}
-
-For example, a synapse component may have a \AnalogReceivePort connected to the
-presynaptic neurons \AnalogSendPort port. When the presynaptic neuron fires;
-it delivers an event to the synapse, which could cause it to produce current
-flow in a post-synaptic neuron.
-
 \subsection{Dynamics}
 \label{sec:Dynamics}
 
-\draftnote{Are {\Regime}s required? Could you have a component that simply consists of aliases?}
 \begin{table}[H]
   \begin{edtable}{tabular}{llr}
     \toprule
@@ -739,7 +744,7 @@ flow in a post-synaptic neuron.
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
     \StateVariable & set & no \\ 
-    \Regime & set & yes\\
+    \Regime & set & no\\
     \Alias & set & no\\
     \bottomrule
   \end{edtable}
@@ -898,114 +903,10 @@ Each \Regime requires a \textit{name} attribute. This name should be a valid ide
 Each \TimeDerivative requires a \textit{variable} attribute. This should refer to the name of a \StateVariable in the \ComponentClass. Only one \TimeDerivative is allow per \textit{variable} in each \Regime.
 
 
-\subsection{OnEvent}
-\label{sec:OnEvent}
-
-An OnEvent block is activated when the dynamics component receives an event from published from an external component.
-
-\vspace*{-0.25ex}
-\begin{table}[H]
-  \begin{edtable}{tabular}{llr}
-    \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{OnEvent Structure}}}\\
-    \toprule
-    \em{Attribute name} & \em{Type/Format} & \em{Required} \\
-    \midrule
-    port & [\EventReceivePort | \EventReducePort{}]@name & yes\\
-    \midrule
-    \em{Element type} & \em{Multiplicity} & \em{Required} \\
-    \midrule
-    \Transition & singleton & no \\    
-    \StateAssignment & set & no\\
-    \EventOut & set & no\\
-    \bottomrule
-  \end{edtable}
-\end{table}
-
-\subsubsection{Port attribute}
-Each \OnEvent requires a \textit{port} attribute. This should refer to the name of an \EventReceivePort or an \EventReducePort in the \ComponentClass interface.
-
-
-\subsection{OnCondition}
-\label{sec:OnCondition}
-
-An OnCondition block is activated when the condition in the \Trigger block is met.
-
-\begin{table}[H]
-  \begin{edtable}{tabular}{llr}
-    \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{OnCondition Structure}}}\\
-    \toprule
-    \em{Element type} & \em{Multiplicity} & \em{Required} \\
-    \midrule
-    \Trigger & singleton & yes \\
-    \Transition & singleton & no \\
-    \StateAssignment & set & no\\
-    \EventOut & set & no\\
-    \bottomrule
-  \end{edtable}
-\end{table}
-
-{\OnCondition}s are the mathematical expressions which define
-when a {\Transition} should be triggered.
-{\OnCondition}s are any arbitrary combination of \emph{Logical
-Operations} (and, or, noop, etc.) on the
-result of any arbitrary combination of \emph{Relational Operations}
-($>$,$<$,$==$,$<=$,$>=$, etc.) on
-{\StateVariable}s. At any given time in the {\Regime},
-the {\OnCondition} expression then evaluates to True or False
-{\tt Boolean} result. For example, the following are valid
-{\OnCondition}s
-
-\begin{lstlisting}
-x>10
-x>10 & y<20
-x>exp(-cos(y)) | y<sin(t)+5
-x==15
-\end{lstlisting}
-
-A {\OnCondition} which persistently evaluates to True violates
-the definition that {\Transition}s should have vanishing
-temporal extent, and the behaviour for this case is undefined, but it
-would be preferable for the implementation to produce an error message
-to the user.
-
-
-\subsection{Trigger}
-\label{sec:Trigger}
-
-The trigger block defines the condition on which the \OnCondition block is activiated.
-
-\begin{table}[H]
-  \begin{edtable}{tabular}{llr}
-    \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Trigger Structure}}}\\
-    \toprule
-    \em{Element type} & \em{Multiplicity} & \em{Required} \\
-    \midrule
-    \MathInline & singleton & yes \\ 
-    \bottomrule
-  \end{edtable}
-\end{table}
-
-
-
-\subsection{Transition}
+\subsection{Transitions: OnEvent \& OnCondition}
 \label{sec:Transition}
 
 {\Transition}s define the transition between \Regime blocks.
-
-\begin{table}[H]
-  \begin{edtable}{tabular}{llr}
-    \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Transition Structure}}}\\
-    \toprule
-    \em{Attribute name} & \em{Type/Format} & \em{Required} \\
-    \midrule
-    to & \Regime{}@name & yes\\
-    \bottomrule
-  \end{edtable}
-\end{table}
 
 Movement between several instances of \Regime happens via \Transition.
 A {\Transition} is defined in NineML as having
@@ -1043,9 +944,103 @@ triggers the {\Transition}
 {\Regime}, which may be the same as the source {\Regime}.
 \end{itemize}
 
-\subsubsection{To attribute}
-Each \Transition requires a \textit{to} attribute. This should refer to the name of a \Regime element in the \ComponentClass.
+\subsection{OnEvent}
+\label{sec:OnEvent}
 
+An OnEvent block is activated when the dynamics component receives an event from published from an external component.
+
+\vspace*{-0.25ex}
+\begin{table}[H]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{OnEvent Structure}}}\\
+    \toprule
+    \em{Attribute name} & \em{Type/Format} & \em{Required} \\
+    \midrule
+    transition-to & \Regime{}@name & no \\    
+    port & \EventReceivePort{}@name & yes\\
+    \midrule
+    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \midrule   
+    \StateAssignment & set & no\\
+    \EventOut & set & no\\
+    \bottomrule
+  \end{edtable}
+\end{table}
+
+\subsubsection{Port attribute}
+Each \OnEvent requires a \textit{port} attribute. This should refer to the name of an \EventReceivePort  in the \ComponentClass interface.
+
+\subsubsection{Transition-to attribute}
+\OnEvent can have a \textit{transition-to} attribute, which should refer to the name of a \Regime element in the \ComponentClass that the dynamics block will transition to when the \OnEvent block is triggered by an incoming event.
+
+\subsection{OnCondition}
+\label{sec:OnCondition}
+
+An OnCondition block is activated when the condition in the \Trigger block is met.
+
+\begin{table}[H]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{OnCondition Structure}}}\\
+    \toprule
+    \em{Attribute name} & \em{Type/Format} & \em{Required} \\
+    \midrule
+    transition-to & \Regime{}@name & no \\
+    \midrule
+    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \midrule
+    \Trigger & singleton & yes \\
+    \Transition & singleton & no \\
+    \StateAssignment & set & no\\
+    \EventOut & set & no\\
+    \bottomrule
+  \end{edtable}
+\end{table}
+
+{\OnCondition}s are the mathematical expressions which define
+when a {\Transition} should be triggered.
+{\OnCondition}s are any arbitrary combination of \emph{Logical
+Operations} (and, or, noop, etc.) on the
+result of any arbitrary combination of \emph{Relational Operations}
+($>$,$<$,$==$,$<=$,$>=$, etc.) on
+{\StateVariable}s. At any given time in the {\Regime},
+the {\OnCondition} expression then evaluates to True or False
+{\tt Boolean} result. For example, the following are valid
+{\OnCondition}s
+
+\begin{lstlisting}
+x>10
+x>10 & y<20
+x>exp(-cos(y)) | y<sin(t)+5
+x==15
+\end{lstlisting}
+
+A {\OnCondition} which persistently evaluates to True violates
+the definition that {\Transition}s should have vanishing
+temporal extent, and the behaviour for this case is undefined, but it
+would be preferable for the implementation to produce an error message
+to the user.
+
+\subsubsection{Transition-to attribute}
+\OnEvent can have a \textit{transition-to} attribute, which should refer to the name of a \Regime element in the \ComponentClass that the dynamics block will transition to when the \Trigger condition is met.
+
+\subsection{Trigger}
+\label{sec:Trigger}
+
+The trigger block defines the condition on which the \OnCondition block is activiated.
+
+\begin{table}[H]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Trigger Structure}}}\\
+    \toprule
+    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \midrule
+    \MathInline & singleton & yes \\ 
+    \bottomrule
+  \end{edtable}
+\end{table}
 
 \subsection{StateAssignment}
 \label{sec:StateAssignment}
@@ -1250,8 +1245,6 @@ although their use is only allowed within \StateAssignment blocks:
 \subsection{ConnectionRule}
 \label{sec:ConnectionRule}
 
-\draftnote{writing this up I thought it was a bit weird that the parameters in the component interface were \lq\lq{}magically\rq\rq{} connected up with the right parameters in the built-in connection rule. Therefore I have introduced a new element for each built-in type, which have attributes that will explicitly link to the parameter names. Since these will only be defined once I didn\rq{}t see the harm in this.}
-
 \begin{table}[H]
   \begin{edtable}{tabular}{llr}
     \toprule
@@ -1283,8 +1276,6 @@ Each cell in the source population is connected to the cell in the destination p
 
 \subsection{ProbabilisticConnectivity}
 \label{sec:ProbabilisticConnectivity}
-
-\draftnote{Looking forward to version 2 I was thinking that this connectivity rule would make a nice target for many \lq\lq{}extended\rq\rq{} connection rule schemes. I don\rq{}t quite like the format of the value list I have come up with though, so if you would prefer to take it out and introduce something else in Version 2 that is okay.}
 
 \begin{table}[H]
   \begin{edtable}{tabular}{llr}
@@ -1346,11 +1337,10 @@ Each \ExplicitConnectionList element requires a \textit{target-indices} attribut
   \end{edtable}
 \end{table}
 
+\draftnote{I will finish adding the required attributes (copying the names used in UncertML) for these distributions later this week}
 
 \subsection{NormalDistribution}
 \label{sec:NormalDistribution}
-
-\draftnote{I thought that we should probably be specific for the built-in random distributions that are required in 9ML implementations. Going through \href{http://www.uncertml.org/}{http://www.uncertml.org/} I have picked out the ones that I suspect will be most useful to start off with. Are there any others you think I should include (or just all of them)?}
 
 \subsection{LogNormalDistribution}
 \label{sec:LogNormalDistribution}
@@ -1458,7 +1448,7 @@ Each \Component requires a \textit{name} attribute. This name should be a valid 
     \midrule
     \em{Text format} & \; & \em{Required} \\
     \midrule
-    \ComponentClass{}@name & \; & no \\ 
+    \ComponentClass{}@name & \; & yes \\ 
     \bottomrule
   \end{edtable}
 \end{table}
@@ -1473,8 +1463,7 @@ file or externally as specified by the \textit{url} attribute.
 If the \ComponentClass referenced by the definition element is defined outside the current file, the \textit{url} attribute specifies a \href{http://en.wikipedia.org/wiki/Uniform_resource_locator}{Uniform Resource Locator (URL)} for the file which contains the \ComponentClass definition.
 
 \subsubsection{Text}
-\draftnote{I know we discussed this but I still am not sure it is a good idea to be able to drop the \ComponentClass name if it is the only \ComponentClass in the file. Because if someone adds a second \ComponentClass to the file it will break any (potentially remote) references to it}
-If the referenced \ComponentClass is in the current file or there is more than one \ComponentClass in the file located by the \textit{url} attribute, the name of the \ComponentClass needs to be provided in the text of \Definition element.
+The name of the \ComponentClass to be referenced \ComponentClass needs to be provided in the text of \Definition element.
 
 \subsection{Prototype}
 \label{sec:Prototype}
@@ -1490,7 +1479,7 @@ If the referenced \ComponentClass is in the current file or there is more than o
     \midrule
     \em{Text format} & \; & \em{Required} \\
     \midrule
-    \Component{}@name & \; & no \\ 
+    \Component{}@name & \; & yes \\ 
     \bottomrule
   \end{edtable}
 \end{table}
@@ -1506,7 +1495,8 @@ component.
 If the prototype \Component is defined outside the current file, the \textit{URL} attribute specifies a \href{http://en.wikipedia.org/wiki/Uniform_resource_locator}{Uniform Resource Locator (URL)} for the file which contains the prototype \Component.
 
 \subsubsection{Text}
-If the prototype \Component is in the current file or there is more than one \Component in the file located by the \textit{url} attribute, the name of the prototype \Component needs to be provided in the text of \Prototype element.
+The name of the \Component to be referenced \Component needs to be provided in the text of \Prototype element.
+
 
 \subsection{Property}
 \label{sec:Property}
@@ -1548,8 +1538,6 @@ Quantity is a compound data type object that encapsulates a numerical value
 and a unit of measurements. Unit has to be of one of the \Unit type.
 Any numeric quantity in the language (except counters) has to be of this type,
 dimensionless quantities shall use predefined empty \Unit.
-\draftnote{I have moved the \Component{}\withelem\RandomDistribution outside of the a \lq\lq{}RandomDistribution\rq\rq{}
-element here, partly because then we would need to come up with a different name for it, and partly as it doesn\rq{}t seem necessary}
 \begin{table}[H]
   \begin{edtable}{tabular}{llr}
     \toprule
@@ -1561,7 +1549,7 @@ element here, partly because then we would need to come up with a different name
     \midrule
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
-    \SingleValue | \Component{}\withelem\RandomDistribution | \ArrayValue | \ExternalArrayValue & singleton & yes \\
+   \pbox{12cm}{ \SingleValue | \Component{}\withelem\RandomDistribution |  \Reference{}\pointto\Component{}\withelem\RandomDistribution | \ArrayValue | \ExternalArrayValue} & singleton & yes \\
     \bottomrule
   \end{edtable}
 \end{table}
@@ -1593,7 +1581,6 @@ The \textit{units} attribute specifies the units of the quantity and should refe
 \subsection{SingleValue}
 \label{sec:SingleValue}
 
-\draftnote{Instead of \lq\lq{}SingleValue\rq\rq{}, I thought \SingleValue was a better name for this, thoughts?}
 \begin{table}[H]
   \begin{edtable}{tabular}{llr}
     \toprule
@@ -1611,8 +1598,6 @@ Any valid numeric value, including shorthand scientific notation e.g. 1e-5 ($1\t
 
 \subsection{ArrayValue}
 \label{sec:ArrayValue}
-
-\draftnote{I thought that \ArrayValue and \ArrayValueRow would be sufficient to provide the XML version explicit lists for demonstration purposes (see GitHub \#21)}
 
 \begin{table}[H]
   \begin{edtable}{tabular}{llr}
@@ -1656,8 +1641,6 @@ Any valid numeric value, including shorthand scientific notation e.g. 1e-5 ($1\t
 \subsection{ExternalArrayValue}
 \label{sec:ExternalArrayValue}
 
-\draftnote{This name is different to what we discussed in the meeting, do you like it?}
-
 \begin{table}[H]
   \begin{edtable}{tabular}{llr}
     \toprule
@@ -1667,7 +1650,7 @@ Any valid numeric value, including shorthand scientific notation e.g. 1e-5 ($1\t
     \midrule
     url & \href{http://en.wikipedia.org/wiki/Uniform_resource_locator}{URL} & yes\\
     mimetype & \href{http://en.wikipedia.org/wiki/Internet_media_type}{MIME type}  & yes\\
-    column-name & Data column name in external file & no\\    
+    column-name & Data column name in external file & yes\\    
     \bottomrule
   \end{edtable}
 \end{table}
@@ -1678,7 +1661,6 @@ The \textit{url} attribute specifies a \href{http://en.wikipedia.org/wiki/Unifor
 \subsubsection{Mimetype attribute}
 The \textit{mimetype} attribute specifies the data format for the external value list in the \href{http://en.wikipedia.org/wiki/Internet_media_type}{MIME type} syntax. Currently, only two formats are supported \lstinline|application/vnd.nineml.valuelist.text| and \lstinline|application/vnd.nineml.valuelist.hdf5|. 
 
-\draftnote{What do you think of these descriptions? I am a bit hazy on the structure of HDF5 could someone clean up my description?}
 \begin{itemize}
 \item \lstinline|application/vnd.nineml.valuelist.text| - an ASCII text file with a single row of white-space separated column names, followed by arbitrarily many white-space separated data rows of numeric values. Each numeric value is associated with the column name corresponding to the same index the along the row. Therefore, the number of items in each row must be the same.
 \item \lstinline|application/vnd.nineml.valuelist.hdf5| - a \href{http://www.hdfgroup.org/HDF5/}{HDF5} data file containing a single level of named members of \primtype{array->float} or \primtype{array->int} type.
@@ -1686,8 +1668,6 @@ The \textit{mimetype} attribute specifies the data format for the external value
 %\tracingall
 
 \subsubsection{Column-name attribute}
-\draftnote{Again, should we require column names to be provided to avoid problems if a second columns is added later?}
-If there is more than one data column in the external file then the \textit{column-name} attribute must be provided to specify which column is referenced.
 
 \subsection{Population}
 \label{sec:Population}
@@ -1716,8 +1696,6 @@ Each \Population requires a \textit{name} attribute. This name should be a valid
 
 \subsection{Cell}
 \label{sec:Cell}
-
-\draftnote{Needed to change since we are using \Prototype instead of \lq\lq{}Reference\rq\rq{} to refer to previously parameterised {\Component}s. I first thought of CellType but then I thought using \lq\lq{}Type\rq\rq{} might be confusing with the \lq\lq{}Class\rq\rq{}es in the Abstraction Layer.}
 
 \begin{table}[H]
   \begin{edtable}{tabular}{llr}
@@ -1789,7 +1767,7 @@ Each \Projection requires a \textit{name} attribute. This name should be a valid
     \toprule
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
-    \Reference{}\pointto\Population | \Reference{}\pointto\Set & singleton & yes \\
+    \Reference{}\pointto\Population | \Reference{}\pointto\PopulationGroup & singleton & yes \\
     \FromDestination & set & no \\
     \FromPlasticity & set & no \\
     \FromResponse & set & no \\
@@ -1800,8 +1778,6 @@ Each \Projection requires a \textit{name} attribute. This name should be a valid
 \subsection{Destination}
 \label{sec:Destination}
 
-\draftnote{I have permitted all the From* to be accessed from each of the four components of a synapse (source, dest, response, plasticity). I am not sure if this is a good idea or whether we should only allow the destination to access the post-synaptic response for example. It could make it unnecessarily complex to implement in some simulators...}
-
 \begin{table}[H]
   \begin{edtable}{tabular}{llr}
     \toprule
@@ -1809,7 +1785,7 @@ Each \Projection requires a \textit{name} attribute. This name should be a valid
     \toprule
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
-    \Reference{}\pointto\Population | \Reference{}\pointto\Set & singleton & yes \\
+    \Reference{}\pointto\Population | \Reference{}\pointto\PopulationGroup & singleton & yes \\
     \FromSource & set & no \\
     \FromPlasticity & set & no \\
     \FromResponse & set & no \\    
@@ -2016,15 +1992,15 @@ The \textit{url} attribute specifies a \href{http://en.wikipedia.org/wiki/Unifor
 The name of the User Layer element to be referenced should be included in the body of the \Reference element.
 
 
-\subsection{Set}
-\label{sec:Set}
+\subsection{PopulationGroup}
+\label{sec:PopulationGroup}
 
-\draftnote{Set doesn\rq{}t seem to be the right name considering we are trying to conserve cell indices (see GitHub \#34)}
+\draftnote{Changed to PopulationGroup as for grouping sub-components we were thinking of using ComponentGroup (see GitHub \#34)}
 
 \begin{table}[H]
   \begin{edtable}{tabular}{llr}
     \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Set Structure}}}\\
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{PopulationGroup Structure}}}\\
     \toprule
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
@@ -2062,13 +2038,13 @@ The name of the User Layer element to be referenced should be included in the bo
     \midrule
     \em{Text format} & \; & \em{Required} \\
     \midrule \relax
-    [\Population | \Set{}]@name & \; & yes\\
+    [\Population | \PopulationGroup{}]@name & \; & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
 
 \subsubsection{Index attribute}
-Each \Item requires a \textit{index} attribute. This attribute specifies the order in which the {\Population}s in the \Set are concatenated and thereby the indices of the cells within the combined \Set. Each \textit{index} must be non-negative, unique amongst the set of \Item{}@index enclosed in the \Concatenate element, and the set of indices must be contiguous for a single \Concatenate element.
+Each \Item requires a \textit{index} attribute. This attribute specifies the order in which the {\Population}s in the \PopulationGroup are concatenated and thereby the indices of the cells within the combined \PopulationGroup. Each \textit{index} must be non-negative, unique amongst the set of \Item{}@index enclosed in the \Concatenate element, and the set of indices must be contiguous for a single \Concatenate element.
 
 \note{This preserves the order non-specific nature of elements in NineML}
 
