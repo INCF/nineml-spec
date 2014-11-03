@@ -6,12 +6,12 @@
 
 %% ============================================================================
 %% Description:  Documentation for \lq\lq{}The NineML Specification Document\rq\rq{}
-%% First authors: Ivan Raikov <raikov@oist.jp>, Thomas G. Close <tclose@oist.jp>
-%% Organization: Okinawa Institute of Science and Technology Graduate University
-%% Date created: October 2014
+%% Authors: Ivan Raikov <raikov@oist.jp>, Thomas G. Close <tclose@oist.jp>, Andrew P. Davison <davison@unic.cnrs-gif.fr>
+%% Organization: Okinawa Institute of Science and Technology Graduate University, Centre National de la Recherche Scientifique
+%% Date created: October 2014  <---- should probably be some date in 2010, 2011 or so...
 %% https://github.com/INCF/nineml/master/spec/specification.tex
 %%
-%% Copyright (C) 2014 Okinawa Institute of Science and Technology Graduate University
+%% Copyright (C) 2014 Okinawa Institute of Science and Technology Graduate University, Centre National de la Recherche Scientifique
 %%
 %% ============================================================================
 
@@ -46,7 +46,6 @@
 \newcommand{\AnalogReceivePort}{\defRef{\textbf{\class{AnalogReceivePort}}\xspace}{sec:AnalogReceivePort}}
 \newcommand{\AnalogReducePort}{\defRef{\textbf{\class{AnalogReducePort}}\xspace}{sec:AnalogReducePort}}
 \newcommand{\EventReceivePort}{\defRef{\textbf{\class{EventReceivePort}}\xspace}{sec:EventReceivePort}}
-\newcommand{\EventReducePort}{\defRef{\textbf{\class{EventReducePort}}\xspace}{sec:EventReducePort}}
 \newcommand{\Annotation}{\defRef{\textbf{\class{Annotation}}\xspace}{sec:Annotation}}
 
 % Define User Layer element references
@@ -76,7 +75,7 @@
 \newcommand{\FromDestination}{\defRef{\textbf{\class{FromDestination}}\xspace}{sec:FromDestination}}
 \newcommand{\FromPlasticity}{\defRef{\textbf{\class{FromPlasticity}}\xspace}{sec:FromPlasticity}}
 \newcommand{\FromResponse}{\defRef{\textbf{\class{FromResponse}}\xspace}{sec:FromResponse}}
-\newcommand{\PopulationGroup}{\defRef{\textbf{\class{Set}}\xspace}{sec:Set}}
+\newcommand{\PopulationGroup}{\defRef{\textbf{\class{PopulationGroup}}\xspace}{sec:PopulationGroup}}
 \newcommand{\Concatenate}{\defRef{\textbf{\class{Concatenate}}\xspace}{sec:Concatenate}}
 \newcommand{\Item}{\defRef{\textbf{\class{Item}}\xspace}{sec:Item}}
 
@@ -207,14 +206,14 @@ cause a major issue for model sharing, replicability and reusability
 of either complete models or parts of models. To overcome this problem,
 we propose a
 common description language to be used for exchanging models and being
-able to simulate them in any simulation platform.
+able to simulate them on any simulation platform.
 
 This description language, using the XML technology, is based on a
-common Object Model describing the different elements of network
+common object model describing the different elements of network
 models. This work, initiated and supported by the International
-Neuroinformatics Coordinating Facility as part of the Multiscale
-Program, involve Computational Neuroscientists, simulator developers and
-developers of simulator-independent language (NeuroML, PyNN).  The name of the
+Neuroinformatics Coordinating Facility as part of the Multiscale Modeling
+Program, involve computational neuroscientists, simulator developers and
+developers of simulator-independent languages (NeuroML, PyNN).  The name of the
 proposed language is NineML (Network Interchange for Neuroscience Modeling
 Language).
 
@@ -225,8 +224,8 @@ succinct and unambiguous description of computational neuroscience models of neu
 
 NineML is intended to describe the network architecture, parameters
 and equations that govern the dynamics of a neuronal network, without
-taking into account model implementation detail such as numerical integration
-method.
+taking into account model implementation details such as numerical integration
+methods.
 
 At the current stage of development, the following concepts of spiking neuron
 network modeling can be fully or partially described:
@@ -237,23 +236,23 @@ network modeling can be fully or partially described:
 \item synapses
 \begin{enumerate}
 \item Post-synaptic membrane current mechanisms
-\item Short-term synaptic dynamics (a la Markram et. al. 1998)
+\item Short-term synaptic dynamics (depression, facilitation)
 \item Long-term synaptic modifications (STDP, learning, etc.)
 \end{enumerate}
 \end{enumerate}
 
-The developed Object Model has been used to create three different
-implementations (Java, Python and Chicken Scheme) that are now able to
-import/export a common XML description and generate code for simulating the
-described model in different simulator.
+At the present time to object model has been implemented in three software
+tools (using Java, Python and Chicken Scheme), which are able to
+import/export a common XML description and generate code for simulating
+models in different simulators.
 
-\subsection{Design Considerations}
+\subsection{Design considerations}
 
-As one of the goals of NineML is to provide a mean to import/export a model from
+As one of the goals of NineML is to provide a means to import/export a model from
 any simulator or implementation, it is crucial to maintain a clear distinction
-between the definition of NineML and a simulator. Therefore, NineML should
+between the role of NineML and the role of a simulator. Therefore, NineML should
 provide only the information necessary for any given simulator
-to instantiate the network models in a simulator agnostic way.
+to instantiate the network models, in a simulator agnostic way.
 For example, NineML should specify the neuron membrane equation to solve,
 but not how to solve it.  In addition, for implementation and performance
 reasons, it is important to keep the language layer ``close'' to the simulator
@@ -281,7 +280,7 @@ instantiation and the value of parameters of all these components of a network
 model.
 \end {enumerate}
 
-As the User Layer provides the mechanism for instantiating and
+As the User Layer provides the mechanism for instantiation and
 parametrization of the model elements that have been defined in the
 Abstraction Layer, it is clearly essential that these two layers share
 a complementary and compatible design philosophy. There is a
@@ -297,13 +296,13 @@ user.
 
 This document presents the current NineML specifications and consists of:
 \begin{enumerate}
-\item a description of the Abstraction and User Layer Object models
-\item the XML serialization with the description of the different tags
-\item documented examples of XML descriptions
-\item a proposal to solve the transition resolution problem
+\item a description of the Abstraction and User Layer object models;
+\item the XML serialization with the description of the different tags;
+\item documented examples of XML descriptions;
+\item a proposal to solve the transition resolution problem.
 \end{enumerate}
 
-\section{Design Philosophy and Scoping Rules}
+\section{Design philosophy and scoping rules}
 \label{sec:format}
 
 \begin{itemize}
@@ -333,7 +332,7 @@ This document presents the current NineML specifications and consists of:
 
 For adding semantic structure to the model it is recommended to use the \href{http://www.w3.org/RDF/}{Resource Description Framework  (RDF)}. 
 
-\section{Unit and Dimensions in NineML}
+\section{Units and dimensions in NineML}
 \label{sec:dimensions}
 
 \noindent
@@ -351,11 +350,11 @@ imported from a specific XML file, describing a set of dimensions.
 Each dimension can give rise to a family of unit declarations, each of
 which has the same dimensionality but a different multiplier. For example,
 typical units for a quantity with dimensionality voltage include
-milliVolts (multiplier = $10^{-3}$), microVolts (multiplier = $10^{-6}$)
-and Volts (multiplier = 1).  To express a dimensional quantity both a
+millivolts (multiplier = $10^{-3}$), microvolts (multiplier = $10^{-6}$)
+and volts (multiplier = 1).  To express a dimensional quantity both a
 numerical factor and a unit are required. Unit can be expressed in a NineML
-file with the "unit" element, defined at the User Layer level or imported
-from a specific XML file, describing a set of units.
+file with the \Unit element, defined at the User Layer level, or imported
+from a specific XML file describing a set of units.
 
 Except where physical constants are required, abstraction layer definitions
 generally only contain references to dimensions and are independent of any
@@ -393,25 +392,25 @@ units by which they are assigned.
 Each \Dimension requires a \textit{name} attribute. This name should be a valid identifier in the \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 standard} and uniquely identify the {\Dimension} in current the scope.
 
 \subsubsection{M attribute}
-The \textit{m} attribute specifies the power of the mass dimension in the \Dimension. If omitted it the power is zero.
+The \textit{m} attribute specifies the power of the mass dimension in the \Dimension. If omitted the power is zero.
 
 \subsubsection{L attribute}
-The \textit{l} attribute specifies the power of the length dimension in the \Dimension. If omitted it the power is zero.
+The \textit{l} attribute specifies the power of the length dimension in the \Dimension. If omitted the power is zero.
 
 \subsubsection{T attribute}
-The \textit{t} attribute specifies the power of the time dimension in the \Dimension. If omitted it the power is zero.
+The \textit{t} attribute specifies the power of the time dimension in the \Dimension. If omitted the power is zero.
 
 \subsubsection{I attribute}
-The \textit{i} attribute specifies the power of the current dimension in the \Dimension. If omitted it the power is zero.
+The \textit{i} attribute specifies the power of the current dimension in the \Dimension. If omitted the power is zero.
 
 \subsubsection{N attribute}
-The \textit{n} attribute specifies the power of the amount-of-substance dimension in the \Dimension. If omitted it the power is zero.
+The \textit{n} attribute specifies the power of the amount-of-substance dimension in the \Dimension. If omitted the power is zero.
 
 \subsubsection{K attribute}
-The \textit{k} attribute specifies the power of the temperature dimension in the \Dimension. If omitted it the power is zero.
+The \textit{k} attribute specifies the power of the temperature dimension in the \Dimension. If omitted the power is zero.
 
 \subsubsection{J attribute}
-The \textit{j} attribute specifies the power of the luminous-intensity dimension in the \Dimension. If omitted it the power is zero.
+The \textit{j} attribute specifies the power of the luminous-intensity dimension in the \Dimension. If omitted the power is zero.
 
 \subsection{Unit}
 \label{sec:Unit}
@@ -426,7 +425,7 @@ The \textit{j} attribute specifies the power of the luminous-intensity dimension
     symbol & \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 identifier} & yes\\
     dimension & \Dimension{}@name & yes\\
     power & \primtype{integer} & yes\\
-    offset & \primtype{float} & no\\
+    offset & \primtype{real number} & no\\
     \bottomrule
   \end{edtable}
 \end{table}
@@ -478,7 +477,6 @@ plasticity, ...)
     \AnalogReducePort & set & no \\ 
     \EventSendPort & set & no\\    
     \EventReceivePort & set & no\\    
-    \EventReducePort & set & no\\
     \Dynamics | \ConnectionRule & singleton & yes \\
     \bottomrule
   \end{edtable}
@@ -490,7 +488,7 @@ objects that relate to the definition of a model (cells, synapses, synaptic
 plasticity rules, random spike trains, inputs, ...).
 All equations and event declarations that are part of particular entity
 model, such as neuron model for instance, belong in a single \textbf{\class{ComponentClass}}.
-A \textbf{\class{ComponentClass}} can be used to represent either a specific model of neuron or a
+A \textbf{\class{ComponentClass}} can be used to represent either a specific model of a neuron or a
 composite model, including synaptic mechanisms (as in the second example
 provided in the Appendix for example) as long as the algebra is correct.
 
@@ -506,18 +504,18 @@ of events. Events are discrete notifications
 that are transmitted over event ports. Since
 Event ports have names, saying that we transmit `event1' for example
 would mean transmitting an event on the EventPort called `event1'. Events
-can be used for example to signal action potentials firing.
+can be used for example to signal action potential firing.
 
 Ports allow instantiations of {\ComponentClass}es to communicate between each
 other during a simulation.
-There are six sub-classes of port objects: {\AnalogSendPort}, \AnalogReceivePort, \AnalogReducePort, \EventSendPort, \EventReceivePort and \EventReducePort
+There are five sub-classes of port objects: {\AnalogSendPort}, \AnalogReceivePort, \AnalogReducePort, \EventSendPort and \EventReceivePort.
 
 A \ComponentClass is composed of:
 \begin{itemize}
 \item {\Parameter}s for the \ComponentClass
-\item An unordered collection of {\AnalogSendPort}, {\AnalogReceivePort} and {\AnalogReducePort}s. Each {\AnalogSendPort}s publishes a state variable or derived value and each {\AnalogReceivePort}s consumes a state variable or derived value published from elsewhere. {\AnalogReducePort}s consume a variable number of published state variables and/or derived values and applies an operator that reduces the incoming ports to a single value.
+\item An unordered collection of {\AnalogSendPort}s, {\AnalogReceivePort}s and {\AnalogReducePort}s. Each {\AnalogSendPort} publishes a state variable or derived value and each {\AnalogReceivePort} consumes a state variable or derived value published from elsewhere. {\AnalogReducePort}s consume a variable number of published state variables and/or derived values and apply an operator that reduces the incoming values to a single value.
 \item  a \Dynamics block and {Interface}s, as shown
-in Figure~\ref{fig:EX1_RegimeGraph}. The \Dynamics block represent the internal
+in Figure~\ref{fig:component_class_overview}. The \Dynamics block represent the internal
 dynamic of the model while the Interface block allows the \ComponentClass to
 communicate with other instantiations of the \ComponentClass and with the User
 Layer.
@@ -527,11 +525,11 @@ Layer.
 \center
 \includegraphics[width=8cm]{figures/component_simple.pdf}
 \protect\caption{ComponentClass Overview (Simple)}
-\label{fig:EX1_RegimeGraph}
+\label{fig:component_class_overview}
 \end{figure}
 
 \subsubsection{Name attribute}
-Each \ComponentClass requires a \textit{name} attribute. This name should be a valid identifier in the \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 standard} and uniquely identify the {\ComponentClass} in current the scope.
+Each \ComponentClass requires a \textit{name} attribute. This name should be a valid identifier in the \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 standard} and uniquely identify the {\ComponentClass} in the current scope.
 
 \subsection{Parameter}
 \label{sec:Parameter}
@@ -573,6 +571,7 @@ Each \Parameter requires a \textit{name} attribute. This name should be a valid 
 Each \Parameter requires a \textit{dimension} attribute. This attribute specifies the dimension of the units of the quantity that is expected to be passed to the \Parameter and should refer to the name of a \Dimension element in the global scope.
 
 \subsection{Ports: interfacing between components}
+\label{sec:Ports}
 
 
 Event ports transmit discrete events. They are useful for example in
@@ -614,7 +613,7 @@ flow in a post-synaptic neuron.
 Each \AnalogSendPort requires a \textit{name} attribute. This name should be a valid identifier in the \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 standard} and uniquely identify the {\AnalogSendPort} from all other elements in the \ComponentClass.
 
 \subsubsection{Dimension attribute}
-Each \Parameter requires a \textit{dimension} attribute. This attribute specifies the dimension of the units of the quantity that is expected to be passed to the \Parameter and should refer to the name of a \Dimension element in the global scope.
+Each \AnalogSendPort requires a \textit{dimension} attribute. This attribute specifies the dimension of the units of the quantity that is expected to be passed through the \AnalogSendPort and should refer to the name of a \Dimension element in the global scope.
 
 
 \subsection{AnalogReceivePort}
@@ -639,7 +638,7 @@ Each \Parameter requires a \textit{dimension} attribute. This attribute specifie
 Each \AnalogReceivePort requires a \textit{name} attribute. This name should be a valid identifier in the \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 standard} and uniquely identify the {\AnalogReceivePort} from all other elements in the \ComponentClass.
 
 \subsubsection{Dimension attribute}
-Each \Parameter requires a \textit{dimension} attribute. This attribute specifies the dimension of the units of the quantity that is expected to be passed to the \Parameter and should refer to the name of a \Dimension element in the global scope.
+Each \AnalogReceivePort requires a \textit{dimension} attribute. This attribute specifies the dimension of the units of the quantity that is expected to be passed through the \AnalogReceivePort and should refer to the name of a \Dimension element in the global scope.
 
 
 \subsection{AnalogReducePort}
@@ -663,36 +662,36 @@ Each \Parameter requires a \textit{dimension} attribute. This attribute specifie
 
 {\AnalogReducePort}s can receive data from any number of {\AnalogSendPort}s (including none). They
 differ from \AnalogReceivePort in that they can be connected to multiple
-{\AnalogSendPort}s. \AnalogReducePort take an additional operator,
-{\tt reduce\_op}, which specifies how the data from multiple \AnalogSendPort
+{\AnalogSendPort}s. \AnalogReducePort takes an additional operator,
+{\tt operator}, which specifies how the data from multiple {\AnalogSendPort}s
 should be combined to produce a single value. Currently, the
 only supported operations are \lq\lq{}$+$\rq\rq{} and \lq\lq{}$*$\rq\rq{}, which sum and multiply the inputs respectively.
 
 The motivation for \AnalogReducePort is that it allows us to make our
 \ComponentClass definitions more general. For example, if we are defining a
-neuron, would define a \AnalogReducePort called \emph{InjectedCurrent}.
+neuron, we would define an \AnalogReducePort called \emph{InjectedCurrent}.
 This allows us to write the membrane equation for that neuron as
-$dV/dt = (1/C) * InjectedCurrent$.
+$\mathrm{d}V/\mathrm{d}t = (1/C) * InjectedCurrent$.
 
 Then, when we connect this neuron to synapses, current-clamps, etc, we
-simply need to connect the SendPorts containing the currents of these
-{\ComponentClass}es onto the \emph{InjectedCurrent} reduce-port, without having
+simply need to connect the send ports containing the currents of these
+{\ComponentClass}es to the \emph{InjectedCurrent} reduce port, without having
 to change our original \ComponentClass definitions.
 
 \subsubsection{Name attribute}
 Each \AnalogReducePort requires a \textit{name} attribute. This name should be a valid identifier in the \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 standard} and uniquely identify the {\AnalogReducePort} from all other elements in the \ComponentClass.
 
 \subsubsection{Dimension attribute}
-Each \AnalogReducePort requires a \textit{dimension} attribute. This attribute specifies the dimension of the units of the quantity that is expected to be passed to the \AnalogReducePort and should refer to the name of a \Dimension element in the global scope.
+Each \AnalogReducePort requires a \textit{dimension} attribute. This attribute specifies the dimension of the units of the quantity that is expected to be communicated through the \AnalogReducePort and should refer to the name of a \Dimension element in the global scope.
 
 \subsubsection{Operator attribute}
-Each \AnalogReducePort requires a \textit{operator} attribute. The operator \lq\lq{}reduces\rq\rq{} the connected inputs to a single value at each time point. For example the following port,
+Each \AnalogReducePort requires an \textit{operator} attribute. The operator \lq\lq{}reduces\rq\rq{} the connected inputs to a single value at each time point. For example the following port,
 
 \begin{lstlisting}
 <AnalogReducePort name="total_membrane_current" dimension="current" operator="+"/>
 \end{lstlisting}
 
-will take all of the electrical currents that have been connected to it via {\AnalogSendPort}s and sum them together to get the total current passing through the membrane.
+will take all of the electrical currents that have been connected to it via {\AnalogSendPort}s and sum them to get the total current passing through the membrane.
 
 
 \subsection{EventSendPort}
@@ -760,21 +759,21 @@ dynamics and non-linear dynamics, the \Dynamics block can contains the
 following concepts:
 
 \begin{itemize}
-\item \StateVariable (section~\ref{state-var})
-\item \Regime (section~\ref{regime}) that describe the dynamics of the
-system for a particular domain of \StateVariable
-\item \Transition (section~\ref{transition}) that links two
+\item \StateVariable (section~\ref{sec:StateVariable}): one of the variables that describe the internal state of a component
+\item \Regime (section~\ref{sec:Regime}): a set of ordinary differential equations (ODEs) that describe the dynamics of the
+system for a particular domain of the {\StateVariable}s
+\item \Transition (section~\ref{sec:Transition}): links two
 regimes: the Source \Regime and the Target \Regime, and can be triggered by
 an event or a condition. If a component is in the Source \Regime, and the
 transition is triggered, then the component moves into the Target \Regime.
-\item \Alias (section~\ref{alias})
+\item \Alias (section~\ref{sec:Alias}): an alternative name for a variable or part of an expression.
 \end{itemize}
 
 
 These different concepts are the building blocks of a graph, called
-the {\tt Regime Graph} (illustrated in Figure~\ref{SimpleRegimeGraph}),
+the Regime Graph (illustrated in Figure~\ref{SimpleRegimeGraph}),
 where the \Regime forms the vertices and the \Transition form the
-directional edges of the {\tt Regime Graph}. This graph must have at
+directional edges of the Regime Graph. This graph must have at
 least one \Regime, and contain no regime islands. At any given time,
 a component will be in a single \Regime, and can change which \Regime
 it is in through \Transition.
@@ -786,7 +785,7 @@ it is in through \Transition.
 \label{SimpleRegimeGraph}
 \end{figure}
 
-An example dynamics in Figure~\ref{SimpleRegimeGraph} has three {\StateVariable}s,
+An example dynamics in \ref{SimpleRegimeGraph} has three {\StateVariable}s,
 \emph{X,Y} and \emph{Z}, and a state graph with three {\Regime}s, \emph{regime1},
 \emph{regime2} and \emph{regime3}. At any time, a component will be in one of
 these regimes, and the state variables will evolve accordingly.
@@ -807,8 +806,8 @@ these regimes, and the state variables will evolve accordingly.
   \end{edtable}
 \end{table}
 
-The internal state of a component is defined by a set of \StateVariable
--- variables that can change either continuously or discontinuously as a
+The internal state of a component is defined by a set of {\StateVariable}s
+ -- variables that can change either continuously or discontinuously as a
 function of time.
 
 The \StateVariable changes happen in two ways:
@@ -817,7 +816,7 @@ The \StateVariable changes happen in two ways:
 \item continuously through \textbf{TimeDerivatives} (in {\Regime}s),
 which define the {\StateVariable}s evolution over time, for example
 $dX/dt=1-X$.
-\item discretely through \StateAssignment (in \Transition),
+\item discretely through \StateAssignment (in {\Transition}s),
 which make discrete changes to a \StateVariable value, for example
 $X = X + 1$.
 \end{itemize}
@@ -861,9 +860,9 @@ properties:
 \begin{itemize}
 \item An unordered collection of {\StateVariable}s which are
 propagated when the {\Regime} is active.
-\item a set of \TimeDerivative, one for each \StateVariable
-of the \ComponentClass, which define how the \StateVariable
-evolve over time in the form $\frac{dx_{i}}{dt} = f(x\_0, ..., x\_i, t)$.
+\item a set of {\TimeDerivative}s, one for each \StateVariable
+of the \ComponentClass, which define how the {\StateVariable}s
+evolve over time in the form $\frac{dx_{i}}{dt} = f(x_0, ..., x_i, t)$.
 \item The independent variable must be shared between the collection
 of {\StateVariable}s and their propagators in a \Regime.
 \end{itemize}
@@ -874,7 +873,7 @@ in a \Regime, it is assumed to be zero.}
 It is important to note that, at the current stage of development, we are only
 considering "Temporal regimes". In the future, the concept could be extended
 to more general cases where the independent variable can be anything (space
-for example)
+for example).
 
 \subsubsection{Name attribute}
 Each \Regime requires a \textit{name} attribute. This name should be a valid identifier in the \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 standard} and uniquely identify the {\Regime} from all other elements in the \ComponentClass.
@@ -900,7 +899,7 @@ Each \Regime requires a \textit{name} attribute. This name should be a valid ide
 \end{table}
 
 \subsubsection{Variable attribute}
-Each \TimeDerivative requires a \textit{variable} attribute. This should refer to the name of a \StateVariable in the \ComponentClass. Only one \TimeDerivative is allow per \textit{variable} in each \Regime.
+Each \TimeDerivative requires a \textit{variable} attribute. This should refer to the name of a \StateVariable in the \ComponentClass. Only one \TimeDerivative is allowed per \textit{variable} in each \Regime.
 
 
 \subsection{Transitions: OnEvent \& OnCondition}
@@ -912,26 +911,25 @@ Movement between several instances of \Regime happens via \Transition.
 A {\Transition} is defined in NineML as having
 a source and target {\Regime}, where the target
 {\Regime} can be the same as the source (For example \emph{t5}
-in Figure~\ref{SimpleRegimeGraph}). There are two types of \Transition:
+in \ref{SimpleRegimeGraph}). There are two types of \Transition:
 
 \begin{itemize}
 \item An \OnCondition function of the \StateVariable, for
 example $X > Y$.
-\item An \OnEvent on an input from an \EventReceivePort. (See section~\ref{port}).
+\item An \OnEvent on an input from an \EventReceivePort. (See section~\ref{sec:Ports}).
 \end{itemize}
 
 During either type of transition three things can happen:
 \begin{itemize}
-\item The component can change regime. For example, in figure 2, if
+\item The component can change regime. For example, in \ref{SimpleRegimeGraph}, if
 the component is in \emph{regime3}, and the trigger for \emph{t3} is
 satisfied, then the component will move into \emph{regime1}.
 \item \textbf{StateAssignment}s can take place, for example, $X=0$
-\item The component can send \EventOut
+\item The component can send events (see \EventOut).
 \end{itemize}
 
-During a transition, multiple \StateAssignment and \EventOut can occur.
-(For more on the resolution of {\Transition}s see Appendix
-section~\ref{resolution})
+During a transition, multiple {\StateAssignment}s can occur and multiple events can be sent.
+(For more on the resolution of {\Transition}s see Appendix~\ref{resolution})
 
 {\Transition}s have a vanishing temporal extent (i.e. they are
 event-like). Once construction of a {\Transition} is complete, it
@@ -947,7 +945,7 @@ triggers the {\Transition}
 \subsection{OnEvent}
 \label{sec:OnEvent}
 
-An OnEvent block is activated when the dynamics component receives an event from published from an external component.
+An OnEvent block is activated when the dynamics component receives an event from an external component.
 
 \vspace*{-0.25ex}
 \begin{table}[H]
@@ -1016,14 +1014,14 @@ x>exp(-cos(y)) | y<sin(t)+5
 x==15
 \end{lstlisting}
 
-A {\OnCondition} which persistently evaluates to True violates
+An {\OnCondition} which persistently evaluates to True violates
 the definition that {\Transition}s should have vanishing
 temporal extent, and the behaviour for this case is undefined, but it
 would be preferable for the implementation to produce an error message
 to the user.
 
 \subsubsection{Transition-to attribute}
-\OnEvent can have a \textit{transition-to} attribute, which should refer to the name of a \Regime element in the \ComponentClass that the dynamics block will transition to when the \Trigger condition is met.
+An \OnEvent can have a \textit{transition-to} attribute, which should refer to the name of a \Regime element in the \ComponentClass that the dynamics block will transition to when the \Trigger condition is met.
 
 \subsection{Trigger}
 \label{sec:Trigger}
@@ -1082,7 +1080,7 @@ Each \StateAssignment requires a \textit{variable} attribute. This should refer 
 \end{table}
 
 \subsubsection{Port attribute}
-Each \OnEvent requires a \textit{port} attribute. This should refer to the name of an \EventSendPort in the \ComponentClass interface.
+Each \EventOut requires a \textit{port} attribute. This should refer to the name of an \EventSendPort in the \ComponentClass interface.
 
 \subsection{Alias}
 \label{sec:Alias}
@@ -1107,15 +1105,13 @@ Each \OnEvent requires a \textit{port} attribute. This should refer to the name 
 \note{\Alias is defined in the Dynamics, \emph{not} in the
 \Regime. This means that aliases are the same across all regimes.}
 
-An alias corresponds to an intermediate variable allowing to store an
-information and to reuse it at different places in the definition of
-the dynamics.
+An alias corresponds to an alternative name for a variable or part of an expression. 
 
-\textbf{Aliases} are motivated from two problems:
+\textbf{Aliases} are motivated by two use cases:
 
 \begin{itemize}
 \item {\bf substitution}: rather than writing long expressions for functions of
-\StateVariable, we can define an \Alias once. For example, we can define chains
+{\StateVariable}s, we can define an \Alias once. For example, we can define chains
 of {\Alias}es:
 %
 \begin{lstlisting}
@@ -1126,15 +1122,15 @@ mtau = 1./(m_alpha+m_beta)
 dm/dt = (1/C)*(minf-m)/mtau
 \end{lstlisting}
 
-In this case, $m_{alpha}$, $m_{beta}$, $minf$ and $mtau$ are all
-alias definitions. There is no reason we couldn't expand our $dm/dt$
+In this case, \lstinline|m_alpha|, \lstinline|m_beta|, \lstinline|minf| and \lstinline|mtau| are all
+alias definitions. There is no reason we couldn't expand our $\mathrm{d}m/\mathrm{d}t$
 description out to eliminate these intermediate {\Alias}es, but the expression
 would be very long and difficult to read.
 
-\item {\bf Accessing intermediate variable}: if we would like to communicate a
+\item {\bf Accessing intermediate variables}: if we would like to communicate a
 value other than a simple \StateVariable to another \ComponentClass. For
 example, if we have a component representing a
-neuron, which has an internal \StateVariable, 'V', we may be interested in
+neuron, which has an internal \StateVariable, `V', we may be interested in
 transmitting a current, for example $i=g*(E-V)$.
 
 \end{itemize}
@@ -1163,14 +1159,14 @@ Each \Alias requires a \textit{name} attribute. This name should be a valid iden
 A block used to specify mathematical expressions. The expression is expected to
 be in \texttt{C} style and given as text. MathML support is planned in future versions of NineML
 
-Depending on the context; MathInline blocks should return an expression that
+Depending on the context, MathInline blocks should return an expression that
 evaluates to either a \verb|Boolean| (when used as the trigger for
-{\OnCondition}s) or a \verb|floating-point| number ( when used  as a
+{\OnCondition}s) or a \verb|real| number ( when used  as a
 right-hand-side for  {\Alias}es, {\TimeDerivative}s \& {\StateAssignment}s).
 
 The following operators are supported, with the same precedence levels as ANSI
-C89. All
-numbers/variables are assumed to be real valued numbers.
+C89. 
+All numbers/variables are assumed to be real valued numbers.
 
 \begin{itemize}
 \item Arithmetic operators
@@ -1289,7 +1285,7 @@ Each cell in the source population is connected to the cell in the destination p
   \end{edtable}
 \end{table}
 
-All cells in the source population are connected to cells in the destination population with a probability defined by the \ConnectionProbability element.
+All cells in the source population are connected to cells in the destination population with a probability defined by the \textit{probability} attribute.
 
 \subsubsection{Probability attribute}
 
@@ -1353,9 +1349,6 @@ Each \ExplicitConnectionList element requires a \textit{target-indices} attribut
 
 \subsection{PoissonDistribution}
 \label{sec:PoissonDistribution}
-
-\subsection{InverseGammaDistribution}
-\label{sec:InverseGammaDistribution}
 
 \subsection{CauchyDistribution}
 \label{sec:CauchyDistribution}
@@ -1815,7 +1808,7 @@ Response defines the effect imposed on the
 post-synaptic cell dynamics by triggering the synaptic input and the input and output ports. 
 \textit{(Removed: This definition includes only the shape of this effect and does not include the
 exact magnitude of the effect)}. The magnitude is described separately through
-plasticity rules and synaptic weights in section \ref{plasticity}. Note
+plasticity rules and synaptic weights in section \ref{sec:Plasticity}. Note
 though that the units of the effect are defined here and synaptic weights in
 plasticity nodes are left dimensionless.
 
@@ -1844,7 +1837,7 @@ is done to allow same plasticity rules to operate on
 different types of postsynaptic responses. Synaptic weight defined in the
 plasticity component determines only the magnitude of the response, the
 shape and physical properties are defined in the corresponding post-synaptic
-response node (section \ref{secSynapse}).
+response node (section \ref{sec:Response}).
 
 \subsection{FromSource}
 \label{sec:FromSource}
@@ -1857,7 +1850,7 @@ response node (section \ref{secSynapse}).
      \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
     sender & [\AnalogSendPort | \EventSendPort{}]@name & yes\\    
-    receiver & [\AnalogReceivePort | \EventReceivePort | \AnalogReducePort | \EventReducePort{}]@name & yes\\
+    receiver & [\AnalogReceivePort | \EventReceivePort | \AnalogReducePort{}]@name & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
@@ -1866,7 +1859,7 @@ response node (section \ref{secSynapse}).
 Each \FromSource element requires a \textit{sender} attribute. This should refer to the name of a \AnalogSendPort or \EventSendPort in the \Cell->\Component{}\withelem\ComponentClass of the source population. The transmission mode of the port (i.e. \lq\lq{}analog\rq\rq{} or \lq\lq{}digital\rq\rq{}) should match that of the port referenced by the \textit{receiver} attribute.
 
 \subsubsection{Receiver attribute}
-Each \FromSource element requires a \textit{receiver} attribute. This should refer to the name of a \AnalogReceivePort, \EventReceivePort, \AnalogReducePort or \EventReducePort in the \Component{}\withelem\ComponentClass in the enclosing \Source/\Destination/\Plasticity/\Response element.  The transmission mode of the port (i.e. \lq\lq{}analog\rq\rq{} or \lq\lq{}digital\rq\rq{}) should match that of the port referenced by the \textit{sender} attribute.
+Each \FromSource element requires a \textit{receiver} attribute. This should refer to the name of a \AnalogReceivePort, \EventReceivePort or \AnalogReducePort in the \Component{}\withelem\ComponentClass in the enclosing \Source/\Destination/\Plasticity/\Response element.  The transmission mode of the port (i.e. \lq\lq{}analog\rq\rq{} or \lq\lq{}digital\rq\rq{}) should match that of the port referenced by the \textit{sender} attribute.
 
 \subsection{FromDestination}
 \label{sec:FromDestination}
@@ -1879,7 +1872,7 @@ Each \FromSource element requires a \textit{receiver} attribute. This should ref
      \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
     sender & [\AnalogSendPort | \EventSendPort{}]@name & yes\\    
-    receiver & [\AnalogReceivePort | \EventReceivePort | \AnalogReducePort | \EventReducePort{}]@name & yes\\
+    receiver & [\AnalogReceivePort | \EventReceivePort | \AnalogReducePort{}]@name & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
@@ -1888,7 +1881,7 @@ Each \FromSource element requires a \textit{receiver} attribute. This should ref
 Each \FromDestination element requires a \textit{sender} attribute. This should refer to the name of a \AnalogSendPort or \EventSendPort in the \Cell->\Component{}\withelem\ComponentClass of the source population. The transmission mode of the port (i.e. \lq\lq{}analog\rq\rq{} or \lq\lq{}digital\rq\rq{}) should match that of the port referenced by the \textit{receiver} attribute.
 
 \subsubsection{Receiver attribute}
-Each \FromDestination element requires a \textit{receiver} attribute. This should refer to the name of a \AnalogReceivePort, \EventReceivePort, \AnalogReducePort or \EventReducePort in the \Component{}\withelem\ComponentClass in the enclosing \Source/\Destination/\Plasticity/\Response element.  The transmission mode of the port (i.e. \lq\lq{}analog\rq\rq{} or \lq\lq{}digital\rq\rq{}) should match that of the port referenced by the \textit{sender} attribute.
+Each \FromDestination element requires a \textit{receiver} attribute. This should refer to the name of a \AnalogReceivePort, \EventReceivePort or \AnalogReducePort in the \Component{}\withelem\ComponentClass in the enclosing \Source/\Destination/\Plasticity/\Response element.  The transmission mode of the port (i.e. \lq\lq{}analog\rq\rq{} or \lq\lq{}digital\rq\rq{}) should match that of the port referenced by the \textit{sender} attribute.
 
 
 \subsection{FromPlasticity}
@@ -1902,7 +1895,7 @@ Each \FromDestination element requires a \textit{receiver} attribute. This shoul
      \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
     sender & [\AnalogSendPort | \EventSendPort{}]@name & yes\\    
-    receiver & [\AnalogReceivePort | \EventReceivePort | \AnalogReducePort | \EventReducePort{}]@name & yes\\
+    receiver & [\AnalogReceivePort | \EventReceivePort | \AnalogReducePort{}]@name & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
@@ -1911,7 +1904,7 @@ Each \FromDestination element requires a \textit{receiver} attribute. This shoul
 Each \FromPlasticity element requires a \textit{sender} attribute. This should refer to the name of a \AnalogSendPort or \EventSendPort in the \Cell->\Component{}\withelem\ComponentClass of the source population. The transmission mode of the port (i.e. \lq\lq{}analog\rq\rq{} or \lq\lq{}digital\rq\rq{}) should match that of the port referenced by the \textit{receiver} attribute.
 
 \subsubsection{Receiver attribute}
-Each \FromPlasticity element requires a \textit{receiver} attribute. This should refer to the name of a \AnalogReceivePort, \EventReceivePort, \AnalogReducePort or \EventReducePort in the \Component{}\withelem\ComponentClass in the enclosing \Source/\Destination/\Plasticity/\Response element.  The transmission mode of the port (i.e. \lq\lq{}analog\rq\rq{} or \lq\lq{}digital\rq\rq{}) should match that of the port referenced by the \textit{sender} attribute.
+Each \FromPlasticity element requires a \textit{receiver} attribute. This should refer to the name of a \AnalogReceivePort, \EventReceivePort or \AnalogReducePort in the \Component{}\withelem\ComponentClass in the enclosing \Source/\Destination/\Plasticity/\Response element.  The transmission mode of the port (i.e. \lq\lq{}analog\rq\rq{} or \lq\lq{}digital\rq\rq{}) should match that of the port referenced by the \textit{sender} attribute.
 
 \subsection{FromResponse}
 \label{sec:FromResponse}
@@ -1925,7 +1918,7 @@ Each \FromPlasticity element requires a \textit{receiver} attribute. This should
      \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
     sender & [\AnalogSendPort | \EventSendPort{}]@name & yes\\    
-    receiver & [\AnalogReceivePort | \EventReceivePort | \AnalogReducePort | \EventReducePort{}]@name & yes\\
+    receiver & [\AnalogReceivePort | \EventReceivePort | \AnalogReducePort{}]@name & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
@@ -1934,7 +1927,7 @@ Each \FromPlasticity element requires a \textit{receiver} attribute. This should
 Each \FromResponse element requires a \textit{sender} attribute. This should refer to the name of a \AnalogSendPort or \EventSendPort in the \Cell->\Component{}\withelem\ComponentClass of the source population. The transmission mode of the port (i.e. \lq\lq{}analog\rq\rq{} or \lq\lq{}digital\rq\rq{}) should match that of the port referenced by the \textit{receiver} attribute.
 
 \subsubsection{Receiver attribute}
-Each \FromResponse element requires a \textit{receiver} attribute. This should refer to the name of a \AnalogReceivePort, \EventReceivePort, \AnalogReducePort or \EventReducePort in the \Component{}\withelem\ComponentClass in the enclosing \Source/\Destination/\Plasticity/\Response element.  The transmission mode of the port (i.e. \lq\lq{}analog\rq\rq{} or \lq\lq{}digital\rq\rq{}) should match that of the port referenced by the \textit{sender} attribute.
+Each \FromResponse element requires a \textit{receiver} attribute. This should refer to the name of a \AnalogReceivePort, \EventReceivePort or \AnalogReducePort in the \Component{}\withelem\ComponentClass in the enclosing \Source/\Destination/\Plasticity/\Response element.  The transmission mode of the port (i.e. \lq\lq{}analog\rq\rq{} or \lq\lq{}digital\rq\rq{}) should match that of the port referenced by the \textit{sender} attribute.
 
 \subsection{Connectivity}
 \label{sec:Connectivity}
@@ -2054,7 +2047,7 @@ Each \Item requires a \textit{index} attribute. This attribute specifies the ord
 \part*{Appendix}
 \addcontentsline{toc}{part}{Appendix}
 
-\section{Structure of a NineML Description}
+\section{Structure of a NineML description}
 
 In order to simplify the descriptions themselves and the mechanisms for
 combining multiple components of the model the NineML description
@@ -2097,7 +2090,7 @@ The {\tt RegimeGraph} is shown in Figure~\ref{fig:EX1_RegimeGraph}
 %\includegraphics[width=14cm]{al/ParallelisingTransitions.pdf}example_IzRegimeTransGraph.pdf
 \includegraphics[width=8cm]{figures/example_IzRegimeTransGraph.pdf}
 \protect\caption{{\tt RegimeGraph} for the XML model in this section.}
-\label{fig:EX3_RegimeGraph}
+\label{fig:EX1_RegimeGraph}
 \end{figure}
 
 \noindent
@@ -2532,7 +2525,7 @@ in this simulation}
 
 \newpage
 
-\section{Transition Resolution}
+\section{Transition resolution}
 \label{resolution}
 
 This section outlines pseudo code which defines the order of
@@ -2546,7 +2539,7 @@ before any {\Transition}s occur and ends after each component has moved
 into its new \Regime, all \textbf{StateAssignments} have been executed
 and all Events generated and resolved in the system.
 
-\subsection{Serial Implementation of Transition Resolution}
+\subsection{Serial implementation of transition resolution}
 
 \newcommand{\CN}[0]{\textsl{C\_n}}
 
@@ -2653,7 +2646,7 @@ the behaviour of a flattened component is identical to that of an unflattened
 component.
 \end{enumerate}
 
-\subsection{Parallelising of Event Resolution}
+\subsection{Parallelising of event resolution}
 
 This algorithm can be parallelised as following. We create a thread for each
 Component, which can independently execute Steps (3 to 6). The threads need
@@ -2669,13 +2662,11 @@ Figure~\ref{ParallelisingTransitions}.
 
 \section{Acknowledgments}
 
-This work was made possible by grant R01 GM070923 from the NIH National
-Institute of General Medical Sciences (USA) for continued development and
-support of SBML and related software infrastructure.
+
 
 
 \clearpage
-\bibliography{sbmlpkgspec}
+%\bibliography{sbmlpkgspec}
 
 % -----------------------------------------------------------------------------
 % End of document
