@@ -6,12 +6,12 @@
 
 %% ============================================================================
 %% Description:  Documentation for \lq\lq{}The NineML Specification Document\rq\rq{}
-%% First authors: Ivan Raikov <raikov@oist.jp>, Thomas G. Close <tclose@oist.jp>
-%% Organization: Okinawa Institute of Science and Technology Graduate University
-%% Date created: October 2014
+%% Authors: Ivan Raikov <raikov@oist.jp>, Thomas G. Close <tclose@oist.jp>, Andrew P. Davison <davison@unic.cnrs-gif.fr>
+%% Organization: Okinawa Institute of Science and Technology Graduate University, Centre National de la Recherche Scientifique
+%% Date created: October 2014  <---- should probably be some date in 2010, 2011 or so...
 %% https://github.com/INCF/nineml/master/spec/specification.tex
 %%
-%% Copyright (C) 2014 Okinawa Institute of Science and Technology Graduate University
+%% Copyright (C) 2014 Okinawa Institute of Science and Technology Graduate University, Centre National de la Recherche Scientifique
 %%
 %% ============================================================================
 
@@ -46,7 +46,6 @@
 \newcommand{\AnalogReceivePort}{\defRef{\textbf{\class{AnalogReceivePort}}\xspace}{sec:AnalogReceivePort}}
 \newcommand{\AnalogReducePort}{\defRef{\textbf{\class{AnalogReducePort}}\xspace}{sec:AnalogReducePort}}
 \newcommand{\EventReceivePort}{\defRef{\textbf{\class{EventReceivePort}}\xspace}{sec:EventReceivePort}}
-\newcommand{\EventReducePort}{\defRef{\textbf{\class{EventReducePort}}\xspace}{sec:EventReducePort}}
 \newcommand{\Annotation}{\defRef{\textbf{\class{Annotation}}\xspace}{sec:Annotation}}
 
 % Define User Layer element references
@@ -76,7 +75,7 @@
 \newcommand{\FromDestination}{\defRef{\textbf{\class{FromDestination}}\xspace}{sec:FromDestination}}
 \newcommand{\FromPlasticity}{\defRef{\textbf{\class{FromPlasticity}}\xspace}{sec:FromPlasticity}}
 \newcommand{\FromResponse}{\defRef{\textbf{\class{FromResponse}}\xspace}{sec:FromResponse}}
-\newcommand{\PopulationGroup}{\defRef{\textbf{\class{Set}}\xspace}{sec:Set}}
+\newcommand{\PopulationGroup}{\defRef{\textbf{\class{PopulationGroup}}\xspace}{sec:PopulationGroup}}
 \newcommand{\Concatenate}{\defRef{\textbf{\class{Concatenate}}\xspace}{sec:Concatenate}}
 \newcommand{\Item}{\defRef{\textbf{\class{Item}}\xspace}{sec:Item}}
 
@@ -478,7 +477,6 @@ plasticity, ...)
     \AnalogReducePort & set & no \\ 
     \EventSendPort & set & no\\    
     \EventReceivePort & set & no\\    
-    \EventReducePort & set & no\\
     \Dynamics | \ConnectionRule & singleton & yes \\
     \bottomrule
   \end{edtable}
@@ -510,14 +508,14 @@ can be used for example to signal action potentials firing.
 
 Ports allow instantiations of {\ComponentClass}es to communicate between each
 other during a simulation.
-There are six sub-classes of port objects: {\AnalogSendPort}, \AnalogReceivePort, \AnalogReducePort, \EventSendPort, \EventReceivePort and \EventReducePort
+There are five sub-classes of port objects: {\AnalogSendPort}, \AnalogReceivePort, \AnalogReducePort, \EventSendPort and \EventReceivePort.
 
 A \ComponentClass is composed of:
 \begin{itemize}
 \item {\Parameter}s for the \ComponentClass
 \item An unordered collection of {\AnalogSendPort}, {\AnalogReceivePort} and {\AnalogReducePort}s. Each {\AnalogSendPort}s publishes a state variable or derived value and each {\AnalogReceivePort}s consumes a state variable or derived value published from elsewhere. {\AnalogReducePort}s consume a variable number of published state variables and/or derived values and applies an operator that reduces the incoming ports to a single value.
 \item  a \Dynamics block and {Interface}s, as shown
-in Figure~\ref{fig:EX1_RegimeGraph}. The \Dynamics block represent the internal
+in Figure~\ref{fig:component_class_overview}. The \Dynamics block represent the internal
 dynamic of the model while the Interface block allows the \ComponentClass to
 communicate with other instantiations of the \ComponentClass and with the User
 Layer.
@@ -527,7 +525,7 @@ Layer.
 \center
 \includegraphics[width=8cm]{figures/component_simple.pdf}
 \protect\caption{ComponentClass Overview (Simple)}
-\label{fig:EX1_RegimeGraph}
+\label{fig:component_class_overview}
 \end{figure}
 
 \subsubsection{Name attribute}
@@ -573,6 +571,7 @@ Each \Parameter requires a \textit{name} attribute. This name should be a valid 
 Each \Parameter requires a \textit{dimension} attribute. This attribute specifies the dimension of the units of the quantity that is expected to be passed to the \Parameter and should refer to the name of a \Dimension element in the global scope.
 
 \subsection{Ports: interfacing between components}
+\label{sec:Ports}
 
 
 Event ports transmit discrete events. They are useful for example in
@@ -760,14 +759,14 @@ dynamics and non-linear dynamics, the \Dynamics block can contains the
 following concepts:
 
 \begin{itemize}
-\item \StateVariable (section~\ref{state-var})
-\item \Regime (section~\ref{regime}) that describe the dynamics of the
+\item \StateVariable (section~\ref{sec:StateVariable})
+\item \Regime (section~\ref{sec:Regime}) that describe the dynamics of the
 system for a particular domain of \StateVariable
-\item \Transition (section~\ref{transition}) that links two
+\item \Transition (section~\ref{sec:Transition}) that links two
 regimes: the Source \Regime and the Target \Regime, and can be triggered by
 an event or a condition. If a component is in the Source \Regime, and the
 transition is triggered, then the component moves into the Target \Regime.
-\item \Alias (section~\ref{alias})
+\item \Alias (section~\ref{sec:Alias})
 \end{itemize}
 
 
@@ -917,7 +916,7 @@ in Figure~\ref{SimpleRegimeGraph}). There are two types of \Transition:
 \begin{itemize}
 \item An \OnCondition function of the \StateVariable, for
 example $X > Y$.
-\item An \OnEvent on an input from an \EventReceivePort. (See section~\ref{port}).
+\item An \OnEvent on an input from an \EventReceivePort. (See section~\ref{sec:Ports}).
 \end{itemize}
 
 During either type of transition three things can happen:
@@ -1289,7 +1288,7 @@ Each cell in the source population is connected to the cell in the destination p
   \end{edtable}
 \end{table}
 
-All cells in the source population are connected to cells in the destination population with a probability defined by the \ConnectionProbability element.
+All cells in the source population are connected to cells in the destination population with a probability defined by the \textit{probability} attribute.
 
 \subsubsection{Probability attribute}
 
@@ -1353,9 +1352,6 @@ Each \ExplicitConnectionList element requires a \textit{target-indices} attribut
 
 \subsection{PoissonDistribution}
 \label{sec:PoissonDistribution}
-
-\subsection{InverseGammaDistribution}
-\label{sec:InverseGammaDistribution}
 
 \subsection{CauchyDistribution}
 \label{sec:CauchyDistribution}
@@ -1815,7 +1811,7 @@ Response defines the effect imposed on the
 post-synaptic cell dynamics by triggering the synaptic input and the input and output ports. 
 \textit{(Removed: This definition includes only the shape of this effect and does not include the
 exact magnitude of the effect)}. The magnitude is described separately through
-plasticity rules and synaptic weights in section \ref{plasticity}. Note
+plasticity rules and synaptic weights in section \ref{sec:Plasticity}. Note
 though that the units of the effect are defined here and synaptic weights in
 plasticity nodes are left dimensionless.
 
@@ -1844,7 +1840,7 @@ is done to allow same plasticity rules to operate on
 different types of postsynaptic responses. Synaptic weight defined in the
 plasticity component determines only the magnitude of the response, the
 shape and physical properties are defined in the corresponding post-synaptic
-response node (section \ref{secSynapse}).
+response node (section \ref{sec:Response}).
 
 \subsection{FromSource}
 \label{sec:FromSource}
@@ -1857,7 +1853,7 @@ response node (section \ref{secSynapse}).
      \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
     sender & [\AnalogSendPort | \EventSendPort{}]@name & yes\\    
-    receiver & [\AnalogReceivePort | \EventReceivePort | \AnalogReducePort | \EventReducePort{}]@name & yes\\
+    receiver & [\AnalogReceivePort | \EventReceivePort | \AnalogReducePort{}]@name & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
@@ -1866,7 +1862,7 @@ response node (section \ref{secSynapse}).
 Each \FromSource element requires a \textit{sender} attribute. This should refer to the name of a \AnalogSendPort or \EventSendPort in the \Cell->\Component{}\withelem\ComponentClass of the source population. The transmission mode of the port (i.e. \lq\lq{}analog\rq\rq{} or \lq\lq{}digital\rq\rq{}) should match that of the port referenced by the \textit{receiver} attribute.
 
 \subsubsection{Receiver attribute}
-Each \FromSource element requires a \textit{receiver} attribute. This should refer to the name of a \AnalogReceivePort, \EventReceivePort, \AnalogReducePort or \EventReducePort in the \Component{}\withelem\ComponentClass in the enclosing \Source/\Destination/\Plasticity/\Response element.  The transmission mode of the port (i.e. \lq\lq{}analog\rq\rq{} or \lq\lq{}digital\rq\rq{}) should match that of the port referenced by the \textit{sender} attribute.
+Each \FromSource element requires a \textit{receiver} attribute. This should refer to the name of a \AnalogReceivePort, \EventReceivePort or \AnalogReducePort in the \Component{}\withelem\ComponentClass in the enclosing \Source/\Destination/\Plasticity/\Response element.  The transmission mode of the port (i.e. \lq\lq{}analog\rq\rq{} or \lq\lq{}digital\rq\rq{}) should match that of the port referenced by the \textit{sender} attribute.
 
 \subsection{FromDestination}
 \label{sec:FromDestination}
@@ -1879,7 +1875,7 @@ Each \FromSource element requires a \textit{receiver} attribute. This should ref
      \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
     sender & [\AnalogSendPort | \EventSendPort{}]@name & yes\\    
-    receiver & [\AnalogReceivePort | \EventReceivePort | \AnalogReducePort | \EventReducePort{}]@name & yes\\
+    receiver & [\AnalogReceivePort | \EventReceivePort | \AnalogReducePort{}]@name & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
@@ -1888,7 +1884,7 @@ Each \FromSource element requires a \textit{receiver} attribute. This should ref
 Each \FromDestination element requires a \textit{sender} attribute. This should refer to the name of a \AnalogSendPort or \EventSendPort in the \Cell->\Component{}\withelem\ComponentClass of the source population. The transmission mode of the port (i.e. \lq\lq{}analog\rq\rq{} or \lq\lq{}digital\rq\rq{}) should match that of the port referenced by the \textit{receiver} attribute.
 
 \subsubsection{Receiver attribute}
-Each \FromDestination element requires a \textit{receiver} attribute. This should refer to the name of a \AnalogReceivePort, \EventReceivePort, \AnalogReducePort or \EventReducePort in the \Component{}\withelem\ComponentClass in the enclosing \Source/\Destination/\Plasticity/\Response element.  The transmission mode of the port (i.e. \lq\lq{}analog\rq\rq{} or \lq\lq{}digital\rq\rq{}) should match that of the port referenced by the \textit{sender} attribute.
+Each \FromDestination element requires a \textit{receiver} attribute. This should refer to the name of a \AnalogReceivePort, \EventReceivePort or \AnalogReducePort in the \Component{}\withelem\ComponentClass in the enclosing \Source/\Destination/\Plasticity/\Response element.  The transmission mode of the port (i.e. \lq\lq{}analog\rq\rq{} or \lq\lq{}digital\rq\rq{}) should match that of the port referenced by the \textit{sender} attribute.
 
 
 \subsection{FromPlasticity}
@@ -1902,7 +1898,7 @@ Each \FromDestination element requires a \textit{receiver} attribute. This shoul
      \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
     sender & [\AnalogSendPort | \EventSendPort{}]@name & yes\\    
-    receiver & [\AnalogReceivePort | \EventReceivePort | \AnalogReducePort | \EventReducePort{}]@name & yes\\
+    receiver & [\AnalogReceivePort | \EventReceivePort | \AnalogReducePort{}]@name & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
@@ -1911,7 +1907,7 @@ Each \FromDestination element requires a \textit{receiver} attribute. This shoul
 Each \FromPlasticity element requires a \textit{sender} attribute. This should refer to the name of a \AnalogSendPort or \EventSendPort in the \Cell->\Component{}\withelem\ComponentClass of the source population. The transmission mode of the port (i.e. \lq\lq{}analog\rq\rq{} or \lq\lq{}digital\rq\rq{}) should match that of the port referenced by the \textit{receiver} attribute.
 
 \subsubsection{Receiver attribute}
-Each \FromPlasticity element requires a \textit{receiver} attribute. This should refer to the name of a \AnalogReceivePort, \EventReceivePort, \AnalogReducePort or \EventReducePort in the \Component{}\withelem\ComponentClass in the enclosing \Source/\Destination/\Plasticity/\Response element.  The transmission mode of the port (i.e. \lq\lq{}analog\rq\rq{} or \lq\lq{}digital\rq\rq{}) should match that of the port referenced by the \textit{sender} attribute.
+Each \FromPlasticity element requires a \textit{receiver} attribute. This should refer to the name of a \AnalogReceivePort, \EventReceivePort or \AnalogReducePort in the \Component{}\withelem\ComponentClass in the enclosing \Source/\Destination/\Plasticity/\Response element.  The transmission mode of the port (i.e. \lq\lq{}analog\rq\rq{} or \lq\lq{}digital\rq\rq{}) should match that of the port referenced by the \textit{sender} attribute.
 
 \subsection{FromResponse}
 \label{sec:FromResponse}
@@ -1925,7 +1921,7 @@ Each \FromPlasticity element requires a \textit{receiver} attribute. This should
      \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
     sender & [\AnalogSendPort | \EventSendPort{}]@name & yes\\    
-    receiver & [\AnalogReceivePort | \EventReceivePort | \AnalogReducePort | \EventReducePort{}]@name & yes\\
+    receiver & [\AnalogReceivePort | \EventReceivePort | \AnalogReducePort{}]@name & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
@@ -1934,7 +1930,7 @@ Each \FromPlasticity element requires a \textit{receiver} attribute. This should
 Each \FromResponse element requires a \textit{sender} attribute. This should refer to the name of a \AnalogSendPort or \EventSendPort in the \Cell->\Component{}\withelem\ComponentClass of the source population. The transmission mode of the port (i.e. \lq\lq{}analog\rq\rq{} or \lq\lq{}digital\rq\rq{}) should match that of the port referenced by the \textit{receiver} attribute.
 
 \subsubsection{Receiver attribute}
-Each \FromResponse element requires a \textit{receiver} attribute. This should refer to the name of a \AnalogReceivePort, \EventReceivePort, \AnalogReducePort or \EventReducePort in the \Component{}\withelem\ComponentClass in the enclosing \Source/\Destination/\Plasticity/\Response element.  The transmission mode of the port (i.e. \lq\lq{}analog\rq\rq{} or \lq\lq{}digital\rq\rq{}) should match that of the port referenced by the \textit{sender} attribute.
+Each \FromResponse element requires a \textit{receiver} attribute. This should refer to the name of a \AnalogReceivePort, \EventReceivePort or \AnalogReducePort in the \Component{}\withelem\ComponentClass in the enclosing \Source/\Destination/\Plasticity/\Response element.  The transmission mode of the port (i.e. \lq\lq{}analog\rq\rq{} or \lq\lq{}digital\rq\rq{}) should match that of the port referenced by the \textit{sender} attribute.
 
 \subsection{Connectivity}
 \label{sec:Connectivity}
@@ -2097,7 +2093,7 @@ The {\tt RegimeGraph} is shown in Figure~\ref{fig:EX1_RegimeGraph}
 %\includegraphics[width=14cm]{al/ParallelisingTransitions.pdf}example_IzRegimeTransGraph.pdf
 \includegraphics[width=8cm]{figures/example_IzRegimeTransGraph.pdf}
 \protect\caption{{\tt RegimeGraph} for the XML model in this section.}
-\label{fig:EX3_RegimeGraph}
+\label{fig:EX1_RegimeGraph}
 \end{figure}
 
 \noindent
@@ -2669,13 +2665,11 @@ Figure~\ref{ParallelisingTransitions}.
 
 \section{Acknowledgments}
 
-This work was made possible by grant R01 GM070923 from the NIH National
-Institute of General Medical Sciences (USA) for continued development and
-support of SBML and related software infrastructure.
+
 
 
 \clearpage
-\bibliography{sbmlpkgspec}
+%\bibliography{sbmlpkgspec}
 
 % -----------------------------------------------------------------------------
 % End of document
