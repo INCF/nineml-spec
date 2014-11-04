@@ -156,15 +156,14 @@ float=tbfh}
 
 {\bf Editors: }
 \noindent
-\begin{itemize}
 \begin{small}
+\begin{itemize}
 \item Anatoli Gorchetchnikov
 \item Ivan Raikov
 \item Mike Hull
 \item Yann Le Franc
-\end{small}
 \end{itemize}
-
+\end{small}
 
 \begin{footnotesize}
 \noindent Acknowledgments: We would like to thank the Task Force members for their
@@ -175,12 +174,10 @@ R. Cannon, Birgit Kriener, Subhasis Ray and S. Hill.
 \vspace*{0.3cm}
 
 \noindent
-\begin{Large}
 This document is under the Common Creative license BY-NC-SA:
 
 \noindent
 http://creativecommons.org/licenses/by-nc-sa/3.0/
-\end{Large}
 
 \vspace*{0.3cm}
 
@@ -255,7 +252,7 @@ At the current stage of development, the following concepts of spiking neuron
 network modeling can be fully or partially described:
 
 \begin{enumerate}
-\item spiking neurons
+\item spiking neurons \textbf{(what about non-spiking neurones??)}
 \item synapses
 \begin{enumerate}
 \item Post-synaptic membrane current mechanisms
@@ -366,7 +363,6 @@ plasticity, ...)
 
 \subsection{ComponentClass}
 
-
 \begin{table}[htb]
 \center
 \begin{tabular}{|c|}
@@ -383,7 +379,6 @@ ComponentClass \\
 \end{tabular}
 \end{table}
 
-
 The main building block of the Object Model is the \ComponentClass.
 The \ComponentClass object is intended to package together a collection of
 objects that relate to the definition of a model (cells, synapses, synaptic
@@ -393,11 +388,16 @@ model, such as neuron model for instance, belong in a single \ComponentClass.
 A \ComponentClass can be used to represent either a specific model of neuron or a
 composite model, including synaptic mechanisms (as in the second example
 provided in the Appendix for example) as long as the algebra is correct.
-A \ComponentClass is composed of a \Dynamics block and \Interfaces, as shown
+A \ComponentClass is composed of:
+\begin{itemize}
+\item \nmlClass{Parameter}s for the \nmlClass{ComponentClass}
+\item An unordered collection of \nmlClass{AnalogSendPort}, \nmlClass{AnalogReceivePort} and \nmlClass{AnalogReducePort}s. Each \nmlClass{AnalogSendPort}s publishes a state variable or derived value and each \nmlClass{AnalogReceivePort}s consumes a state variable or derived value published from elsewhere. \nmlClass{AnalogReducePort}s consume a variable number of published state variables and/or derived values and applies an operator that reduces the incoming ports to a single value.
+\item  a \Dynamics block and \Interfaces, as shown
 in Figure~\ref{fig:EX1_RegimeGraph}. The \Dynamic block represent the internal
 dynamic of the model while the \Interface block allows the \ComponentClass to
 communicate with other instantiations of the \ComponentClass and with the User
 Layer.
+\end{itemize}
 
 \begin{figure}[htb!]
 \center
@@ -405,6 +405,7 @@ Layer.
 \protect\caption{ComponentClass Overview (Simple)}
 \label{fig:EX1_RegimeGraph}
 \end{figure}
+
 
 \subsection{Dynamics}
 
@@ -544,10 +545,6 @@ propagated when the \nmlClass{Regime} is active.
 \item a set of \TimeDerivative, one for each \StateVariable
 of the \ComponentClass, which define how the \StateVariable
 evolve over time in the form $\frac{dx_{i}}{dt} = f(x\_0, ..., x\_i, t)$.
-\item \nmlClass{Parameter}s for the \nmlClass{Regime}
-\item An unordered collection of \nmlClass{AnalogPort}s which publish state
-variables (type=send), or consume state variables published from elsewhere
-(type=recv, or type=reduce).
 \item The independent variable must be shared between the collection
 of \nmlClass{StateVariable}s and their propagators in a \Regime.
 \end{itemize}
@@ -894,7 +891,7 @@ User Layer through an object of type {\tt Definition}.
 Component \\
 \hline
 \hline
-{\em label}: {\tt String} \\
+{\em name}: {\tt String} \\
 \hline
 {\em definition}: \{{\tt Definition}$|${\tt Reference}\}\\
 \hline
@@ -992,7 +989,7 @@ Abstraction Layer \Parameter definition.
 Property \\
 \hline
 \hline
-{\em label}: {\tt String} \\
+{\em name}: {\tt String} \\
 \hline
 {\em value}: {\tt Quantity} \\
 \hline
@@ -1059,11 +1056,160 @@ component.
 Reference \\
 \hline
 \hline
-{\em label}: {\tt String} \\
+{\em name}: {\tt String} \\
 \hline
 \end{tabular}
 \end{table}
 
+\subsection{Population}
+
+Population elements define sets of neuron components of the same class. The size of the set is specified by the {\tt number} attribute. The properties of the neuron components can be constant across the population, randomly distributed, individually specified or as a function of neuron index.  
+
+\begin{table}[htb]
+\center
+\begin{tabular}{|c|}
+\hline
+\hline
+Population \\
+\hline
+\hline
+{\em name}: {\tt String} \\
+\hline
+{\em prototype}: {\tt Component->Spiking Neuron} \\
+\hline
+{\em number}: {\tt Integer}\\
+\hline
+{\em note}: {\tt \{String|URL\} (optional)} \\
+\hline
+\end{tabular}
+\end{table}
+
+\newpage
+
+\subsection{Projection}
+\label{projections}
+
+Projections define the synaptic connectivity between two populations, the post-synaptic response of the connections and the plasticity rules that modulate the post-synaptic response. Synaptic components are connected to the port  connected to a event or analog port depending on the connection-rule.
+
+\begin{table}[htb]
+\center
+\begin{tabular}{|c|}
+\hline
+\hline
+Projection \\
+\hline
+\hline
+{\em name}: {\tt String} \\
+\hline
+{\em source}: {\tt Population/Port} \\
+\hline
+{\em destination}: {\tt Population} \\
+\hline
+{\em connection-rule}: {\tt Component->Connection Rule} \\
+\hline
+{\em post-synaptic-response}: {\tt PostSynapticResponse} \\
+\hline
+{\em plasticity}: {\tt Plasticity} \\
+\hline
+{\em note}: \{{\tt String}$|${\tt URL}\} (optional)\\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{PostSynapticResponse}
+\label{postsynapticresponse}
+
+\begin{table}[htb]
+\center
+\begin{tabular}{|c|}
+\hline
+\hline
+PostSynapticResponse \\
+\hline
+\hline
+{\em prototype}: {\tt Component->Post-Synaptic Response} \\
+\hline
+\colorbox{issuecolor}{\parbox{0.4\linewidth}
+{\center Set of {\tt PortConnection} objects}} \\
+\hline
+\end{tabular}
+\end{table}
+
+
+\subsection{Plasticity}
+\label{plasticity}
+
+\begin{table}[htb]
+\center
+\begin{tabular}{|c|}
+\hline
+\hline
+PostSynapticResponse \\
+\hline
+\hline
+{\em plasticity}: {\tt Component->Plasticity} (optional) \\
+\hline
+\colorbox{issuecolor}{\parbox{0.4\linewidth}
+{\center Set of {\tt PortConnection} objects}} \\
+\hline
+\end{tabular}
+\end{table}
+
+%
+%
+%\subsection{PostSynapticResponse Component}
+%\label{PostSynapticResponse}
+%
+%PostSynapticResponse defines the effect imposed on the
+%post-synaptic cell dynamics by triggering the synaptic input and the input and output ports. 
+%\textit{(Removed: This definition includes only the shape of this effect and does not include the
+%exact magnitude of the effect)}. The magnitude is described separately through
+%plasticity rules and synaptic weights in section \ref{plasticity}. Note
+%though that the units of the effect are defined here and synaptic weights in
+%plasticity nodes are left dimensionless.
+%
+%\begin{table}[htb]
+%\center
+%\begin{tabular}{|c|}
+%\hline
+%\hline
+%PostSynapticResponse \\
+%\hline
+%\hline
+%{\em prototype}: {\tt Component->PSR} \\
+%\hline
+%{\em port}: {\tt AnalogPort} \\
+%\hline
+%\end{tabular}
+%\end{table}
+%
+%\subsection{Plasticity Component}
+%\label{plasticity}
+%
+%Plasticity components handle the synaptic weight and its possible
+%modification. Note that synaptic weight is a dimensionless quantity and
+%as such always have units of the predefined empty {\tt Dimension}. This
+%is done to allow same plasticity rules to operate on
+%different types of postsynaptic responses. Synaptic weight defined in the
+%plasticity component determines only the magnitude of the response, the
+%shape and physical properties are defined in the corresponding post-synaptic
+%response node (section \ref{secSynapse}).
+%
+%\begin{table}[htb]
+%\center
+%\begin{tabular}{|c|}
+%\hline
+%\hline
+%Placticity\\
+%\hline
+%\hline
+%{\em name}: {\tt String} \\
+%\hline
+%{\em prototype}: {\tt Component->Plasticity} \\
+%\hline
+%\end{tabular}
+%\end{table}
+%
 \newpage
 \appendix
 
