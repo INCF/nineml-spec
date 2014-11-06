@@ -75,7 +75,7 @@
 \newcommand{\FromDestination}{\defRef{\textbf{\class{FromDestination}}\xspace}{sec:FromDestination}}
 \newcommand{\FromPlasticity}{\defRef{\textbf{\class{FromPlasticity}}\xspace}{sec:FromPlasticity}}
 \newcommand{\FromResponse}{\defRef{\textbf{\class{FromResponse}}\xspace}{sec:FromResponse}}
-\newcommand{\PopulationGroup}{\defRef{\textbf{\class{PopulationGroup}}\xspace}{sec:PopulationGroup}}
+\newcommand{\PopulationSelection}{\defRef{\textbf{\class{PopulationSelection}}\xspace}{sec:PopulationSelection}}
 \newcommand{\Concatenate}{\defRef{\textbf{\class{Concatenate}}\xspace}{sec:Concatenate}}
 \newcommand{\Item}{\defRef{\textbf{\class{Item}}\xspace}{sec:Item}}
 
@@ -1760,13 +1760,15 @@ Each \Projection requires a \textit{name} attribute. This name should be a valid
     \toprule
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
-    \Reference{}\pointto\Population | \Reference{}\pointto\PopulationGroup & singleton & yes \\
+    \Reference{}\pointto\Population | \Reference{}\pointto\PopulationSelection & singleton & yes \\
     \FromDestination & set & no \\
     \FromPlasticity & set & no \\
     \FromResponse & set & no \\
     \bottomrule
   \end{edtable}
 \end{table}
+
+The \Source field defines the pre-synaptic population of the \Projection and all receive-port connections to the pre-synaptic population. The pre-synaptic population can be either specified in-line via a \Population element, or by a \Reference to a \Population element, which is defined in a separate file or in the top-level context of the current file. The port connections the pre-synaptic population can receive arise from the post-synaptic response (see \Response), the plasticity rule (see \Plasticity) or the post-synaptic population (see \Destination), and are specified by the \FromResponse, \FromPlasticity and \FromDestination fields respectively.
 
 \subsection{Destination}
 \label{sec:Destination}
@@ -1778,13 +1780,15 @@ Each \Projection requires a \textit{name} attribute. This name should be a valid
     \toprule
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
-    \Reference{}\pointto\Population | \Reference{}\pointto\PopulationGroup & singleton & yes \\
+    \Reference{}\pointto\Population | \Reference{}\pointto\PopulationSelection & singleton & yes \\
     \FromSource & set & no \\
     \FromPlasticity & set & no \\
     \FromResponse & set & no \\    
     \bottomrule
   \end{edtable}
 \end{table}
+
+The \Destination field defines the post-synaptic population of the \Projection and all receive-port connections to the post-synaptic population. The post-synaptic population can be either specified in-line via a \Population element, or by a \Reference to a \Population element, which is defined in a separate file or in the top-level context of the current file. The port connections the post-synaptic population can receive arise from the pre-synaptic response (see \Response), the plasticity rule (see \Plasticity) or the post-synaptic population (see \Source), and are specified by the \FromResponse, \FromPlasticity and \FromSource fields respectively.
 
 \subsection{Response}
 \label{sec:Response}
@@ -1985,15 +1989,15 @@ The \textit{url} attribute specifies a \href{http://en.wikipedia.org/wiki/Unifor
 The name of the User Layer element to be referenced should be included in the body of the \Reference element.
 
 
-\subsection{PopulationGroup}
-\label{sec:PopulationGroup}
+\subsection{PopulationSelection}
+\label{sec:PopulationSelection}
 
-\draftnote{Changed to PopulationGroup as for grouping sub-components we were thinking of using ComponentGroup (see GitHub \#34)}
+\draftnote{Changed to PopulationSelection as for grouping sub-components we were thinking of using ComponentGroup (see GitHub \#34)}
 
 \begin{table}[H]
   \begin{edtable}{tabular}{llr}
     \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{PopulationGroup Structure}}}\\
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{PopulationSelection Structure}}}\\
     \toprule
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
@@ -2031,13 +2035,13 @@ The name of the User Layer element to be referenced should be included in the bo
     \midrule
     \em{Text format} & \; & \em{Required} \\
     \midrule \relax
-    [\Population | \PopulationGroup{}]@name & \; & yes\\
+    [\Population | \PopulationSelection{}]@name & \; & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
 
 \subsubsection{Index attribute}
-Each \Item requires a \textit{index} attribute. This attribute specifies the order in which the {\Population}s in the \PopulationGroup are concatenated and thereby the indices of the cells within the combined \PopulationGroup. Each \textit{index} must be non-negative, unique amongst the set of \Item{}@index enclosed in the \Concatenate element, and the set of indices must be contiguous for a single \Concatenate element.
+Each \Item requires a \textit{index} attribute. This attribute specifies the order in which the {\Population}s in the \PopulationSelection are concatenated and thereby the indices of the cells within the combined \PopulationSelection. Each \textit{index} must be non-negative, unique amongst the set of \Item{}@index enclosed in the \Concatenate element, and the set of indices must be contiguous for a single \Concatenate element.
 
 \note{This preserves the order non-specific nature of elements in NineML}
 
