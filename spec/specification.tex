@@ -2125,7 +2125,7 @@ The corresponding Abstraction Layer XML description for this model is the follow
     <Parameter name="d" dimension="voltage_per_time"/>
     <Parameter name="theta" dimension="voltage"/>
 
-    <AnalogPort name="iSyn" mode="reduce" reduce_op="+" dimension="current"/>
+    <AnalogPort name="iSyn" mode="reduce" operator="+" dimension="current"/>
     <AnalogPort name="U" mode="send" dimension="none"/>
     <AnalogPort name="V" mode="send" dimension="voltage"/>
     <EventPort name="spikeOutput" mode="send"/>
@@ -2322,7 +2322,7 @@ The resulting XML description for the Abstraction Layer is :
 <NineML xmlns="http://nineml.org/9ML/0.1">
   <ComponentClass name="iaf_1coba">
     <AnalogPort mode="send" name="iaf_V"/>
-    <AnalogPort mode="reduce" reduce_op="+" name="iaf_ISyn"/>
+    <AnalogPort mode="reduce" operator="+" name="iaf_ISyn"/>
     <AnalogPort mode="send" name="cobaExcit_I"/>
     <EventPort mode="send" name="iaf_spikeoutput"/>
     <EventPort mode="recv" name="cobaExcit_spikeinput"/>
