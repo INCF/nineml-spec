@@ -34,6 +34,7 @@
 \newcommand{\StateAssignment}{\defRef{\textbf{\class{StateAssignment}}\xspace}{sec:StateAssignment}}
 \newcommand{\TimeDerivative}{\defRef{\textbf{\class{TimeDerivative}}\xspace}{sec:TimeDerivative}}
 \newcommand{\Alias}{\defRef{\textbf{\class{Alias}}\xspace}{sec:Alias}}
+\newcommand{\StandardLibrary}{\defRef{\textbf{\class{StandardLibrary}}\xspace}{sec:StandardLibrary}}
 \newcommand{\Regime}{\defRef{\textbf{\class{Regime}}\xspace}{sec:Regime}}
 \newcommand{\Transition}{\defRef{\textbf{\class{Transition}}\xspace}{sec:Transition}}
 \newcommand{\Trigger}{\defRef{\textbf{\class{Trigger}}\xspace}{sec:Trigger}}
@@ -688,6 +689,29 @@ although their use is only allowed within \StateAssignment blocks:
 \subsection{StandardLibrary}
 \label{sec:StandardLibrary}
 
+\begin{table}[H]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{StandardLibrary Structure}}}\\
+    \toprule
+    \em{Attribute name} & \em{Type/Format} & \em{Required} \\
+    \midrule
+    webpage & \href{http://en.wikipedia.org/wiki/Uniform_resource_locator}{URL} & yes\\
+    \midrule
+    \em{Text format} & \; & \em{Required} \\
+    \midrule
+    member name & \; & yes \\ 
+    \bottomrule
+  \end{edtable}
+\end{table}
+
+
+\subsubsection{Webpage attribute}
+\StandardLibrary require a \textit{webpage} attribute, which specifies a \href{http://en.wikipedia.org/wiki/Uniform_resource_locator}{Uniform Resource Locator (URL)} that describes the behaviour of the standard library member.
+
+\subsubsection{Text}
+The name of the member within the library to use.
+
 \section{Ports}
 \label{sec:Ports}
 
@@ -1214,44 +1238,44 @@ Each \EventOut requires a \textit{port} attribute. This should refer to the name
     \toprule
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
-    *Distribution & singleton & yes\\
+    \StandardLibrary & singleton & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
 
-\draftnote{I will finish adding the required attributes (copying the names used in UncertML) for these distributions later this week}
+As of version 1.0, the only random distributions available to the user are those defined in the standard library (see \StandardLibrary). The names and parameters of the random distribution in the standard library match the UncertML definitions that can be found at \href{http://www.uncertml.org/distributions}{http://www.uncertml.org/distributions}. The subset of the UncertML distributions that should be implemented are by NineML compliant packages are,
 
-\subsection{NormalDistribution}
-\label{sec:NormalDistribution}
+\begin{itemize}
+\item BernoulliDistribution
+\item BetaDistribution
+\item BinomialDistribution
+\item CauchyDistribution
+\item ChiSquareDistribution
+\item DirichletDistribution
+\item ExponentialDistribution
+\item FDistribution
+\item GammaDistribution
+\item GeometricDistribution
+\item HypergeometricDistribution
+\item InverseGammaDistribution
+\item LaplaceDistribution
+\item LogisticDistribution
+\item LogNormalDistribution
+\item MixtureModel
+\item MultinomialDistribution
+\item NegativeBinomialDistribution
+\item NormalDistribution
+\item NormalInverseGammaDistribution
+\item ParetoDistribution
+\item PoissonDistribution
+\item StudentTDistribution
+\item UniformDistribution
+\item WeibullDistribution
+\end{itemize}
 
-\subsection{LogNormalDistribution}
-\label{sec:LogNormalDistribution}
+~
 
-\subsection{GammaDistribution}
-\label{sec:GammaDistribution}
-
-\subsection{InverseGammaDistribution}
-\label{sec:InverseGammaDistribution}
-
-\subsection{PoissonDistribution}
-\label{sec:PoissonDistribution}
-
-\subsection{CauchyDistribution}
-\label{sec:CauchyDistribution}
-
-\subsection{ExponentialDistribution}
-\label{sec:ExponentialDistribution}
-
-\subsection{LaplaceDistribution}
-\label{sec:LaplaceDistribution}
-
-\subsection{BetaDistribution}
-\label{sec:BetaDistribution}
-
-\subsection{UniformDistribution}
-\label{sec:UniformDistribution}
-
-
+\note{\textit{C} implementations of these distributions are available in the GNU Scientific Library, \href{http://www.gnu.org/software/gsl/}{http://www.gnu.org/software/gsl/}}
 
 \section{Connectivity}
 
@@ -1265,74 +1289,46 @@ Each \EventOut requires a \textit{port} attribute. This should refer to the name
     \toprule
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
-    \AllToAll | \OneToOne | \ProbabilisticConnectivity | \ExplicitConnectionList & singleton & yes\\
+    \StandardLibrary & singleton & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
 
-In Version 1.0 of the NineML standard, connection rules must be one of four built-in types, \AllToAll, \OneToOne, \ProbabilisticConnectivity or \ExplicitConnectionList. In future versions, extensions 
-are planned to this framework to allow richer connectivity rules.
+In Version 1.0 of the NineML standard, connection rules must be one of 6 standard library types:
+\begin{itemize}
+\item AllToAll
+\item OneToOne
+\item ProbabilisticConnectivity
+\item ExplicityConnectionList
+\item RandomFanIn
+\item RandomFanOut
+\end{itemize}
 
-\subsection{AllToAll}
-\label{sec:AllToAll}
+In future versions, extensions are planned to this framework to allow richer connectivity rules.
+
+\subsubsection{AllToAll}
 
 All cells in the source population are connected to all cells in the destination population.
 
-\note{\AllToAll has no attributes or child-elements}
-
-\subsection{OneToOne}
-\label{sec:OneToOne}
+\subsubsection{OneToOne}
 
 Each cell in the source population is connected to the cell in the destination population with the corresponding index. Note that this requires that the source and destination populations be the same size.
 
-\note{\OneToOne has no attributes or child-elements}
+\subsubsection{ProbabilisticConnectivity}
 
-\subsection{ProbabilisticConnectivity}
-\label{sec:ProbabilisticConnectivity}
+All cells in the source population are connected to cells in the destination population with a probability defined by the \textit{probability} parameter. This attribute should refer to a name of a dimensionless \Parameter in the enclosing \ComponentClass. The properties supplied to this parameter should either be a dimensionless \SingleValue representing the probability of a connection between all source and destination cell pairs, or a \ArrayValue or \ExternalArrayValue of size $M{\times}N$, where $M$ and $N$ are the size of the source and destination populations respectively. In the case of the \ArrayValue or \ExternalArrayValue properties, the list represents probabilities of connections existing between the first cell in the source population with every cell in the destination population in order of their index, followed by the second cell in the source with with every cell in the destination population in order of their index and so forth for each cell in the source population.
 
-\begin{table}[H]
-  \begin{edtable}{tabular}{llr}
-    \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{ProbabilisticConnectivity Structure}}}\\
-    \toprule
-    \em{Attribute name} & \em{Type/Format} & \em{Required} \\
-    \midrule
-    probability & \Parameter{}@name & yes\\
-    \bottomrule
-  \end{edtable}
-\end{table}
-
-All cells in the source population are connected to cells in the destination population with a probability defined by the \textit{probability} attribute.
-
-\subsubsection{Probability attribute}
-
-Each \ProbabilisticConnectivity element requires a \textit{probability} attribute. This attribute should refer to a name of a dimensionless \Parameter in the enclosing \ComponentClass. The properties supplied to this parameter should either be a dimensionless \SingleValue representing the probability of a connection between all source and destination cell pairs, or a \ArrayValue or \ExternalArrayValue of size $M{\times}N$, where $M$ and $N$ are the size of the source and destination populations respectively. In the case of the \ArrayValue or \ExternalArrayValue properties, the list represents probabilities of connections existing between the first cell in the source population with every cell in the destination population in order of their index, followed by the second cell in the source with with every cell in the destination population in order of their index and so forth for each cell in the source population.
-
-\subsection{ExplicitConnectionList}
-\label{sec:ExplicitConnectionList}
-
-\begin{table}[H]
-  \begin{edtable}{tabular}{llr}
-    \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{ProbabilisticConnectivity Structure}}}\\
-    \toprule
-    \em{Attribute name} & \em{Type/Format} & \em{Required} \\
-    \midrule
-    source-indices & \Parameter{}@name & yes\\
-    target-indices & \Parameter{}@name & yes\\
-    \bottomrule
-  \end{edtable}
-\end{table}
+\subsubsection{ExplicitConnectionList}
 
 Cells in the source population are connected to cells in the destination population as specified by an explicit lists.
 
-\subsubsection{Source-indices attribute}
+This \textit{source-indicies} parameter The properties supplied to this parameter should be a \ArrayValue or \ExternalArrayValue drawn from the set $\{1,\ldots,M\}$ where $M$ is the size of the source population and be the same length as the property supplied to the \textit{target-indices} parameter.
 
-Each \ExplicitConnectionList element requires a \textit{source-indices} attribute. This attribute should refer to a name of a dimensionless \Parameter in the enclosing \ComponentClass. The properties supplied to this parameter should be a \ArrayValue or \ExternalArrayValue drawn from the set $\{1,\ldots,M\}$ where $M$ is the size of the source population and be the same length as the property supplied to the \textit{target-indices} parameter.
+This \textit{target-indicies} parameter The properties supplied to this parameter should be a \ArrayValue or \ExternalArrayValue drawn from the set $\{1,\ldots,N\}$ where $N$ is the size of the source population and be the same length as the property supplied to the \textit{source-indices} parameter.
 
-\subsubsection{Target-indices attribute}
+\subsubsection{RandomFanIn}
 
-Each \ExplicitConnectionList element requires a \textit{target-indices} attribute. This attribute should refer to a name of a dimensionless \Parameter in the enclosing \ComponentClass. The properties supplied to this parameter should be a \ArrayValue or \ExternalArrayValue drawn from the set $\{1,\ldots,N\}$ where $N$ is the size of the source population and be the same length as the property supplied to the \textit{source-indices} parameter.
+\subsubsection{RandomFanOut}
 
 \part{User Layer}
 \section{Common Elements}
