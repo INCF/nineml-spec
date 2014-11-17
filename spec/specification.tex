@@ -332,124 +332,8 @@ This document presents the current NineML specifications and consists of:
 
 For adding semantic structure to the model it is recommended to use the \href{http://www.w3.org/RDF/}{Resource Description Framework  (RDF)}. 
 
-\section{Units and dimensions in NineML}
-\label{sec:dimensions}
-
-\noindent
-Each specification of a parameter or a state variable in the definition of
-a class of component must state its dimension. A dimension declaration
-associates a name with values for the powers for each of seven SI base
-units: length, l; mass, m; time t; electric current i; temperature T;
-luminous intensity L and amount of substance, n.
-For example, acceleration has dimension $lt^{-2}$ and voltage is
-$ml^2t^3i^{-1}$.
-Dimensions can be declared at the top level of a NineML file with
-the "Dimension" element with attributes for each of the base dimensions or
-imported from a specific XML file, describing a set of dimensions.
-
-Each dimension can give rise to a family of unit declarations, each of
-which has the same dimensionality but a different multiplier. For example,
-typical units for a quantity with dimensionality voltage include
-millivolts (multiplier = $10^{-3}$), microvolts (multiplier = $10^{-6}$)
-and volts (multiplier = 1).  To express a dimensional quantity both a
-numerical factor and a unit are required. Unit can be expressed in a NineML
-file with the \Unit element, defined at the User Layer level, or imported
-from a specific XML file describing a set of units.
-
-Except where physical constants are required, abstraction layer definitions
-generally only contain references to dimensions and are independent of any
-particular choice of units. Conversely, the user layer only refers to units.
-Internally, dimensional quantities are to be understood
-as rich types with a numerical factor and exponents for each of the
-base dimensions. They are independent of the particular choice of
-units by which they are assigned.
-
-
-\subsection{Dimension}
-\label{sec:Dimension}
-
-%\draftnote{This the LEMS format (which is very similar to a format I found in an old version of the NineML spec). I personally would favour more descriptive attributes and changing Dimension to UnitDimension but I think this format should be fine (see GitHub \#32)}
-\begin{table}[H]
-  \begin{edtable}{tabular}{llr}
-    \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Dimension Structure}}}\\
-    \toprule
-    \em{Attribute name} & \em{Type/Format} & \em{Required} \\
-    \midrule
-    name & \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 identifier} & yes\\
-    m & \primtype{integer} & no\\
-    l & \primtype{integer} & no\\
-    t & \primtype{integer} & no\\
-    i & \primtype{integer} & no\\
-    n & \primtype{integer} & no\\
-    k & \primtype{integer} & no\\
-    j & \primtype{integer} & no\\
-    \bottomrule
-  \end{edtable}
-\end{table}
-
-\subsubsection{Name attribute}
-Each \Dimension requires a \textit{name} attribute. This name should be a valid identifier in the \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 standard} and uniquely identify the {\Dimension} in current the scope.
-
-\subsubsection{M attribute}
-The \textit{m} attribute specifies the power of the mass dimension in the \Dimension. If omitted the power is zero.
-
-\subsubsection{L attribute}
-The \textit{l} attribute specifies the power of the length dimension in the \Dimension. If omitted the power is zero.
-
-\subsubsection{T attribute}
-The \textit{t} attribute specifies the power of the time dimension in the \Dimension. If omitted the power is zero.
-
-\subsubsection{I attribute}
-The \textit{i} attribute specifies the power of the current dimension in the \Dimension. If omitted the power is zero.
-
-\subsubsection{N attribute}
-The \textit{n} attribute specifies the power of the amount-of-substance dimension in the \Dimension. If omitted the power is zero.
-
-\subsubsection{K attribute}
-The \textit{k} attribute specifies the power of the temperature dimension in the \Dimension. If omitted the power is zero.
-
-\subsubsection{J attribute}
-The \textit{j} attribute specifies the power of the luminous-intensity dimension in the \Dimension. If omitted the power is zero.
-
-\subsection{Unit}
-\label{sec:Unit}
-
-\begin{table}[H]
-  \begin{edtable}{tabular}{llr}
-    \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Unit Structure}}}\\
-    \toprule
-    \em{Attribute name} & \em{Type/Format} & \em{Required} \\
-    \midrule
-    symbol & \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 identifier} & yes\\
-    dimension & \Dimension{}@name & yes\\
-    power & \primtype{integer} & yes\\
-    offset & \primtype{real number} & no\\
-    \bottomrule
-  \end{edtable}
-\end{table}
-
-\subsubsection{Symbol attribute}
-Each \Unit requires a \textit{symbol} attribute. This name should be a valid identifier in the \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 standard} and uniquely identify the {\Unit} in current the scope.
-
-\subsubsection{Dimension attribute}
-Each \Unit requires a \textit{dimension} attribute. This attribute specifies the dimension of the units and should refer to the name of a \Dimension element in the global scope.
-
-\subsubsection{Power attribute}
-Each \Unit requires a \textit{power} attribute. This attribute specifies the relative scale of the units compared to the equivalent SI units in powers of ten.
-
-\subsubsection{Offset attribute}
-A \Unit can optionally have an \textit{offset} attribute. This attribute specifies the zero offset of the unit scale. For example,
-
-\begin{lstlisting}
-<Unit name="degC" dimension="temperature" power="0" offset="273.15"/>
-\end{lstlisting}
-
-If omitted, the offset is zero.
-
-\section{Abstraction Layer}
-\label{AbstractionL}
+\part{Abstraction Layer}
+\section{Common Concepts}
 
 The Abstraction Layer aims at providing general concepts to represent the
 mathematical entities (functions, differential equations, event handling,...)
@@ -570,7 +454,276 @@ Each \Parameter requires a \textit{name} attribute. This name should be a valid 
 \subsubsection{Dimension attribute}
 Each \Parameter requires a \textit{dimension} attribute. This attribute specifies the dimension of the units of the quantity that is expected to be passed to the \Parameter and should refer to the name of a \Dimension element in the global scope.
 
-\subsection{Ports: interfacing between components}
+\subsection{Dimension}
+\label{sec:Dimension}
+
+Each specification of a parameter or a state variable in the definition of
+a class of component must state its dimension. A dimension declaration
+associates a name with values for the powers for each of seven SI base
+units: length, l; mass, m; time t; electric current i; temperature T;
+luminous intensity L and amount of substance, n.
+For example, acceleration has dimension $lt^{-2}$ and voltage is
+$ml^2t^3i^{-1}$.
+Dimensions can be declared at the top level of a NineML file with
+the "Dimension" element with attributes for each of the base dimensions or
+imported from a specific XML file, describing a set of dimensions.
+
+Each dimension can give rise to a family of unit declarations, each of
+which has the same dimensionality but a different multiplier. For example,
+typical units for a quantity with dimensionality voltage include
+millivolts (multiplier = $10^{-3}$), microvolts (multiplier = $10^{-6}$)
+and volts (multiplier = 1).  To express a dimensional quantity both a
+numerical factor and a unit are required. Unit can be expressed in a NineML
+file with the \Unit element, defined at the User Layer level, or imported
+from a specific XML file describing a set of units.
+
+Except where physical constants are required, abstraction layer definitions
+generally only contain references to dimensions and are independent of any
+particular choice of units. Conversely, the user layer only refers to units.
+Internally, dimensional quantities are to be understood
+as rich types with a numerical factor and exponents for each of the
+base dimensions. They are independent of the particular choice of
+units by which they are assigned.
+
+
+%\draftnote{This the LEMS format (which is very similar to a format I found in an old version of the NineML spec). I personally would favour more descriptive attributes and changing Dimension to UnitDimension but I think this format should be fine (see GitHub \#32)}
+\begin{table}[H]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Dimension Structure}}}\\
+    \toprule
+    \em{Attribute name} & \em{Type/Format} & \em{Required} \\
+    \midrule
+    name & \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 identifier} & yes\\
+    m & \primtype{integer} & no\\
+    l & \primtype{integer} & no\\
+    t & \primtype{integer} & no\\
+    i & \primtype{integer} & no\\
+    n & \primtype{integer} & no\\
+    k & \primtype{integer} & no\\
+    j & \primtype{integer} & no\\
+    \bottomrule
+  \end{edtable}
+\end{table}
+
+\subsubsection{Name attribute}
+Each \Dimension requires a \textit{name} attribute. This name should be a valid identifier in the \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 standard} and uniquely identify the {\Dimension} in current the scope.
+
+\subsubsection{M attribute}
+The \textit{m} attribute specifies the power of the mass dimension in the \Dimension. If omitted the power is zero.
+
+\subsubsection{L attribute}
+The \textit{l} attribute specifies the power of the length dimension in the \Dimension. If omitted the power is zero.
+
+\subsubsection{T attribute}
+The \textit{t} attribute specifies the power of the time dimension in the \Dimension. If omitted the power is zero.
+
+\subsubsection{I attribute}
+The \textit{i} attribute specifies the power of the current dimension in the \Dimension. If omitted the power is zero.
+
+\subsubsection{N attribute}
+The \textit{n} attribute specifies the power of the amount-of-substance dimension in the \Dimension. If omitted the power is zero.
+
+\subsubsection{K attribute}
+The \textit{k} attribute specifies the power of the temperature dimension in the \Dimension. If omitted the power is zero.
+
+\subsubsection{J attribute}
+The \textit{j} attribute specifies the power of the luminous-intensity dimension in the \Dimension. If omitted the power is zero.
+
+\subsection{Unit}
+\label{sec:Unit}
+
+\begin{table}[H]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Unit Structure}}}\\
+    \toprule
+    \em{Attribute name} & \em{Type/Format} & \em{Required} \\
+    \midrule
+    symbol & \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 identifier} & yes\\
+    dimension & \Dimension{}@name & yes\\
+    power & \primtype{integer} & yes\\
+    offset & \primtype{real number} & no\\
+    \bottomrule
+  \end{edtable}
+\end{table}
+
+\subsubsection{Symbol attribute}
+Each \Unit requires a \textit{symbol} attribute. This name should be a valid identifier in the \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 standard} and uniquely identify the {\Unit} in current the scope.
+
+\subsubsection{Dimension attribute}
+Each \Unit requires a \textit{dimension} attribute. This attribute specifies the dimension of the units and should refer to the name of a \Dimension element in the global scope.
+
+\subsubsection{Power attribute}
+Each \Unit requires a \textit{power} attribute. This attribute specifies the relative scale of the units compared to the equivalent SI units in powers of ten.
+
+\subsubsection{Offset attribute}
+A \Unit can optionally have an \textit{offset} attribute. This attribute specifies the zero offset of the unit scale. For example,
+
+\begin{lstlisting}
+<Unit name="degC" dimension="temperature" power="0" offset="273.15"/>
+\end{lstlisting}
+
+If omitted, the offset is zero.
+
+
+\subsection{Alias}
+\label{sec:Alias}
+
+
+\begin{table}[H]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Alias Structure}}}\\
+    \toprule
+    \em{Attribute name} & \em{Type/Format} & \em{Required} \\
+    \midrule
+    name & \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 identifier} & yes\\
+    \midrule
+    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \midrule
+    \MathInline & singleton & yes \\ 
+    \bottomrule
+  \end{edtable}
+\end{table}
+
+\note{\Alias is defined in the Dynamics, \emph{not} in the
+\Regime. This means that aliases are the same across all regimes.}
+
+An alias corresponds to an alternative name for a variable or part of an expression. 
+
+\textbf{Aliases} are motivated by two use cases:
+
+\begin{itemize}
+\item {\bf substitution}: rather than writing long expressions for functions of
+{\StateVariable}s, we can define an \Alias once. For example, we can define chains
+of {\Alias}es:
+%
+\begin{lstlisting}
+m_alpha = (alphaA+alphaB*V)/(alphaC+exp((alphaD+V/alphaE)))
+m_beta = (betaA+betaB*V)/(betaC+exp((betaD+V/betaE)))
+minf = m_alpha/(m_alpha+m_beta)
+mtau = 1./(m_alpha+m_beta)
+dm/dt = (1/C)*(minf-m)/mtau
+\end{lstlisting}
+
+In this case, \lstinline|m_alpha|, \lstinline|m_beta|, \lstinline|minf| and \lstinline|mtau| are all
+alias definitions. There is no reason we couldn't expand our $\mathrm{d}m/\mathrm{d}t$
+description out to eliminate these intermediate {\Alias}es, but the expression
+would be very long and difficult to read.
+
+\item {\bf Accessing intermediate variables}: if we would like to communicate a
+value other than a simple \StateVariable to another \ComponentClass. For
+example, if we have a component representing a
+neuron, which has an internal \StateVariable, `V', we may be interested in
+transmitting a current, for example $i=g*(E-V)$.
+
+\end{itemize}
+
+
+\subsubsection{Name attribute}
+Each \Alias requires a \textit{name} attribute. This name should be a valid identifier in the \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 standard} and uniquely identify the {\Alias} from all other elements in the \ComponentClass.
+
+
+\subsection{MathInline}
+\label{sec:MathInline}
+
+\begin{table}[H]
+  \begin{edtable}{tabular}{lr}
+    \toprule
+    \multicolumn{2}{c}{\parbox{0.55\linewidth}{\center\textbf{MathInline Structure}}}\\
+    \toprule
+    \em{Description of text} & \em{Required} \\
+    \midrule
+    Inline mathematical expression & yes\\
+    \bottomrule
+  \end{edtable}
+\end{table}
+
+
+A block used to specify mathematical expressions. The expression is expected to
+be in \texttt{C} style and given as text. MathML support is planned in future versions of NineML
+
+Depending on the context, MathInline blocks should return an expression that
+evaluates to either a \verb|Boolean| (when used as the trigger for
+{\OnCondition}s) or a \verb|real| number ( when used  as a
+right-hand-side for  {\Alias}es, {\TimeDerivative}s \& {\StateAssignment}s).
+
+The following operators are supported, with the same precedence levels as ANSI
+C89. 
+All numbers/variables are assumed to be real valued numbers.
+
+\begin{itemize}
+\item Arithmetic operators
+\begin{itemize}
+\item Addition \verb|+|
+\item Subtraction \verb|-|
+\item Division \verb|/|
+\item Multiplication \verb|*|
+\end{itemize}
+
+\item Relational operators
+\begin{itemize}
+\item Greater than \verb|>|
+\item Greater than equal \verb|>=|
+\item Lesser than \verb|<|
+\item Lesser than equal \verb|<=|
+\end{itemize}
+
+Logical operators
+\begin{itemize}
+\item Logical And: \verb|&&|
+\item Logical Or:  \verb+||+
+\item Logical Not: \verb|!|
+\end{itemize}
+
+\end{itemize}
+
+The following symbols are built in, and cannot be redefined:
+\begin{itemize}
+\item pi
+\item e
+\end{itemize}
+
+The following functions are built in, and cannot be redefined:
+\begin{itemize}
+\item \verb|exp(x)|
+\item \verb|sin(x)|
+\item \verb|cos(x)|
+\item \verb|log(x)|
+\item \verb|log10(x)|
+\item \verb|pow(x)|
+\item \verb|sinh(x)|
+\item \verb|cosh(x)|
+\item \verb|tanh(x)|
+\item \verb|sqrt(x)|
+\item \verb|atan(x)|
+\item \verb|asin(x)|
+\item \verb|acos(x)|
+\item \verb|asinh(x)|
+\item \verb|acosh(x)|
+\item \verb|atanh(x)|
+\item \verb|atan2(x)|
+\item \verb|ceil(x)|
+\item \verb|floor(x)|
+\end{itemize}
+
+These functions take the same parameters and are defined as per ANSI C89.
+
+The following random distributions are available, through the \verb|random|
+namespace,
+although their use is only allowed within \StateAssignment blocks:
+
+\begin{itemize}
+\item \verb|random.uniform|
+\item \verb|random.normal|
+\item \verb|random.binomial(N,P)|
+\item \verb|random.poisson(L)|
+\item \verb|random.exponential(L)|
+\end{itemize}
+
+
+\section{Ports}
 \label{sec:Ports}
 
 
@@ -731,6 +884,7 @@ Each \EventSendPort requires a \textit{name} attribute. This name should be a va
 \subsubsection{Name attribute}
 Each \EventReceivePort requires a \textit{name} attribute. This name should be a valid identifier in the \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 standard} and uniquely identify the {\EventReceivePort} from all other elements in the \ComponentClass.
 
+\section{Differential Equations}
 
 \subsection{Dynamics}
 \label{sec:Dynamics}
@@ -778,17 +932,6 @@ least one \Regime, and contain no regime islands. At any given time,
 a component will be in a single \Regime, and can change which \Regime
 it is in through \Transition.
 
-\begin{figure}[htb!]
-\center
-\includegraphics[width=14cm]{images/SimpleRegimeGraph.png}
-\protect\caption{The dynamics block for an example component.}
-\label{SimpleRegimeGraph}
-\end{figure}
-
-An example dynamics in \ref{SimpleRegimeGraph} has three {\StateVariable}s,
-\emph{X,Y} and \emph{Z}, and a state graph with three {\Regime}s, \emph{regime1},
-\emph{regime2} and \emph{regime3}. At any time, a component will be in one of
-these regimes, and the state variables will evolve accordingly.
 
 \subsection{StateVariable}
 \label{sec:StateVariable}
@@ -902,10 +1045,22 @@ Each \Regime requires a \textit{name} attribute. This name should be a valid ide
 Each \TimeDerivative requires a \textit{variable} attribute. This should refer to the name of a \StateVariable in the \ComponentClass. Only one \TimeDerivative is allowed per \textit{variable} in each \Regime.
 
 
-\subsection{Transitions: OnEvent \& OnCondition}
+\section{Events and Transitions}
 \label{sec:Transition}
 
+
+\begin{figure}[htb!]
+\center
+\includegraphics[width=14cm]{images/SimpleRegimeGraph.png}
+\protect\caption{The dynamics block for an example component.}
+\label{SimpleRegimeGraph}
+\end{figure}
+
 {\Transition}s define the transition between \Regime blocks.
+An example dynamics in \ref{SimpleRegimeGraph} has three {\StateVariable}s,
+\emph{X,Y} and \emph{Z}, and a state graph with three {\Regime}s, \emph{regime1},
+\emph{regime2} and \emph{regime3}. At any time, a component will be in one of
+these regimes, and the state variables will evolve accordingly.
 
 Movement between several instances of \Regime happens via \Transition.
 A {\Transition} is defined in NineML as having
@@ -1082,161 +1237,58 @@ Each \StateAssignment requires a \textit{variable} attribute. This should refer 
 \subsubsection{Port attribute}
 Each \EventOut requires a \textit{port} attribute. This should refer to the name of an \EventSendPort in the \ComponentClass interface.
 
-\subsection{Alias}
-\label{sec:Alias}
+\section{Random Distributions}
 
+\subsection{RandomDistribution}
+\label{sec:RandomDistribution}
 
 \begin{table}[H]
   \begin{edtable}{tabular}{llr}
     \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Alias Structure}}}\\
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{RandomDistribution Structure}}}\\
     \toprule
-    \em{Attribute name} & \em{Type/Format} & \em{Required} \\
-    \midrule
-    name & \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 identifier} & yes\\
-    \midrule
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
-    \MathInline & singleton & yes \\ 
+    *Distribution & singleton & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
 
-\note{\Alias is defined in the Dynamics, \emph{not} in the
-\Regime. This means that aliases are the same across all regimes.}
+\draftnote{I will finish adding the required attributes (copying the names used in UncertML) for these distributions later this week}
 
-An alias corresponds to an alternative name for a variable or part of an expression. 
+\subsection{NormalDistribution}
+\label{sec:NormalDistribution}
 
-\textbf{Aliases} are motivated by two use cases:
+\subsection{LogNormalDistribution}
+\label{sec:LogNormalDistribution}
 
-\begin{itemize}
-\item {\bf substitution}: rather than writing long expressions for functions of
-{\StateVariable}s, we can define an \Alias once. For example, we can define chains
-of {\Alias}es:
-%
-\begin{lstlisting}
-m_alpha = (alphaA+alphaB*V)/(alphaC+exp((alphaD+V/alphaE)))
-m_beta = (betaA+betaB*V)/(betaC+exp((betaD+V/betaE)))
-minf = m_alpha/(m_alpha+m_beta)
-mtau = 1./(m_alpha+m_beta)
-dm/dt = (1/C)*(minf-m)/mtau
-\end{lstlisting}
+\subsection{GammaDistribution}
+\label{sec:GammaDistribution}
 
-In this case, \lstinline|m_alpha|, \lstinline|m_beta|, \lstinline|minf| and \lstinline|mtau| are all
-alias definitions. There is no reason we couldn't expand our $\mathrm{d}m/\mathrm{d}t$
-description out to eliminate these intermediate {\Alias}es, but the expression
-would be very long and difficult to read.
+\subsection{InverseGammaDistribution}
+\label{sec:InverseGammaDistribution}
 
-\item {\bf Accessing intermediate variables}: if we would like to communicate a
-value other than a simple \StateVariable to another \ComponentClass. For
-example, if we have a component representing a
-neuron, which has an internal \StateVariable, `V', we may be interested in
-transmitting a current, for example $i=g*(E-V)$.
+\subsection{PoissonDistribution}
+\label{sec:PoissonDistribution}
 
-\end{itemize}
+\subsection{CauchyDistribution}
+\label{sec:CauchyDistribution}
 
+\subsection{ExponentialDistribution}
+\label{sec:ExponentialDistribution}
 
-\subsubsection{Name attribute}
-Each \Alias requires a \textit{name} attribute. This name should be a valid identifier in the \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 standard} and uniquely identify the {\Alias} from all other elements in the \ComponentClass.
+\subsection{LaplaceDistribution}
+\label{sec:LaplaceDistribution}
+
+\subsection{BetaDistribution}
+\label{sec:BetaDistribution}
+
+\subsection{UniformDistribution}
+\label{sec:UniformDistribution}
 
 
-\subsection{MathInline}
-\label{sec:MathInline}
 
-\begin{table}[H]
-  \begin{edtable}{tabular}{lr}
-    \toprule
-    \multicolumn{2}{c}{\parbox{0.55\linewidth}{\center\textbf{MathInline Structure}}}\\
-    \toprule
-    \em{Description of text} & \em{Required} \\
-    \midrule
-    Inline mathematical expression & yes\\
-    \bottomrule
-  \end{edtable}
-\end{table}
-
-
-A block used to specify mathematical expressions. The expression is expected to
-be in \texttt{C} style and given as text. MathML support is planned in future versions of NineML
-
-Depending on the context, MathInline blocks should return an expression that
-evaluates to either a \verb|Boolean| (when used as the trigger for
-{\OnCondition}s) or a \verb|real| number ( when used  as a
-right-hand-side for  {\Alias}es, {\TimeDerivative}s \& {\StateAssignment}s).
-
-The following operators are supported, with the same precedence levels as ANSI
-C89. 
-All numbers/variables are assumed to be real valued numbers.
-
-\begin{itemize}
-\item Arithmetic operators
-\begin{itemize}
-\item Addition \verb|+|
-\item Subtraction \verb|-|
-\item Division \verb|/|
-\item Multiplication \verb|*|
-\end{itemize}
-
-\item Relational operators
-\begin{itemize}
-\item Greater than \verb|>|
-\item Greater than equal \verb|>=|
-\item Lesser than \verb|<|
-\item Lesser than equal \verb|<=|
-\end{itemize}
-
-Logical operators
-\begin{itemize}
-\item Logical And: \verb|&&|
-\item Logical Or:  \verb+||+
-\item Logical Not: \verb|!|
-\end{itemize}
-
-\end{itemize}
-
-The following symbols are built in, and cannot be redefined:
-\begin{itemize}
-\item pi
-\item e
-\end{itemize}
-
-
-The following functions are built in, and cannot be redefined:
-\begin{itemize}
-\item \verb|exp(x)|
-\item \verb|sin(x)|
-\item \verb|cos(x)|
-\item \verb|log(x)|
-\item \verb|log10(x)|
-\item \verb|pow(x)|
-\item \verb|sinh(x)|
-\item \verb|cosh(x)|
-\item \verb|tanh(x)|
-\item \verb|sqrt(x)|
-\item \verb|atan(x)|
-\item \verb|asin(x)|
-\item \verb|acos(x)|
-\item \verb|asinh(x)|
-\item \verb|acosh(x)|
-\item \verb|atanh(x)|
-\item \verb|atan2(x)|
-\item \verb|ceil(x)|
-\item \verb|floor(x)|
-\end{itemize}
-
-These functions take the same parameters and are defined as per ANSI C89.
-
-The following random distributions are available, through the \verb|random|
-namespace,
-although their use is only allowed within \StateAssignment blocks:
-
-\begin{itemize}
-\item \verb|random.uniform|
-\item \verb|random.normal|
-\item \verb|random.binomial(N,P)|
-\item \verb|random.poisson(L)|
-\item \verb|random.exponential(L)|
-\end{itemize}
+\section{Connectivity}
 
 \subsection{ConnectionRule}
 \label{sec:ConnectionRule}
@@ -1316,54 +1368,6 @@ Each \ExplicitConnectionList element requires a \textit{source-indices} attribut
 \subsubsection{Target-indices attribute}
 
 Each \ExplicitConnectionList element requires a \textit{target-indices} attribute. This attribute should refer to a name of a dimensionless \Parameter in the enclosing \ComponentClass. The properties supplied to this parameter should be a \ArrayValue or \ExternalArrayValue drawn from the set $\{1,\ldots,N\}$ where $N$ is the size of the source population and be the same length as the property supplied to the \textit{source-indices} parameter.
-
-
-\subsection{RandomDistribution}
-\label{sec:RandomDistribution}
-
-\begin{table}[H]
-  \begin{edtable}{tabular}{llr}
-    \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{RandomDistribution Structure}}}\\
-    \toprule
-    \em{Element type} & \em{Multiplicity} & \em{Required} \\
-    \midrule
-    *Distribution & singleton & yes\\
-    \bottomrule
-  \end{edtable}
-\end{table}
-
-\draftnote{I will finish adding the required attributes (copying the names used in UncertML) for these distributions later this week}
-
-\subsection{NormalDistribution}
-\label{sec:NormalDistribution}
-
-\subsection{LogNormalDistribution}
-\label{sec:LogNormalDistribution}
-
-\subsection{GammaDistribution}
-\label{sec:GammaDistribution}
-
-\subsection{InverseGammaDistribution}
-\label{sec:InverseGammaDistribution}
-
-\subsection{PoissonDistribution}
-\label{sec:PoissonDistribution}
-
-\subsection{CauchyDistribution}
-\label{sec:CauchyDistribution}
-
-\subsection{ExponentialDistribution}
-\label{sec:ExponentialDistribution}
-
-\subsection{LaplaceDistribution}
-\label{sec:LaplaceDistribution}
-
-\subsection{BetaDistribution}
-\label{sec:BetaDistribution}
-
-\subsection{UniformDistribution}
-\label{sec:UniformDistribution}
 
 
 \newpage

@@ -86,6 +86,7 @@
 \RequirePackage[T1]{fontenc}
 \RequirePackage{suffix}
 \RequirePackage{varwidth}
+\RequirePackage{titlesec}
 
 % We use the "optional" package to indicate whether to generate a grayscale
 % vs a color version of the document without having to alter the .tex file
@@ -704,6 +705,14 @@
 % Definition of section heading style.
 % The "changed" versions put the numbers in red, to indicate a change
 % in section numbers.
+
+\titleformat{\part}[display]
+        {\clearpage\normalfont\centering\huge\bfseries\sffamily\color{mediumgray}}%
+        {\thispagestyle{empty}\vspace{12.5pc}%
+         \partname~\thepart}%
+        {1em}%
+        {\vspace{-15pt}\Huge\color{ninemlblue}}%
+        [\clearpage]
 
 \renewcommand\@seccntformat[1]{%
   \color{@sectionnumcolor}{\csname the#1\endcsname}\hspace{0.5em}}
