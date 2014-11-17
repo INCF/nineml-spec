@@ -75,7 +75,7 @@
 \newcommand{\FromDestination}{\defRef{\textbf{\class{FromDestination}}\xspace}{sec:FromDestination}}
 \newcommand{\FromPlasticity}{\defRef{\textbf{\class{FromPlasticity}}\xspace}{sec:FromPlasticity}}
 \newcommand{\FromResponse}{\defRef{\textbf{\class{FromResponse}}\xspace}{sec:FromResponse}}
-\newcommand{\PopulationSelection}{\defRef{\textbf{\class{PopulationSelection}}\xspace}{sec:PopulationSelection}}
+\newcommand{\Selection}{\defRef{\textbf{\class{Selection}}\xspace}{sec:Selection}}
 \newcommand{\Concatenate}{\defRef{\textbf{\class{Concatenate}}\xspace}{sec:Concatenate}}
 \newcommand{\Item}{\defRef{\textbf{\class{Item}}\xspace}{sec:Item}}
 
@@ -333,7 +333,7 @@ This document presents the current NineML specifications and consists of:
 For adding semantic structure to the model it is recommended to use the \href{http://www.w3.org/RDF/}{Resource Description Framework  (RDF)}. 
 
 \part{Abstraction Layer}
-\section{Common Concepts}
+\section{Common Elements}
 
 The Abstraction Layer aims at providing general concepts to represent the
 mathematical entities (functions, differential equations, event handling,...)
@@ -530,43 +530,6 @@ The \textit{k} attribute specifies the power of the temperature dimension in the
 \subsubsection{J attribute}
 The \textit{j} attribute specifies the power of the luminous-intensity dimension in the \Dimension. If omitted the power is zero.
 
-\subsection{Unit}
-\label{sec:Unit}
-
-\begin{table}[H]
-  \begin{edtable}{tabular}{llr}
-    \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Unit Structure}}}\\
-    \toprule
-    \em{Attribute name} & \em{Type/Format} & \em{Required} \\
-    \midrule
-    symbol & \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 identifier} & yes\\
-    dimension & \Dimension{}@name & yes\\
-    power & \primtype{integer} & yes\\
-    offset & \primtype{real number} & no\\
-    \bottomrule
-  \end{edtable}
-\end{table}
-
-\subsubsection{Symbol attribute}
-Each \Unit requires a \textit{symbol} attribute. This name should be a valid identifier in the \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 standard} and uniquely identify the {\Unit} in current the scope.
-
-\subsubsection{Dimension attribute}
-Each \Unit requires a \textit{dimension} attribute. This attribute specifies the dimension of the units and should refer to the name of a \Dimension element in the global scope.
-
-\subsubsection{Power attribute}
-Each \Unit requires a \textit{power} attribute. This attribute specifies the relative scale of the units compared to the equivalent SI units in powers of ten.
-
-\subsubsection{Offset attribute}
-A \Unit can optionally have an \textit{offset} attribute. This attribute specifies the zero offset of the unit scale. For example,
-
-\begin{lstlisting}
-<Unit name="degC" dimension="temperature" power="0" offset="273.15"/>
-\end{lstlisting}
-
-If omitted, the offset is zero.
-
-
 \subsection{Alias}
 \label{sec:Alias}
 
@@ -722,6 +685,8 @@ although their use is only allowed within \StateAssignment blocks:
 \item \verb|random.exponential(L)|
 \end{itemize}
 
+\subsection{StandardLibrary}
+\label{sec:StandardLibrary}
 
 \section{Ports}
 \label{sec:Ports}
@@ -884,7 +849,7 @@ Each \EventSendPort requires a \textit{name} attribute. This name should be a va
 \subsubsection{Name attribute}
 Each \EventReceivePort requires a \textit{name} attribute. This name should be a valid identifier in the \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 standard} and uniquely identify the {\EventReceivePort} from all other elements in the \ComponentClass.
 
-\section{Differential Equations}
+\section{Dynamics}
 
 \subsection{Dynamics}
 \label{sec:Dynamics}
@@ -1369,11 +1334,8 @@ Each \ExplicitConnectionList element requires a \textit{source-indices} attribut
 
 Each \ExplicitConnectionList element requires a \textit{target-indices} attribute. This attribute should refer to a name of a dimensionless \Parameter in the enclosing \ComponentClass. The properties supplied to this parameter should be a \ArrayValue or \ExternalArrayValue drawn from the set $\{1,\ldots,N\}$ where $N$ is the size of the source population and be the same length as the property supplied to the \textit{source-indices} parameter.
 
-
-\newpage
-
-\section{User Layer}
-\label{UserL}
+\part{User Layer}
+\section{Common Elements}
 
 \subsection{Component}
 \label{sec:Component}
@@ -1574,6 +1536,42 @@ definitions or MathML.
 \subsubsection{Unit attribute}
 The \textit{units} attribute specifies the units of the quantity and should refer to the name of a \Unit element in the global scope. If it is omitted then the quantity is considered to be dimensionless.
 
+\subsection{Unit}
+\label{sec:Unit}
+
+\begin{table}[H]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Unit Structure}}}\\
+    \toprule
+    \em{Attribute name} & \em{Type/Format} & \em{Required} \\
+    \midrule
+    symbol & \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 identifier} & yes\\
+    dimension & \Dimension{}@name & yes\\
+    power & \primtype{integer} & yes\\
+    offset & \primtype{real number} & no\\
+    \bottomrule
+  \end{edtable}
+\end{table}
+
+\subsubsection{Symbol attribute}
+Each \Unit requires a \textit{symbol} attribute. This name should be a valid identifier in the \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 standard} and uniquely identify the {\Unit} in current the scope.
+
+\subsubsection{Dimension attribute}
+Each \Unit requires a \textit{dimension} attribute. This attribute specifies the dimension of the units and should refer to the name of a \Dimension element in the global scope.
+
+\subsubsection{Power attribute}
+Each \Unit requires a \textit{power} attribute. This attribute specifies the relative scale of the units compared to the equivalent SI units in powers of ten.
+
+\subsubsection{Offset attribute}
+A \Unit can optionally have an \textit{offset} attribute. This attribute specifies the zero offset of the unit scale. For example,
+
+\begin{lstlisting}
+<Unit name="degC" dimension="temperature" power="0" offset="273.15"/>
+\end{lstlisting}
+
+If omitted, the offset is zero.
+
 
 \subsection{SingleValue}
 \label{sec:SingleValue}
@@ -1666,6 +1664,34 @@ The \textit{mimetype} attribute specifies the data format for the external value
 
 \subsubsection{Column-name attribute}
 
+\subsection{Reference}
+\label{sec:Reference}
+
+\begin{table}[H]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Delay Structure}}}\\
+    \toprule
+    \em{Attribute name} & \em{Type/Format} & \em{Required} \\
+    \midrule
+    url &  \href{http://en.wikipedia.org/wiki/Uniform_resource_locator}{URL}  & no\\
+    \midrule
+    \em{Text format} & \; & \em{Required} \\
+    \midrule
+    *@name & \; & yes\\
+    \bottomrule
+  \end{edtable}
+\end{table}
+
+\subsubsection{Url attribute}
+The \textit{url} attribute specifies a \href{http://en.wikipedia.org/wiki/Uniform_resource_locator}{Uniform Resource Locator (URL)} for the file which contains the User Layer element to be referenced.
+
+\subsubsection{Text format}
+The name of the User Layer element to be referenced should be included in the body of the \Reference element.
+
+
+\section{Populations}
+
 \subsection{Population}
 \label{sec:Population}
 
@@ -1724,6 +1750,8 @@ Each \Population requires a \textit{name} attribute. This name should be a valid
 \subsubsection{Text format}
 The number of cells in the population is specified by the integer provided in the text of the \Number element. 
 
+\section{Projections}
+
 \subsection{Projection}
 \label{sec:Projection}
 
@@ -1764,7 +1792,7 @@ Each \Projection requires a \textit{name} attribute. This name should be a valid
     \toprule
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
-    \Reference{}\pointto\Population | \Reference{}\pointto\PopulationSelection & singleton & yes \\
+    \Reference{}\pointto\Population | \Reference{}\pointto\Selection & singleton & yes \\
     \FromDestination & set & no \\
     \FromPlasticity & set & no \\
     \FromResponse & set & no \\
@@ -1784,7 +1812,7 @@ The \Source field defines the pre-synaptic population of the \Projection and all
     \toprule
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
-    \Reference{}\pointto\Population | \Reference{}\pointto\PopulationSelection & singleton & yes \\
+    \Reference{}\pointto\Population | \Reference{}\pointto\Selection & singleton & yes \\
     \FromSource & set & no \\
     \FromPlasticity & set & no \\
     \FromResponse & set & no \\    
@@ -1867,7 +1895,8 @@ response node (section \ref{sec:Response}).
 Each \FromSource element requires a \textit{sender} attribute. This should refer to the name of a \AnalogSendPort or \EventSendPort in the \Cell->\Component{}\withelem\ComponentClass of the source population. The transmission mode of the port (i.e. \lq\lq{}analog\rq\rq{} or \lq\lq{}digital\rq\rq{}) should match that of the port referenced by the \textit{receiver} attribute.
 
 \subsubsection{Receiver attribute}
-Each \FromSource element requires a \textit{receiver} attribute. This should refer to the name of a \AnalogReceivePort, \EventReceivePort or \AnalogReducePort in the \Component{}\withelem\ComponentClass in the enclosing \Source/\Destination/\Plasticity/\Response element.  The transmission mode of the port (i.e. \lq\lq{}analog\rq\rq{} or \lq\lq{}digital\rq\rq{}) should match that of the port referenced by the \textit{sender} attribute.
+Each \FromSource element requires a \textit{receiver} attribute. This should refer to the name of a \AnalogReceivePort, \EventReceivePort or \AnalogReducePort in the \Component{}\withelem\ComponentClass in the enclosing \\
+\Source/\Destination/\Plasticity/\Response element.  The transmission mode of the port (i.e. \lq\lq{}analog\rq\rq{} or \lq\lq{}digital\rq\rq{}) should match that of the port referenced by the \textit{sender} attribute.
 
 \subsection{FromDestination}
 \label{sec:FromDestination}
@@ -1889,7 +1918,8 @@ Each \FromSource element requires a \textit{receiver} attribute. This should ref
 Each \FromDestination element requires a \textit{sender} attribute. This should refer to the name of a \AnalogSendPort or \EventSendPort in the \Cell->\Component{}\withelem\ComponentClass of the source population. The transmission mode of the port (i.e. \lq\lq{}analog\rq\rq{} or \lq\lq{}digital\rq\rq{}) should match that of the port referenced by the \textit{receiver} attribute.
 
 \subsubsection{Receiver attribute}
-Each \FromDestination element requires a \textit{receiver} attribute. This should refer to the name of a \AnalogReceivePort, \EventReceivePort or \AnalogReducePort in the \Component{}\withelem\ComponentClass in the enclosing \Source/\Destination/\Plasticity/\Response element.  The transmission mode of the port (i.e. \lq\lq{}analog\rq\rq{} or \lq\lq{}digital\rq\rq{}) should match that of the port referenced by the \textit{sender} attribute.
+Each \FromDestination element requires a \textit{receiver} attribute. This should refer to the name of a \AnalogReceivePort, \EventReceivePort or \AnalogReducePort in the \Component{}\withelem\ComponentClass in the enclosing \\
+\Source/\Destination/\Plasticity/\Response element.  The transmission mode of the port (i.e. \lq\lq{}analog\rq\rq{} or \lq\lq{}digital\rq\rq{}) should match that of the port referenced by the \textit{sender} attribute.
 
 
 \subsection{FromPlasticity}
@@ -1967,41 +1997,15 @@ Each \FromResponse element requires a \textit{receiver} attribute. This should r
   \end{edtable}
 \end{table}
 
-\subsection{Reference}
-\label{sec:Reference}
+\section{Selections: combining population subsets}
+
+\subsection{Selection}
+\label{sec:Selection}
 
 \begin{table}[H]
   \begin{edtable}{tabular}{llr}
     \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Delay Structure}}}\\
-    \toprule
-    \em{Attribute name} & \em{Type/Format} & \em{Required} \\
-    \midrule
-    url &  \href{http://en.wikipedia.org/wiki/Uniform_resource_locator}{URL}  & no\\
-    \midrule
-    \em{Text format} & \; & \em{Required} \\
-    \midrule
-    *@name & \; & yes\\
-    \bottomrule
-  \end{edtable}
-\end{table}
-
-\subsubsection{Url attribute}
-The \textit{url} attribute specifies a \href{http://en.wikipedia.org/wiki/Uniform_resource_locator}{Uniform Resource Locator (URL)} for the file which contains the User Layer element to be referenced.
-
-\subsubsection{Text format}
-The name of the User Layer element to be referenced should be included in the body of the \Reference element.
-
-
-\subsection{PopulationSelection}
-\label{sec:PopulationSelection}
-
-\draftnote{Changed to PopulationSelection as for grouping sub-components we were thinking of using ComponentGroup (see GitHub \#34)}
-
-\begin{table}[H]
-  \begin{edtable}{tabular}{llr}
-    \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{PopulationSelection Structure}}}\\
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Selection Structure}}}\\
     \toprule
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
@@ -2039,17 +2043,16 @@ The name of the User Layer element to be referenced should be included in the bo
     \midrule
     \em{Text format} & \; & \em{Required} \\
     \midrule \relax
-    [\Population | \PopulationSelection{}]@name & \; & yes\\
+    [\Population | \Selection{}]@name & \; & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
 
 \subsubsection{Index attribute}
-Each \Item requires a \textit{index} attribute. This attribute specifies the order in which the {\Population}s in the \PopulationSelection are concatenated and thereby the indices of the cells within the combined \PopulationSelection. Each \textit{index} must be non-negative, unique amongst the set of \Item{}@index enclosed in the \Concatenate element, and the set of indices must be contiguous for a single \Concatenate element.
+Each \Item requires a \textit{index} attribute. This attribute specifies the order in which the {\Population}s in the \Selection are concatenated and thereby the indices of the cells within the combined \Selection. Each \textit{index} must be non-negative, unique amongst the set of \Item{}@index enclosed in the \Concatenate element, and the set of indices must be contiguous for a single \Concatenate element.
 
 \note{This preserves the order non-specific nature of elements in NineML}
 
-\newpage
 \appendix
 
 \part*{Appendix}

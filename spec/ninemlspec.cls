@@ -707,7 +707,7 @@
 % in section numbers.
 
 \titleformat{\part}[display]
-        {\clearpage\normalfont\centering\huge\bfseries\sffamily\color{mediumgray}}%
+        {\newpage\normalfont\centering\huge\bfseries\sffamily\color{mediumgray}}%
         {\thispagestyle{empty}\vspace{12.5pc}%
          \partname~\thepart}%
         {1em}%
