@@ -673,16 +673,15 @@ The following functions are built in, and cannot be redefined:
 
 These functions take the same parameters and are defined as per ANSI C89.
 
-The following random distributions are available, through the \verb|random|
-namespace,
+The following random distributions are also available in inline math,
 although their use is only allowed within \StateAssignment blocks:
 
 \begin{itemize}
-\item \verb|random.uniform|
-\item \verb|random.normal|
-\item \verb|random.binomial(N,P)|
-\item \verb|random.poisson(L)|
-\item \verb|random.exponential(L)|
+\item \verb|uniform(L,U)|
+\item \verb|normal|($\mu$, $\sigma$)
+\item \verb|binomial(N,P)|
+\item \verb|poisson(L)|
+\item \verb|exponential(L)|
 \end{itemize}
 
 \subsection{StandardLibrary}
