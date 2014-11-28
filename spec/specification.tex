@@ -793,7 +793,7 @@ Each \AnalogReceivePort requires a \textit{dimension} attribute. This attribute 
     \midrule
     name & \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 identifier} & yes\\
     dimension & \Dimension{}@name & yes\\
-    operator & \textit{+} | \textit{*} & yes \\
+    operator & \textit{+} & yes \\
     \bottomrule
   \end{edtable}
 \end{table}
@@ -805,7 +805,7 @@ differ from \AnalogReceivePort in that they can be connected to multiple
 {\AnalogSendPort}s. \AnalogReducePort takes an additional operator,
 {\tt operator}, which specifies how the data from multiple {\AnalogSendPort}s
 should be combined to produce a single value. Currently, the
-only supported operations are \lq\lq{}$+$\rq\rq{} and \lq\lq{}$*$\rq\rq{}, which sum and multiply the inputs respectively.
+only supported operations is \lq\lq{}$+$\rq\rq{}, which sums the inputs.
 
 The motivation for \AnalogReducePort is that it allows us to make our
 \ComponentClass definitions more general. For example, if we are defining a
