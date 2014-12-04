@@ -293,8 +293,6 @@ user.
 
 \subsection{About this document}
 
-\draftnote{Andrew, I was thinking after your suggestion to have a section describing the general purpose of ports that it would be good to move the top sections up a level and maybe have the \lq\lq{}Abstraction Layer\rq\rq{} and \lq\lq{}User Layer\rq\rq{} as latex \lq\lq{}parts\rq\rq{} and then introduce a new layer of sections for Ports, Dynamics, ConnectionRule, RandomDistribution, etc. What do you think?}
-
 This document presents the current NineML specifications and consists of:
 \begin{enumerate}
 \item a description of the Abstraction and User Layer object models;
@@ -616,7 +614,7 @@ right-hand-side for  {\Alias}es, {\TimeDerivative}s \& {\StateAssignment}s).
 The following operators are supported, with the same precedence levels as ANSI
 C89. 
 All numbers/variables are assumed to be real valued numbers.
-
+\draftnote{I have added exponent to this list since it is commonly used in Hoc, and quite convenient but it is not ANSI C89 so I am not sure whether you guys think this is a good idea}
 \begin{itemize}
 \item Arithmetic operators
 \begin{itemize}
@@ -627,12 +625,10 @@ All numbers/variables are assumed to be real valued numbers.
 \item Exponent \verb|^|
 \end{itemize}
 
-\item Relational operators
+\item Inequality operators
 \begin{itemize}
 \item Greater than \verb|>|
-\item Greater than equal \verb|>=|
 \item Lesser than \verb|<|
-\item Lesser than equal \verb|<=|
 \end{itemize}
 
 Logical operators
@@ -644,6 +640,7 @@ Logical operators
 
 \end{itemize}
 
+\draftnote{We need to define what these symbols mean somewhere}
 The following symbols are built in, and cannot be redefined:
 \begin{itemize}
 \item pi
@@ -678,6 +675,7 @@ These functions take the same parameters and are defined as per ANSI C89.
 The following random distributions are also available in inline math,
 although their use is only allowed within \StateAssignment blocks:
 
+\draftnote{I removed the "random" namespace since it was proving difficult to parse and didn't seem necessary. Can add it back in if you like though}
 \begin{itemize}
 \item \verb|uniform(L,U)|
 \item \verb|normal|($\mu$, $\sigma$)
@@ -696,7 +694,7 @@ although their use is only allowed within \StateAssignment blocks:
     \toprule
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
-    webpage & \href{http://en.wikipedia.org/wiki/Uniform_resource_locator}{URL} & yes\\
+    url & \href{http://en.wikipedia.org/wiki/Uniform_resource_locator}{URL} & yes\\
     \midrule
     \em{Text format} & \; & \em{Required} \\
     \midrule
@@ -706,8 +704,8 @@ although their use is only allowed within \StateAssignment blocks:
 \end{table}
 
 
-\subsubsection{Webpage attribute}
-\StandardLibrary require a \textit{webpage} attribute, which specifies a \href{http://en.wikipedia.org/wiki/Uniform_resource_locator}{Uniform Resource Locator (URL)} that describes the behaviour of the standard library member.
+\subsubsection{Url attribute}
+\StandardLibrary require a \textit{url} attribute, which specifies a \href{http://en.wikipedia.org/wiki/Uniform_resource_locator}{Uniform Resource Locator (URL)} that describes the behaviour of the standard library member.
 
 \subsubsection{Text}
 The name of the member within the library to use.
@@ -1099,7 +1097,7 @@ An OnEvent block is activated when the dynamics component receives an event from
     \toprule
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
-    transition-to & \Regime{}@name & no \\    
+    target & \Regime{}@name & no \\    
     port & \EventReceivePort{}@name & yes\\
     \midrule
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
@@ -1113,8 +1111,8 @@ An OnEvent block is activated when the dynamics component receives an event from
 \subsubsection{Port attribute}
 Each \OnEvent requires a \textit{port} attribute. This should refer to the name of an \EventReceivePort  in the \ComponentClass interface.
 
-\subsubsection{Transition-to attribute}
-\OnEvent can have a \textit{transition-to} attribute, which should refer to the name of a \Regime element in the \ComponentClass that the dynamics block will transition to when the \OnEvent block is triggered by an incoming event.
+\subsubsection{Target attribute}
+\OnEvent can have a \textit{target} attribute, which should refer to the name of a \Regime element in the \ComponentClass that the dynamics block will transition to when the \OnEvent block is triggered by an incoming event.
 
 \subsection{OnCondition}
 \label{sec:OnCondition}
@@ -1128,7 +1126,7 @@ An OnCondition block is activated when the condition in the \Trigger block is me
     \toprule
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
-    transition-to & \Regime{}@name & no \\
+    target & \Regime{}@name & no \\
     \midrule
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
@@ -1140,32 +1138,8 @@ An OnCondition block is activated when the condition in the \Trigger block is me
   \end{edtable}
 \end{table}
 
-{\OnCondition}s are the mathematical expressions which define
-when a {\Transition} should be triggered.
-{\OnCondition}s are any arbitrary combination of \emph{Logical
-Operations} (and, or, noop, etc.) on the
-result of any arbitrary combination of \emph{Relational Operations}
-($>$,$<$,$==$,$<=$,$>=$, etc.) on
-{\StateVariable}s. At any given time in the {\Regime},
-the {\OnCondition} expression then evaluates to True or False
-{\tt Boolean} result. For example, the following are valid
-{\OnCondition}s
-
-\begin{lstlisting}
-x>10
-x>10 & y<20
-x>exp(-cos(y)) | y<sin(t)+5
-x==15
-\end{lstlisting}
-
-An {\OnCondition} which persistently evaluates to True violates
-the definition that {\Transition}s should have vanishing
-temporal extent, and the behaviour for this case is undefined, but it
-would be preferable for the implementation to produce an error message
-to the user.
-
-\subsubsection{Transition-to attribute}
-An \OnEvent can have a \textit{transition-to} attribute, which should refer to the name of a \Regime element in the \ComponentClass that the dynamics block will transition to when the \Trigger condition is met.
+\subsubsection{Target attribute}
+An \OnEvent can have a \textit{target} attribute, which should refer to the name of a \Regime element in the \ComponentClass that the dynamics block will transition to when the \Trigger condition is met.
 
 \subsection{Trigger}
 \label{sec:Trigger}
@@ -1183,6 +1157,15 @@ The trigger block defines the condition on which the \OnCondition block is activ
     \bottomrule
   \end{edtable}
 \end{table}
+
+
+{\Trigger}s define when an {\OnCondition} transition should be triggered. The \MathInline block of a
+{\Trigger} can contain any arbitrary combination of `and' and `or' \emph{logical
+operations} (`$\&\&$' and `$||$') on the
+result of pure inequality \emph{relational operations} (`$>$' and `$<$').
+The inequality expressions may contain references to 
+\StateVariable{s}, \AnalogReceivePort{s}, \AnalogReducePort{s}, \Parameter{s} and nested {\Alias}es, with the exception of {\Alias}es
+derived from random distributions. The \OnCondition block is triggered when the boolean result of the \Trigger statement changes from false to true. 
 
 \subsection{StateAssignment}
 \label{sec:StateAssignment}
