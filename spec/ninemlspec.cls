@@ -1,13 +1,14 @@
 %% Filename:     ninemlspec.cls                         -*- mode: latex -*-
 %%
-%% Slightly modified from:
+%% Description:   LaTeX style file for SBML Level 3 package specifications
+%% Author(s):       Thomas G. Close <tclose@oist.jp>
+%% Organization: Okinawa Institute of Science and Technology Graduate University
+%% Date created: 2014-12-09
 %%
-%% Description:  LaTeX style file for SBML Level 3 package specifications
-%% Author(s):    Michael Hucka <mhucka@caltech.edu>
-%% Organization: California Institute of Technology
-%% Date created: 2011-08-11
+%% NB: This style file is adapted from the "LaTeX style file for SBML Level 3 package specifications"
+%%        developed by Michael Hucka <mhucka@caltech.edu>.
 %%
-%% Copyright 2007-2014 California Institute of Technology, Pasadena, CA, USA.
+%% Copyright 2007-2014 Okinawa Institute of Science and Technology Graduate University
 %% 
 %% This file is free software; you can redistribute it and/or modify it
 %% under the terms of the GNU Lesser General Public License as published
@@ -707,12 +708,12 @@
 % in section numbers.
 
 \titleformat{\part}[display]
-        {\newpage\normalfont\centering\huge\bfseries\sffamily\color{mediumgray}}%
+        {\normalfont\centering\huge\bfseries\sffamily\color{mediumgray}}%
         {\thispagestyle{empty}\vspace{12.5pc}%
          \partname~\thepart}%
         {1em}%
         {\vspace{-15pt}\Huge\color{ninemlblue}}%
-        [\clearpage]
+        []
 
 \renewcommand\@seccntformat[1]{%
   \color{@sectionnumcolor}{\csname the#1\endcsname}\hspace{0.5em}}

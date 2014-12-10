@@ -158,12 +158,12 @@
 \draftnote{This is how it is done in SBML but I am not sure if this is the best way for us}
 {\Large\bf Editors: }
 \begin{itemize}
-\item Ivan Raikov
-\item Thomas G. Close
-\item Andrew P. Davison
 \item Alex Cope
-\item Paul Richmond
+\item Andrew P. Davison
 \item Erik De Schutter
+\item Ivan Raikov
+\item Paul Richmond
+\item Thomas G. Close
 \end{itemize}
 
 \vspace*{0.25cm}
@@ -228,24 +228,18 @@ and equations that govern the dynamics of a neuronal network, without
 taking into account model implementation details such as numerical integration
 methods.
 
-At the current stage of development, the following concepts of spiking neuron
-network modeling can be fully or partially described:
-
-\draftnote{what about non-spiking neurons and potentially glial cells?}
+As of version 1.0, the following neuronal
+network objects can be described in NineML:
 \begin{enumerate}
-\item spiking neurons
+\item spiking and non-spiking neurons
 \item synapses
 \begin{enumerate}
 \item Post-synaptic membrane current mechanisms
 \item Short-term synaptic dynamics (depression, facilitation)
 \item Long-term synaptic modifications (STDP, learning, etc.)
+\item Gap-junctions
 \end{enumerate}
 \end{enumerate}
-
-At the present time to object model has been implemented in three software
-tools (using Java, Python and Chicken Scheme), which are able to
-import/export a common XML description and generate code for simulating
-models in different simulators.
 
 \subsection{Design considerations}
 
@@ -255,19 +249,17 @@ between the role of NineML and the role of a simulator. Therefore, NineML should
 provide only the information necessary for any given simulator
 to instantiate the network models, in a simulator agnostic way.
 For example, NineML should specify the neuron membrane equation to solve,
-but not how to solve it.  In addition, for implementation and performance
+but not how to solve it, although suggestions may be provided in the form of annotations
+to the model.  In addition, for implementation and performance
 reasons, it is important to keep the language layer ``close'' to the simulator
 -- such that the language layer is not responsible for maintaining separate
 representations of all the instantiated elements in the network.
 
 A NineML object model representation can take multiple forms.  A
 program can employ a concrete representation of the NineML objects in
-a specific programming language, or it can convert an internal model
-representation to and from the NineML XML schema, or it can take the
-form of an interpreter for the NineML native language as a compact
-representation and use code generation to produce a model
-representation for a target simulation environment.
-
+a specific programming language, convert an internal model
+representation to and from the NineML XML schema, or use code generation 
+to produce a model representation for a target simulation environment. 
 It is important to note that the NineML XML schema is isomorphic to the NineML
 object model.
 
@@ -291,54 +283,32 @@ the mechanisms for naming and addressing Abstraction Layer concepts
 that are instantiated in the User Layer have been kept simple for the
 user.
 
+The following rules were followed in the design of the NineML syntax:
+\begin{itemize}
+\item Child elements are not order specific
+\item Elements are assigned \emph{names}, which are unique in the scope they are enclosed by (either the global scope or the component class)
+\item Child elements are favoured over attributes where there is a possibility of adding children to the child nodes to facilitate backwards compatibility in future standards. 
+\end{itemize}
+
 \subsection{About this document}
 
 This document presents the current NineML specifications and consists of:
-\begin{enumerate}
+\begin{itemize}
 \item a description of the Abstraction and User Layer object models;
 \item the XML serialization with the description of the different tags;
 \item documented examples of XML descriptions;
 \item a proposal to solve the transition resolution problem.
-\end{enumerate}
-
-\section{Design philosophy and scoping rules}
-\label{sec:format}
-
-\begin{itemize}
-\item Child elements are not order specific
-\item Elements are assigned \emph{names}, which are either in the global scope or internal to the \ComponentClass they are enclosed by.
-\item Child elements are favoured over attributes where there is a possibility of extending the represented data, as this allows for backwards compatibility in the standard. 
 \end{itemize}
 
-\subsection{Annotation}
-\label{sec:Annotation}
-
-\begin{table}[H]
-  \begin{edtable}{tabular}{llr}
-    \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Annotation Structure}}}\\
-    \toprule
-    \em{Element type} & \em{Multiplicity} & \em{Required} \\
-    \midrule
-    * & set & no\\
-    \bottomrule
-  \end{edtable}
-\end{table}
-
-{\Annotation}s elements are provided to add semantic information about the model. They can be included within any NineML element. Likewise, any elements are allowed to be included within {\Annotation}s. In order to be compliant with the NineML specification any tool handling NineML descriptions must preserve all existing annotations, except where a user explicitly edits/deletes them.
-
-%\draftnote{Should we make it mandatory to use RDF? It would probably greatly improve its value if all NineML files were using the same system for annotations (see GitHub \#23)}
-
-For adding semantic structure to the model it is recommended to use the \href{http://www.w3.org/RDF/}{Resource Description Framework  (RDF)}. 
-
+\clearpage
 \part{Abstraction Layer}
-\section{Common Elements}
+\section{Common Abstraction Layer Elements}
 
-The Abstraction Layer aims at providing general concepts to represent the
-mathematical entities (functions, differential equations, event handling,...)
-defining the dynamics of the different types of models composing a network
-(neuron models, synapse models, synaptic/intrinsic
-plasticity, ...)
+%The Abstraction Layer aims at providing general concepts to represent the
+%mathematical entities (functions, differential equations, event handling,...)
+%defining the dynamics of the different types of models composing a network
+%(neuron models, synapse models, synaptic/intrinsic
+%plasticity, ...)
 
 \subsection{ComponentClass}
 \label{sec:ComponentClass}
@@ -1313,8 +1283,9 @@ This \textit{target-indicies} parameter The properties supplied to this paramete
 
 \subsubsection{RandomFanOut}
 
+\clearpage
 \part{User Layer}
-\section{Common Elements}
+\section{Common User Layer Elements}
 
 \subsection{Component}
 \label{sec:Component}
@@ -2032,7 +2003,34 @@ Each \Item requires a \textit{index} attribute. This attribute specifies the ord
 
 \note{This preserves the order non-specific nature of elements in NineML}
 
+\clearpage
+\part{Annotations}
+
+\section{Annotations}
+
+\subsection{Annotations}
+\label{sec:Annotation}
+
+\begin{table}[H]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Annotation Structure}}}\\
+    \toprule
+    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \midrule
+    * & set & no\\
+    \bottomrule
+  \end{edtable}
+\end{table}
+
+{\Annotation}s elements are provided to add semantic information about the model. They can be included within any NineML element. Likewise, any elements are allowed to be included within {\Annotation}s. In order to be compliant with the NineML specification any tool handling NineML descriptions must preserve all existing annotations, except where a user explicitly edits/deletes them.
+
+%\draftnote{Should we make it mandatory to use RDF? It would probably greatly improve its value if all NineML files were using the same system for annotations (see GitHub \#23)}
+
+For adding semantic structure to the model it is recommended to use the \href{http://www.w3.org/RDF/}{Resource Description Framework  (RDF)}. 
+
 \appendix
+\clearpage
 
 \part*{Appendix}
 \addcontentsline{toc}{part}{Appendix}
