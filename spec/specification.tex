@@ -23,7 +23,7 @@
 \newcommand{\Unit}{\defRef{\textbf{\class{Unit}}\xspace}{sec:Unit}}
 \newcommand{\Dimension}{\defRef{\textbf{\class{Dimension}}\xspace}{sec:Dimension}}
 \newcommand{\ComponentClass}{\defRef{\textbf{\class{ComponentClass}}\xspace}{sec:ComponentClass}}
-\newcommand{\ComponentClassNL}{\textbf{\textcolor{ninemlblue}{\class{ComponentClass}}}\xspace} % Component class reference style without an associated link to the section
+%\newcommand{\ComponentClass}{\textbf{\textcolor{ninemlblue}{\class{ComponentClass}}}\xspace} % Component class reference style without an associated link to the section
 \newcommand{\Dynamics}{\defRef{\defRef{\textbf{\class{Dynamics}}\xspace}{sec:Dynamics}}{sec:Dynamics}}
 \newcommand{\RandomDistribution}{\defRef{\textbf{\class{RandomDistribution}}\xspace}{sec:RandomDistribution}}
 \newcommand{\BuiltInDistribution}{\defRef{\textbf{\class{BuiltInDistribution}}\xspace}{sec:BuiltInDistribution}}
@@ -342,44 +342,31 @@ plasticity) and the rules by which they are connected.
   \end{edtable}
 \end{table}
 
-The main building block of the Abstraction Layer is the \ComponentClassNL.
-The \ComponentClassNL is intended to package together a collection of
-objects that relate to the definition of a model (cells, synapses, synaptic
-plasticity rules, random spike trains, inputs, ...).
+The main building block of the Abstraction Layer is the \ComponentClass.
+The \ComponentClass is intended to package together a collection of
+objects that relate to the definition of a model (e.g. cells, synapses, synaptic
+plasticity rules, random spike trains, inputs).
 All equations and event declarations that are part of particular entity
-model, such as neuron model for instance, belong in a single \ComponentClassNL element.
-A \ComponentClassNL element can be used to represent either a specific model of a neuron or a
-composite model, including synaptic mechanisms (as in the second example
-provided in the Appendix for example) as long as the algebra is correct.
+model, such as neuron model, belong in a single \ComponentClass.
+A \ComponentClass can be used to represent either a specific model of a neuron or a
+composite model, including synaptic mechanisms.
 
-
-The interface is the \emph{external} view of the \ComponentClassNL element that defines
-what inputs and outputs the component exposes to other {\ComponentClassNL}es and the
-parameters that can be set for the \ComponentClassNL. The interface consists of
-instances of ports and \Parameter.
-
-As well as being able to specify the communication of continuous values,
-{\ComponentClassNL} elements are also able to specify the emission and the reception
-of events. Events are discrete notifications
-that are transmitted over event ports. Since
-Event ports have names, saying that we transmit `event1' for example
-would mean transmitting an event on the EventPort called `event1'. Events
-can be used for example to signal action potential firing.
-
-Ports allow instantiations of {\ComponentClassNL} elements to communicate between each
-other during a simulation.
-There are five sub-classes of port elements: {\AnalogSendPort}, \AnalogReceivePort, \AnalogReducePort, \EventSendPort and \EventReceivePort.
-
-A \ComponentClassNL is composed of:
+\draftnote{Not sure if these bullet points are redundant or not}
+A \ComponentClass is composed of:
 \begin{itemize}
-\item {\Parameter}s for the \ComponentClassNL
-\item An unordered collection of {\AnalogSendPort}s, {\AnalogReceivePort}s and {\AnalogReducePort}s. Each {\AnalogSendPort} publishes a state variable or derived value and each {\AnalogReceivePort} consumes a state variable or derived value published from elsewhere. {\AnalogReducePort}s consume a variable number of published state variables and/or derived values and apply an operator that reduces the incoming values to a single value.
-\item  a \Dynamics block and {Interface}s, as shown
-in Figure~\ref{fig:component_class_overview}. The \Dynamics block represent the internal
-dynamic of the model while the Interface block allows the \ComponentClassNL to
-communicate with other instantiations of the \ComponentClassNL and with the User
+\item {\Parameter}s for the \ComponentClass
+\item An unordered collection of {\AnalogSendPort}, {\AnalogReceivePort}, {\AnalogReducePort}, \EventSendPort and \EventReceivePort objects. Each {\AnalogSendPort} publishes a state variable or derived value and each {\AnalogReceivePort} consumes a state variable or derived value published from elsewhere. {\AnalogReducePort}s consume a variable number of published state variables and/or derived values and apply an operator that reduces the incoming values to a single value. \EventSendPort and \EventReceivePort objects raise and listen for events passed between dynamic components.
+\item One of either a \Dynamics, \ConnectionRule or \RandomDistribution block shown
+. The \Dynamics block represent the internal
+dynamic of the model while the Interface block allows the \ComponentClass to
+communicate with other instantiations of the \ComponentClass and with the User
 Layer.
 \end{itemize}
+
+The interface is the \emph{external} view of the \ComponentClass that defines
+what inputs and outputs the component exposes to other {\ComponentClass} elements and the
+parameters that can be set for the \ComponentClass. The interface consists of
+instances of ports and \Parameter (see \ref{fig:component_class_overview}).
 
 \begin{figure}[htb]
 \center
@@ -388,15 +375,22 @@ Layer.
 \label{fig:component_class_overview}
 \end{figure}
 
+As well as being able to specify the communication of continuous values,
+{\ComponentClass} elements are also able to specify the emission and the reception
+of events. Events are discrete notifications
+that are transmitted over event ports. Since
+Event ports have names, saying that we transmit `event1' for example
+would mean transmitting an event on the EventPort called `event1'. Events
+can be used for example to signal action potential firing.
+
+
 \subsubsection{Name attribute}
-Each \ComponentClassNL requires a \textit{name} attribute, which should be a valid \identifier and uniquely identify the {\ComponentClassNL} in the current scope.
+Each \ComponentClass requires a \textit{name} attribute, which should be a valid \identifier and uniquely identify the {\ComponentClass} in the global scope.
 
 \subsection{Parameter}
 \label{sec:Parameter}
 
-Parameters correspond to a placeholder for a numerical value with
-dimension (this value can also be defined as dimensionless).
-
+\draftnote{I am having second thoughts about making the dimension attribute optional as it could lead lazy coders (most of us) to just omit it even though many people won't code by hand. Thoughts?}
 \begin{table}[H]
   \begin{edtable}{tabular}{llr}
     \toprule
@@ -405,44 +399,31 @@ dimension (this value can also be defined as dimensionless).
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
     name & \identifier & yes\\
-    dimension & \Dimension{}@name & yes\\
+    dimension & \Dimension{}@name & no\\
     \bottomrule
   \end{edtable}
 \end{table}
 
-It defines particular aspects of the model, such as the firing threshold,
-reset voltage, the
-decay time constant of a synapse model.  The instantiation of
-Parameters at the Abstraction Layer level allow us to define the
-dynamics of a general component.  It is then possible to instantiate
-several variants of this component by attributing different values for
-the {\Parameter}s, in the User Layer.  For example, if we are building
-an integrate-and-fire neuron, we can specify that the Reset-Voltage
-and the Firing-Threshold are parameters, write our dynamics in terms
-of these parameters, then use the User Layer to provide parameters to
-create different neurons. By definition, Parameters are set at the
+\Parameter objects are placeholders for numerical values within a \ComponentClass.
+They define particular qualities of the model,
+such as the firing threshold, reset voltage or the
+decay time constant of a synapse model. By definition, Parameters are set at the
 start of the simulation, and remain constant throughout.
 
-
 \subsubsection{Name attribute}
-Each \Parameter requires a \textit{name} attribute, which is a valid \identifier and uniquely identify the \Parameter from all other elements in the \ComponentClass.
+Each \Parameter requires a \textit{name} attribute, which is a valid \identifier and uniquely identify the \Parameter within the \ComponentClass.
 
 \subsubsection{Dimension attribute}
-Each \Parameter requires a \textit{dimension} attribute. This attribute specifies the dimension of the units of the quantity that is expected to be passed to the \Parameter and should refer to the name of a \Dimension element in the global scope.
+\Parameter objects can have a \textit{dimension} attribute. This attribute specifies the dimension of the units of the quantity that is expected to be passed to the \Parameter and should refer to the name of a \Dimension element in the global scope. If omitted the \Parameter is dimensionless.
 
 \subsection{Dimension}
 \label{sec:Dimension}
 
-Each specification of a parameter or a state variable in the definition of
-a class of component must state its dimension. A dimension declaration
-associates a name with values for the powers for each of seven SI base
-units: length, l; mass, m; time t; electric current i; temperature T;
-luminous intensity L and amount of substance, n.
+Dimensions are associated with parameters, analog ports and state variables in component class
+definitions. \Dimension objects are constructed values from the powers for each of the seven SI base
+units: length (\emph{l}), mass (\emph{m}), time (\emph{t}), electric current (\emph{i}), temperature  (\emph{k}), luminous intensity  (\emph{l}) and amount of substance  (\emph{n}).
 For example, acceleration has dimension $lt^{-2}$ and voltage is
-$ml^2t^3i^{-1}$.
-Dimensions can be declared at the top level of a NineML file with
-the "Dimension" element with attributes for each of the base dimensions or
-imported from a specific XML file, describing a set of dimensions.
+$ml^2t^3i^{-1}$. Dimensions must be declared in the global scope of the NineML file they are used.
 
 Each dimension can give rise to a family of unit declarations, each of
 which has the same dimensionality but a different multiplier. For example,
@@ -506,11 +487,49 @@ The \textit{k} attribute specifies the power of the temperature dimension in the
 \subsubsection{J attribute}
 The \textit{j} attribute specifies the power of the luminous-intensity dimension in the \Dimension. If omitted the power is zero.
 
-\note{This format for \Dimension is the same as is used in 
+\note{This format for \Dimension is the same as is used in NeuroML version 2.0 (\href{http://www.neuroml.org}{http://www.neuroml.org}).}
+
+
+\subsection{Unit}
+\label{sec:Unit}
+
+\begin{table}[H]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Unit Structure}}}\\
+    \toprule
+    \em{Attribute name} & \em{Type/Format} & \em{Required} \\
+    \midrule
+    symbol & \identifier & yes\\
+    dimension & \Dimension{}@name & yes\\
+    power & \primtype{integer} & yes\\
+    offset & \primtype{real number} & no\\
+    \bottomrule
+  \end{edtable}
+\end{table}
+
+\subsubsection{Symbol attribute}
+Each \Unit requires a \textit{symbol} attribute, which should be a valid \identifier and uniquely identify the {\Unit} in current the scope.
+
+\subsubsection{Dimension attribute}
+Each \Unit requires a \textit{dimension} attribute. This attribute specifies the dimension of the units and should refer to the name of a \Dimension element in the global scope.
+
+\subsubsection{Power attribute}
+Each \Unit requires a \textit{power} attribute. This attribute specifies the relative scale of the units compared to the equivalent SI units in powers of ten.
+
+\subsubsection{Offset attribute}
+A \Unit can optionally have an \textit{offset} attribute. This attribute specifies the zero offset of the unit scale. For example,
+
+\begin{lstlisting}
+<Unit name="degC" dimension="temperature" power="0" offset="273.15"/>
+\end{lstlisting}
+
+If omitted, the offset is zero.
+
+\note{This format for \Unit is the same as is used in NeuroML version 2.0 (\href{http://www.neuroml.org}{http://www.neuroml.org}).}
 
 \subsection{Alias}
 \label{sec:Alias}
-
 
 \begin{table}[H]
   \begin{edtable}{tabular}{llr}
@@ -537,9 +556,7 @@ An alias corresponds to an alternative name for a variable or part of an express
 
 \begin{itemize}
 \item {\bf substitution}: rather than writing long expressions for functions of
-{\StateVariable}s, we can define an \Alias once. For example, we can define chains
-of {\Alias}es:
-%
+state variables, we can split the expressions into a chain of \Alias objects, e.g.
 \begin{lstlisting}
 m_alpha = (alphaA + alphaB * V)/(alphaC + exp((alphaD + V / alphaE)))
 m_beta = (betaA + betaB * V)/(betaC + exp((betaD + V / betaE)))
@@ -585,13 +602,12 @@ Each \Alias requires a \textit{name} attribute, which is a valid \identifier and
 A block used to specify mathematical expressions. The expression is expected to
 be in \texttt{C} style and given as text. MathML support is planned in future versions of NineML
 
-Depending on the context, MathInline blocks should return an expression that
+Depending on the context, \MathInline blocks should return an expression that
 evaluates to either a \verb|Boolean| (when used as the trigger for
-{\OnCondition}s) or a \verb|real| number ( when used  as a
-right-hand-side for  {\Alias}es, {\TimeDerivative}s \& {\StateAssignment}s). All numbers/variables in MathInline expressions are assumed to be real valued numbers.
+{\OnCondition} objects) or a \verb|real| number ( when used  as a
+right-hand-side for {\Alias}, {\TimeDerivative} and {\StateAssignment} objects). All numbers/variables in inline maths expressions are assumed to be real valued numbers.
 
-The following operators are supported, with the same precedence levels as ANSI
-C89. 
+The following operators are supported in inline maths expressions,
 \draftnote{I have added exponent operator since it is commonly used in neutron models and is quite convenient but it is not ANSI C89 so I am not sure whether you guys think this is a good idea}
 \begin{itemize}
 \item Arithmetic operators
@@ -603,13 +619,19 @@ C89.
 \item Exponent \verb|^|
 \end{itemize}
 
+The `\verb|+|', `\verb|-|', `\verb|/|' and `\verb|*|' operators have the same interpretation and precedence levels as in the ANSI C89 standard. `\verb|^|', which is not part of the ANSI C89 standard, is the exponent operator e.g.
+ \begin{lstlisting}
+a^3 = a*a*a
+\end{lstlisting}
+and has the highest level of precedence.
+
 \item Inequality operators
 \begin{itemize}
 \item Greater than \verb|>|
 \item Lesser than \verb|<|
 \end{itemize}
 
-Logical operators
+\item Logical operators
 \begin{itemize}
 \item Logical And: \verb|&&|
 \item Logical Or:  \verb+||+
@@ -625,7 +647,7 @@ The following functions are built in and are defined as per ANSI C89:
 \item \verb|cos(x)|
 \item \verb|log(x)|
 \item \verb|log10(x)|
-\item \verb|pow(x)|
+\item \verb|pow(x, p)|
 \item \verb|sinh(x)|
 \item \verb|cosh(x)|
 \item \verb|tanh(x)|
@@ -641,26 +663,15 @@ The following functions are built in and are defined as per ANSI C89:
 \item \verb|floor(x)|
 \end{itemize}
 
+\draftnote{I removed the "random" namespace since it was proving difficult to parse and didn't seem necessary. Can add it back in if you like though. Actually are these functions still necessary if we have already included the \RandomDistribution elements in this standard?}
 
-The following symbols are built in, and cannot be redefined:
+The following symbols are built in, and cannot be redefined,
 \begin{itemize}
 \item pi
 \item t
 \end{itemize}
+where $pi$ is the mathematical constant $\pi$, and $t$ is the elapsed simulation time within a \Dynamics block.
 
-where $pi$ is the mathematical constant $\pi$ and $t$ is the elapsed simulation time when referenced within \Dynamics blocks.
-
-The following random distributions are also available in inline math,
-although their use is only allowed within \StateAssignment blocks:
-
-\draftnote{I removed the "random" namespace since it was proving difficult to parse and didn't seem necessary. Can add it back in if you like though}
-\begin{itemize}
-\item \verb|uniform(L,U)|
-\item \verb|normal|($\mu$, $\sigma$)
-\item \verb|binomial(N,P)|
-\item \verb|poisson(L)|
-\item \verb|exponential(L)|
-\end{itemize}
 
 %\subsection{StandardLibrary}
 %\label{sec:StandardLibrary}
@@ -691,6 +702,9 @@ although their use is only allowed within \StateAssignment blocks:
 \section{Ports}
 \label{sec:Ports}
 
+Ports allow instantiations of {\ComponentClass} elements to communicate between each
+other during a simulation.
+There are five sub-classes of port elements: {\AnalogSendPort}, \AnalogReceivePort, \AnalogReducePort, \EventSendPort and \EventReceivePort.
 
 Event ports transmit discrete events. They are useful for example in
 simulation of integrate-and-fire neurons to notify {\ComponentClass}es about neuron's
@@ -1242,7 +1256,7 @@ As of version 1.0, the only random distributions available to the user are those
 
 
 
-\section{Connectivity}
+\section{Network Connectivity}
 
 \subsection{ConnectionRule}
 \label{sec:ConnectionRule}
@@ -1455,6 +1469,7 @@ in the Abstraction Layer.
 \subsubsection{Name attribute}
 Each \Property requires a \textit{name} attribute. This should refer to the name of a \Parameter in the corresponding \ComponentClass of the \Component.
 
+\draftnote{I can't quite remember the discussion we had about this but I no longer see the need for the quantity tag instead of just having the units as an attribute of the property elements. The only other places we might want to use a quantity element is for delays and numerical constants. But constants are in the Abstraction Layer so we shouldn't use it there anyway and delays will need to have special checking to only permit time-dimension units}
 \subsection{Quantity}
 \label{sec:Quantity}
 
@@ -1500,51 +1515,13 @@ definitions or MathML.
 
 \subsubsection{Unit attribute}
 The \textit{units} attribute specifies the units of the quantity and should refer to the name of a \Unit element in the global scope. If it is omitted then the quantity is considered to be dimensionless.
-
-\subsection{Unit}
-\label{sec:Unit}
-
-\begin{table}[H]
-  \begin{edtable}{tabular}{llr}
-    \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Unit Structure}}}\\
-    \toprule
-    \em{Attribute name} & \em{Type/Format} & \em{Required} \\
-    \midrule
-    symbol & \identifier & yes\\
-    dimension & \Dimension{}@name & yes\\
-    power & \primtype{integer} & yes\\
-    offset & \primtype{real number} & no\\
-    \bottomrule
-  \end{edtable}
-\end{table}
-
-\subsubsection{Symbol attribute}
-Each \Unit requires a \textit{symbol} attribute, which should be a valid \identifier and uniquely identify the {\Unit} in current the scope.
-
-\subsubsection{Dimension attribute}
-Each \Unit requires a \textit{dimension} attribute. This attribute specifies the dimension of the units and should refer to the name of a \Dimension element in the global scope.
-
-\subsubsection{Power attribute}
-Each \Unit requires a \textit{power} attribute. This attribute specifies the relative scale of the units compared to the equivalent SI units in powers of ten.
-
-\subsubsection{Offset attribute}
-A \Unit can optionally have an \textit{offset} attribute. This attribute specifies the zero offset of the unit scale. For example,
-
-\begin{lstlisting}
-<Unit name="degC" dimension="temperature" power="0" offset="273.15"/>
-\end{lstlisting}
-
-If omitted, the offset is zero.
-
-
 \subsection{Reference}
 \label{sec:Reference}
 
 \begin{table}[H]
   \begin{edtable}{tabular}{llr}
     \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Delay Structure}}}\\
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Reference Structure}}}\\
     \toprule
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
