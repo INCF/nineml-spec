@@ -3,7 +3,6 @@
 \usepackage{pbox}
 \usepackage{multirow}
 \usepackage{float}
-
 %% ============================================================================
 %% Description:  Documentation for \lq\lq{}The NineML Specification Document\rq\rq{}
 %% Authors: Ivan Raikov <raikov@oist.jp>, Thomas G. Close <tclose@oist.jp>, Andrew P. Davison <davison@unic.cnrs-gif.fr>
@@ -15,11 +14,16 @@
 %%
 %% ============================================================================
 
+% Define misc. references
+\newcommand{\identifier}{\typeDefRef{identifier\xspace}{sec:identifier}}
+\newcommand{\URL}{\href{http://en.wikipedia.org/wiki/Uniform_resource_locator}{URL} }
+
 % Define Abstraction Layer element references
 
 \newcommand{\Unit}{\defRef{\textbf{\class{Unit}}\xspace}{sec:Unit}}
 \newcommand{\Dimension}{\defRef{\textbf{\class{Dimension}}\xspace}{sec:Dimension}}
 \newcommand{\ComponentClass}{\defRef{\textbf{\class{ComponentClass}}\xspace}{sec:ComponentClass}}
+\newcommand{\ComponentClassNL}{\textbf{\textcolor{ninemlblue}{\class{ComponentClass}}}\xspace} % Component class reference style without an associated link to the section
 \newcommand{\Dynamics}{\defRef{\defRef{\textbf{\class{Dynamics}}\xspace}{sec:Dynamics}}{sec:Dynamics}}
 \newcommand{\RandomDistribution}{\defRef{\textbf{\class{RandomDistribution}}\xspace}{sec:RandomDistribution}}
 \newcommand{\BuiltInDistribution}{\defRef{\textbf{\class{BuiltInDistribution}}\xspace}{sec:BuiltInDistribution}}
@@ -47,7 +51,7 @@
 \newcommand{\AnalogReceivePort}{\defRef{\textbf{\class{AnalogReceivePort}}\xspace}{sec:AnalogReceivePort}}
 \newcommand{\AnalogReducePort}{\defRef{\textbf{\class{AnalogReducePort}}\xspace}{sec:AnalogReducePort}}
 \newcommand{\EventReceivePort}{\defRef{\textbf{\class{EventReceivePort}}\xspace}{sec:EventReceivePort}}
-\newcommand{\Annotation}{\defRef{\textbf{\class{Annotation}}\xspace}{sec:Annotation}}
+\newcommand{\Annotations}{\defRef{\textbf{\class{Annotations}}\xspace}{sec:Annotations}}
 
 % Define User Layer element references
 
@@ -56,6 +60,7 @@
 \newcommand{\Quantity}{\defRef{\textbf{\class{Quantity}}\xspace}{sec:Quantity}}
 \newcommand{\SingleValue}{\defRef{\textbf{\class{SingleValue}}\xspace}{sec:SingleValue}}
 \newcommand{\ExternalArrayValue}{\defRef{\textbf{\class{ExternalArrayValue}}\xspace}{sec:ExternalArrayValue}}
+\newcommand{\ComponentValue}{\defRef{\textbf{\class{ComponentValue}}\xspace}{sec:ComponentValue}}
 \newcommand{\ArrayValue}{\defRef{\textbf{\class{ArrayValue}}\xspace}{sec:ArrayValue}}
 \newcommand{\ArrayValueRow}{\defRef{\textbf{\class{ArrayValueRow}}\xspace}{sec:ArrayValueRow}}
 \newcommand{\ListColumn}{\defRef{\textbf{\class{ListColumn}}\xspace}{sec:ListColumn}}
@@ -241,6 +246,7 @@ network objects can be described in NineML:
 \end{enumerate}
 
 \subsection{Design considerations}
+\label{sec:design_considerations}
 
 As one of the goals of NineML is to provide a means to import/export a model from
 any simulator or implementation, it is crucial to maintain a clear distinction
@@ -282,15 +288,14 @@ the mechanisms for naming and addressing Abstraction Layer concepts
 that are instantiated in the User Layer have been kept simple for the
 user.
 
-The following rules were followed in the design of the NineML syntax:
-\begin{itemize}
-\item Child elements are not order specific
-\item Elements are assigned \emph{names}, which are unique in the scope they are enclosed by (either the global scope or the component class)
-\item Child elements are favoured over attributes where there is a possibility of adding children to the child nodes to facilitate backwards compatibility in future standards. 
-\end{itemize}
+In order to simplify their interpretation and maintain compatibility with a wide range of data formats (e.g. JSON, Python objects), NineML documents are not sensitive to the order of elements.
 
 \subsection{Identifiers}
+\label{sec:identifier}
 
+Elements are identified by \emph{names}, which are unique in the scope they are enclosed by (either within a component class or in the global scope of the file). For a name to be a valid identifier, it must meet the requirements for a \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 identifiers} with the additional requirement that it does not start or end with `\_'. 
+
+NineML identifiers are case-sensitive in the sense that they must be referred to with the same case as they are defined. However, two identifiers that are identical with the exception of case, e.g. `v\_threshold' and `v\_Threshold', are not permitted in the same scope.
 
 \subsection{About this document}
 
@@ -304,13 +309,13 @@ This document presents the current NineML specifications and consists of:
 
 \clearpage
 \part{Abstraction Layer}
-\section{Common Abstraction Layer Elements}
+\section{Basic Abstraction Layer Elements}
 
-%The Abstraction Layer aims at providing general concepts to represent the
-%mathematical entities (functions, differential equations, event handling,...)
-%defining the dynamics of the different types of models composing a network
-%(neuron models, synapse models, synaptic/intrinsic
-%plasticity, ...)
+The Abstraction Layer aims at providing general concepts to represent the
+mathematical entities (e.g. functions, differential equations, event handling)
+defining the dynamics of the different types of models composing a network
+(e.g. neuron models, synapse models, synaptic/intrinsic
+plasticity) and the rules by which they are connected.
 
 \subsection{ComponentClass}
 \label{sec:ComponentClass}
@@ -322,7 +327,7 @@ This document presents the current NineML specifications and consists of:
     \toprule
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
-    name & \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 identifier} & yes\\
+    name & \identifier & yes\\
     \midrule
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
@@ -332,59 +337,59 @@ This document presents the current NineML specifications and consists of:
     \AnalogReducePort & set & no \\ 
     \EventSendPort & set & no\\    
     \EventReceivePort & set & no\\    
-    \Dynamics | \ConnectionRule & singleton & yes \\
+    \Dynamics | \ConnectionRule | \RandomDistribution & singleton & yes \\
     \bottomrule
   \end{edtable}
 \end{table}
 
-The main building block of the Abstraction Layer is the \textbf{\class{ComponentClass}}.
-The \textbf{\class{ComponentClass}} object is intended to package together a collection of
+The main building block of the Abstraction Layer is the \ComponentClassNL.
+The \ComponentClassNL is intended to package together a collection of
 objects that relate to the definition of a model (cells, synapses, synaptic
 plasticity rules, random spike trains, inputs, ...).
 All equations and event declarations that are part of particular entity
-model, such as neuron model for instance, belong in a single \textbf{\class{ComponentClass}}.
-A \textbf{\class{ComponentClass}} can be used to represent either a specific model of a neuron or a
+model, such as neuron model for instance, belong in a single \ComponentClassNL element.
+A \ComponentClassNL element can be used to represent either a specific model of a neuron or a
 composite model, including synaptic mechanisms (as in the second example
 provided in the Appendix for example) as long as the algebra is correct.
 
 
-The interface is the \emph{external} view of the \ComponentClass that defines
-what inputs and outputs the component exposes to other {\ComponentClass}es and the
-parameters that can be set for the \ComponentClass. The interface consists of
+The interface is the \emph{external} view of the \ComponentClassNL element that defines
+what inputs and outputs the component exposes to other {\ComponentClassNL}es and the
+parameters that can be set for the \ComponentClassNL. The interface consists of
 instances of ports and \Parameter.
 
 As well as being able to specify the communication of continuous values,
-{\ComponentClass}es are also able to specify the emission and the reception
+{\ComponentClassNL} elements are also able to specify the emission and the reception
 of events. Events are discrete notifications
 that are transmitted over event ports. Since
 Event ports have names, saying that we transmit `event1' for example
 would mean transmitting an event on the EventPort called `event1'. Events
 can be used for example to signal action potential firing.
 
-Ports allow instantiations of {\ComponentClass}es to communicate between each
+Ports allow instantiations of {\ComponentClassNL} elements to communicate between each
 other during a simulation.
-There are five sub-classes of port objects: {\AnalogSendPort}, \AnalogReceivePort, \AnalogReducePort, \EventSendPort and \EventReceivePort.
+There are five sub-classes of port elements: {\AnalogSendPort}, \AnalogReceivePort, \AnalogReducePort, \EventSendPort and \EventReceivePort.
 
-A \ComponentClass is composed of:
+A \ComponentClassNL is composed of:
 \begin{itemize}
-\item {\Parameter}s for the \ComponentClass
+\item {\Parameter}s for the \ComponentClassNL
 \item An unordered collection of {\AnalogSendPort}s, {\AnalogReceivePort}s and {\AnalogReducePort}s. Each {\AnalogSendPort} publishes a state variable or derived value and each {\AnalogReceivePort} consumes a state variable or derived value published from elsewhere. {\AnalogReducePort}s consume a variable number of published state variables and/or derived values and apply an operator that reduces the incoming values to a single value.
 \item  a \Dynamics block and {Interface}s, as shown
 in Figure~\ref{fig:component_class_overview}. The \Dynamics block represent the internal
-dynamic of the model while the Interface block allows the \ComponentClass to
-communicate with other instantiations of the \ComponentClass and with the User
+dynamic of the model while the Interface block allows the \ComponentClassNL to
+communicate with other instantiations of the \ComponentClassNL and with the User
 Layer.
 \end{itemize}
 
 \begin{figure}[htb]
 \center
 \includegraphics[width=8cm]{figures/component_simple.pdf}
-\protect\caption{ComponentClass Overview (Simple)}
+\protect\caption{ComponentClass Overview}
 \label{fig:component_class_overview}
 \end{figure}
 
 \subsubsection{Name attribute}
-Each \ComponentClass requires a \textit{name} attribute. This name should be a valid identifier in the \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 standard} and uniquely identify the {\ComponentClass} in the current scope.
+Each \ComponentClassNL requires a \textit{name} attribute, which should be a valid \identifier and uniquely identify the {\ComponentClassNL} in the current scope.
 
 \subsection{Parameter}
 \label{sec:Parameter}
@@ -399,7 +404,7 @@ dimension (this value can also be defined as dimensionless).
     \toprule
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
-    name & \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 identifier} & yes\\
+    name & \identifier & yes\\
     dimension & \Dimension{}@name & yes\\
     \bottomrule
   \end{edtable}
@@ -420,7 +425,7 @@ start of the simulation, and remain constant throughout.
 
 
 \subsubsection{Name attribute}
-Each \Parameter requires a \textit{name} attribute. This name should be a valid identifier in the \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 standard} and uniquely identify the {\Parameter} from all other elements in the \ComponentClass.
+Each \Parameter requires a \textit{name} attribute, which is a valid \identifier and uniquely identify the \Parameter from all other elements in the \ComponentClass.
 
 \subsubsection{Dimension attribute}
 Each \Parameter requires a \textit{dimension} attribute. This attribute specifies the dimension of the units of the quantity that is expected to be passed to the \Parameter and should refer to the name of a \Dimension element in the global scope.
@@ -465,7 +470,7 @@ units by which they are assigned.
     \toprule
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
-    name & \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 identifier} & yes\\
+    name & \identifier & yes\\
     m & \primtype{integer} & no\\
     l & \primtype{integer} & no\\
     t & \primtype{integer} & no\\
@@ -478,7 +483,7 @@ units by which they are assigned.
 \end{table}
 
 \subsubsection{Name attribute}
-Each \Dimension requires a \textit{name} attribute. This name should be a valid identifier in the \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 standard} and uniquely identify the {\Dimension} in current the scope.
+Each \Dimension requires a \textit{name} attribute, which should be a valid \identifier and uniquely identify the {\Dimension} in current the scope.
 
 \subsubsection{M attribute}
 The \textit{m} attribute specifies the power of the mass dimension in the \Dimension. If omitted the power is zero.
@@ -501,6 +506,8 @@ The \textit{k} attribute specifies the power of the temperature dimension in the
 \subsubsection{J attribute}
 The \textit{j} attribute specifies the power of the luminous-intensity dimension in the \Dimension. If omitted the power is zero.
 
+\note{This format for \Dimension is the same as is used in 
+
 \subsection{Alias}
 \label{sec:Alias}
 
@@ -512,7 +519,7 @@ The \textit{j} attribute specifies the power of the luminous-intensity dimension
     \toprule
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
-    name & \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 identifier} & yes\\
+    name & \identifier & yes\\
     \midrule
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
@@ -534,11 +541,11 @@ An alias corresponds to an alternative name for a variable or part of an express
 of {\Alias}es:
 %
 \begin{lstlisting}
-m_alpha = (alphaA+alphaB*V)/(alphaC+exp((alphaD+V/alphaE)))
-m_beta = (betaA+betaB*V)/(betaC+exp((betaD+V/betaE)))
-minf = m_alpha/(m_alpha+m_beta)
-mtau = 1./(m_alpha+m_beta)
-dm/dt = (1/C)*(minf-m)/mtau
+m_alpha = (alphaA + alphaB * V)/(alphaC + exp((alphaD + V / alphaE)))
+m_beta = (betaA + betaB * V)/(betaC + exp((betaD + V / betaE)))
+minf = m_alpha / (m_alpha + m_beta)
+mtau = 1.0 / (m_alpha + m_beta)
+dm/dt = (1 / C) * (minf - m) / mtau
 \end{lstlisting}
 
 In this case, \lstinline|m_alpha|, \lstinline|m_beta|, \lstinline|minf| and \lstinline|mtau| are all
@@ -556,7 +563,7 @@ transmitting a current, for example $i=g*(E-V)$.
 
 
 \subsubsection{Name attribute}
-Each \Alias requires a \textit{name} attribute. This name should be a valid identifier in the \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 standard} and uniquely identify the {\Alias} from all other elements in the \ComponentClass.
+Each \Alias requires a \textit{name} attribute, which is a valid \identifier and uniquely identify the \Alias from all other elements in the \ComponentClass.
 
 
 \subsection{MathInline}
@@ -581,12 +588,11 @@ be in \texttt{C} style and given as text. MathML support is planned in future ve
 Depending on the context, MathInline blocks should return an expression that
 evaluates to either a \verb|Boolean| (when used as the trigger for
 {\OnCondition}s) or a \verb|real| number ( when used  as a
-right-hand-side for  {\Alias}es, {\TimeDerivative}s \& {\StateAssignment}s).
+right-hand-side for  {\Alias}es, {\TimeDerivative}s \& {\StateAssignment}s). All numbers/variables in MathInline expressions are assumed to be real valued numbers.
 
 The following operators are supported, with the same precedence levels as ANSI
 C89. 
-All numbers/variables are assumed to be real valued numbers.
-\draftnote{I have added exponent to this list since it is commonly used in Hoc, and quite convenient but it is not ANSI C89 so I am not sure whether you guys think this is a good idea}
+\draftnote{I have added exponent operator since it is commonly used in neutron models and is quite convenient but it is not ANSI C89 so I am not sure whether you guys think this is a good idea}
 \begin{itemize}
 \item Arithmetic operators
 \begin{itemize}
@@ -612,14 +618,7 @@ Logical operators
 
 \end{itemize}
 
-\draftnote{We need to define what these symbols mean somewhere}
-The following symbols are built in, and cannot be redefined:
-\begin{itemize}
-\item pi
-\item t
-\end{itemize}
-
-The following functions are built in, and cannot be redefined:
+The following functions are built in and are defined as per ANSI C89:
 \begin{itemize}
 \item \verb|exp(x)|
 \item \verb|sin(x)|
@@ -642,7 +641,14 @@ The following functions are built in, and cannot be redefined:
 \item \verb|floor(x)|
 \end{itemize}
 
-These functions take the same parameters and are defined as per ANSI C89.
+
+The following symbols are built in, and cannot be redefined:
+\begin{itemize}
+\item pi
+\item t
+\end{itemize}
+
+where $pi$ is the mathematical constant $\pi$ and $t$ is the elapsed simulation time when referenced within \Dynamics blocks.
 
 The following random distributions are also available in inline math,
 although their use is only allowed within \StateAssignment blocks:
@@ -656,31 +662,31 @@ although their use is only allowed within \StateAssignment blocks:
 \item \verb|exponential(L)|
 \end{itemize}
 
-\subsection{StandardLibrary}
-\label{sec:StandardLibrary}
-
-\begin{table}[H]
-  \begin{edtable}{tabular}{llr}
-    \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{StandardLibrary Structure}}}\\
-    \toprule
-    \em{Attribute name} & \em{Type/Format} & \em{Required} \\
-    \midrule
-    url & \href{http://en.wikipedia.org/wiki/Uniform_resource_locator}{URL} & yes\\
-    \midrule
-    \em{Text format} & \; & \em{Required} \\
-    \midrule
-    member name & \; & yes \\ 
-    \bottomrule
-  \end{edtable}
-\end{table}
-
-
-\subsubsection{Url attribute}
-\StandardLibrary require a \textit{url} attribute, which specifies a \href{http://en.wikipedia.org/wiki/Uniform_resource_locator}{Uniform Resource Locator (URL)} that describes the behaviour of the standard library member.
-
-\subsubsection{Text}
-The name of the member within the library to use.
+%\subsection{StandardLibrary}
+%\label{sec:StandardLibrary}
+%
+%\begin{table}[H]
+%  \begin{edtable}{tabular}{llr}
+%    \toprule
+%    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{StandardLibrary Structure}}}\\
+%    \toprule
+%    \em{Attribute name} & \em{Type/Format} & \em{Required} \\
+%    \midrule
+%    url & \href{http://en.wikipedia.org/wiki/Uniform_resource_locator}{URL} & yes\\
+%    \midrule
+%    \em{Text format} & \; & \em{Required} \\
+%    \midrule
+%    member name & \; & yes \\ 
+%    \bottomrule
+%  \end{edtable}
+%\end{table}
+%
+%
+%\subsubsection{Url attribute}
+%\StandardLibrary require a \textit{url} attribute, which specifies a \href{http://en.wikipedia.org/wiki/Uniform_resource_locator}{Uniform Resource Locator (URL)} that describes the behaviour of the standard library member.
+%
+%\subsubsection{Text}
+%The name of the member within the library to use.
 
 \section{Ports}
 \label{sec:Ports}
@@ -715,14 +721,14 @@ flow in a post-synaptic neuron.
     \toprule
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
-    name & \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 identifier} & yes\\
+    name & \identifier & yes\\
     dimension & \Dimension{}@name & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
 
 \subsubsection{Name attribute}
-Each \AnalogSendPort requires a \textit{name} attribute. This name should be a valid identifier in the \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 standard} and uniquely identify the {\AnalogSendPort} from all other elements in the \ComponentClass.
+Each \AnalogSendPort requires a \textit{name} attribute, which is a valid \identifier and uniquely identify the \AnalogSendPort from all other elements in the \ComponentClass.
 
 \subsubsection{Dimension attribute}
 Each \AnalogSendPort requires a \textit{dimension} attribute. This attribute specifies the dimension of the units of the quantity that is expected to be passed through the \AnalogSendPort and should refer to the name of a \Dimension element in the global scope.
@@ -740,14 +746,14 @@ Each \AnalogSendPort requires a \textit{dimension} attribute. This attribute spe
     \toprule
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
-    name & \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 identifier} & yes\\
+    name & \identifier & yes\\
     dimension & \Dimension{}@name & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
 
 \subsubsection{Name attribute}
-Each \AnalogReceivePort requires a \textit{name} attribute. This name should be a valid identifier in the \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 standard} and uniquely identify the {\AnalogReceivePort} from all other elements in the \ComponentClass.
+Each \AnalogReceivePort requires a \textit{name} attribute, which is a valid \identifier and uniquely identify the \AnalogReceivePort from all other elements in the \ComponentClass.
 
 \subsubsection{Dimension attribute}
 Each \AnalogReceivePort requires a \textit{dimension} attribute. This attribute specifies the dimension of the units of the quantity that is expected to be passed through the \AnalogReceivePort and should refer to the name of a \Dimension element in the global scope.
@@ -763,7 +769,7 @@ Each \AnalogReceivePort requires a \textit{dimension} attribute. This attribute 
     \toprule
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
-    name & \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 identifier} & yes\\
+    name & \identifier & yes\\
     dimension & \Dimension{}@name & yes\\
     operator & \textit{+} & yes \\
     \bottomrule
@@ -791,7 +797,7 @@ simply need to connect the send ports containing the currents of these
 to change our original \ComponentClass definitions.
 
 \subsubsection{Name attribute}
-Each \AnalogReducePort requires a \textit{name} attribute. This name should be a valid identifier in the \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 standard} and uniquely identify the {\AnalogReducePort} from all other elements in the \ComponentClass.
+Each \AnalogReducePort requires a \textit{name} attribute, which is a valid \identifier and uniquely identify the \AnalogReducePort from all other elements in the \ComponentClass.
 
 \subsubsection{Dimension attribute}
 Each \AnalogReducePort requires a \textit{dimension} attribute. This attribute specifies the dimension of the units of the quantity that is expected to be communicated through the \AnalogReducePort and should refer to the name of a \Dimension element in the global scope.
@@ -816,13 +822,13 @@ will take all of the electrical currents that have been connected to it via {\An
     \toprule
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
-    name & \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 identifier} & yes\\
+    name & \identifier & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
 
 \subsubsection{Name attribute}
-Each \EventSendPort requires a \textit{name} attribute. This name should be a valid identifier in the \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 standard} and uniquely identify the {\EventSendPort} from all other elements in the \ComponentClass.
+Each \EventSendPort requires a \textit{name} attribute, which is a valid \identifier and uniquely identify the \EventSendPort from all other elements in the \ComponentClass.
 
 
 \subsection{EventReceivePort}
@@ -835,15 +841,15 @@ Each \EventSendPort requires a \textit{name} attribute. This name should be a va
     \toprule
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
-    name & \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 identifier} & yes\\
+    name & \identifier & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
 
 \subsubsection{Name attribute}
-Each \EventReceivePort requires a \textit{name} attribute. This name should be a valid identifier in the \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 standard} and uniquely identify the {\EventReceivePort} from all other elements in the \ComponentClass.
+Each \EventReceivePort requires a \textit{name} attribute, which is a valid \identifier and uniquely identify the \EventReceivePort from all other elements in the \ComponentClass.
 
-\section{Dynamics}
+\section{Dynamic Regimes}
 
 \subsection{Dynamics}
 \label{sec:Dynamics}
@@ -902,7 +908,7 @@ it is in through \Transition.
     \toprule
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
-    name & \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 identifier} & yes\\
+    name & \identifier & yes\\
     dimension & \Dimension{}@name & yes\\
     \bottomrule
   \end{edtable}
@@ -925,7 +931,7 @@ $X = X + 1$.
 \end{quote}
 
 \subsubsection{Name attribute}
-Each \StateVariable requires a \textit{name} attribute. This name should be a valid identifier in the \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 standard} and uniquely identify the {\StateVariable} from all other elements in the \ComponentClass.
+Each \StateVariable requires a \textit{name} attribute, which is a valid \identifier and uniquely identify the \StateVariable from all other elements in the \ComponentClass.
 
 \subsubsection{Dimension attribute}
 Each \StateVariable requires a \textit{dimension} attribute. This attribute specifies the dimension of the units of the quantities that \StateVariable is expected to be initialised and updated with and should refer to the name of a \Dimension element in the global scope.
@@ -941,7 +947,7 @@ Each \StateVariable requires a \textit{dimension} attribute. This attribute spec
     \toprule
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
-    name & \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 identifier} & yes\\
+    name & \identifier & yes\\
     \midrule
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
@@ -978,7 +984,7 @@ to more general cases where the independent variable can be anything (space
 for example).
 
 \subsubsection{Name attribute}
-Each \Regime requires a \textit{name} attribute. This name should be a valid identifier in the \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 standard} and uniquely identify the {\Regime} from all other elements in the \ComponentClass.
+Each \Regime requires a \textit{name} attribute, which is a valid \identifier and uniquely identify the \Regime from all other elements in the \ComponentClass.
 
 
 \subsection{TimeDerivative}
@@ -1191,9 +1197,9 @@ Each \EventOut requires a \textit{port} attribute. This should refer to the name
     \toprule
     \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{RandomDistribution Structure}}}\\
     \toprule
-    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
-    \StandardLibrary & singleton & yes\\
+    builtin & \URL & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
@@ -1232,6 +1238,10 @@ As of version 1.0, the only random distributions available to the user are those
 
 \note{\textit{C} implementations of these distributions are available in the GNU Scientific Library, \href{http://www.gnu.org/software/gsl/}{http://www.gnu.org/software/gsl/}}
 
+\subsubsection{Builtin attribute}
+
+
+
 \section{Connectivity}
 
 \subsection{ConnectionRule}
@@ -1242,9 +1252,9 @@ As of version 1.0, the only random distributions available to the user are those
     \toprule
     \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{ConnectionRule Structure}}}\\
     \toprule
-    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
-    \StandardLibrary & singleton & yes\\
+    standardLibrary & \URL & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
@@ -1259,21 +1269,24 @@ In Version 1.0 of the NineML standard, connection rules must be one of 6 standar
 \item RandomFanOut
 \end{itemize}
 
-In future versions, extensions are planned to this framework to allow richer connectivity rules.
+In future versions, built-in connectivity rules are to be replaced with connection rule functions.
 
-\subsubsection{AllToAll}
+\subsubsection{StandardLibrary attribute}
+The \textit{builtin} attribute is required and should point to a \URL underneath the \href{http://nineml.net/standardlibraries/connectionrules/}{http://nineml.net/standardlibraries/connectionrules/}
+
+\subsubsection*{AllToAll}
 
 All cells in the source population are connected to all cells in the destination population.
 
-\subsubsection{OneToOne}
+\subsubsection*{OneToOne}
 
 Each cell in the source population is connected to the cell in the destination population with the corresponding index. Note that this requires that the source and destination populations be the same size.
 
-\subsubsection{ProbabilisticConnectivity}
+\subsubsection*{ProbabilisticConnectivity}
 
 All cells in the source population are connected to cells in the destination population with a probability defined by the \textit{probability} parameter. This attribute should refer to a name of a dimensionless \Parameter in the enclosing \ComponentClass. The properties supplied to this parameter should either be a dimensionless \SingleValue representing the probability of a connection between all source and destination cell pairs, or a \ArrayValue or \ExternalArrayValue of size $M{\times}N$, where $M$ and $N$ are the size of the source and destination populations respectively. In the case of the \ArrayValue or \ExternalArrayValue properties, the list represents probabilities of connections existing between the first cell in the source population with every cell in the destination population in order of their index, followed by the second cell in the source with with every cell in the destination population in order of their index and so forth for each cell in the source population.
 
-\subsubsection{ExplicitConnectionList}
+\subsubsection*{ExplicitConnectionList}
 
 Cells in the source population are connected to cells in the destination population as specified by an explicit lists.
 
@@ -1281,13 +1294,13 @@ This \textit{source-indicies} parameter The properties supplied to this paramete
 
 This \textit{target-indicies} parameter The properties supplied to this parameter should be a \ArrayValue or \ExternalArrayValue drawn from the set $\{1,\ldots,N\}$ where $N$ is the size of the source population and be the same length as the property supplied to the \textit{source-indices} parameter.
 
-\subsubsection{RandomFanIn}
+\subsubsection*{RandomFanIn}
 
-\subsubsection{RandomFanOut}
+\subsubsection*{RandomFanOut}
 
 \clearpage
 \part{User Layer}
-\section{Common User Layer Elements}
+\section{Basic User Layer Elements}
 
 \subsection{Component}
 \label{sec:Component}
@@ -1299,7 +1312,7 @@ This \textit{target-indicies} parameter The properties supplied to this paramete
     \toprule
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
-    name & \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 identifier} & yes\\
+    name & \identifier & yes\\
     \midrule
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
@@ -1343,7 +1356,7 @@ User Layer description of the component and the intrinsic simulator code
 that implements the same mathematics.
 
 \subsubsection{Name attribute}
-Each \Component requires a \textit{name} attribute. This name should be a valid identifier in the \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 standard} and uniquely identify the {\Component} from all other elements in the global scope.
+Each \Component requires a \textit{name} attribute, which should be a valid \identifier and uniquely identify the {\Component} from all other elements in the global scope.
 
 \subsection{Definition}
 \label{sec:Definition}
@@ -1355,7 +1368,7 @@ Each \Component requires a \textit{name} attribute. This name should be a valid 
     \toprule
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
-    url & \href{http://en.wikipedia.org/wiki/Uniform_resource_locator}{URL} & no\\
+    url & \url & no\\
     \midrule
     \em{Text format} & \; & \em{Required} \\
     \midrule
@@ -1460,7 +1473,7 @@ dimensionless quantities shall use predefined empty \Unit.
     \midrule
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
-   \pbox{12cm}{ \SingleValue | \Component{}\withelem\RandomDistribution |  \Reference{}\pointto\Component{}\withelem\RandomDistribution | \ArrayValue | \ExternalArrayValue} & singleton & yes \\
+   \pbox{12cm}{ \SingleValue | \ArrayValue | \ExternalArrayValue | \ComponentValue} & singleton & yes \\
     \bottomrule
   \end{edtable}
 \end{table}
@@ -1498,7 +1511,7 @@ The \textit{units} attribute specifies the units of the quantity and should refe
     \toprule
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
-    symbol & \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 identifier} & yes\\
+    symbol & \identifier & yes\\
     dimension & \Dimension{}@name & yes\\
     power & \primtype{integer} & yes\\
     offset & \primtype{real number} & no\\
@@ -1507,7 +1520,7 @@ The \textit{units} attribute specifies the units of the quantity and should refe
 \end{table}
 
 \subsubsection{Symbol attribute}
-Each \Unit requires a \textit{symbol} attribute. This name should be a valid identifier in the \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 standard} and uniquely identify the {\Unit} in current the scope.
+Each \Unit requires a \textit{symbol} attribute, which should be a valid \identifier and uniquely identify the {\Unit} in current the scope.
 
 \subsubsection{Dimension attribute}
 Each \Unit requires a \textit{dimension} attribute. This attribute specifies the dimension of the units and should refer to the name of a \Dimension element in the global scope.
@@ -1525,6 +1538,33 @@ A \Unit can optionally have an \textit{offset} attribute. This attribute specifi
 If omitted, the offset is zero.
 
 
+\subsection{Reference}
+\label{sec:Reference}
+
+\begin{table}[H]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Delay Structure}}}\\
+    \toprule
+    \em{Attribute name} & \em{Type/Format} & \em{Required} \\
+    \midrule
+    url &  \href{http://en.wikipedia.org/wiki/Uniform_resource_locator}{URL}  & no\\
+    \midrule
+    \em{Text format} & \; & \em{Required} \\
+    \midrule
+    *@name & \; & yes\\
+    \bottomrule
+  \end{edtable}
+\end{table}
+
+\subsubsection{Url attribute}
+The \textit{url} attribute specifies a \href{http://en.wikipedia.org/wiki/Uniform_resource_locator}{Uniform Resource Locator (URL)} for the file which contains the User Layer element to be referenced.
+
+\subsubsection{Text format}
+The name of the User Layer element to be referenced should be included in the body of the \Reference element.
+
+\section{Values}
+
 \subsection{SingleValue}
 \label{sec:SingleValue}
 
@@ -1535,7 +1575,7 @@ If omitted, the offset is zero.
     \toprule
     \em{Text format} & \; & \em{Required} \\
     \midrule
-    Numeric value & \; & yes \\ 
+    \primtype{real number} & \; & yes \\ 
     \bottomrule
   \end{edtable}
 \end{table}
@@ -1572,7 +1612,7 @@ Any valid numeric value, including shorthand scientific notation e.g. 1e-5 ($1\t
     \midrule
     \em{Text format} & \; & \em{Required} \\
     \midrule
-    Numeric value & \; & yes\\
+    \primtype{real number} & \; & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
@@ -1580,7 +1620,7 @@ Any valid numeric value, including shorthand scientific notation e.g. 1e-5 ($1\t
 \subsubsection{Index attribute}
 The \textit{index} attribute specifies the index of the \ArrayValueRow in the \ArrayValue. It must be non-negative, unique amongst the set of \ArrayValueRow{}@index in the list, and the set of indices must be contiguous for a single \ArrayValue.
 
-\note{This preserves the order non-specific nature of elements in NineML}
+\note{The order of {\ArrayValueRow} elements within an \ArrayValue element does not effect the interpreted order of the values in the array in keeping with the order non-specific design philosophy of NineML (see \ref{sec:design_considerations}).}
 
 \subsubsection{Text format}
 Any valid numeric value, including shorthand scientific notation e.g. 1e-5 ($1\times10^{-5}$).
@@ -1596,8 +1636,8 @@ Any valid numeric value, including shorthand scientific notation e.g. 1e-5 ($1\t
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
     url & \href{http://en.wikipedia.org/wiki/Uniform_resource_locator}{URL} & yes\\
-    mimetype & \href{http://en.wikipedia.org/wiki/Internet_media_type}{MIME type}  & yes\\
-    column-name & Data column name in external file & yes\\    
+    mimeType & \href{http://en.wikipedia.org/wiki/Internet_media_type}{MIME type}  & yes\\
+    columnName & Data column name in external file & yes\\    
     \bottomrule
   \end{edtable}
 \end{table}
@@ -1605,7 +1645,7 @@ Any valid numeric value, including shorthand scientific notation e.g. 1e-5 ($1\t
 \subsubsection{Url attribute}
 The \textit{url} attribute specifies a \href{http://en.wikipedia.org/wiki/Uniform_resource_locator}{Uniform Resource Locator (URL)} for the external data file.
 
-\subsubsection{Mimetype attribute}
+\subsubsection{MimeType attribute}
 The \textit{mimetype} attribute specifies the data format for the external value list in the \href{http://en.wikipedia.org/wiki/Internet_media_type}{MIME type} syntax. Currently, only two formats are supported \lstinline|application/vnd.nineml.valuelist.text| and \lstinline|application/vnd.nineml.valuelist.hdf5|. 
 
 \begin{itemize}
@@ -1614,32 +1654,28 @@ The \textit{mimetype} attribute specifies the data format for the external value
 \end{itemize}
 %\tracingall
 
-\subsubsection{Column-name attribute}
+\subsubsection{ColumnName attribute}
 
-\subsection{Reference}
-\label{sec:Reference}
+\subsection{ComponentValue}
+\label{sec:ComponentValue}
 
 \begin{table}[H]
   \begin{edtable}{tabular}{llr}
     \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Delay Structure}}}\\
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{ExternalArrayValue Structure}}}\\
     \toprule
+    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \midrule
+    \Component{}\withelem\RandomDistribution | \Reference{}\pointto\Component{}\withelem\RandomDistribution & singleton & yes \\
+    \midrule
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
-    url &  \href{http://en.wikipedia.org/wiki/Uniform_resource_locator}{URL}  & no\\
-    \midrule
-    \em{Text format} & \; & \em{Required} \\
-    \midrule
-    *@name & \; & yes\\
+    port & {\AnalogSendPort}@name & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
 
-\subsubsection{Url attribute}
-The \textit{url} attribute specifies a \href{http://en.wikipedia.org/wiki/Uniform_resource_locator}{Uniform Resource Locator (URL)} for the file which contains the User Layer element to be referenced.
-
-\subsubsection{Text format}
-The name of the User Layer element to be referenced should be included in the body of the \Reference element.
+\subsubsection{Port attribute}
 
 
 \section{Populations}
@@ -1654,7 +1690,7 @@ The name of the User Layer element to be referenced should be included in the bo
     \toprule
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
-    name & \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 identifier} & yes\\
+    name & \identifier & yes\\
     \midrule
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
@@ -1667,7 +1703,7 @@ The name of the User Layer element to be referenced should be included in the bo
 Population elements define sets of neuron components of the same class. The size of the set is specified by the {\tt number} attribute. The properties of the neuron components can be constant across the population, randomly distributed, individually specified or as a function of neuron index.  
 
 \subsubsection{Name attribute}
-Each \Population requires a \textit{name} attribute. This name should be a valid identifier in the \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 standard} and uniquely identify the {\Population} from all other elements in the global scope.
+Each \Population requires a \textit{name} attribute, which should be a valid \identifier and uniquely identify the {\Population} from all other elements in the global scope.
 
 \subsection{Cell}
 \label{sec:Cell}
@@ -1714,7 +1750,7 @@ The number of cells in the population is specified by the integer provided in th
     \toprule
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
-    name & \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 identifier} & yes\\
+    name & \identifier & yes\\
     \midrule
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
@@ -1732,7 +1768,7 @@ Projections define the synaptic connectivity between two populations, the post-s
 
 
 \subsubsection{Name attribute}
-Each \Projection requires a \textit{name} attribute. This name should be a valid identifier in the \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 standard} and uniquely identify the {\Projection} from all other elements in the global scope.
+Each \Projection requires a \textit{name} attribute, which should be a valid \identifier and uniquely identify the {\Projection} from all other elements in the global scope.
 
 \subsection{Source}
 \label{sec:Source}
@@ -1894,7 +1930,8 @@ Each \FromDestination element requires a \textit{receiver} attribute. This shoul
 Each \FromPlasticity element requires a \textit{sender} attribute. This should refer to the name of a \AnalogSendPort or \EventSendPort in the \Cell->\Component{}\withelem\ComponentClass of the source population. The transmission mode of the port (i.e. \lq\lq{}analog\rq\rq{} or \lq\lq{}digital\rq\rq{}) should match that of the port referenced by the \textit{receiver} attribute.
 
 \subsubsection{Receiver attribute}
-Each \FromPlasticity element requires a \textit{receiver} attribute. This should refer to the name of a \AnalogReceivePort, \EventReceivePort or \AnalogReducePort in the \Component{}\withelem\ComponentClass in the enclosing \Source/\Destination/\Plasticity/\Response element.  The transmission mode of the port (i.e. \lq\lq{}analog\rq\rq{} or \lq\lq{}digital\rq\rq{}) should match that of the port referenced by the \textit{sender} attribute.
+Each \FromPlasticity element requires a \textit{receiver} attribute. This should refer to the name of a \AnalogReceivePort, \EventReceivePort or \AnalogReducePort in the \Component{}\withelem\ComponentClass in the enclosing \Source/\Destination/
+\Plasticity/\Response element.  The transmission mode of the port (i.e. \lq\lq{}analog\rq\rq{} or \lq\lq{}digital\rq\rq{}) should match that of the port referenced by the \textit{sender} attribute.
 
 \subsection{FromResponse}
 \label{sec:FromResponse}
@@ -1949,7 +1986,7 @@ Each \FromResponse element requires a \textit{receiver} attribute. This should r
   \end{edtable}
 \end{table}
 
-\section{Selections: combining population subsets}
+\section{Selections: combining populations and subsets}
 
 \subsection{Selection}
 \label{sec:Selection}
@@ -2011,12 +2048,12 @@ Each \Item requires a \textit{index} attribute. This attribute specifies the ord
 \section{Annotations}
 
 \subsection{Annotations}
-\label{sec:Annotation}
+\label{sec:Annotations}
 
 \begin{table}[H]
   \begin{edtable}{tabular}{llr}
     \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Annotation Structure}}}\\
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Annotations Structure}}}\\
     \toprule
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
@@ -2025,7 +2062,7 @@ Each \Item requires a \textit{index} attribute. This attribute specifies the ord
   \end{edtable}
 \end{table}
 
-{\Annotation}s elements are provided to add semantic information about the model. They can be included within any NineML element. Likewise, any elements are allowed to be included within {\Annotation}s. In order to be compliant with the NineML specification any tool handling NineML descriptions must preserve all existing annotations, except where a user explicitly edits/deletes them.
+{\Annotations} elements are provided to add semantic information about the model, preserving structure that is lost during conversion from an extended format to core NineML, and provide suggestions for the simulation of the model. They can be included within any NineML element and any valid XML is allowed within {\Annotations} elements. In order to be compliant with the NineML specification any tool handling NineML descriptions must preserve all existing annotations, except where a user explicitly edits/deletes them.
 
 %\draftnote{Should we make it mandatory to use RDF? It would probably greatly improve its value if all NineML files were using the same system for annotations (see GitHub \#23)}
 
