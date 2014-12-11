@@ -38,6 +38,7 @@
 \newcommand{\StateAssignment}{\defRef{\textbf{\class{StateAssignment}}\xspace}{sec:StateAssignment}}
 \newcommand{\TimeDerivative}{\defRef{\textbf{\class{TimeDerivative}}\xspace}{sec:TimeDerivative}}
 \newcommand{\Alias}{\defRef{\textbf{\class{Alias}}\xspace}{sec:Alias}}
+\newcommand{\Constant}{\defRef{\textbf{\class{Constant}}\xspace}{sec:Constant}}
 \newcommand{\StandardLibrary}{\defRef{\textbf{\class{StandardLibrary}}\xspace}{sec:StandardLibrary}}
 \newcommand{\Regime}{\defRef{\textbf{\class{Regime}}\xspace}{sec:Regime}}
 \newcommand{\Transition}{\defRef{\textbf{\class{Transition}}\xspace}{sec:Transition}}
@@ -288,7 +289,7 @@ the mechanisms for naming and addressing Abstraction Layer concepts
 that are instantiated in the User Layer have been kept simple for the
 user.
 
-In order to simplify their interpretation and maintain compatibility with a wide range of data formats (e.g. JSON, Python objects), NineML documents are not sensitive to the order of elements.
+In order to simplify their interpretation and maintain compatibility with a wide range of data formats (e.g. JSON, Python objects), NineML documents are not sensitive to the order that objects appear in.
 
 \subsection{Identifiers}
 \label{sec:identifier}
@@ -309,13 +310,36 @@ This document presents the current NineML specifications and consists of:
 
 \clearpage
 \part{Abstraction Layer}
-\section{Basic Abstraction Layer Elements}
+\section{Component Classes and Parameters}
 
-The Abstraction Layer aims at providing general concepts to represent the
-mathematical entities (e.g. functions, differential equations, event handling)
-defining the dynamics of the different types of models composing a network
-(e.g. neuron models, synapse models, synaptic/intrinsic
-plasticity) and the rules by which they are connected.
+The main building block of the Abstraction Layer is the \ComponentClass.
+The \ComponentClass is intended to package together a collection of
+objects that relate to the definition of a model (e.g. cells, synapses, synaptic
+plasticity rules, random spike trains, inputs).
+All equations and event declarations that are part of particular entity
+model, such as neuron model, belong in a single \ComponentClass.
+A \ComponentClass can be used to represent either a specific model of a neuron or a
+composite model, including synaptic mechanisms.
+
+The interface is the \emph{external} view of the \ComponentClass that defines
+what inputs and outputs the component exposes to other {\ComponentClass} elements and the
+parameters that can be set for the \ComponentClass. The interface consists of
+instances of ports and \Parameter (see \ref{fig:component_class_overview}).
+
+\begin{figure}[htb]
+\center
+\includegraphics[width=8cm]{figures/component_simple.pdf}
+\protect\caption{ComponentClass Overview}
+\label{fig:component_class_overview}
+\end{figure}
+
+As well as being able to specify the communication of continuous values,
+{\ComponentClass} elements are also able to specify the emission and the reception
+of events. Events are discrete notifications
+that are transmitted over event ports. Since
+Event ports have names, saying that we transmit `event1' for example
+would mean transmitting an event on the EventPort called `event1'. Events
+can be used for example to signal action potential firing.
 
 \subsection{ComponentClass}
 \label{sec:ComponentClass}
@@ -342,47 +366,12 @@ plasticity) and the rules by which they are connected.
   \end{edtable}
 \end{table}
 
-The main building block of the Abstraction Layer is the \ComponentClass.
-The \ComponentClass is intended to package together a collection of
-objects that relate to the definition of a model (e.g. cells, synapses, synaptic
-plasticity rules, random spike trains, inputs).
-All equations and event declarations that are part of particular entity
-model, such as neuron model, belong in a single \ComponentClass.
-A \ComponentClass can be used to represent either a specific model of a neuron or a
-composite model, including synaptic mechanisms.
-
-\draftnote{Not sure if these bullet points are redundant or not}
 A \ComponentClass is composed of:
 \begin{itemize}
-\item {\Parameter}s for the \ComponentClass
-\item An unordered collection of {\AnalogSendPort}, {\AnalogReceivePort}, {\AnalogReducePort}, \EventSendPort and \EventReceivePort objects. Each {\AnalogSendPort} publishes a state variable or derived value and each {\AnalogReceivePort} consumes a state variable or derived value published from elsewhere. {\AnalogReducePort}s consume a variable number of published state variables and/or derived values and apply an operator that reduces the incoming values to a single value. \EventSendPort and \EventReceivePort objects raise and listen for events passed between dynamic components.
-\item One of either a \Dynamics, \ConnectionRule or \RandomDistribution block shown
-. The \Dynamics block represent the internal
-dynamic of the model while the Interface block allows the \ComponentClass to
-communicate with other instantiations of the \ComponentClass and with the User
-Layer.
+\item {\Parameter} objects for the \ComponentClass, which specify which values are required to be provided in the User Layer.
+\item An unordered collection of port objects, which either publish or read state variables or derived values published from other components in the case of analog send and receive ports, or emit events or listen for events emitted from components. \EventSendPort and \EventReceivePort objects raise and listen for events passed between dynamic components.
+\item Either a \Dynamics, \ConnectionRule or \RandomDistribution block. \Dynamics blocks represent the internal dynamics of the model. \ConnectionRule blocks specify the rule by which populations are connected in projections. \RandomDistribution block defines random distribution.
 \end{itemize}
-
-The interface is the \emph{external} view of the \ComponentClass that defines
-what inputs and outputs the component exposes to other {\ComponentClass} elements and the
-parameters that can be set for the \ComponentClass. The interface consists of
-instances of ports and \Parameter (see \ref{fig:component_class_overview}).
-
-\begin{figure}[htb]
-\center
-\includegraphics[width=8cm]{figures/component_simple.pdf}
-\protect\caption{ComponentClass Overview}
-\label{fig:component_class_overview}
-\end{figure}
-
-As well as being able to specify the communication of continuous values,
-{\ComponentClass} elements are also able to specify the emission and the reception
-of events. Events are discrete notifications
-that are transmitted over event ports. Since
-Event ports have names, saying that we transmit `event1' for example
-would mean transmitting an event on the EventPort called `event1'. Events
-can be used for example to signal action potential firing.
-
 
 \subsubsection{Name attribute}
 Each \ComponentClass requires a \textit{name} attribute, which should be a valid \identifier and uniquely identify the {\ComponentClass} in the global scope.
@@ -416,23 +405,15 @@ Each \Parameter requires a \textit{name} attribute, which is a valid \identifier
 \subsubsection{Dimension attribute}
 \Parameter objects can have a \textit{dimension} attribute. This attribute specifies the dimension of the units of the quantity that is expected to be passed to the \Parameter and should refer to the name of a \Dimension element in the global scope. If omitted the \Parameter is dimensionless.
 
-\subsection{Dimension}
-\label{sec:Dimension}
+\section{Units and Dimensions}
 
 Dimensions are associated with parameters, analog ports and state variables in component class
-definitions. \Dimension objects are constructed values from the powers for each of the seven SI base
-units: length (\emph{l}), mass (\emph{m}), time (\emph{t}), electric current (\emph{i}), temperature  (\emph{k}), luminous intensity  (\emph{l}) and amount of substance  (\emph{n}).
-For example, acceleration has dimension $lt^{-2}$ and voltage is
-$ml^2t^3i^{-1}$. Dimensions must be declared in the global scope of the NineML file they are used.
-
-Each dimension can give rise to a family of unit declarations, each of
+definitions. Each dimension can give rise to a family of unit declarations, each of
 which has the same dimensionality but a different multiplier. For example,
 typical units for a quantity with dimensionality voltage include
 millivolts (multiplier = $10^{-3}$), microvolts (multiplier = $10^{-6}$)
 and volts (multiplier = 1).  To express a dimensional quantity both a
-numerical factor and a unit are required. Unit can be expressed in a NineML
-file with the \Unit element, defined at the User Layer level, or imported
-from a specific XML file describing a set of units.
+numerical factor and a unit are required.
 
 Except where physical constants are required, abstraction layer definitions
 generally only contain references to dimensions and are independent of any
@@ -442,8 +423,9 @@ as rich types with a numerical factor and exponents for each of the
 base dimensions. They are independent of the particular choice of
 units by which they are assigned.
 
+\subsection{Dimension}
+\label{sec:Dimension}
 
-%\draftnote{This the LEMS format (which is very similar to a format I found in an old version of the NineML spec). I personally would favour more descriptive attributes and changing Dimension to UnitDimension but I think this format should be fine (see GitHub \#32)}
 \begin{table}[H]
   \begin{edtable}{tabular}{llr}
     \toprule
@@ -462,6 +444,11 @@ units by which they are assigned.
     \bottomrule
   \end{edtable}
 \end{table}
+
+ \Dimension objects are constructed values from the powers for each of the seven SI base
+units: length (\emph{l}), mass (\emph{m}), time (\emph{t}), electric current (\emph{i}), temperature  (\emph{k}), luminous intensity  (\emph{l}) and amount of substance  (\emph{n}).
+For example, acceleration has dimension $lt^{-2}$ and voltage is
+$ml^2t^3i^{-1}$. \Dimension objects must be declared in the top-level scope of the NineML document where they are referenced.
 
 \subsubsection{Name attribute}
 Each \Dimension requires a \textit{name} attribute, which should be a valid \identifier and uniquely identify the {\Dimension} in current the scope.
@@ -508,6 +495,8 @@ The \textit{j} attribute specifies the power of the luminous-intensity dimension
   \end{edtable}
 \end{table}
 
+\Unit objects specify the dimension multiplier and the offset of a unit with respect to a defined \Dimension object. \Unit objects must be declared in the top-level scope of the NineML documents where they are referenced.
+
 \subsubsection{Symbol attribute}
 Each \Unit requires a \textit{symbol} attribute, which should be a valid \identifier and uniquely identify the {\Unit} in current the scope.
 
@@ -528,6 +517,10 @@ If omitted, the offset is zero.
 
 \note{This format for \Unit is the same as is used in NeuroML version 2.0 (\href{http://www.neuroml.org}{http://www.neuroml.org}).}
 
+\section{Mathematical Expressions}
+
+As of NineML version 1.0, only inline mathematical expressions, which have similar syntax to the ANSI C89 standard, are supported. In future versions it is envisaged that inline expressions will be either augmented or replaced with MathML (\href{http://mathml.org}{http://mathml.org}) expressions.
+
 \subsection{Alias}
 \label{sec:Alias}
 
@@ -547,9 +540,6 @@ If omitted, the offset is zero.
   \end{edtable}
 \end{table}
 
-\note{\Alias is defined in the Dynamics, \emph{not} in the
-\Regime. This means that aliases are the same across all regimes.}
-
 An alias corresponds to an alternative name for a variable or part of an expression. 
 
 \textbf{Aliases} are motivated by two use cases:
@@ -567,7 +557,7 @@ dm/dt = (1 / C) * (minf - m) / mtau
 
 In this case, \lstinline|m_alpha|, \lstinline|m_beta|, \lstinline|minf| and \lstinline|mtau| are all
 alias definitions. There is no reason we couldn't expand our $\mathrm{d}m/\mathrm{d}t$
-description out to eliminate these intermediate {\Alias}es, but the expression
+description out to eliminate these intermediate {\Alias} objects, but the expression
 would be very long and difficult to read.
 
 \item {\bf Accessing intermediate variables}: if we would like to communicate a
@@ -599,13 +589,10 @@ Each \Alias requires a \textit{name} attribute, which is a valid \identifier and
 \end{table}
 
 
-A block used to specify mathematical expressions. The expression is expected to
-be in \texttt{C} style and given as text. MathML support is planned in future versions of NineML
-
-Depending on the context, \MathInline blocks should return an expression that
-evaluates to either a \verb|Boolean| (when used as the trigger for
-{\OnCondition} objects) or a \verb|real| number ( when used  as a
-right-hand-side for {\Alias}, {\TimeDerivative} and {\StateAssignment} objects). All numbers/variables in inline maths expressions are assumed to be real valued numbers.
+\MathInline blocks are used to specify mathematical expressions. Depending on the context, \MathInline blocks should return an expression that
+evaluates to either a \primtype{bool} (when used as the trigger for
+{\OnCondition} objects) or a \primtype{real number} (when used  as a
+right-hand-side for {\Alias}, {\TimeDerivative} and {\StateAssignment} objects). All numbers/variables in inline maths expressions are assumed to be \primtype{real numbers}.
 
 The following operators are supported in inline maths expressions,
 \draftnote{I have added exponent operator since it is commonly used in neutron models and is quite convenient but it is not ANSI C89 so I am not sure whether you guys think this is a good idea}
@@ -672,6 +659,35 @@ The following symbols are built in, and cannot be redefined,
 \end{itemize}
 where $pi$ is the mathematical constant $\pi$, and $t$ is the elapsed simulation time within a \Dynamics block.
 
+\subsection{Constant}
+
+\begin{table}[H]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Constant Structure}}}\\
+    \toprule
+    \em{Attribute name} & \em{Type/Format} & \em{Required} \\
+    \midrule
+    name & \identifier & yes\\
+    units & \Unit@name & no\\
+    \midrule
+    \em{Text format} & \; & \em{Required} \\
+    \midrule
+    \primtype{real number} & \; & yes \\ 
+    \bottomrule
+  \end{edtable}
+\end{table}
+
+\Constant objects are used to specify physical constants such as the Ideal Gas Constant (i.e. ??) or Avogadro's number (i.e. ??).
+
+\subsubsection{Name attribute}
+Each \Dimension requires a \textit{name} attribute, which should be a valid \identifier and uniquely identify the {\Dimension} in current the scope.
+
+\subsubsection{Unit attribute}
+The \textit{units} attribute specifies the units of the quantity and should refer to the name of a \Unit element in the global scope. If it is omitted then the quantity is considered to be dimensionless.
+
+\subsubsection{Text format}
+Any valid numeric value, including shorthand scientific notation e.g. 1e-5 ($1\times10^{-5}$).
 
 %\subsection{StandardLibrary}
 %\label{sec:StandardLibrary}
@@ -726,8 +742,6 @@ flow in a post-synaptic neuron.
 \subsection{AnalogSendPort}
 \label{sec:AnalogSendPort}
 
-{\AnalogSendPort}s of variables from the current component to be published externally to be read by other {\ComponentClass}es. Each {\AnalogSendPort} can be connected to multiple {\AnalogReceivePort}s and {\AnalogReducePort}s.
-
 \begin{table}[H]
   \begin{edtable}{tabular}{llr}
     \toprule
@@ -741,6 +755,8 @@ flow in a post-synaptic neuron.
   \end{edtable}
 \end{table}
 
+{\AnalogSendPort} objects allow variables from the current component to be published externally to be read by other {\ComponentClass} objects. Each {\AnalogSendPort} can be connected to multiple {\AnalogReceivePort} and {\AnalogReducePort} objects.
+
 \subsubsection{Name attribute}
 Each \AnalogSendPort requires a \textit{name} attribute, which is a valid \identifier and uniquely identify the \AnalogSendPort from all other elements in the \ComponentClass.
 
@@ -750,8 +766,6 @@ Each \AnalogSendPort requires a \textit{dimension} attribute. This attribute spe
 
 \subsection{AnalogReceivePort}
 \label{sec:AnalogReceivePort}
-
-{\AnalogReceivePort}s allow variables that have been published externally to be used within the current component. Each \AnalogReceivePort can be connected to \emph{one} \AnalogSendPort.
 
 \begin{table}[H]
   \begin{edtable}{tabular}{llr}
@@ -765,6 +779,8 @@ Each \AnalogSendPort requires a \textit{dimension} attribute. This attribute spe
     \bottomrule
   \end{edtable}
 \end{table}
+
+{\AnalogReceivePort}s allow variables that have been published externally to be used within the current component. Each \AnalogReceivePort can be connected to \emph{one} \AnalogSendPort.
 
 \subsubsection{Name attribute}
 Each \AnalogReceivePort requires a \textit{name} attribute, which is a valid \identifier and uniquely identify the \AnalogReceivePort from all other elements in the \ComponentClass.
@@ -790,14 +806,10 @@ Each \AnalogReceivePort requires a \textit{dimension} attribute. This attribute 
   \end{edtable}
 \end{table}
 
-
-
-{\AnalogReducePort}s can receive data from any number of {\AnalogSendPort}s (including none). They
-differ from \AnalogReceivePort in that they can be connected to multiple
-{\AnalogSendPort}s. \AnalogReducePort takes an additional operator,
-{\tt operator}, which specifies how the data from multiple {\AnalogSendPort}s
+Reduce ports can receive data from any number of {\AnalogSendPort} objects (including none).  An \AnalogReducePort takes an additional operator compared to an \AnalogReceivePort,
+{\tt operator}, which specifies how the data from multiple analog send ports
 should be combined to produce a single value. Currently, the
-only supported operations is \lq\lq{}$+$\rq\rq{}, which sums the inputs.
+only supported operations is \lq\lq{}$+$\rq\rq{}, which sums all the incoming port values.
 
 The motivation for \AnalogReducePort is that it allows us to make our
 \ComponentClass definitions more general. For example, if we are defining a
@@ -841,6 +853,8 @@ will take all of the electrical currents that have been connected to it via {\An
   \end{edtable}
 \end{table}
 
+An \EventSendPort specifies a channel over which events can be transmitted from the component. 
+
 \subsubsection{Name attribute}
 Each \EventSendPort requires a \textit{name} attribute, which is a valid \identifier and uniquely identify the \EventSendPort from all other elements in the \ComponentClass.
 
@@ -859,6 +873,8 @@ Each \EventSendPort requires a \textit{name} attribute, which is a valid \identi
     \bottomrule
   \end{edtable}
 \end{table}
+
+An \EventReceivePort specifies a channel over which events can be received by the component. 
 
 \subsubsection{Name attribute}
 Each \EventReceivePort requires a \textit{name} attribute, which is a valid \identifier and uniquely identify the \EventReceivePort from all other elements in the \ComponentClass.
@@ -911,6 +927,7 @@ least one \Regime, and contain no regime islands. At any given time,
 a component will be in a single \Regime, and can change which \Regime
 it is in through \Transition.
 
+\note{\Alias objects are defined in Dynamics blocks, \emph{not} \Regime blocks. This means that aliases are the same across all regimes.}
 
 \subsection{StateVariable}
 \label{sec:StateVariable}
@@ -1027,6 +1044,11 @@ Each \TimeDerivative requires a \textit{variable} attribute. This should refer t
 \section{Events and Transitions}
 \label{sec:Transition}
 
+{\Transition}s define the transition between \Regime blocks.
+An example dynamics in \ref{SimpleRegimeGraph} has three {\StateVariable}s,
+\emph{X,Y} and \emph{Z}, and a state graph with three {\Regime}s, \emph{regime1},
+\emph{regime2} and \emph{regime3}. At any time, a component will be in one of
+these regimes, and the state variables will evolve accordingly (see \ref{SimpleRegimeGraph}).
 
 \begin{figure}[htb!]
 \center
@@ -1034,12 +1056,6 @@ Each \TimeDerivative requires a \textit{variable} attribute. This should refer t
 \protect\caption{The dynamics block for an example component.}
 \label{SimpleRegimeGraph}
 \end{figure}
-
-{\Transition}s define the transition between \Regime blocks.
-An example dynamics in \ref{SimpleRegimeGraph} has three {\StateVariable}s,
-\emph{X,Y} and \emph{Z}, and a state graph with three {\Regime}s, \emph{regime1},
-\emph{regime2} and \emph{regime3}. At any time, a component will be in one of
-these regimes, and the state variables will evolve accordingly.
 
 Movement between several instances of \Regime happens via \Transition.
 A {\Transition} is defined in NineML as having
@@ -1052,6 +1068,7 @@ in \ref{SimpleRegimeGraph}). There are two types of \Transition:
 example $X > Y$.
 \item An \OnEvent on an input from an \EventReceivePort. (See section~\ref{sec:Ports}).
 \end{itemize}
+
 
 During either type of transition three things can happen:
 \begin{itemize}
@@ -1109,8 +1126,6 @@ Each \OnEvent requires a \textit{port} attribute. This should refer to the name 
 \subsection{OnCondition}
 \label{sec:OnCondition}
 
-An OnCondition block is activated when the condition in the \Trigger block is met.
-
 \begin{table}[H]
   \begin{edtable}{tabular}{llr}
     \toprule
@@ -1130,13 +1145,13 @@ An OnCondition block is activated when the condition in the \Trigger block is me
   \end{edtable}
 \end{table}
 
+An OnCondition block is activated when the condition in the \Trigger block is met.
+
 \subsubsection{Target attribute}
 An \OnEvent can have a \textit{target} attribute, which should refer to the name of a \Regime element in the \ComponentClass that the dynamics block will transition to when the \Trigger condition is met.
 
 \subsection{Trigger}
 \label{sec:Trigger}
-
-The trigger block defines the condition on which the \OnCondition block is activiated.
 
 \begin{table}[H]
   \begin{edtable}{tabular}{llr}
@@ -1149,7 +1164,6 @@ The trigger block defines the condition on which the \OnCondition block is activ
     \bottomrule
   \end{edtable}
 \end{table}
-
 
 {\Trigger}s define when an {\OnCondition} transition should be triggered. The \MathInline block of a
 {\Trigger} can contain any arbitrary combination of `and' and `or' \emph{logical
@@ -1213,12 +1227,12 @@ Each \EventOut requires a \textit{port} attribute. This should refer to the name
     \toprule
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
-    builtin & \URL & yes\\
+    standardLibrary & \URL & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
 
-As of version 1.0, the only random distributions available to the user are those defined in the standard library (see \StandardLibrary). The names and parameters of the random distribution in the standard library match the UncertML definitions that can be found at \href{http://www.uncertml.org/distributions}{http://www.uncertml.org/distributions}. The subset of the UncertML distributions that should be implemented are by NineML compliant packages are,
+As of version 1.0, the only random distributions available to the user are those defined in the standard library. The names and parameters of the random distribution in the standard library match the UncertML definitions that can be found at \href{http://www.uncertml.org/distributions}{http://www.uncertml.org/distributions}. The subset of the UncertML distributions that should be implemented are by NineML compliant packages are,
 
 \begin{itemize}
 \item BernoulliDistribution
@@ -1252,7 +1266,7 @@ As of version 1.0, the only random distributions available to the user are those
 
 \note{\textit{C} implementations of these distributions are available in the GNU Scientific Library, \href{http://www.gnu.org/software/gsl/}{http://www.gnu.org/software/gsl/}}
 
-\subsubsection{Builtin attribute}
+\subsubsection{StandardLibrary attribute}
 
 
 
@@ -1288,19 +1302,19 @@ In future versions, built-in connectivity rules are to be replaced with connecti
 \subsubsection{StandardLibrary attribute}
 The \textit{builtin} attribute is required and should point to a \URL underneath the \href{http://nineml.net/standardlibraries/connectionrules/}{http://nineml.net/standardlibraries/connectionrules/}
 
-\subsubsection*{AllToAll}
+\emph{\textbf{AllToAll}}
 
 All cells in the source population are connected to all cells in the destination population.
 
-\subsubsection*{OneToOne}
+\emph{\textbf{OneToOne}}
 
 Each cell in the source population is connected to the cell in the destination population with the corresponding index. Note that this requires that the source and destination populations be the same size.
 
-\subsubsection*{ProbabilisticConnectivity}
+\emph{\textbf{ProbabilisticConnectivity}}
 
 All cells in the source population are connected to cells in the destination population with a probability defined by the \textit{probability} parameter. This attribute should refer to a name of a dimensionless \Parameter in the enclosing \ComponentClass. The properties supplied to this parameter should either be a dimensionless \SingleValue representing the probability of a connection between all source and destination cell pairs, or a \ArrayValue or \ExternalArrayValue of size $M{\times}N$, where $M$ and $N$ are the size of the source and destination populations respectively. In the case of the \ArrayValue or \ExternalArrayValue properties, the list represents probabilities of connections existing between the first cell in the source population with every cell in the destination population in order of their index, followed by the second cell in the source with with every cell in the destination population in order of their index and so forth for each cell in the source population.
 
-\subsubsection*{ExplicitConnectionList}
+\emph{\textbf{ExplicitConnectionList}}
 
 Cells in the source population are connected to cells in the destination population as specified by an explicit lists.
 
@@ -1308,13 +1322,13 @@ This \textit{source-indicies} parameter The properties supplied to this paramete
 
 This \textit{target-indicies} parameter The properties supplied to this parameter should be a \ArrayValue or \ExternalArrayValue drawn from the set $\{1,\ldots,N\}$ where $N$ is the size of the source population and be the same length as the property supplied to the \textit{source-indices} parameter.
 
-\subsubsection*{RandomFanIn}
+\emph{\textbf{RandomFanIn}}
 
-\subsubsection*{RandomFanOut}
+\emph{\textbf{RandomFanOut}}
 
 \clearpage
 \part{User Layer}
-\section{Basic User Layer Elements}
+\section{Components and Properties}
 
 \subsection{Component}
 \label{sec:Component}
@@ -1641,13 +1655,13 @@ The \textit{mimetype} attribute specifies the data format for the external value
     \toprule
     \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{ExternalArrayValue Structure}}}\\
     \toprule
-    \em{Element type} & \em{Multiplicity} & \em{Required} \\
-    \midrule
-    \Component{}\withelem\RandomDistribution | \Reference{}\pointto\Component{}\withelem\RandomDistribution & singleton & yes \\
-    \midrule
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
     port & {\AnalogSendPort}@name & yes\\
+    \midrule    
+    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \midrule
+    \Component{}\withelem\RandomDistribution | \Reference{}\pointto\Component{}\withelem\RandomDistribution & singleton & yes \\
     \bottomrule
   \end{edtable}
 \end{table}
