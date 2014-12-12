@@ -41,7 +41,6 @@
 \newcommand{\Constant}{\defRef{\textbf{\class{Constant}}\xspace}{sec:Constant}}
 \newcommand{\StandardLibrary}{\defRef{\textbf{\class{StandardLibrary}}\xspace}{sec:StandardLibrary}}
 \newcommand{\Regime}{\defRef{\textbf{\class{Regime}}\xspace}{sec:Regime}}
-\newcommand{\Transition}{\defRef{\textbf{\class{Transition}}\xspace}{sec:Transition}}
 \newcommand{\Trigger}{\defRef{\textbf{\class{Trigger}}\xspace}{sec:Trigger}}
 \newcommand{\EventOut}{\defRef{\textbf{\class{EventOut}}\xspace}{sec:EventOut}}
 \newcommand{\OnEvent}{\defRef{\textbf{\class{OnEvent}}\xspace}{sec:OnEvent}}
@@ -298,6 +297,9 @@ Elements are identified by \emph{names}, which are unique in the scope they are 
 
 NineML identifiers are case-sensitive in the sense that they must be referred to with the same case as they are defined. However, two identifiers that are identical with the exception of case, e.g. `v\_threshold' and `v\_Threshold', are not permitted in the same scope.
 
+\subsection{Extensions}
+\label{sec:extensions}
+
 \subsection{About this document}
 
 This document presents the current NineML specifications and consists of:
@@ -370,7 +372,12 @@ A \ComponentClass is composed of:
 \begin{itemize}
 \item {\Parameter} objects for the \ComponentClass, which specify which values are required to be provided in the User Layer.
 \item An unordered collection of port objects, which either publish or read state variables or derived values published from other components in the case of analog send and receive ports, or emit events or listen for events emitted from components. \EventSendPort and \EventReceivePort objects raise and listen for events passed between dynamic components.
-\item Either a \Dynamics, \ConnectionRule or \RandomDistribution block. \Dynamics blocks represent the internal dynamics of the model. \ConnectionRule blocks specify the rule by which populations are connected in projections. \RandomDistribution block defines random distribution.
+\item {A `main' block, which specifies the nature of the component class:
+\begin{itemize} 
+\item \Dynamics, the component class defines a dynamic element such as neutron or post-synaptic response.
+\item \ConnectionRule, the component class defines a rule by which populations are connected in projections.
+\item \RandomDistribution, the component class defines random distribution.
+\end{itemize}}
 \end{itemize}
 
 \subsubsection{Name attribute}
@@ -521,57 +528,6 @@ If omitted, the offset is zero.
 
 As of NineML version 1.0, only inline mathematical expressions, which have similar syntax to the ANSI C89 standard, are supported. In future versions it is envisaged that inline expressions will be either augmented or replaced with MathML (\href{http://mathml.org}{http://mathml.org}) expressions.
 
-\subsection{Alias}
-\label{sec:Alias}
-
-\begin{table}[H]
-  \begin{edtable}{tabular}{llr}
-    \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Alias Structure}}}\\
-    \toprule
-    \em{Attribute name} & \em{Type/Format} & \em{Required} \\
-    \midrule
-    name & \identifier & yes\\
-    \midrule
-    \em{Element type} & \em{Multiplicity} & \em{Required} \\
-    \midrule
-    \MathInline & singleton & yes \\ 
-    \bottomrule
-  \end{edtable}
-\end{table}
-
-An alias corresponds to an alternative name for a variable or part of an expression. 
-
-\textbf{Aliases} are motivated by two use cases:
-
-\begin{itemize}
-\item {\bf substitution}: rather than writing long expressions for functions of
-state variables, we can split the expressions into a chain of \Alias objects, e.g.
-\begin{lstlisting}
-m_alpha = (alphaA + alphaB * V)/(alphaC + exp((alphaD + V / alphaE)))
-m_beta = (betaA + betaB * V)/(betaC + exp((betaD + V / betaE)))
-minf = m_alpha / (m_alpha + m_beta)
-mtau = 1.0 / (m_alpha + m_beta)
-dm/dt = (1 / C) * (minf - m) / mtau
-\end{lstlisting}
-
-In this case, \lstinline|m_alpha|, \lstinline|m_beta|, \lstinline|minf| and \lstinline|mtau| are all
-alias definitions. There is no reason we couldn't expand our $\mathrm{d}m/\mathrm{d}t$
-description out to eliminate these intermediate {\Alias} objects, but the expression
-would be very long and difficult to read.
-
-\item {\bf Accessing intermediate variables}: if we would like to communicate a
-value other than a simple \StateVariable to another \ComponentClass. For
-example, if we have a component representing a
-neuron, which has an internal \StateVariable, `V', we may be interested in
-transmitting a current, for example $i=g*(E-V)$.
-
-\end{itemize}
-
-
-\subsubsection{Name attribute}
-Each \Alias requires a \textit{name} attribute, which is a valid \identifier and uniquely identify the \Alias from all other elements in the \ComponentClass.
-
 
 \subsection{MathInline}
 \label{sec:MathInline}
@@ -659,6 +615,58 @@ The following symbols are built in, and cannot be redefined,
 \end{itemize}
 where $pi$ is the mathematical constant $\pi$, and $t$ is the elapsed simulation time within a \Dynamics block.
 
+\subsection{Alias}
+\label{sec:Alias}
+
+\begin{table}[H]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Alias Structure}}}\\
+    \toprule
+    \em{Attribute name} & \em{Type/Format} & \em{Required} \\
+    \midrule
+    name & \identifier & yes\\
+    \midrule
+    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \midrule
+    \MathInline & singleton & yes \\ 
+    \bottomrule
+  \end{edtable}
+\end{table}
+
+An alias corresponds to an alternative name for a variable or part of an expression. 
+
+\textbf{Aliases} are motivated by two use cases:
+
+\begin{itemize}
+\item {\bf substitution}: rather than writing long expressions for functions of
+state variables, we can split the expressions into a chain of \Alias objects, e.g.
+\begin{lstlisting}
+m_alpha = (alphaA + alphaB * V)/(alphaC + exp((alphaD + V / alphaE)))
+m_beta = (betaA + betaB * V)/(betaC + exp((betaD + V / betaE)))
+minf = m_alpha / (m_alpha + m_beta)
+mtau = 1.0 / (m_alpha + m_beta)
+dm/dt = (1 / C) * (minf - m) / mtau
+\end{lstlisting}
+
+In this case, \lstinline|m_alpha|, \lstinline|m_beta|, \lstinline|minf| and \lstinline|mtau| are all
+alias definitions. There is no reason we couldn't expand our $\mathrm{d}m/\mathrm{d}t$
+description out to eliminate these intermediate {\Alias} objects, but the expression
+would be very long and difficult to read.
+
+\item {\bf Accessing intermediate variables}: if we would like to communicate a
+value other than a simple \StateVariable to another \ComponentClass. For
+example, if we have a component representing a
+neuron, which has an internal \StateVariable, `V', we may be interested in
+transmitting a current, for example $i=g*(E-V)$.
+
+\end{itemize}
+
+
+\subsubsection{Name attribute}
+Each \Alias requires a \textit{name} attribute, which is a valid \identifier and uniquely identify the \Alias from all other elements in the \ComponentClass.
+
+\draftnote{Was tossing up whether `PhysicalConstant' was a better name for this or not. Was thinking that this could also be used to remove `pi' from the list of built-in symbols}
 \subsection{Constant}
 
 \begin{table}[H]
@@ -718,26 +726,12 @@ Any valid numeric value, including shorthand scientific notation e.g. 1e-5 ($1\t
 \section{Ports}
 \label{sec:Ports}
 
-Ports allow instantiations of {\ComponentClass} elements to communicate between each
-other during a simulation.
-There are five sub-classes of port elements: {\AnalogSendPort}, \AnalogReceivePort, \AnalogReducePort, \EventSendPort and \EventReceivePort.
+\draftnote{Is the idea that analog ports are also used to transmit synaptic weights? If so I will mention that here as well}
+Ports allow components to communicate with each
+other during a simulation. Ports can either transmit transmit discrete events or a continuous analog stream of data. Events are typically used to transmit and receive spikes between neutron model, whereas analog ports can be used to model injected current and gap junctions between neuron models. 
 
-Event ports transmit discrete events. They are useful for example in
-simulation of integrate-and-fire neurons to notify {\ComponentClass}es about neuron's
-spiking. Event ports only have 2 modes:
+Ports are divided into sending, \EventSendPort and \AnalogSendPort, and receiving objects, \EventReceivePort, \AnalogReceivePort and \AnalogReducePort. With the exception of \AnalogReducePort objects, each receive port must be connected to exactly one send port, where as a send port can be connected any number of receive ports. \AnalogReducePort objects can be connected to any number of \AnalogSendPort objects; the values of the connected ports are then ``reduced'' to a single data stream.
 
-\begin{itemize}
-\item \AnalogSendPort - transmit events originating in this \ComponentClass which can be
-read by
-other {\ComponentClass}es
-\item \AnalogReceivePort - receive events from another \ComponentClass \AnalogSendPort port.
-Each recv port can be connected to \emph{multiple} \AnalogSendPort.
-\end{itemize}
-
-For example, a synapse component may have a \AnalogReceivePort connected to the
-presynaptic neurons \AnalogSendPort port. When the presynaptic neuron fires;
-it delivers an event to the synapse, which could cause it to produce current
-flow in a post-synaptic neuron.
 
 \subsection{AnalogSendPort}
 \label{sec:AnalogSendPort}
@@ -780,7 +774,7 @@ Each \AnalogSendPort requires a \textit{dimension} attribute. This attribute spe
   \end{edtable}
 \end{table}
 
-{\AnalogReceivePort}s allow variables that have been published externally to be used within the current component. Each \AnalogReceivePort can be connected to \emph{one} \AnalogSendPort.
+{\AnalogReceivePort}s allow variables that have been published externally to be used within the current component. Each \AnalogReceivePort must be connected to exactly \emph{one} \AnalogSendPort.
 
 \subsubsection{Name attribute}
 Each \AnalogReceivePort requires a \textit{name} attribute, which is a valid \identifier and uniquely identify the \AnalogReceivePort from all other elements in the \ComponentClass.
@@ -809,7 +803,7 @@ Each \AnalogReceivePort requires a \textit{dimension} attribute. This attribute 
 Reduce ports can receive data from any number of {\AnalogSendPort} objects (including none).  An \AnalogReducePort takes an additional operator compared to an \AnalogReceivePort,
 {\tt operator}, which specifies how the data from multiple analog send ports
 should be combined to produce a single value. Currently, the
-only supported operations is \lq\lq{}$+$\rq\rq{}, which sums all the incoming port values.
+only supported operation is \lq\lq{}$+$\rq\rq{}, which calculates the sum of the incoming port values.
 
 The motivation for \AnalogReducePort is that it allows us to make our
 \ComponentClass definitions more general. For example, if we are defining a
@@ -853,7 +847,7 @@ will take all of the electrical currents that have been connected to it via {\An
   \end{edtable}
 \end{table}
 
-An \EventSendPort specifies a channel over which events can be transmitted from the component. 
+An \EventSendPort specifies a channel over which events can be transmitted from a component. Each \EventSendPort can be connected any number of \EventReceivePort objects.
 
 \subsubsection{Name attribute}
 Each \EventSendPort requires a \textit{name} attribute, which is a valid \identifier and uniquely identify the \EventSendPort from all other elements in the \ComponentClass.
@@ -874,12 +868,21 @@ Each \EventSendPort requires a \textit{name} attribute, which is a valid \identi
   \end{edtable}
 \end{table}
 
-An \EventReceivePort specifies a channel over which events can be received by the component. 
+An \EventReceivePort specifies a channel over which events can be received by a component. Each \EventReceivePort must be connected to exactly \emph{one} \EventSendPort.
 
 \subsubsection{Name attribute}
 Each \EventReceivePort requires a \textit{name} attribute, which is a valid \identifier and uniquely identify the \EventReceivePort from all other elements in the \ComponentClass.
 
 \section{Dynamic Regimes}
+
+Component classes that contain \Dynamics elements define dynamic models such as neurons, post-synaptic responses or the plasticity of synaptic weights. In these components, state variables are evolved by sets of ordinary differential equations (ODE) to describe the behaviour of the model. The state of the model can transition between distinct regimes with different sets of differential equations via `transitions'. \ref{fig:simple_regime_graph} illustrates a hypothetical transition graph between different ODE regimes, which could be used to separately model sub-threshold and refractory periods for example.
+
+\begin{figure}[htb!]
+\center
+\includegraphics[width=14cm]{images/SimpleRegimeGraph.png}
+\protect\caption{The dynamics block for an example component.}
+\label{fig:simple_regime_graph}
+\end{figure}
 
 \subsection{Dynamics}
 \label{sec:Dynamics}
@@ -892,7 +895,7 @@ Each \EventReceivePort requires a \textit{name} attribute, which is a valid \ide
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
     \StateVariable & set & no \\ 
-    \Regime & set & no\\
+    \Regime & set & yes\\
     \Alias & set & no\\
     \bottomrule
   \end{edtable}
@@ -900,34 +903,11 @@ Each \EventReceivePort requires a \textit{name} attribute, which is a valid \ide
 
 
 The \Dynamics block represents the \emph{internal} mechanisms
-governing the behaviour of the component.  For most of the models
-these dynamics are non-linear, presenting transitions between
-different regimes at particular values of one or different {\StateVariable}s.
-To create a representation that include both simple
-dynamics and non-linear dynamics, the \Dynamics block can contains the
-following concepts:
-
-\begin{itemize}
-\item \StateVariable (section~\ref{sec:StateVariable}): one of the variables that describe the internal state of a component
-\item \Regime (section~\ref{sec:Regime}): a set of ordinary differential equations (ODEs) that describe the dynamics of the
-system for a particular domain of the {\StateVariable}s
-\item \Transition (section~\ref{sec:Transition}): links two
-regimes: the Source \Regime and the Target \Regime, and can be triggered by
-an event or a condition. If a component is in the Source \Regime, and the
-transition is triggered, then the component moves into the Target \Regime.
-\item \Alias (section~\ref{sec:Alias}): an alternative name for a variable or part of an expression.
-\end{itemize}
-
-
-These different concepts are the building blocks of a graph, called
-the Regime Graph (illustrated in Figure~\ref{SimpleRegimeGraph}),
-where the \Regime forms the vertices and the \Transition form the
-directional edges of the Regime Graph. This graph must have at
-least one \Regime, and contain no regime islands. At any given time,
-a component will be in a single \Regime, and can change which \Regime
-it is in through \Transition.
+governing the behaviour of the component. These dynamics are based on ordinary differential equations (ODE) but may contain non-linear transitions between
+different ODE regimes. The regime graph (e.g. \ref{fig:simple_regime_graph}) must contain at least one \Regime element, and contain no regime islands. At any given time, a component will be in a single regime, and can change which regime it is in through transitions.
 
 \note{\Alias objects are defined in Dynamics blocks, \emph{not} \Regime blocks. This means that aliases are the same across all regimes.}
+
 
 \subsection{StateVariable}
 \label{sec:StateVariable}
@@ -945,19 +925,18 @@ it is in through \Transition.
   \end{edtable}
 \end{table}
 
-The internal state of a component is defined by a set of {\StateVariable}s
+The internal state of a component is defined by a set of state variables
  -- variables that can change either continuously or discontinuously as a
 function of time.
 
-The \StateVariable changes happen in two ways:
+The value of a \StateVariable can change in two ways:
 \begin{quote}
 \begin{itemize}
-\item continuously through \textbf{TimeDerivatives} (in {\Regime}s),
-which define the {\StateVariable}s evolution over time, for example
+\item continuously through \TimeDerivative elements (in {\Regime} elements),
+which define how the {\StateVariable} evolves over time, e.g.
 $dX/dt=1-X$.
-\item discretely through \StateAssignment (in {\Transition}s),
-which make discrete changes to a \StateVariable value, for example
-$X = X + 1$.
+\item discretely through \StateAssignment (in \OnCondition or \OnEvent transition elements),
+which make discrete changes to a \StateVariable value, e.g. $X = X + 1$.
 \end{itemize}
 \end{quote}
 
@@ -989,30 +968,15 @@ Each \StateVariable requires a \textit{dimension} attribute. This attribute spec
   \end{edtable}
 \end{table}
 
-A \Regime is defined in NineML as a system of ODEs in time
+A \Regime element represents a system of ODEs in time
 on \StateVariable.  As such, \Regime defines how the {\StateVariable}s
-change (propagate in time) between subsequent {\Transition}s. \Regime is
-defined to have non-vanishing temporal extent. Once construction of
+change (propagate in time) between subsequent transitions. \Regime is
+must have non-vanishing temporal extent. Once construction of
 the \Regime is complete, it should have defined the following
 properties:
 
-\begin{itemize}
-\item An unordered collection of {\StateVariable}s which are
-propagated when the {\Regime} is active.
-\item a set of {\TimeDerivative}s, one for each \StateVariable
-of the \ComponentClass, which define how the {\StateVariable}s
-evolve over time in the form $\frac{dx_{i}}{dt} = f(x_0, ..., x_i, t)$.
-\item The independent variable must be shared between the collection
-of {\StateVariable}s and their propagators in a \Regime.
-\end{itemize}
-
 \note{If a {\TimeDerivative} for a \StateVariable is not defined
 in a \Regime, it is assumed to be zero.}
-
-It is important to note that, at the current stage of development, we are only
-considering "Temporal regimes". In the future, the concept could be extended
-to more general cases where the independent variable can be anything (space
-for example).
 
 \subsubsection{Name attribute}
 Each \Regime requires a \textit{name} attribute, which is a valid \identifier and uniquely identify the \Regime from all other elements in the \ComponentClass.
@@ -1037,6 +1001,12 @@ Each \Regime requires a \textit{name} attribute, which is a valid \identifier an
   \end{edtable}
 \end{table}
 
+\TimeDerivative elements contain a mathematical expression for the right-hand side of the ODE
+\begin{equation}
+\frac{\mathrm{d} variable}{\mathrm{d} t} = expression
+\end{equation}
+which can contain of references to any combination of \StateVariable, \Parameter, \AnalogReceivePort, \AnalogReducePort and \Alias elements with the exception of those derived from \RandomDistribution components.
+
 \subsubsection{Variable attribute}
 Each \TimeDerivative requires a \textit{variable} attribute. This should refer to the name of a \StateVariable in the \ComponentClass. Only one \TimeDerivative is allowed per \textit{variable} in each \Regime.
 
@@ -1044,24 +1014,17 @@ Each \TimeDerivative requires a \textit{variable} attribute. This should refer t
 \section{Events and Transitions}
 \label{sec:Transition}
 
-{\Transition}s define the transition between \Regime blocks.
+Transitions define the transition between \Regime blocks.
 An example dynamics in \ref{SimpleRegimeGraph} has three {\StateVariable}s,
 \emph{X,Y} and \emph{Z}, and a state graph with three {\Regime}s, \emph{regime1},
 \emph{regime2} and \emph{regime3}. At any time, a component will be in one of
 these regimes, and the state variables will evolve accordingly (see \ref{SimpleRegimeGraph}).
 
-\begin{figure}[htb!]
-\center
-\includegraphics[width=14cm]{images/SimpleRegimeGraph.png}
-\protect\caption{The dynamics block for an example component.}
-\label{SimpleRegimeGraph}
-\end{figure}
-
-Movement between several instances of \Regime happens via \Transition.
-A {\Transition} is defined in NineML as having
+Movement between several instances of \Regime happens via a transition.
+A transition is defined in NineML as having
 a source and target {\Regime}, where the target
 {\Regime} can be the same as the source (For example \emph{t5}
-in \ref{SimpleRegimeGraph}). There are two types of \Transition:
+in \ref{SimpleRegimeGraph}). There are two types of transitions:
 
 \begin{itemize}
 \item An \OnCondition function of the \StateVariable, for
@@ -1080,14 +1043,14 @@ satisfied, then the component will move into \emph{regime1}.
 \end{itemize}
 
 During a transition, multiple {\StateAssignment}s can occur and multiple events can be sent.
-(For more on the resolution of {\Transition}s see Appendix~\ref{resolution})
+(For more on the resolution of transitions see Appendix~\ref{resolution})
 
-{\Transition}s have a vanishing temporal extent (i.e. they are
-event-like). Once construction of a {\Transition} is complete, it
+Transitions have a vanishing temporal extent (i.e. they are
+event-like). Once construction of a transition is complete, it
 should have defined the following properties:
 \begin{itemize}
 \item The {\OnCondition} or {\EventReceivePort} which
-triggers the {\Transition}
+triggers the transition
 \item A set of \StateAssignment and \EventOut objects
 \item The label of the source {\Regime}, and the label of the target
 {\Regime}, which may be the same as the source {\Regime}.
@@ -1138,7 +1101,6 @@ Each \OnEvent requires a \textit{port} attribute. This should refer to the name 
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
     \Trigger & singleton & yes \\
-    \Transition & singleton & no \\
     \StateAssignment & set & no\\
     \EventOut & set & no\\
     \bottomrule
@@ -1297,7 +1259,7 @@ In Version 1.0 of the NineML standard, connection rules must be one of 6 standar
 \item RandomFanOut
 \end{itemize}
 
-In future versions, built-in connectivity rules are to be replaced with connection rule functions.
+In future versions, built-in connectivity rules are to be replaced with arbitrary connection rule functions.
 
 \subsubsection{StandardLibrary attribute}
 The \textit{builtin} attribute is required and should point to a \URL underneath the \href{http://nineml.net/standardlibraries/connectionrules/}{http://nineml.net/standardlibraries/connectionrules/}
@@ -2088,7 +2050,7 @@ The {\TimeDerivative}s are defined for the Regime as:
 \end{align}
 
 \noindent
-The \ComponentClass has a single \Transition, is triggered when $V>theta$. When
+The \ComponentClass has a single \OnCondition transition, is triggered when $V>theta$. When
 triggered, It causes an Event called $spikeOutput$ to be emitted, and two
 {\StateAssignment}s to be made:
 \begin{align}
@@ -2097,7 +2059,7 @@ V &\leftarrow c
 \end{align}
 
 \noindent
-The target-regime of the \Transition is not declared explicitly in the XML,
+The target-regime of the \OnCondition transition is not declared explicitly in the XML,
 implying that the
 target-regime is the same as the source-regime, i.e. $subthresholdRegime$.
 
@@ -2307,7 +2269,7 @@ The neuron has 2 EventPorts, $iaf\_spikeoutput$ is a send port, which sends
 events when the neuron fires, and $cobaExcit\_spikeinput$ is a recv port,
 which tells the attached synapse that it should `fire'.
 \noindent
-The neuron has 4 {\Transition}s, 2 {\OnEvent}s  and 2 {\OnCondition}s.
+The neuron has 4 transitions, 2 {\OnEvent} transitions  and 2 {\OnCondition} transitions.
 Two of the Transitions are triggered by $cobaExcit\_spikeinput$ events, which
 cause the conductance of the synapse to increase by an amount $q$, These
 happen in both Regimes.
@@ -2547,13 +2509,13 @@ in this simulation}
 \label{resolution}
 
 This section outlines pseudo code which defines the order of
-\Transition-triggering, state assignment execution, event emission,
+transition-triggering, state assignment execution, event emission,
 transmission and resolution in a system of connected components.
 Implementations do not need to implement this algorithm but should produce
 the same behaviours.
 
 A {\tt TransitionResolutionBlock} represents an instant in time. It begins
-before any {\Transition}s occur and ends after each component has moved
+before any transitions occur and ends after each component has moved
 into its new \Regime, all \textbf{StateAssignments} have been executed
 and all Events generated and resolved in the system.
 
@@ -2567,8 +2529,8 @@ $R^{t}_{n}$.
 
 \noindent From \Regime $R^{t}_{n}$, there are:
 \begin{itemize}
-\item OnEvent {\Transition}s $OnEv^{t}_{n} = \{ ... \}$
-\item OnCondition {\Transition}s $OnCond^{t}_{n} = \{ ... \}$
+\item OnEvent transitions $OnEv^{t}_{n} = \{ ... \}$
+\item OnCondition transitions $OnCond^{t}_{n} = \{ ... \}$
 \end{itemize}
 
 \newcommand{\send}[0]{\texttt{send} }
