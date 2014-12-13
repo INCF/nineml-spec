@@ -23,7 +23,6 @@
 \newcommand{\Unit}{\defRef{\textbf{\class{Unit}}\xspace}{sec:Unit}}
 \newcommand{\Dimension}{\defRef{\textbf{\class{Dimension}}\xspace}{sec:Dimension}}
 \newcommand{\ComponentClass}{\defRef{\textbf{\class{ComponentClass}}\xspace}{sec:ComponentClass}}
-%\newcommand{\ComponentClass}{\textbf{\textcolor{ninemlblue}{\class{ComponentClass}}}\xspace} % Component class reference style without an associated link to the section
 \newcommand{\Dynamics}{\defRef{\defRef{\textbf{\class{Dynamics}}\xspace}{sec:Dynamics}}{sec:Dynamics}}
 \newcommand{\RandomDistribution}{\defRef{\textbf{\class{RandomDistribution}}\xspace}{sec:RandomDistribution}}
 \newcommand{\BuiltInDistribution}{\defRef{\textbf{\class{BuiltInDistribution}}\xspace}{sec:BuiltInDistribution}}
@@ -407,7 +406,7 @@ decay time constant of a synapse model. By definition, Parameters are set at the
 start of the simulation, and remain constant throughout.
 
 \subsubsection{Name attribute}
-Each \Parameter requires a \textit{name} attribute, which is a valid \identifier and uniquely identify the \Parameter within the \ComponentClass.
+Each \Parameter requires a \textit{name} attribute, which is a valid \identifier and uniquely identifies the \Parameter within the \ComponentClass.
 
 \subsubsection{Dimension attribute}
 \Parameter objects can have a \textit{dimension} attribute. This attribute specifies the dimension of the units of the quantity that is expected to be passed to the \Parameter and should refer to the name of a \Dimension element in the global scope. If omitted the \Parameter is dimensionless.
@@ -664,7 +663,7 @@ transmitting a current, for example $i=g*(E-V)$.
 
 
 \subsubsection{Name attribute}
-Each \Alias requires a \textit{name} attribute, which is a valid \identifier and uniquely identify the \Alias from all other elements in the \ComponentClass.
+Each \Alias requires a \textit{name} attribute, which is a valid \identifier and uniquely identifies the \Alias from all other elements in the \ComponentClass.
 
 \draftnote{Was tossing up whether `PhysicalConstant' was a better name for this or not. Was thinking that this could also be used to remove `pi' from the list of built-in symbols}
 \subsection{Constant}
@@ -752,7 +751,7 @@ Ports are divided into sending, \EventSendPort and \AnalogSendPort, and receivin
 {\AnalogSendPort} objects allow variables from the current component to be published externally to be read by other {\ComponentClass} objects. Each {\AnalogSendPort} can be connected to multiple {\AnalogReceivePort} and {\AnalogReducePort} objects.
 
 \subsubsection{Name attribute}
-Each \AnalogSendPort requires a \textit{name} attribute, which is a valid \identifier and uniquely identify the \AnalogSendPort from all other elements in the \ComponentClass.
+Each \AnalogSendPort requires a \textit{name} attribute, which is a valid \identifier and uniquely identifies the \AnalogSendPort from all other elements in the \ComponentClass.
 
 \subsubsection{Dimension attribute}
 Each \AnalogSendPort requires a \textit{dimension} attribute. This attribute specifies the dimension of the units of the quantity that is expected to be passed through the \AnalogSendPort and should refer to the name of a \Dimension element in the global scope.
@@ -777,7 +776,7 @@ Each \AnalogSendPort requires a \textit{dimension} attribute. This attribute spe
 {\AnalogReceivePort}s allow variables that have been published externally to be used within the current component. Each \AnalogReceivePort must be connected to exactly \emph{one} \AnalogSendPort.
 
 \subsubsection{Name attribute}
-Each \AnalogReceivePort requires a \textit{name} attribute, which is a valid \identifier and uniquely identify the \AnalogReceivePort from all other elements in the \ComponentClass.
+Each \AnalogReceivePort requires a \textit{name} attribute, which is a valid \identifier and uniquely identifies the \AnalogReceivePort from all other elements in the \ComponentClass.
 
 \subsubsection{Dimension attribute}
 Each \AnalogReceivePort requires a \textit{dimension} attribute. This attribute specifies the dimension of the units of the quantity that is expected to be passed through the \AnalogReceivePort and should refer to the name of a \Dimension element in the global scope.
@@ -817,7 +816,7 @@ simply need to connect the send ports containing the currents of these
 to change our original \ComponentClass definitions.
 
 \subsubsection{Name attribute}
-Each \AnalogReducePort requires a \textit{name} attribute, which is a valid \identifier and uniquely identify the \AnalogReducePort from all other elements in the \ComponentClass.
+Each \AnalogReducePort requires a \textit{name} attribute, which is a valid \identifier and uniquely identifies the \AnalogReducePort from all other elements in the \ComponentClass.
 
 \subsubsection{Dimension attribute}
 Each \AnalogReducePort requires a \textit{dimension} attribute. This attribute specifies the dimension of the units of the quantity that is expected to be communicated through the \AnalogReducePort and should refer to the name of a \Dimension element in the global scope.
@@ -850,7 +849,7 @@ will take all of the electrical currents that have been connected to it via {\An
 An \EventSendPort specifies a channel over which events can be transmitted from a component. Each \EventSendPort can be connected any number of \EventReceivePort objects.
 
 \subsubsection{Name attribute}
-Each \EventSendPort requires a \textit{name} attribute, which is a valid \identifier and uniquely identify the \EventSendPort from all other elements in the \ComponentClass.
+Each \EventSendPort requires a \textit{name} attribute, which is a valid \identifier and uniquely identifies the \EventSendPort from all other elements in the \ComponentClass.
 
 
 \subsection{EventReceivePort}
@@ -871,11 +870,13 @@ Each \EventSendPort requires a \textit{name} attribute, which is a valid \identi
 An \EventReceivePort specifies a channel over which events can be received by a component. Each \EventReceivePort must be connected to exactly \emph{one} \EventSendPort.
 
 \subsubsection{Name attribute}
-Each \EventReceivePort requires a \textit{name} attribute, which is a valid \identifier and uniquely identify the \EventReceivePort from all other elements in the \ComponentClass.
+Each \EventReceivePort requires a \textit{name} attribute, which is a valid \identifier and uniquely identifies the \EventReceivePort from all other elements in the \ComponentClass.
 
 \section{Dynamic Regimes}
 
-Component classes that contain \Dynamics elements define dynamic models such as neurons, post-synaptic responses or the plasticity of synaptic weights. In these components, state variables are evolved by sets of ordinary differential equations (ODE) to describe the behaviour of the model. The state of the model can transition between distinct regimes with different sets of differential equations via `transitions'. \ref{fig:simple_regime_graph} illustrates a hypothetical transition graph between different ODE regimes, which could be used to separately model sub-threshold and refractory periods for example.
+Component classes that contain \Dynamics elements define dynamic models such as neurons, post-synaptic responses or the plasticity of synaptic weights. In these components, state variables are evolved by sets of ordinary differential equations (ODE) to describe the behaviour of the model. The state of the model can transition between distinct regimes with different sets of differential equations via `transitions'.  Multiple regimes can be used to model qualitatively distinct behaviour by neuron models, such as sub-threshold, spiking and refractory periods for example.
+
+\ref{fig:simple_regime_graph} illustrates a hypothetical transition graph for a system with three state variables, $X$, $Y$ and $Z$, which transitions between three ODE regimes, \emph{regime1}, \emph{regime2} and \emph{regime3}. At any time, a component will be in one of these regimes, and the state variables will evolve according to the ODE of that regime.
 
 \begin{figure}[htb!]
 \center
@@ -941,7 +942,7 @@ which make discrete changes to a \StateVariable value, e.g. $X = X + 1$.
 \end{quote}
 
 \subsubsection{Name attribute}
-Each \StateVariable requires a \textit{name} attribute, which is a valid \identifier and uniquely identify the \StateVariable from all other elements in the \ComponentClass.
+Each \StateVariable requires a \textit{name} attribute, which is a valid \identifier and uniquely identifies the \StateVariable from all other elements in the \ComponentClass.
 
 \subsubsection{Dimension attribute}
 Each \StateVariable requires a \textit{dimension} attribute. This attribute specifies the dimension of the units of the quantities that \StateVariable is expected to be initialised and updated with and should refer to the name of a \Dimension element in the global scope.
@@ -969,17 +970,14 @@ Each \StateVariable requires a \textit{dimension} attribute. This attribute spec
 \end{table}
 
 A \Regime element represents a system of ODEs in time
-on \StateVariable.  As such, \Regime defines how the {\StateVariable}s
+on \StateVariable.  As such, \Regime defines how the state variables
 change (propagate in time) between subsequent transitions. \Regime is
 must have non-vanishing temporal extent. Once construction of
 the \Regime is complete, it should have defined the following
 properties:
 
-\note{If a {\TimeDerivative} for a \StateVariable is not defined
-in a \Regime, it is assumed to be zero.}
-
 \subsubsection{Name attribute}
-Each \Regime requires a \textit{name} attribute, which is a valid \identifier and uniquely identify the \Regime from all other elements in the \ComponentClass.
+Each \Regime requires a \textit{name} attribute, which is a valid \identifier and uniquely identifies the \Regime from all other elements in the \ComponentClass.
 
 
 \subsection{TimeDerivative}
@@ -1005,86 +1003,27 @@ Each \Regime requires a \textit{name} attribute, which is a valid \identifier an
 \begin{equation}
 \frac{\mathrm{d} variable}{\mathrm{d} t} = expression
 \end{equation}
-which can contain of references to any combination of \StateVariable, \Parameter, \AnalogReceivePort, \AnalogReducePort and \Alias elements with the exception of those derived from \RandomDistribution components.
+which can contain of references to any combination of \StateVariable, \Parameter, \AnalogReceivePort, \AnalogReducePort and \Alias elements with the exception of aliases that are derived from \RandomDistribution components. Therefore, only one \TimeDerivative element is allowed per \StateVariable per \Regime. If a {\TimeDerivative} for a \StateVariable is not defined in a \Regime, it is assumed to be zero.
 
 \subsubsection{Variable attribute}
 Each \TimeDerivative requires a \textit{variable} attribute. This should refer to the name of a \StateVariable in the \ComponentClass. Only one \TimeDerivative is allowed per \textit{variable} in each \Regime.
 
 
-\section{Events and Transitions}
+\section{Transitions}
 \label{sec:Transition}
 
-Transitions define the transition between \Regime blocks.
-An example dynamics in \ref{SimpleRegimeGraph} has three {\StateVariable}s,
-\emph{X,Y} and \emph{Z}, and a state graph with three {\Regime}s, \emph{regime1},
-\emph{regime2} and \emph{regime3}. At any time, a component will be in one of
-these regimes, and the state variables will evolve accordingly (see \ref{SimpleRegimeGraph}).
+Movement between dynamic regimes occurs via transitions. There are two types of transitions, condition-triggered transitions (see \OnCondition), which are evoked when an associated trigger expression become true, or event-triggered transitions (see \OnEvent), which are evoked when an associated event port receive an event from external components. Transitions have vanishing temporal extents (i.e. they are event-like).
 
-Movement between several instances of \Regime happens via a transition.
-A transition is defined in NineML as having
-a source and target {\Regime}, where the target
-{\Regime} can be the same as the source (For example \emph{t5}
-in \ref{SimpleRegimeGraph}). There are two types of transitions:
-
+\draftnote{Should \OnEvent transitions be able to emit new events or would this be unnecessarily complex to handle?}
+During either type of transition three instantaneous actions can occur:
 \begin{itemize}
-\item An \OnCondition function of the \StateVariable, for
-example $X > Y$.
-\item An \OnEvent on an input from an \EventReceivePort. (See section~\ref{sec:Ports}).
-\end{itemize}
-
-
-During either type of transition three things can happen:
-\begin{itemize}
-\item The component can change regime. For example, in \ref{SimpleRegimeGraph}, if
-the component is in \emph{regime3}, and the trigger for \emph{t3} is
-satisfied, then the component will move into \emph{regime1}.
-\item \textbf{StateAssignment}s can take place, for example, $X=0$
+\item The component transitions to a target regime
+\item State variables can be assigned new values (see \StateAssignment)
 \item The component can send events (see \EventOut).
 \end{itemize}
 
-During a transition, multiple {\StateAssignment}s can occur and multiple events can be sent.
-(For more on the resolution of transitions see Appendix~\ref{resolution})
-
-Transitions have a vanishing temporal extent (i.e. they are
-event-like). Once construction of a transition is complete, it
-should have defined the following properties:
-\begin{itemize}
-\item The {\OnCondition} or {\EventReceivePort} which
-triggers the transition
-\item A set of \StateAssignment and \EventOut objects
-\item The label of the source {\Regime}, and the label of the target
-{\Regime}, which may be the same as the source {\Regime}.
-\end{itemize}
-
-\subsection{OnEvent}
-\label{sec:OnEvent}
-
-An OnEvent block is activated when the dynamics component receives an event from an external component.
-
-\vspace*{-0.25ex}
-\begin{table}[H]
-  \begin{edtable}{tabular}{llr}
-    \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{OnEvent Structure}}}\\
-    \toprule
-    \em{Attribute name} & \em{Type/Format} & \em{Required} \\
-    \midrule
-    target & \Regime{}@name & no \\    
-    port & \EventReceivePort{}@name & yes\\
-    \midrule
-    \em{Element type} & \em{Multiplicity} & \em{Required} \\
-    \midrule   
-    \StateAssignment & set & no\\
-    \EventOut & set & no\\
-    \bottomrule
-  \end{edtable}
-\end{table}
-
-\subsubsection{Port attribute}
-Each \OnEvent requires a \textit{port} attribute. This should refer to the name of an \EventReceivePort  in the \ComponentClass interface.
-
-\subsubsection{Target attribute}
-\OnEvent can have a \textit{target} attribute, which should refer to the name of a \Regime element in the \ComponentClass that the dynamics block will transition to when the \OnEvent block is triggered by an incoming event.
+Multiple state assignments can be sent and multiple events can be sent within a single transition block
+(for more on the resolution of transitions see Appendix~\ref{resolution}).
 
 \subsection{OnCondition}
 \label{sec:OnCondition}
@@ -1096,7 +1035,7 @@ Each \OnEvent requires a \textit{port} attribute. This should refer to the name 
     \toprule
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
-    target & \Regime{}@name & no \\
+    targetRegime & \Regime{}@name & no \\
     \midrule
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
@@ -1107,10 +1046,41 @@ Each \OnEvent requires a \textit{port} attribute. This should refer to the name 
   \end{edtable}
 \end{table}
 
-An OnCondition block is activated when the condition in the \Trigger block is met.
+\OnCondition blocks are activated when the mathematical expression in the \Trigger block becomes true. They are typically used to model spikes in spiking neuron models, potentially emitting spike events and/or transitioning to an explicit refractory regime.
 
-\subsubsection{Target attribute}
-An \OnEvent can have a \textit{target} attribute, which should refer to the name of a \Regime element in the \ComponentClass that the dynamics block will transition to when the \Trigger condition is met.
+\subsubsection{TargetRegime attribute}
+An \OnEvent can have a \textit{targetRegime} attribute, which should refer to the name of a \Regime element in the \ComponentClass that the dynamics block will transition to when the trigger condition is met.  If the \textit{targetRegime} attribute is omitted the regime will transition to itself.
+
+
+\subsection{OnEvent}
+\label{sec:OnEvent}
+
+\vspace*{-0.25ex}
+\begin{table}[H]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{OnEvent Structure}}}\\
+    \toprule
+    \em{Attribute name} & \em{Type/Format} & \em{Required} \\
+    \midrule
+    targetRegime & \Regime{}@name & no \\    
+    port & \EventReceivePort{}@name & yes\\
+    \midrule
+    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \midrule   
+    \StateAssignment & set & no\\
+    \EventOut & set & no\\
+    \bottomrule
+  \end{edtable}
+\end{table}
+
+\OnEvent blocks are activated when the dynamics component receives an event from an external component on the port the \OnEvent element is ``listening'' to. They are typically used to model the transient response to spike events from incoming synaptic connections.
+
+\subsubsection{Port attribute}
+Each \OnEvent requires a \textit{port} attribute. This should refer to the name of an \EventReceivePort  in the \ComponentClass interface.
+
+\subsubsection{TargetRegime attribute}
+\OnEvent can have a \textit{targetRegime} attribute, which should refer to the name of a \Regime element in the \ComponentClass that the dynamics block will transition to when the \OnEvent block is triggered by an incoming event. If the \textit{targetRegime} attribute is omitted the regime will transition to itself.
 
 \subsection{Trigger}
 \label{sec:Trigger}
@@ -1127,12 +1097,12 @@ An \OnEvent can have a \textit{target} attribute, which should refer to the name
   \end{edtable}
 \end{table}
 
-{\Trigger}s define when an {\OnCondition} transition should be triggered. The \MathInline block of a
-{\Trigger} can contain any arbitrary combination of `and' and `or' \emph{logical
-operations} (`$\&\&$' and `$||$') on the
+{\Trigger}s define when an {\OnCondition} transition should be occur. The \MathInline block of a
+{\Trigger} can contain any arbitrary combination of `and', `or' and `negation' \emph{logical
+operations} (`$\&\&$', `$||$' and `$!$' respectively) on the
 result of pure inequality \emph{relational operations} (`$>$' and `$<$').
-The inequality expressions may contain references to 
-\StateVariable{s}, \AnalogReceivePort{s}, \AnalogReducePort{s}, \Parameter{s} and nested {\Alias}es, with the exception of {\Alias}es
+The inequality expression may contain references to 
+\StateVariable, \AnalogReceivePort, \AnalogReducePort, \Parameter and {\Alias} elements, with the exception of {\Alias} elements
 derived from random distributions. The \OnCondition block is triggered when the boolean result of the \Trigger statement changes from false to true. 
 
 \subsection{StateAssignment}
@@ -1154,10 +1124,12 @@ derived from random distributions. The \OnCondition block is triggered when the 
   \end{edtable}
 \end{table}
 
+\StateAssignment elements allow discontinuous changes in the value of state variables. Only one state assignment is allowed per variable per transition block. The assignment expression may contain references to 
+\StateVariable, \AnalogReceivePort, \AnalogReducePort, \Parameter and {\Alias} elements, including {\Alias}
+elements derived from random distributions. State assignments are typically used to reset the membrane voltage after an outgoing spike event or update post-synaptic response states after an incoming spike event.
+
 \subsubsection{Variable attribute}
 Each \StateAssignment requires a \textit{variable} attribute. This should refer to the name of a \StateVariable in the \ComponentClass. Only one \StateAssignment is allow per \textit{variable} in each \OnEvent or \OnCondition block.
-
-
 
 \subsection{EventOut}
 \label{sec:EventOut}
@@ -1173,6 +1145,8 @@ Each \StateAssignment requires a \textit{variable} attribute. This should refer 
     \bottomrule
   \end{edtable}
 \end{table}
+
+\EventOut elements specify events to be raised during a transition. They are typically used to raise spike events from within \OnCondition elements.
 
 \subsubsection{Port attribute}
 Each \EventOut requires a \textit{port} attribute. This should refer to the name of an \EventSendPort in the \ComponentClass interface.
@@ -1229,7 +1203,7 @@ As of version 1.0, the only random distributions available to the user are those
 \note{\textit{C} implementations of these distributions are available in the GNU Scientific Library, \href{http://www.gnu.org/software/gsl/}{http://www.gnu.org/software/gsl/}}
 
 \subsubsection{StandardLibrary attribute}
-
+The \textit{standardLibrary} attribute is required and should point to a \URL in the \href{http://www.uncertml.org/distributions/}{http://www.uncertml.org/distributions/} directory.
 
 
 \section{Network Connectivity}
@@ -1249,44 +1223,46 @@ As of version 1.0, the only random distributions available to the user are those
   \end{edtable}
 \end{table}
 
-In Version 1.0 of the NineML standard, connection rules must be one of 6 standard library types:
+In Version 1.0 of the NineML standard, connection rules must be one of 6 standard library types (in future versions, built-in connectivity rules are to be replaced with arbitrary connection rule generators):
 \begin{itemize}
 \item AllToAll
 \item OneToOne
 \item ProbabilisticConnectivity
 \item ExplicityConnectionList
-\item RandomFanIn
 \item RandomFanOut
+\item RandomFanIn
 \end{itemize}
 
-In future versions, built-in connectivity rules are to be replaced with arbitrary connection rule functions.
-
 \subsubsection{StandardLibrary attribute}
-The \textit{builtin} attribute is required and should point to a \URL underneath the \href{http://nineml.net/standardlibraries/connectionrules/}{http://nineml.net/standardlibraries/connectionrules/}
+The \textit{standardLibrary} attribute is required and should point to a \URL in the \href{http://nineml.net/standardlibraries/connectionrules/}{http://nineml.net/standardlibraries/connectionrules/} directory.
 
-\emph{\textbf{AllToAll}}
+\emph{\textbf{http://nineml.net/standardlibraries/connectionrules/AllToAll}}
 
 All cells in the source population are connected to all cells in the destination population.
 
-\emph{\textbf{OneToOne}}
+\emph{\textbf{http://nineml.net/standardlibraries/connectionrules/OneToOne}}
 
 Each cell in the source population is connected to the cell in the destination population with the corresponding index. Note that this requires that the source and destination populations be the same size.
 
-\emph{\textbf{ProbabilisticConnectivity}}
+\emph{\textbf{http://nineml.net/standardlibraries/connectionrules/ProbabilisticConnectivity}}
 
-All cells in the source population are connected to cells in the destination population with a probability defined by the \textit{probability} parameter. This attribute should refer to a name of a dimensionless \Parameter in the enclosing \ComponentClass. The properties supplied to this parameter should either be a dimensionless \SingleValue representing the probability of a connection between all source and destination cell pairs, or a \ArrayValue or \ExternalArrayValue of size $M{\times}N$, where $M$ and $N$ are the size of the source and destination populations respectively. In the case of the \ArrayValue or \ExternalArrayValue properties, the list represents probabilities of connections existing between the first cell in the source population with every cell in the destination population in order of their index, followed by the second cell in the source with with every cell in the destination population in order of their index and so forth for each cell in the source population.
+All cells in the source population are connected to cells in the destination population with a probability defined by a parameter, which should be named \textit{probability}. The properties supplied to the \textit{probability} parameter should either be a \SingleValue representing the probability of a connection between all source and destination cell pairs, or a \ArrayValue or \ExternalArrayValue of size $M{\times}N$, where $M$ and $N$ are the size of the source and destination populations respectively. In the case of the \ArrayValue or \ExternalArrayValue properties, the list represents probabilities of connections existing between the first cell in the source population with every cell in the destination population in order of their index, followed by the second cell in the source with with every cell in the destination population in order of their index and so forth for each cell in the source population.
 
-\emph{\textbf{ExplicitConnectionList}}
+\emph{\textbf{http://nineml.net/standardlibraries/connectionrules/ExplicitConnectionList}}
 
-Cells in the source population are connected to cells in the destination population as specified by an explicit lists.
+Cells in the source population are connected to cells in the destination population as specified by an explicit arrays. The source and destination are defined via parameters, which should be named \textit{sourceIndicies} and \textit{destinationIndicies} parameters respectively.
 
-This \textit{source-indicies} parameter The properties supplied to this parameter should be a \ArrayValue or \ExternalArrayValue drawn from the set $\{1,\ldots,M\}$ where $M$ is the size of the source population and be the same length as the property supplied to the \textit{target-indices} parameter.
+The properties supplied to the \textit{sourceIndicies} parameter should be a \ArrayValue or \ExternalArrayValue drawn from the set $\{1,\ldots,M\}$ where $M$ is the size of the source population and be the same length as the property supplied to the \textit{target-indices} parameter.
 
-This \textit{target-indicies} parameter The properties supplied to this parameter should be a \ArrayValue or \ExternalArrayValue drawn from the set $\{1,\ldots,N\}$ where $N$ is the size of the source population and be the same length as the property supplied to the \textit{source-indices} parameter.
+The properties supplied to the \textit{destinationIndicies} parameter should be a \ArrayValue or \ExternalArrayValue drawn from the set $\{1,\ldots,N\}$ where $N$ is the size of the source population and be the same length as the property supplied to the \textit{source-indices} parameter.
 
-\emph{\textbf{RandomFanIn}}
+\emph{\textbf{http://nineml.net/standardlibraries/connectionrules/RandomFanOut}}
 
-\emph{\textbf{RandomFanOut}}
+Cells in the source population are connected to cells in the destination population with a probability defined by a parameter, which should be named \textit{probability}. The property supplied to the \textit{probability} parameter should be a \SingleValue.
+
+\emph{\textbf{http://nineml.net/standardlibraries/connectionrules/RandomFanIn}}
+
+Cells in the destination population are connected to cells in the source population with a probability defined by a parameter, which should be named \textit{probability}. The property supplied to the \textit{probability} parameter should be a \SingleValue.
 
 \clearpage
 \part{User Layer}
@@ -2606,14 +2582,19 @@ this target-regime, or remains in the same regime if \RCLn is empty.
 \subsubsection{Notes}
 
 \begin{enumerate}
-\item  There is no order defined in transitions; this means
+\item \draftnote{Not sure about this either. Since a transition can also mean transitioning to a new regime it would
+be very bad if two conditions were met at the same time and it was ambiguous which was applied first. Should
+we not require an order of execution if there are multiple {\OnCondition}s in the same regime. Could be quite difficult
+for the user to handle this otherwise}
+There is no order defined in transitions; this means
 that the order of resolution of state assignments can be ambiguous. If, for
 example, we have two transitions, T1 and T2, originating from the same \Regime,
 in which T1 contains the state assignment \textsl{V=V+1} and T2 contains the
-assignment \textsl{V=V*V}, and both transitions are triggered, then there is no
+assignment \textsl{V=V*V}, and both transitions are triggered simultaneously, then there is no
 guarantee about the value of V. It is up the user to ensure this does not
 happen.
 
+\draftnote{I am not sure this is a good idea, we could just not allow \EventOut in \OnEvent transitions}
 \item This Resolution System allows \emph{cascading} of Events, which in theory
 could be recursive through components, depending on connectivity. The
 implementation allows for this; and it is the users responsibility to ensure
@@ -2621,9 +2602,6 @@ that there are not such issues. The implementation may decided to terminate
 Step (6) after a given number (say 1000) of iterations to prevent infinite
 loops.
 
-\item Flattening of hierarchical components; implementation should ensure that
-the behaviour of a flattened component is identical to that of an unflattened
-component.
 \end{enumerate}
 
 \subsection{Parallelising of event resolution}
