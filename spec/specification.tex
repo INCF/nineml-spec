@@ -16,7 +16,7 @@
 
 % Define misc. references
 \newcommand{\identifier}{\typeDefRef{identifier\xspace}{sec:identifier}}
-\newcommand{\URL}{\href{http://en.wikipedia.org/wiki/Uniform_resource_locator}{URL} }
+\newcommand{\URL}{\href{http://en.wikipedia.org/wiki/Uniform_resource_locator}{URL}\xspace}
 
 % Define Abstraction Layer element references
 
@@ -292,31 +292,28 @@ In order to simplify their interpretation and maintain compatibility with a wide
 \subsection{Identifiers}
 \label{sec:identifier}
 
-Elements are identified by \emph{names}, which are unique in the scope they are enclosed by (either within a component class or in the global scope of the file). For a name to be a valid identifier, it must meet the requirements for a \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 identifiers} with the additional requirement that it does not start or end with `\_'. 
+Elements are identified by \emph{names}, which are unique in the scope they are enclosed by (either within a component class or in the global scope of the file). For a name to be a valid identifier, it must meet the requirements for a \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 identifiers} with the additional requirement that it does not start or end with an underscore (i.e. `\_'). 
 
-NineML identifiers are case-sensitive in the sense that they must be referred to with the same case as they are defined. However, two identifiers that are identical with the exception of case, e.g. `v\_threshold' and `v\_Threshold', are not permitted in the same scope.
+NineML identifiers are case-sensitive in the sense that they must be referred to with the same case as they are defined. However, two identifiers that are identical with the exception of case, e.g. `v\_threshold' and `v\_Threshold', are not permitted within the same scope.
 
 \subsection{Extensions}
 \label{sec:extensions}
 
-``Extensions'' provide high level descriptive power to NineML. The NineML ``Core'' is defined in the Specification, excepting those parts specifically described as Extensions.
+``Extensions'' increase the descriptive power of NineML by providing compact, high-level descriptions of models that can also be expressed in ``Core'' NineML (i.e. syntactic sugar). Envisaged examples include more concise forms for kinetic equations and multi-component/compartment dynamic models. 
 
-To be classified as an Extension to NineML, a modelling language must meet the following requirements.
-Extensions MUST be collapsible to Core descriptions, and provide two way conversion (in the form of standalone tools) between the Extension level description and the Core description (Extension information can be stored in annotations, see \Annotations) \label{item:collapsible}
-
-The rationale behind these requirements is to minimise the amount of updating that tool builders and code generation builders need to do (as long as the core is supported all extensions should also be supported via collapsing to the core).
-
-\note{To support the , NineML compliant tools must preserve all annotations during reading, writing and transformation, with the exception of when they are explicitly added/deleted by the user.}
-
-\subsection{About this document}
-
-This document presents the current NineML specifications and consists of:
+Core NineML is everything defined by this document, except those parts specifically described as Extensions. To be classified as a NineML Extension, a modelling language must meet the following requirements.
 \begin{itemize}
-\item a description of the Abstraction and User Layer object models;
-\item the XML serialization with the description of the different tags;
-\item documented examples of XML descriptions;
-\item a proposal to solve the transition resolution problem.
+\item Models (or part thereof) written in the Extension format must be collapsible to Core NineML without change in behaviour.
+\item The flattened (to Core NineML) descriptions must be convertible back to their original form (the additional information required to perform the reverse conversion can be stored in \Annotations).
+\item Stand-alone tools that perform the two-way conversion between the extended and core forms (preferably written in commonly used languages such as XSLT, Python, Java, etc...) must be downloadable from a publicly available \URL (a section of the NineML website will be available for this purpose).
+\item Non-standard extensions must be defined within a unique namespace
+\item Detailed specifications (preferably in the same format as this document) must be made publicly available along with the conversion tools.
+ \label{item:collapsible}
 \end{itemize}
+
+One of the rationales behind the division between core and extended NineML is to minimise the set of features that a tool needs to support to be NineML compliant, i.e. as long as the core is supported all extensions should also be supported via flattening to core NineML. However, tool builders may want to take advantage of the additional structure provided by the extensions to optimise the implementation of the model or provide more intuitive interfaces to the user. 
+
+\note{To facilitate the reverse conversion from core to extended formats, NineML compliant tools must preserve all annotations during reading, writing and transformation, with the exception of when the return conversion is no longer possible due to the applied transformation or the annotations are explicitly added/deleted by the user.}
 
 \clearpage
 \part{Abstraction Layer}
@@ -723,7 +720,7 @@ Any valid numeric value, including shorthand scientific notation e.g. 1e-5 ($1\t
 %
 %
 %\subsubsection{Url attribute}
-%\StandardLibrary require a \textit{url} attribute, which specifies a \href{http://en.wikipedia.org/wiki/Uniform_resource_locator}{Uniform Resource Locator (URL)} that describes the behaviour of the standard library member.
+%\StandardLibrary require a \textit{url} attribute, which specifies a \URL that describes the behaviour of the standard library member.
 %
 %\subsubsection{Text}
 %The name of the member within the library to use.
@@ -880,9 +877,9 @@ Each \EventReceivePort requires a \textit{name} attribute, which is a valid \ide
 
 \section{Dynamic Regimes}
 
-Component classes that contain \Dynamics elements define dynamic models such as neurons, post-synaptic responses or the plasticity of synaptic weights. In these components, state variables are evolved by sets of ordinary differential equations (ODE) to describe the behaviour of the model. The state of the model can transition between distinct regimes with different sets of differential equations via `transitions'.  Multiple regimes can be used to model qualitatively distinct behaviour by neuron models, such as sub-threshold, spiking and refractory periods for example.
+Component classes that contain a \Dynamics block define dynamic models such as neurons, post-synaptic responses or the plasticity of synaptic weights. In these components, state variables are evolved by sets of ordinary differential equations (ODE), which describe the behaviour of the model. The state of the model can transition between distinct regimes, which define different sets of differential equations, via `transitions'.  Multiple regimes can be used to model qualitatively distinct behaviour by neuron models, such as sub-threshold, spiking and refractory periods of an abstract neuron model for example.
 
-\ref{fig:simple_regime_graph} illustrates a hypothetical transition graph for a system with three state variables, $X$, $Y$ and $Z$, which transitions between three ODE regimes, \emph{regime1}, \emph{regime2} and \emph{regime3}. At any time, a component will be in one of these regimes, and the state variables will evolve according to the ODE of that regime.
+\ref{fig:simple_regime_graph} illustrates a hypothetical transition graph for a system with three state variables, $X$, $Y$ and $Z$, which transitions between three ODE regimes, \emph{regime1}, \emph{regime2} and \emph{regime3}. At any time, the model will be in one and only one of these regimes, and the state variables will evolve according to the ODE of that regime.
 
 \begin{figure}[htb!]
 \center
@@ -1018,12 +1015,12 @@ Each \TimeDerivative requires a \textit{variable} attribute. This should refer t
 \section{Transitions}
 \label{sec:Transition}
 
-Movement between dynamic regimes occurs via transitions. There are two types of transitions, condition-triggered transitions (see \OnCondition), which are evoked when an associated trigger expression become true, or event-triggered transitions (see \OnEvent), which are evoked when an associated event port receive an event from external components. Transitions have vanishing temporal extents (i.e. they are event-like).
+Movements between dynamic regimes occurs via transitions, and have vanishing temporal extents (i.e. they are event-like). There are two types of transitions, condition-triggered transitions (see \OnCondition), which are evoked when an associated trigger expression becomes true, or event-triggered transitions (see \OnEvent), which are evoked when an associated event port receives an event from an external component.
 
 \draftnote{Should \OnEvent transitions be able to emit new events or would this be unnecessarily complex to handle?}
-During either type of transition three instantaneous actions can occur:
+During either type of transition three instantaneous actions will/can occur:
 \begin{itemize}
-\item The component transitions to a target regime
+\item The component transitions to a target regime (can be the same as the current regime)
 \item State variables can be assigned new values (see \StateAssignment)
 \item The component can send events (see \EventOut).
 \end{itemize}
@@ -1294,38 +1291,10 @@ Cells in the destination population are connected to cells in the source populat
   \end{edtable}
 \end{table}
 
-The basic building block of NineML User Layer is called component. In the
-User Layer description component is a reference to a \ComponentClass
-object defined in the Abstraction Layer. Abstraction Layer defines the
-mathematics of the component and this definition is then referred in the
-User Layer through an object of type \Definition.
-
-In addition to the \Definition object, the component encapsulates
-user-given ID or label, and a set of \Property objects. The composition
-of this set of properties is defined in the Abstraction Layer (or externally)
-and instantiated in the User Layer description of component. The mapping
-between mathematical description of the object in the abstraction
-layer and the corresponding properties labels in the User Layer are
-provided in this specification.
-
-User can add a note to a component. These notes are intended to provide
-a specific reference to the research paper page where this component is
-described and similar kind of information. These notes are not intended
-to duplicate the Abstraction Layer documentation or any other
-documentation, thus they shall not provide mathematical description and
-other details of the component implementation. Note can contain text
-(type {\tt String}) or link to an Internet resource (type {\tt URL}).
-
-To reduce the size of the resulting model description user can refer to
-already described component by referencing their label instead of providing
-a link to the Abstraction Layer or external definition. In this case the
-properties of the component that have to be redefined are stated explicitly,
-the properties that are inherited from the original description are omitted.
-
-If the simulator only supports User Layer, then the simulator developers
-can create mappings directly between the reference to a definition in the
-User Layer description of the component and the intrinsic simulator code
-that implements the same mathematics.
+\Component elements instantiate Abstraction Layer component classes by providing properties 
+for each of the parameters defined the class. Each \Component is linked to a \ComponentClass
+class by a \Definition element, which locates the component class. A \Component 
+that instantiates a \ComponentClass directly must supply matching \Property elements for each \Parameter in the \ComponentClass. Alternatively, a \Component can inherit a \ComponentClass and set of \Property elements from an existing component by substituting the \Definition for a \Prototype element, which locates the reference \Component. In this case, only the properties that differ from the reference component need to be specified.
 
 \subsubsection{Name attribute}
 Each \Component requires a \textit{name} attribute, which should be a valid \identifier and uniquely identify the {\Component} from all other elements in the global scope.
@@ -1340,7 +1309,7 @@ Each \Component requires a \textit{name} attribute, which should be a valid \ide
     \toprule
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
-    url & \url & no\\
+    url & \URL & no\\
     \midrule
     \em{Text format} & \; & \em{Required} \\
     \midrule
@@ -1349,14 +1318,12 @@ Each \Component requires a \textit{name} attribute, which should be a valid \ide
   \end{edtable}
 \end{table}
 
-All constructs in the User Layer have their mathematical or algorithmical
-definitions in the Abstraction Layer. Definition is an object that
-establishes a link between User Layer component and Abstraction Layer
-\ComponentClass. This \ComponentClass can be located either internal to the current
-file or externally as specified by the \textit{url} attribute.
+The \Definition element establishes a link between a User Layer component and Abstraction Layer
+\ComponentClass. This \ComponentClass can be located either in the current
+document or in another file if a \textit{url} attribute is provided.
 
 \subsubsection{Url attribute}
-If the \ComponentClass referenced by the definition element is defined outside the current file, the \textit{url} attribute specifies a \href{http://en.wikipedia.org/wiki/Uniform_resource_locator}{Uniform Resource Locator (URL)} for the file which contains the \ComponentClass definition.
+If the \ComponentClass referenced by the definition element is defined outside the current document, the \textit{url} attribute specifies a \URL for the file which contains the \ComponentClass definition. If it is omitted the \ComponentClass is assumed to be in the current document.
 
 \subsubsection{Text}
 The name of the \ComponentClass to be referenced \ComponentClass needs to be provided in the text of \Definition element.
@@ -1380,20 +1347,16 @@ The name of the \ComponentClass to be referenced \ComponentClass needs to be pro
   \end{edtable}
 \end{table}
 
-\Prototype is a User Layer object that can replace \Definition object
-in situations where user needs to reuse the same definition for multiple
-instances of objects. In this case the first instance shall be described using
-\Definition and the rest can use the first one through \Reference.
-Label in the \Reference must match a label in a previously defined
-component.
+The \Prototype element establishes a link to an existing User Layer \Component, which defines the \ComponentClass and default properties of the \Component.  The reference \Component can be located either in the current
+document or in another file if a \textit{url} attribute is provided.
 
 \subsubsection{Url attribute}
-If the prototype \Component is defined outside the current file, the \textit{URL} attribute specifies a \href{http://en.wikipedia.org/wiki/Uniform_resource_locator}{Uniform Resource Locator (URL)} for the file which contains the prototype \Component.
+If the prototype \Component is defined outside the current file, the \textit{URL} attribute specifies a \URL for the file which contains the prototype \Component.
 
 \subsubsection{Text}
 The name of the \Component to be referenced \Component needs to be provided in the text of \Prototype element.
 
-
+\draftnote{I have removed the \Quantity{s} in favour of adding units to the \Property elements. I will create a GitHub issue about this where we can discuss this and potentially decide to change it back if you like}
 \subsection{Property}
 \label{sec:Property}
 
@@ -1405,74 +1368,68 @@ The name of the \Component to be referenced \Component needs to be provided in t
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
     name & \Parameter{}@name & yes\\
-    \midrule
-    \em{Element type} & \em{Multiplicity} & \em{Required} \\
-    \midrule
-    \Quantity & singleton & yes \\ 
-    \bottomrule
-  \end{edtable}
-\end{table}
-
-
-Property is a User Layer object that instantiates values in simple
-Abstraction Layer \Parameter and combines described in the quantity object
-and a label. The label should match the corresponding label in the
-Abstraction Layer \Parameter definition.
-
-The user can set the value of the property and (when applicable for the data
-type, e.g. \Quantity) the units of measurement. These units are also
-checked against the dimensionality of the corresponding property definition
-in the Abstraction Layer.
-
-\subsubsection{Name attribute}
-Each \Property requires a \textit{name} attribute. This should refer to the name of a \Parameter in the corresponding \ComponentClass of the \Component.
-
-\draftnote{I can't quite remember the discussion we had about this but I no longer see the need for the quantity tag instead of just having the units as an attribute of the property elements. The only other places we might want to use a quantity element is for delays and numerical constants. But constants are in the Abstraction Layer so we shouldn't use it there anyway and delays will need to have special checking to only permit time-dimension units}
-\subsection{Quantity}
-\label{sec:Quantity}
-
-Quantity is a compound data type object that encapsulates a numerical value
-and a unit of measurements. Unit has to be of one of the \Unit type.
-Any numeric quantity in the language (except counters) has to be of this type,
-dimensionless quantities shall use predefined empty \Unit.
-\begin{table}[H]
-  \begin{edtable}{tabular}{llr}
-    \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Quantity Structure}}}\\
-    \toprule
-    \em{Attribute name} & \em{Type/Format} & \em{Required} \\
-    \midrule
     units & \Unit{}@symbol & no\\
     \midrule
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
-   \pbox{12cm}{ \SingleValue | \ArrayValue | \ExternalArrayValue | \ComponentValue} & singleton & yes \\
+    \SingleValue | \ArrayValue | \ExternalArrayValue | \ComponentValue & singleton & yes \\ 
     \bottomrule
   \end{edtable}
 \end{table}
 
-There are two kinds of quantities: values of the first kind are given to the
-model by the user and stay fixed, values of a second kind are computed within
-the model during simulation. For all practical reasons the syntax of the user
-layer descriptions is identical for both kinds of quantities. Furthermore,
-because NineML does not provide any default values for quantities, it is a
-job of the user to provide initial values for all defined quantities. To
-ensure the integrity of the model NineML requires all initial values to be
-set in the User Layer description. For batch simulations and other
-modifications any of the values given in the User Layer can be overwritten
-by a simulation setup description, but this is outside of the scope of the
-current version of NineML.
+\Property elements provide values for the parameters defined in the \ComponentClass
+of the \Component. Their \textit{name} attribute should match the name of the corresponding \Parameter element in the \ComponentClass. The \Property should be provided units that match the dimensionality of the corresponding \Parameter definition.
 
-Some quantities can have values drawn from random distribution. In
-this case User Layer description of the quantities includes a
-reference to a random distribution component instead of a numeric
-value.  Other quantities might be calculated according to some
-function dependent on some other quantities. These can be defined
-through the type Functionby including inline Abstraction Layer
-definitions or MathML.
+\subsubsection{Name attribute}
+Each \Property requires a \textit{name} attribute. This should refer to the name of a \Parameter in the corresponding \ComponentClass of the \Component.
 
-\subsubsection{Unit attribute}
-The \textit{units} attribute specifies the units of the quantity and should refer to the name of a \Unit element in the global scope. If it is omitted then the quantity is considered to be dimensionless.
+\subsubsection{Units attribute}
+The \textit{units} attribute specifies the units of the quantity and should refer to the name of a \Unit element in the global scope. If it is omitted then the quantity is considered to be dimensionless. The \Dimension of the \Unit should have matching power attributes (i.e. `\emph{l}', `\emph{m}', `\emph{k}', `\emph{t}', `\emph{n}', `\emph{i}' and `\emph{j}') to the \Dimension of the corresponding \Parameter.
+
+%
+%\subsection{Quantity}
+%\label{sec:Quantity}
+%
+%Quantity is a compound data type object that encapsulates a numerical value
+%and a unit of measurements. Unit has to be of one of the \Unit type.
+%Any numeric quantity in the language (except counters) has to be of this type,
+%dimensionless quantities shall use predefined empty \Unit.
+%\begin{table}[H]
+%  \begin{edtable}{tabular}{llr}
+%    \toprule
+%    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Quantity Structure}}}\\
+%    \toprule
+%    \em{Attribute name} & \em{Type/Format} & \em{Required} \\
+%    \midrule
+%
+%    \midrule
+%    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+%    \midrule
+%   \pbox{12cm}{ \SingleValue | \ArrayValue | \ExternalArrayValue | \ComponentValue} & singleton & yes \\
+%    \bottomrule
+%  \end{edtable}
+%\end{table}
+%
+%There are two kinds of quantities: values of the first kind are given to the
+%model by the user and stay fixed, values of a second kind are computed within
+%the model during simulation. For all practical reasons the syntax of the user
+%layer descriptions is identical for both kinds of quantities. Furthermore,
+%because NineML does not provide any default values for quantities, it is a
+%job of the user to provide initial values for all defined quantities. To
+%ensure the integrity of the model NineML requires all initial values to be
+%set in the User Layer description. For batch simulations and other
+%modifications any of the values given in the User Layer can be overwritten
+%by a simulation setup description, but this is outside of the scope of the
+%current version of NineML.
+%
+%Some quantities can have values drawn from random distribution. In
+%this case User Layer description of the quantities includes a
+%reference to a random distribution component instead of a numeric
+%value.  Other quantities might be calculated according to some
+%function dependent on some other quantities. These can be defined
+%through the type Functionby including inline Abstraction Layer
+%definitions or MathML.
+
 \subsection{Reference}
 \label{sec:Reference}
 
@@ -1492,13 +1449,23 @@ The \textit{units} attribute specifies the units of the quantity and should refe
   \end{edtable}
 \end{table}
 
+\Reference elements are used to locate User Layer elements in the global scope of the current separate documents. In most cases, User Layer elements (with the exception of \Population elements supplied to \Projection) can be specified inline, i.e. within the element they are required. However, it is often convenient to define a component in the global scope as this allows it to be reused at different places within the model. The \textit{url} attribute can be used to reference a component in a separate document, potentially one published online in a public repository (e.g. \href{http://senselab.med.yale.edu/modeldb/ListByModelName.asp?c=19&lin=-1}{ModelDB (http://senselab.med.yale.edu/modeldb/)}or \href{http://www.opensourcebrain.org/}{Open Source Brain (http://www.opensourcebrain.org/)}).
+
 \subsubsection{Url attribute}
-The \textit{url} attribute specifies a \href{http://en.wikipedia.org/wiki/Uniform_resource_locator}{Uniform Resource Locator (URL)} for the file which contains the User Layer element to be referenced.
+The \textit{url} attribute specifies a \URL for the file which contains the User Layer element to be referenced.
 
 \subsubsection{Text format}
 The name of the User Layer element to be referenced should be included in the body of the \Reference element.
 
 \section{Values}
+
+In NineML, ``values'' are arrays that implicitly grow to fill the size of the container (i.e. \Population or \Projection) they are located within. Values can be one of four types
+\begin{itemize}
+\item \SingleValue, a consistent value across the container
+\item \ArrayValue, an explicit array defined in NineML
+\item \ExternalArrayValue, an explicit array defined in text (space delimited) or HDF5 format.
+\item \ComponentValue, a return value from a \RandomDistribution component.
+\end{itemize}
 
 \subsection{SingleValue}
 \label{sec:SingleValue}
@@ -1578,7 +1545,7 @@ Any valid numeric value, including shorthand scientific notation e.g. 1e-5 ($1\t
 \end{table}
 
 \subsubsection{Url attribute}
-The \textit{url} attribute specifies a \href{http://en.wikipedia.org/wiki/Uniform_resource_locator}{Uniform Resource Locator (URL)} for the external data file.
+The \textit{url} attribute specifies a \URL for the external data file.
 
 \subsubsection{MimeType attribute}
 The \textit{mimetype} attribute specifies the data format for the external value list in the \href{http://en.wikipedia.org/wiki/Internet_media_type}{MIME type} syntax. Currently, only two formats are supported \lstinline|application/vnd.nineml.valuelist.text| and \lstinline|application/vnd.nineml.valuelist.hdf5|. 
@@ -1889,7 +1856,8 @@ Each \FromPlasticity element requires a \textit{receiver} attribute. This should
 Each \FromResponse element requires a \textit{sender} attribute. This should refer to the name of a \AnalogSendPort or \EventSendPort in the \Cell->\Component{}\withelem\ComponentClass of the source population. The transmission mode of the port (i.e. \lq\lq{}analog\rq\rq{} or \lq\lq{}digital\rq\rq{}) should match that of the port referenced by the \textit{receiver} attribute.
 
 \subsubsection{Receiver attribute}
-Each \FromResponse element requires a \textit{receiver} attribute. This should refer to the name of a \AnalogReceivePort, \EventReceivePort or \AnalogReducePort in the \Component{}\withelem\ComponentClass in the enclosing \Source/\Destination/\Plasticity/\Response element.  The transmission mode of the port (i.e. \lq\lq{}analog\rq\rq{} or \lq\lq{}digital\rq\rq{}) should match that of the port referenced by the \textit{sender} attribute.
+Each \FromResponse element requires a \textit{receiver} attribute. This should refer to the name of a \AnalogReceivePort, \EventReceivePort or \AnalogReducePort in the \Component{}\withelem\ComponentClass in the enclosing \Source/\Destination/\\
+\Plasticity/\Response element.  The transmission mode of the port (i.e. \lq\lq{}analog\rq\rq{} or \lq\lq{}digital\rq\rq{}) should match that of the port referenced by the \textit{sender} attribute.
 
 \subsection{Connectivity}
 \label{sec:Connectivity}
@@ -1982,6 +1950,10 @@ Each \Item requires a \textit{index} attribute. This attribute specifies the ord
 
 \section{Annotations}
 
+Annotations are provided to add semantic information about the model, preserving structure that is lost during conversion from an extended format to core NineML, and provide suggestions for the simulation of the model. It is highly recommended to add references to all publications on which the model or property values are based in the annotations. For adding semantic structure to the model it is recommended to use the \href{http://www.w3.org/RDF/}{Resource Description Framework (RDF)} although it not a strict requirement.
+
+In order to be compliant with the NineML specification any tool handling NineML descriptions must preserve all existing annotations, except where a user explicitly edits/deletes them. In future versions of this section will be expanded to include suggested formats for commonly used annotations.
+
 \subsection{Annotations}
 \label{sec:Annotations}
 
@@ -1997,14 +1969,12 @@ Each \Item requires a \textit{index} attribute. This attribute specifies the ord
   \end{edtable}
 \end{table}
 
-{\Annotations} elements are provided to add semantic information about the model, preserving structure that is lost during conversion from an extended format to core NineML, and provide suggestions for the simulation of the model. They can be included within any NineML element and any valid XML is allowed within {\Annotations} elements. In order to be compliant with the NineML specification any tool handling NineML descriptions must preserve all existing annotations, except where a user explicitly edits/deletes them.
-
-%\draftnote{Should we make it mandatory to use RDF? It would probably greatly improve its value if all NineML files were using the same system for annotations (see GitHub \#23)}
-
-For adding semantic structure to the model it is recommended to use the \href{http://www.w3.org/RDF/}{Resource Description Framework  (RDF)}. 
+The \Annotations element is the top-level of the annotations attached to a NineML element. They can be included within any NineML element (User Layer and Abstraction Layer) and any valid XML is allowed within them.
 
 \appendix
-\addcontentsline{toc}{part}{Appendix}
+\clearpage
+\part*{Appendix}
+
 
 \section{Structure of a NineML description}
 
