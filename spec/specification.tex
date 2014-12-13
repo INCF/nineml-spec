@@ -299,6 +299,15 @@ NineML identifiers are case-sensitive in the sense that they must be referred to
 \subsection{Extensions}
 \label{sec:extensions}
 
+``Extensions'' provide high level descriptive power to NineML. The NineML ``Core'' is defined in the Specification, excepting those parts specifically described as Extensions.
+
+To be classified as an Extension to NineML, a modelling language must meet the following requirements.
+Extensions MUST be collapsible to Core descriptions, and provide two way conversion (in the form of standalone tools) between the Extension level description and the Core description (Extension information can be stored in annotations, see \Annotations) \label{item:collapsible}
+
+The rationale behind these requirements is to minimise the amount of updating that tool builders and code generation builders need to do (as long as the core is supported all extensions should also be supported via collapsing to the core).
+
+\note{To support the , NineML compliant tools must preserve all annotations during reading, writing and transformation, with the exception of when they are explicitly added/deleted by the user.}
+
 \subsection{About this document}
 
 This document presents the current NineML specifications and consists of:
@@ -429,6 +438,8 @@ as rich types with a numerical factor and exponents for each of the
 base dimensions. They are independent of the particular choice of
 units by which they are assigned.
 
+\note{The format for units and dimensions is the same as is used in NeuroML version 2.0 (\href{http://www.neuroml.org}{http://www.neuroml.org}).}
+
 \subsection{Dimension}
 \label{sec:Dimension}
 
@@ -480,9 +491,6 @@ The \textit{k} attribute specifies the power of the temperature dimension in the
 \subsubsection{J attribute}
 The \textit{j} attribute specifies the power of the luminous-intensity dimension in the \Dimension. If omitted the power is zero.
 
-\note{This format for \Dimension is the same as is used in NeuroML version 2.0 (\href{http://www.neuroml.org}{http://www.neuroml.org}).}
-
-
 \subsection{Unit}
 \label{sec:Unit}
 
@@ -520,8 +528,6 @@ A \Unit can optionally have an \textit{offset} attribute. This attribute specifi
 \end{lstlisting}
 
 If omitted, the offset is zero.
-
-\note{This format for \Unit is the same as is used in NeuroML version 2.0 (\href{http://www.neuroml.org}{http://www.neuroml.org}).}
 
 \section{Mathematical Expressions}
 
