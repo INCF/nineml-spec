@@ -37,7 +37,7 @@
 \newcommand{\StateAssignment}{\defRef{\textbf{\class{StateAssignment}}\xspace}{sec:StateAssignment}}
 \newcommand{\TimeDerivative}{\defRef{\textbf{\class{TimeDerivative}}\xspace}{sec:TimeDerivative}}
 \newcommand{\Alias}{\defRef{\textbf{\class{Alias}}\xspace}{sec:Alias}}
-\newcommand{\Constant}{\defRef{\textbf{\class{Constant}}\xspace}{sec:Constant}}
+\newcommand{\PhysicalConstant}{\defRef{\textbf{\class{PhysicalConstant}}\xspace}{sec:PhysicalConstant}}
 \newcommand{\StandardLibrary}{\defRef{\textbf{\class{StandardLibrary}}\xspace}{sec:StandardLibrary}}
 \newcommand{\Regime}{\defRef{\textbf{\class{Regime}}\xspace}{sec:Regime}}
 \newcommand{\Trigger}{\defRef{\textbf{\class{Trigger}}\xspace}{sec:Trigger}}
@@ -147,7 +147,7 @@
 \vspace{0.5cm}
 \noindent{\LARGE \bf Specification}\\
 \vspace{0.5cm}
-\noindent{\large INCF Task Force on Multi-Scale Modeling}\\
+\noindent{\large NineML Standardization Committee}\\
 \vspace{0.5cm}
 \noindent{\large Version: 1.0}
 \end{center}
@@ -203,7 +203,7 @@ This document is under the Common Creative license BY-NC-SA:\\ http://creativeco
 % -----------------------------------------------------------------------------
 \section{Introduction}
 % -----------------------------------------------------------------------------
-
+\vspace{-12.5pc} % A bit of a hack to reverse the vspace added by the Appendix name
 The increasing number of studies related to neuronal network modeling
 and the diversity of the simulation platforms and implementations
 cause a major issue for model sharing, replicability and reusability
@@ -277,37 +277,35 @@ instantiation and the value of parameters of all these components of a network
 model.
 \end {enumerate}
 
-As the User Layer provides the mechanism for instantiation and
-parametrization of the model elements that have been defined in the
-Abstraction Layer, it is clearly essential that these two layers share
-a complementary and compatible design philosophy. There is a
-clear definition of which aspects of a model are defined in the User
-Layer and which are defined in the Abstraction Layer. In addition,
-the mechanisms for naming and addressing Abstraction Layer concepts
-that are instantiated in the User Layer have been kept simple for the
-user.
-
-In order to simplify their interpretation and maintain compatibility with a wide range of data formats (e.g. JSON, Python objects), NineML documents are not sensitive to the order that objects appear in.
+Since the User Layer provides the instantiation and
+parametrization of model elements that have been defined in the
+Abstraction Layer, the two layers should share
+a complementary and compatible design philosophy. Which aspects of a model
+are defined in the Abtraction Layer and which are in the User Layer
+Layer are clearly defined (each element type belongs to either one).
+In order to simplify their interpretation and maintain compatibility with a wide 
+range of data formats (e.g. JSON, Python objects), NineML documents are 
+not sensitive to the order that objects appear in.
 
 \subsection{Identifiers}
 \label{sec:identifier}
 
-Elements are identified by \emph{names}, which are unique in the scope they are enclosed by (either within a component class or in the global scope of the file). For a name to be a valid identifier, it must meet the requirements for a \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 identifiers} with the additional requirement that it does not start or end with an underscore (i.e. `\_'). 
+Elements are identified by \emph{names}, which are unique in the scope they are enclosed by (either within a component class or in the global scope of the file). For a name to be a valid NineML identifier, it must meet the requirements for a \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 identifiers}. Additionally, identifiers are not permitted to begin or end with an underscore character (i.e. `\_') to allow special variables to be defined in the same scope as identified variables/objects in generated code.
 
-NineML identifiers are case-sensitive in the sense that they must be referred to with the same case as they are defined. However, two identifiers that are identical with the exception of case, e.g. `v\_threshold' and `v\_Threshold', are not permitted within the same scope.
+NineML identifiers are case-sensitive in the sense that they must be referred to with the same case as they are defined. However, two identifiers that are identical with the exception of case, e.g. `v\_threshold' and `v\_Threshold', are not permitted within the same scope. Identifiers used within component classes also cannot be the same (case-sensitive) as one of the built-in symbols or functions (see \MathInline).
 
 \subsection{Extensions}
 \label{sec:extensions}
 
-``Extensions'' increase the descriptive power of NineML by providing compact, high-level descriptions of models that can also be expressed in ``Core'' NineML (i.e. syntactic sugar). Envisaged examples include more concise forms for kinetic equations and multi-component/compartment dynamic models. 
+``Extensions'' increase the descriptive power of NineML by providing syntax for compact, high-level descriptions of models that can also be expressed in ``Core'' NineML (i.e. syntactic sugar). Envisaged examples include concise forms for kinetic equations and multi-component/compartment dynamic models. 
 
 Core NineML is everything defined by this document, except those parts specifically described as Extensions. To be classified as a NineML Extension, a modelling language must meet the following requirements.
 \begin{itemize}
-\item Models (or part thereof) written in the Extension format must be collapsible to Core NineML without change in behaviour.
+\item Models written in the Extension format (or part thereof) must be collapsible to Core NineML without change in behaviour.
 \item The flattened (to Core NineML) descriptions must be convertible back to their original form (the additional information required to perform the reverse conversion can be stored in \Annotations).
-\item Stand-alone tools that perform the two-way conversion between the extended and core forms (preferably written in commonly used languages such as XSLT, Python, Java, etc...) must be downloadable from a publicly available \URL (a section of the NineML website will be available for this purpose).
+\item Stand-alone tools that perform the two-way conversion between the extended and core forms (preferably written in commonly used languages such as XSLT, Python, Java, etc...) must be downloadable from a publicly available \URL (a section of the NineML website, \href{http://nineml.net}{http://nineml.net}, is available for this purpose).
 \item Non-standard extensions must be defined within a unique namespace
-\item Detailed specifications (preferably in the same format as this document) must be made publicly available along with the conversion tools.
+\item Detailed specifications, preferably in the same format as this document (see the `ninemlspec.cls' latex class), must be made publicly available along with the conversion tools.
  \label{item:collapsible}
 \end{itemize}
 
@@ -435,7 +433,7 @@ as rich types with a numerical factor and exponents for each of the
 base dimensions. They are independent of the particular choice of
 units by which they are assigned.
 
-\note{The format for units and dimensions is the same as is used in NeuroML version 2.0 (\href{http://www.neuroml.org}{http://www.neuroml.org}).}
+\note{The format for units and dimensions was copied from NeuroML version 2.0 (\href{http://www.neuroml.org}{http://www.neuroml.org}).}
 
 \subsection{Dimension}
 \label{sec:Dimension}
@@ -669,26 +667,28 @@ transmitting a current, for example $i=g*(E-V)$.
 Each \Alias requires a \textit{name} attribute, which is a valid \identifier and uniquely identifies the \Alias from all other elements in the \ComponentClass.
 
 \draftnote{Was tossing up whether `PhysicalConstant' was a better name for this or not. Was thinking that this could also be used to remove `pi' from the list of built-in symbols}
-\subsection{Constant}
+
+\subsection{PhysicalConstant}
+\label{sec:PhysicalConstant}
 
 \begin{table}[H]
   \begin{edtable}{tabular}{llr}
     \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Constant Structure}}}\\
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{PhysicalConstant Structure}}}\\
     \toprule
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
     name & \identifier & yes\\
     units & \Unit@name & no\\
     \midrule
-    \em{Text format} & \; & \em{Required} \\
+    \em{Body format} & \; & \em{Required} \\
     \midrule
     \primtype{real number} & \; & yes \\ 
     \bottomrule
   \end{edtable}
 \end{table}
 
-\Constant objects are used to specify physical constants such as the Ideal Gas Constant (i.e. ??) or Avogadro's number (i.e. ??).
+\PhysicalConstant objects are used to specify physical constants such as the Ideal Gas Constant (i.e. 8.314462175 JK$^{-1}$mol$^{-1}$) or Avogadro's number (i.e. 6.0221412927$\times$10$^{23}$mol$^{-1}$).
 
 \subsubsection{Name attribute}
 Each \Dimension requires a \textit{name} attribute, which should be a valid \identifier and uniquely identify the {\Dimension} in current the scope.
@@ -696,7 +696,7 @@ Each \Dimension requires a \textit{name} attribute, which should be a valid \ide
 \subsubsection{Unit attribute}
 The \textit{units} attribute specifies the units of the quantity and should refer to the name of a \Unit element in the global scope. If it is omitted then the quantity is considered to be dimensionless.
 
-\subsubsection{Text format}
+\subsubsection{Body format}
 Any valid numeric value, including shorthand scientific notation e.g. 1e-5 ($1\times10^{-5}$).
 
 %\subsection{StandardLibrary}
@@ -711,7 +711,7 @@ Any valid numeric value, including shorthand scientific notation e.g. 1e-5 ($1\t
 %    \midrule
 %    url & \href{http://en.wikipedia.org/wiki/Uniform_resource_locator}{URL} & yes\\
 %    \midrule
-%    \em{Text format} & \; & \em{Required} \\
+%    \em{Body format} & \; & \em{Required} \\
 %    \midrule
 %    member name & \; & yes \\ 
 %    \bottomrule
@@ -901,6 +901,7 @@ Component classes that contain a \Dynamics block define dynamic models such as n
     \StateVariable & set & no \\ 
     \Regime & set & yes\\
     \Alias & set & no\\
+    \PhysicalConstant & set & no\\    
     \bottomrule
   \end{edtable}
 \end{table}
@@ -1311,7 +1312,7 @@ Each \Component requires a \textit{name} attribute, which should be a valid \ide
     \midrule
     url & \URL & no\\
     \midrule
-    \em{Text format} & \; & \em{Required} \\
+    \em{Body format} & \; & \em{Required} \\
     \midrule
     \ComponentClass{}@name & \; & yes \\ 
     \bottomrule
@@ -1340,7 +1341,7 @@ The name of the \ComponentClass to be referenced \ComponentClass needs to be pro
     \midrule
     url & \href{http://en.wikipedia.org/wiki/Uniform_resource_locator}{URL} & no\\
     \midrule
-    \em{Text format} & \; & \em{Required} \\
+    \em{Body format} & \; & \em{Required} \\
     \midrule
     \Component{}@name & \; & yes \\ 
     \bottomrule
@@ -1442,7 +1443,7 @@ The \textit{units} attribute specifies the units of the quantity and should refe
     \midrule
     url &  \href{http://en.wikipedia.org/wiki/Uniform_resource_locator}{URL}  & no\\
     \midrule
-    \em{Text format} & \; & \em{Required} \\
+    \em{Body format} & \; & \em{Required} \\
     \midrule
     *@name & \; & yes\\
     \bottomrule
@@ -1454,10 +1455,11 @@ The \textit{units} attribute specifies the units of the quantity and should refe
 \subsubsection{Url attribute}
 The \textit{url} attribute specifies a \URL for the file which contains the User Layer element to be referenced.
 
-\subsubsection{Text format}
+\subsubsection{Body format}
 The name of the User Layer element to be referenced should be included in the body of the \Reference element.
 
 \section{Values}
+\label{sec:Values}
 
 In NineML, ``values'' are arrays that implicitly grow to fill the size of the container (i.e. \Population or \Projection) they are located within. Values can be one of four types
 \begin{itemize}
@@ -1473,17 +1475,19 @@ In NineML, ``values'' are arrays that implicitly grow to fill the size of the co
 \begin{table}[H]
   \begin{edtable}{tabular}{llr}
     \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{HomogeneousValue Structure}}}\\
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{SingleValue Structure}}}\\
     \toprule
-    \em{Text format} & \; & \em{Required} \\
+    \em{Body format} & \; & \em{Required} \\
     \midrule
     \primtype{real number} & \; & yes \\ 
     \bottomrule
   \end{edtable}
 \end{table}
 
-\subsubsection{Text format}
-Any valid numeric value, including shorthand scientific notation e.g. 1e-5 ($1\times10^{-5}$).
+A \SingleValue element represents an array filled with a single value.
+
+\subsubsection{Body format}
+Any valid numeric value in \href{http://en.wikipedia.org/wiki/ANSI_C}{ANSI C89}, including shorthand scientific notation  e.g. 1e-5 ($1\times10^{-5}$).
 
 \subsection{ArrayValue}
 \label{sec:ArrayValue}
@@ -1500,6 +1504,8 @@ Any valid numeric value, including shorthand scientific notation e.g. 1e-5 ($1\t
   \end{edtable}
 \end{table}
 
+\ArrayValue elements are used to represent an explicit array of values in XML. \ArrayValue elements contain a set of \ArrayValueRow elements (i.e. unordered, since they are explicitly ordered by their \textit{index} attribute). Since XML is significantly slower to parse than plain text and binary formats it is not recommended to use \ArrayValue for large arrays, preferring \ExternalArrayValue instead. 
+
 \subsection{ArrayValueRow}
 \label{sec:ArrayValueRow}
 
@@ -1512,20 +1518,21 @@ Any valid numeric value, including shorthand scientific notation e.g. 1e-5 ($1\t
     \midrule
     index & integer & yes \\
     \midrule
-    \em{Text format} & \; & \em{Required} \\
+    \em{Body format} & \; & \em{Required} \\
     \midrule
     \primtype{real number} & \; & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
 
+\ArrayValueRow elements represent the numerical values of the explicit \ArrayValue element.
 \subsubsection{Index attribute}
 The \textit{index} attribute specifies the index of the \ArrayValueRow in the \ArrayValue. It must be non-negative, unique amongst the set of \ArrayValueRow{}@index in the list, and the set of indices must be contiguous for a single \ArrayValue.
 
 \note{The order of {\ArrayValueRow} elements within an \ArrayValue element does not effect the interpreted order of the values in the array in keeping with the order non-specific design philosophy of NineML (see \ref{sec:design_considerations}).}
 
-\subsubsection{Text format}
-Any valid numeric value, including shorthand scientific notation e.g. 1e-5 ($1\times10^{-5}$).
+\subsubsection{Body format}
+Any valid numeric value in \href{http://en.wikipedia.org/wiki/ANSI_C}{ANSI C89}, including shorthand scientific notation  e.g. 1e-5 ($1\times10^{-5}$).
 
 \subsection{ExternalArrayValue}
 \label{sec:ExternalArrayValue}
@@ -1544,19 +1551,25 @@ Any valid numeric value, including shorthand scientific notation e.g. 1e-5 ($1\t
   \end{edtable}
 \end{table}
 
+\ExternalArrayValue elements are used to explicitly define large arrays of values. The array data are not stored in XML (which is slow to parse) but more efficient text or binary \href{http://www.hdfgroup.org/HDF5/}{HDF5 (http://www.hdfgroup.org/HDF5/)} formats. As of version 1.0, the data in the external files are stored as dense \primtype{float} or \primtype{integer} arrays. However, sparse-array formats are planned for future versions.
+
+The \textit{columnName} attribute of the \ExternalArrayValue elements allows multiple arrays of equal length (and therefore typically relating to the same container) to be stored in the same external file. 
+
 \subsubsection{Url attribute}
-The \textit{url} attribute specifies a \URL for the external data file.
+The \textit{url} attribute specifies the \URL of the external data file.
 
 \subsubsection{MimeType attribute}
 The \textit{mimetype} attribute specifies the data format for the external value list in the \href{http://en.wikipedia.org/wiki/Internet_media_type}{MIME type} syntax. Currently, only two formats are supported \lstinline|application/vnd.nineml.valuelist.text| and \lstinline|application/vnd.nineml.valuelist.hdf5|. 
 
 \begin{itemize}
-\item \lstinline|application/vnd.nineml.valuelist.text| - an ASCII text file with a single row of white-space separated column names, followed by arbitrarily many white-space separated data rows of numeric values. Each numeric value is associated with the column name corresponding to the same index the along the row. Therefore, the number of items in each row must be the same.
-\item \lstinline|application/vnd.nineml.valuelist.hdf5| - a \href{http://www.hdfgroup.org/HDF5/}{HDF5} data file containing a single level of named members of \primtype{array->float} or \primtype{array->int} type.
+\item \lstinline|application/vnd.nineml.externalvaluearray.text| - an ASCII text file with a single row of white-space separated column names, followed by arbitrarily many white-space separated data rows of numeric values. Each numeric value is associated with the column name corresponding to the same index the along the row. Therefore, the number of items in each row must be the same.
+\item \lstinline|application/vnd.nineml.externalvaluearray.hdf5| - a \href{http://www.hdfgroup.org/HDF5/}{HDF5} data file containing a single level of named members of \primtype{array->float} or \primtype{array->int} type.
 \end{itemize}
 %\tracingall
 
 \subsubsection{ColumnName attribute}
+
+Each \ExternalArrayValue must have a \textit{columnName} attribute, which refers to a column header in the external data file. 
 
 \subsection{ComponentValue}
 \label{sec:ComponentValue}
@@ -1577,8 +1590,10 @@ The \textit{mimetype} attribute specifies the data format for the external value
   \end{edtable}
 \end{table}
 
-\subsubsection{Port attribute}
+The array of values represented by a \ComponentValue element is populated from the output port of a component. As of version 1.0, only \RandomDistribution components are supported within \ComponentValue but function and generator components are planned for later versions. The size of the generated array is determined by the size of the container (i.e. \Population or \Projection) the \ComponentValue is nested within.
 
+\subsubsection{Port attribute}
+Each \ComponentValue requires a \textit{port} attribute, which selects which port of the \Component to read.
 
 \section{Populations}
 
@@ -1602,7 +1617,7 @@ The \textit{mimetype} attribute specifies the data format for the external value
   \end{edtable}
 \end{table}
 
-Population elements define sets of neuron components of the same class. The size of the set is specified by the {\tt number} attribute. The properties of the neuron components can be constant across the population, randomly distributed, individually specified or as a function of neuron index.  
+A \Population defines a set of dynamic components of the same class. The size of the set is specified by the \Number element. The properties of the dynamic components are generated from value types, which can be constant across the population, randomly distributed or individually specified (see \ref{sec:Values}).
 
 \subsubsection{Name attribute}
 Each \Population requires a \textit{name} attribute, which should be a valid \identifier and uniquely identify the {\Population} from all other elements in the global scope.
@@ -1622,6 +1637,8 @@ Each \Population requires a \textit{name} attribute, which should be a valid \id
   \end{edtable}
 \end{table}
 
+The \Cell element specifies the dynamic components that will make up the population. The \Component can be defined inline or via a \Reference element. 
+
 \subsection{Number}
 \label{sec:Number}
 
@@ -1630,17 +1647,28 @@ Each \Population requires a \textit{name} attribute, which should be a valid \id
     \toprule
     \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Number Structure}}}\\
     \toprule
-    \em{Text format} & \; & \em{Required} \\
+    \em{Body format} & \; & \em{Required} \\
     \midrule
-    integer & \; & yes\\
+    \primtype{integer} & \; & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
 
-\subsubsection{Text format}
-The number of cells in the population is specified by the integer provided in the text of the \Number element. 
+The number of cells in the population is specified by the integer provided in the text of the \Number element. In future versions this may be extended to allow the size of a population to be derived from other features of the \Population. 
+
+\subsubsection{Body format}
+The body of the \Number element contains an \primtype{integer} representing the size of the population.
 
 \section{Projections}
+
+Projections define the synaptic connectivity between two populations, the post-synaptic response of the connections, the plasticity rules that modulate the post-synaptic response and the transmission delays. Synaptic and plasticity dynamic components are created and connected to and from explicitly defined ports of the cell components in the source and projection populations if the connection rule determines there is a connection between a particular source and destination cell pair. 
+
+\draftnote{I just made this up so it will need checking}
+\SingleValue and \ComponentValue elements used in properties of a projection (\emph{not} the source and destination populations) take the size of the number of connections made. While \ArrayValue and \ExternalArrayValue elements can either be the size of the number of connections made or the number of possible unique connections (i.e. $N_{\mathrm{source}} * N_{\mathrm{dest}}$). In either case, the expected array data is ordered by the indices
+\begin{equation}
+i_{\mathrm{value}} = i_{\mathrm{source}} * N_{\mathrm{dest}} + i_{\mathrm{dest}}
+\end{equation}
+where $i_{\mathrm{value}}$, $i_{\mathrm{source}}$ and $i_{\mathrm{dest}}$ are the indices of the array entry, and the source and destination cells respectively and $N_{\mathrm{dest}}$ is the size of the destination population. For the case of the explicit arrays being the size of the number connections made, data for $i_{\mathrm{value}}$ indices that don't correspond to connected pairs are omitted.
 
 \subsection{Projection}
 \label{sec:Projection}
@@ -1666,7 +1694,6 @@ The number of cells in the population is specified by the integer provided in th
   \end{edtable}
 \end{table}
 
-Projections define the synaptic connectivity between two populations, the post-synaptic response of the connections and the plasticity rules that modulate the post-synaptic response. Synaptic components are connected to the port  connected to a event or analog port depending on the connection-rule.
 
 
 \subsubsection{Name attribute}
@@ -1782,7 +1809,7 @@ response node (section \ref{sec:Response}).
 \end{table}
 
 \subsubsection{Sender attribute}
-Each \FromSource element requires a \textit{sender} attribute. This should refer to the name of a \AnalogSendPort or \EventSendPort in the \Cell->\Component{}\withelem\ComponentClass of the source population. The transmission mode of the port (i.e. \lq\lq{}analog\rq\rq{} or \lq\lq{}digital\rq\rq{}) should match that of the port referenced by the \textit{receiver} attribute.
+Each \FromSource element requires a \textit{sender} attribute. This should refer to the name of a \AnalogSendPort or \EventSendPort in the \Cell{}\withelem\Component{}\withelem\ComponentClass of the source population. The transmission mode of the port (i.e. \lq\lq{}analog\rq\rq{} or \lq\lq{}digital\rq\rq{}) should match that of the port referenced by the \textit{receiver} attribute.
 
 \subsubsection{Receiver attribute}
 Each \FromSource element requires a \textit{receiver} attribute. This should refer to the name of a \AnalogReceivePort, \EventReceivePort or \AnalogReducePort in the \Component{}\withelem\ComponentClass in the enclosing \\
@@ -1805,7 +1832,7 @@ Each \FromSource element requires a \textit{receiver} attribute. This should ref
 \end{table}
 
 \subsubsection{Sender attribute}
-Each \FromDestination element requires a \textit{sender} attribute. This should refer to the name of a \AnalogSendPort or \EventSendPort in the \Cell->\Component{}\withelem\ComponentClass of the source population. The transmission mode of the port (i.e. \lq\lq{}analog\rq\rq{} or \lq\lq{}digital\rq\rq{}) should match that of the port referenced by the \textit{receiver} attribute.
+Each \FromDestination element requires a \textit{sender} attribute. This should refer to the name of a \AnalogSendPort or \EventSendPort in the \Cell\withelem\Component{}\withelem\ComponentClass of the source population. The transmission mode of the port (i.e. \lq\lq{}analog\rq\rq{} or \lq\lq{}digital\rq\rq{}) should match that of the port referenced by the \textit{receiver} attribute.
 
 \subsubsection{Receiver attribute}
 Each \FromDestination element requires a \textit{receiver} attribute. This should refer to the name of a \AnalogReceivePort, \EventReceivePort or \AnalogReducePort in the \Component{}\withelem\ComponentClass in the enclosing \\
@@ -1884,7 +1911,7 @@ Each \FromResponse element requires a \textit{receiver} attribute. This should r
     \toprule
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
-    \Quantity & singleton & yes \\ 
+    \SingleValue | \ArrayValue | \ExternalArrayValue | \ComponentValue & singleton & yes \\ 
     \bottomrule
   \end{edtable}
 \end{table}
@@ -1933,7 +1960,7 @@ Each \FromResponse element requires a \textit{receiver} attribute. This should r
     \midrule
     index & \primtype{integer} & yes\\
     \midrule
-    \em{Text format} & \; & \em{Required} \\
+    \em{Body format} & \; & \em{Required} \\
     \midrule \relax
     [\Population | \Selection{}]@name & \; & yes\\
     \bottomrule
@@ -1973,34 +2000,29 @@ The \Annotations element is the top-level of the annotations attached to a NineM
 
 \appendix
 \clearpage
-\part*{Appendix}
+\part*{\vspace{12.5pc}Appendix}
 
 
-\section{Structure of a NineML description}
+\section{Examples}
 
-In order to simplify the descriptions themselves and the mechanisms for
-combining multiple components of the model the NineML description
-is consisting of multiple files that define various components and
-contains the syntax to import external files.
-
-\subsection{First XML example}
+\subsection{Izhikevich Model}
 
 \noindent
-In this first example, we are describing how to represent the Izhikevich model using the NineML Object Model, described above.
-The model is composed of single \ComponentClass, containing a single \Regime, $subthresholdRegime$ and two
+In this first example, we are describing how to represent the Izhikevich model in NineML.
+The model is composed of single \ComponentClass, containing a single \Regime, \emph{subthresholdRegime}, and two
 {\StateVariable}s, $U$ \& $V$.
 
 \noindent
 The {\TimeDerivative}s are defined for the Regime as:
 
 \begin{align}
-\frac{dV}{dt} &= 0.04*V*V + 5*V + 140.0 - U + iSyn + iinj\_constant   \\
+\frac{dV}{dt} &= 0.04*V*V + 5*V + 140.0 - U + i_{\mathrm{synapse}} + i_{\mathrm{injected}}  \\
 \frac{dU}{dt} &= a * ( b* V -U )
 \end{align}
 
 \noindent
 The \ComponentClass has a single \OnCondition transition, is triggered when $V>theta$. When
-triggered, It causes an Event called $spikeOutput$ to be emitted, and two
+triggered, It causes an Event called  \emph{spikeOutput} to be emitted, and two
 {\StateAssignment}s to be made:
 \begin{align}
 U &\leftarrow U + d \\
@@ -2010,7 +2032,7 @@ V &\leftarrow c
 \noindent
 The target-regime of the \OnCondition transition is not declared explicitly in the XML,
 implying that the
-target-regime is the same as the source-regime, i.e. $subthresholdRegime$.
+target-regime is the same as the source-regime, i.e. \emph{subthresholdRegime}.
 
 The {\tt RegimeGraph} is shown in Figure~\ref{fig:EX1_RegimeGraph}
 
@@ -2024,159 +2046,95 @@ The {\tt RegimeGraph} is shown in Figure~\ref{fig:EX1_RegimeGraph}
 
 \noindent
 Using this Abstraction Layer definition, as well as suitable parameters from the
-user layer; $a=0.02, b=0.2, c=-65, d= 8, iinj\_constant= 5.0$, we can simulate
+user layer; $a=0.02, b=0.2, c=-65, d= 8, i_{\mathrm{injected}}= 5.0$, we can simulate
 this, giving output as shown in Figure~\ref{fig:Ex1_Output}.
 
 In Figure~\ref{fig:Ex1_Output}, we can see the value of the \StateVariable $V$
 over time. We can also see that when the value of $V>theta$ triggers the
 condition, we emit a spike, and the \StateAssignment of $V \leftarrow c$ resets
 the value of $V$.
-%
-\noindent
+\clearpage
 The corresponding Abstraction Layer XML description for this model is the following:
-%
 \begin{lstlisting}
-
-<?xml version='1.0' encoding='UTF-8'?>
-<NineML xmlns="http://nineml.org/9ML/0.1">
+<?xml version="1.0" encoding='UTF-8'?>
+<NineML xmlns="http://nineml.net/9ML/1.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://nineml.org/9ML/0.1 NineML\_v0.2.xsd">
-
-  <ComponentClass name="izhikevichCellNew">
-
-    <Parameter name="a" dimension="none"/>
+    xsi:schemaLocation="http://nineml.net/9ML/1.0/NineML_v1.0.xsd">
+  <ComponentClass name="IzhikevichCell">
+    <Parameter name="a" dimension="dimensionless"/>
     <Parameter name="c" dimension="voltage"/>
     <Parameter name="b" dimension="per_time"/>
     <Parameter name="d" dimension="voltage_per_time"/>
     <Parameter name="theta" dimension="voltage"/>
-
-    <AnalogPort name="iSyn" mode="reduce" operator="+" dimension="current"/>
-    <AnalogPort name="U" mode="send" dimension="none"/>
-    <AnalogPort name="V" mode="send" dimension="voltage"/>
+    <AnalogReducePort name="iSyn" operator="+" dimension="current"/>
+    <AnalogSendPort name="U" dimension="dimensionless"/>
+    <AnalogSendPort name="V" dimension="voltage"/>
     <EventPort name="spikeOutput" mode="send"/>
-
-
     <Dynamics>
-
         <StateVariable name="V" dimension="voltage"/>
         <StateVariable name="U" dimension="voltage_per_time"/>
-
-        <Alias name="rv" dimension="none">
+        <Alias name="rv">
             <MathInline>V*U</MathInline>
         </Alias>
-
         <Regime name="subthresholdRegime">
-
           <TimeDerivative variable="U">
             <MathInline>a*(b*V - U)</MathInline>
           </TimeDerivative>
-
           <TimeDerivative variable="V">
             <MathInline>0.04*V*V + 5*V + 140.0 - U + iSyn</MathInline>
           </TimeDerivative>
-
-
           <OnCondition>
             <Trigger>
-              <MathInline>V \&gt; theta </MathInline>
+              <MathInline>V &gt; theta </MathInline>
             </Trigger>
-
             <StateAssignment variable="V" >
               <MathInline>c</MathInline>
             </StateAssignment>
-
             <StateAssignment variable="U" >
               <MathInline>U+d</MathInline>
             </StateAssignment>
-
             <EventOut port="spikeOutput" />
-
           </OnCondition>
-
         </Regime>
     </Dynamics>
-
   </ComponentClass>
 </NineML>
 \end{lstlisting}
 
+\clearpage
 User Layer description for the above example:
 
 \begin{lstlisting}
 <?xml version='1.0' encoding='UTF-8'?>
-<nineml xmlns="http://www.NineML.org/9ML/1.0" name="Izhikevich neuron">
-  <import language="NineML">
-    http://www.NineML.org/1.0/dimensions.9ml
-  </import>
-  <component name="Izhikevich neuron">
-    <definition language="NineML">
-      http://www.NineML.org/neurons/izhikevichCellNew.9ml
-    </definition>
-    <property name="V">
-       <quantity>
-         <value>
-           <scalar>-60</scalar>
-           <unit>mV</unit>
-         </value>
-       </quantity>
-       <note><String>Initial value</String></note>
-    </property>
-    <property name="U">
-       <quantity>
-         <value>
-           <scalar>0</scalar>
-           <unit>mV_per_ms</unit>
-         </value>
-       </quantity>
-       <note><String>Initial value</String></note>
-    </property>
-    <property name="theta">
-       <quantity>
-         <value>
-           <scalar>50</scalar>
-           <unit>mV</unit>
-         </value>
-       </quantity>
-       <note><String>Parameter value (spike amplitude)</String></note>
-    </property>
-    <property name="a">
-       <quantity>
-         <value>
-           <scalar>0.02</scalar>
-           <unit>none</unit>
-         </value>
-       </quantity>
-       <note><String>Parameter value</String></note>
-    </property>
-    <property name="b">
-       <quantity>
-         <value>
-           <scalar>0.2</scalar>
-           <unit>per_ms</unit>
-         </value>
-       </quantity>
-       <note><String>Parameter value</String></note>
-    </property>
-    <property name="c">
-       <quantity>
-         <value>
-           <scalar>-65</scalar>
-           <unit>mV</unit>
-         </value>
-       </quantity>
-       <note><String>Parameter value (reset voltage)</String></note>
-    </property>
-    <property name="d">
-       <quantity>
-         <value>
-           <scalar>8</scalar>
-           <unit>mV_per_ms</unit>
-         </value>
-       </quantity>
-       <note><String>Parameter value</String></note>
-    </property>
-  </component>
-</nineml>
+<NineML xmlns="http://nineml.net/9ML/1.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://nineml.net/9ML/1.0/NineML_v1.0.xsd">
+  <Component name="IzhikevichNeuron">
+    <Definition url="http://nineml.net/catalog/izhikevichCell.9ml"
+      >IzhikevichCell</Definition>
+    <Property name="V" units="mV">
+      <SingleValue>-60</SingleValue>
+    </Property>
+    <Property name="U" units="mV_per_ms">
+      <SingleValue>0</SingleValue>
+    </Property>
+    <Property name="theta" units="mV">
+      <SingleValue>50</SingleValue>
+    </Property>
+    <Property name="a" units="none">
+      <SingleValue>0.02</SingleValue>
+    </Property>
+    <Property name="b" units="per_ms">
+      <SingleValue>0.2</SingleValue>
+    </Property>
+    <Property name="c" units="mV">
+      <SingleValue>-65</SingleValue>
+    </Property>
+    <Property name="d" units="mV_per_ms">
+      <SingleValue>8</SingleValue>
+    </Property>
+  </Component>
+</NineML>
 \end{lstlisting}
 
 Here, we show the simulation results of this XML representation.
@@ -2190,7 +2148,7 @@ this section}
 \end{figure}
 
 \newpage
-\subsection{Second XML example}
+\subsection{Leaky Integrate and Fire model}
 
 In this example, we build a representation of a integrate-and-fire neuron, with
 an attached input synapse.
@@ -2240,17 +2198,19 @@ The corresponding Regime Graph is shown in Figure 5.
 \label{fig:EX2_trans}
 \end{figure}
 
+\clearpage
 The resulting XML description for the Abstraction Layer is :
-
 \begin{lstlisting}[label=code:xmliaf2]
 <?xml version='1.0' encoding='UTF-8'?>
-<NineML xmlns="http://nineml.org/9ML/0.1">
-  <ComponentClass name="iaf_1coba">
-    <AnalogPort mode="send" name="iaf_V"/>
-    <AnalogPort mode="reduce" operator="+" name="iaf_ISyn"/>
-    <AnalogPort mode="send" name="cobaExcit_I"/>
-    <EventPort mode="send" name="iaf_spikeoutput"/>
-    <EventPort mode="recv" name="cobaExcit_spikeinput"/>
+<NineML xmlns="http://nineml.net/9ML/1.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://nineml.net/9ML/1.0/NineML_v1.0.xsd">
+  <ComponentClass name="Iaf1Coba">
+    <AnalogSendPort dimension="voltage" name="iaf_V" />
+    <AnalogReducePort dimension="current" operator="+" name="iaf_ISyn" />
+    <AnalogSendPort dimension="current" name="cobaExcit_I" />
+    <EventSendPort  name="iaf_spikeoutput"/>
+    <EventReceivePort name="cobaExcit_spikeinput"/>
     <Parameter dimension="area" name="iaf_cm"/>
     <Parameter dimension="time" name="iaf_taurefrac"/>
     <Parameter dimension="conductance" name="iaf_gl"/>
@@ -2261,6 +2221,9 @@ The resulting XML description for the Abstraction Layer is :
     <Parameter dimension="conductance" name="cobaExcit_q"/>
     <Parameter dimension="voltage" name="cobaExcit_vrev"/>
     <Dynamics>
+      <StateVariable dimension="voltage" name="iaf_V"/>
+      <StateVariable dimension="time" name="iaf_tspike"/>
+      <StateVariable dimension="conductance" name="cobaExcit_g"/>
       <Regime name="RefractoryRegime">
         <TimeDerivative variable="iaf_V">
           <MathInline>0</MathInline>
@@ -2307,137 +2270,58 @@ The resulting XML description for the Abstraction Layer is :
       <Alias name="cobaExcit_I">
         <MathInline>cobaExcit_g*(cobaExcit_vrev-iaf_V)</MathInline>
       </Alias>
-      <StateVariable dimension="voltage" name="iaf_V"/>
-      <StateVariable dimension="time" name="iaf_tspike"/>
-      <StateVariable dimension="conductance" name="cobaExcit_g"/>
     </Dynamics>
   </ComponentClass>
 </NineML>
-
 \end{lstlisting}
 
 User Layer description for the above example:
-
 \begin{lstlisting}
 <?xml version='1.0' encoding='UTF-8'?>
-<nineml xmlns="http://www.NineML.org/9ML/1.0" name="IaF neuron with synapse">
-  <import language="NineML">
-    http://www.NineML.org/1.0/dimensions.9ml
-  </import>
-  <component name="IaF neuron">
-    <definition language="NineML">
-      http://www.NineML.org/neurons/iaf_1coba.9ml
-    </definition>
-    <property name="iaf_V">
-       <quantity>
-         <value>
-           <scalar>-60</scalar>
-           <unit>mV</unit>
-         </value>
-       </quantity>
-       <note><String>Initial value</String></note>
-    </property>
-    <property name="iaf_tspike">
-       <quantity>
-         <value>
-           <scalar>-1</scalar>
-           <unit>ms</unit>
-         </value>
-       </quantity>
-       <note><String>Initial value</String></note>
-    </property>
-    <property name="cobaExcit_g">
-       <quantity>
-         <value>
-           <scalar>0</scalar>
-           <unit>mS</unit>
-         </value>
-       </quantity>
-       <note><String>Initial value</String></note>
-    </property>
-    <property name="iaf_cm">
-       <quantity>
-         <value>
-           <scalar>0.02</scalar>
-           <unit>cm_square</unit>
-         </value>
-       </quantity>
-       <note><String>Parameter value</String></note>
-    </property>
-    <property name="iaf_taurefrac">
-       <quantity>
-         <value>
-           <scalar>3</scalar>
-           <unit>ms</unit>
-         </value>
-       </quantity>
-       <note><String>Parameter value (refractory period)</String></note>
-    </property>
-    <property name="iaf_gl">
-       <quantity>
-         <value>
-           <scalar>0.1</scalar>
-           <unit>mS</unit>
-         </value>
-       </quantity>
-       <note><String>Parameter value (leak conductance)</String></note>
-    </property>
-    <property name="iaf_vreset">
-       <quantity>
-         <value>
-           <scalar>-70</scalar>
-           <unit>mV</unit>
-         </value>
-       </quantity>
-       <note><String>Parameter value (reset voltage)</String></note>
-    </property>
-    <property name="iaf_vrest">
-       <quantity>
-         <value>
-           <scalar>-60</scalar>
-           <unit>mV</unit>
-         </value>
-       </quantity>
-       <note><String>Parameter value (resting potential)</String></note>
-    </property>
-    <property name="iaf_vthresh">
-       <quantity>
-         <value>
-           <scalar>20</scalar>
-           <unit>mV</unit>
-         </value>
-       </quantity>
-       <note><String>Parameter value (threshold potential)</String></note>
-    </property>
-    <property name="cobaExcit_tau">
-       <quantity>
-         <value>
-           <scalar>2</scalar>
-           <unit>ms</unit>
-         </value>
-       </quantity>
-       <note><String>Parameter value (synaptic time constant)</String></note>
-    </property>
-    <property name="cobaExcit_q">
-       <quantity>
-         <value>
-           <scalar>1</scalar>
-           <unit>ms</unit>
-         </value>
-       </quantity>
-       <note><String>Parameter value (conductance increase on spike)</String></note>
-    </property>
-    <property name="cobaExcit_vrev">
-       <quantity>
-         <value>
-           <scalar>0</scalar>
-           <unit>mV</unit>
-         </value>
-       </quantity>
-       <note><String>Parameter value (synaptic reversal potential)</String></note>
-    </property>
-  </component>
-</nineml>
+<NineML xmlns="http://nineml.net/9ML/1.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://nineml.net/9ML/1.0/NineML_v1.0.xsd">
+  <Component name="IaFNeuron">
+    <Definition url="http://nineml.net/catalog/neurons/iafICoba.9ml"
+      >Iaf1Coba</Definition>
+    <Property name="iaf_V" units="mV">
+      <SingleValue>-60</SingleValue>
+    </Property>
+    <Property name="iaf_tspike" units="ms">
+      <SingleValue>-1</SingleValue>
+    </Property>
+    <Property name="cobaExcit_g" units="mS">
+      <SingleValue>0</SingleValue>
+    </Property>
+    <Property name="iaf_cm" units="cm_square">
+      <SingleValue>0.02</SingleValue>
+    </Property>
+    <Property name="iaf_taurefrac" units="ms">
+      <SingleValue>3</SingleValue>
+    </Property>
+    <Property name="iaf_gl" units="mS">
+      <SingleValue>0.1</SingleValue>
+    </Property>
+    <Property name="iaf_vreset" units="mV">
+      <SingleValue>-70</SingleValue>
+    </Property>
+    <Property name="iaf_vrest" units="mV">
+      <SingleValue>-60</SingleValue>
+    </Property>
+    <Property name="iaf_vthresh" units="mV">
+      <SingleValue>20</SingleValue>
+    </Property>
+    <Property name="cobaExcit_tau" units="ms">
+      <SingleValue>2</SingleValue>
+    </Property>
+    <Property name="cobaExcit_q" units="ms">
+      <SingleValue>1</SingleValue>
+    </Property>
+    <Property name="cobaExcit_vrev" units="mV">
+      <SingleValue>0</SingleValue>
+    </Property>
+  </Component>
+</NineML>
 \end{lstlisting}
 
 The simulation results is presented in Figure 6.
@@ -2592,9 +2476,34 @@ Figure~\ref{ParallelisingTransitions}.
 \end{figure}
 
 \section{Acknowledgments}
-
-
-
+\subsection{Former NineML INCF Task Force members}
+\begin{itemize}
+\item Abigail Morrison
+\item Alex Cope
+\item Anatoli Gorchetchnikov
+\item Andrew P. Davison
+\item Birgit Kriener
+\item Chung-Chuan Lo
+\item Damien Drix
+\item Dragan Nikolic
+\item Eilif Muller
+\item Erik De Schutter
+\item Hans Ekkehard Plesser
+\item Hugo Cornelis
+\item Ivan Raikov
+\item Lars Schwabe
+\item Malin Sandström
+\item Michael Hull
+\item Mikael Djurfeldt
+\item Padraig Gleeson
+\item Raphael Ritz
+\item Robert Cannon
+\item Robert Clewley
+\item Sean Hill
+\item Subhasis Ray
+\item Valentin Haenel
+\item Yann Le Franc
+\end{itemize}
 
 \clearpage
 %\bibliography{sbmlpkgspec}
