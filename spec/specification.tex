@@ -204,15 +204,11 @@ This document is under the Common Creative license BY-NC-SA:\\ http://creativeco
 \section{Introduction}
 % -----------------------------------------------------------------------------
 \vspace{-12.5pc} % A bit of a hack to reverse the vspace added by the Appendix name
-The increasing number of studies related to neuronal network modeling
-and the diversity of the simulation platforms and implementations
-cause a major issue for model sharing, replicability and reusability
-of either complete models or parts of models. To overcome this problem,
-we propose a
-common description language to be used for exchanging models and being
-able to simulate them on any simulation platform.
+The ever increasing diversity of neuronal network models and the software/hardware platforms used to simulate them,
+makes sharing, replicability and reusability of neuronal network models, or parts thereof, a challenging problem.
+To address this problem, we propose a common description language to facilitate the exchange models between researchers and simulator platforms.
 
-This description language, using the XML technology, is based on a
+This description language is based on a
 common object model describing the different elements of network
 models. This work, initiated and supported by the International
 Neuroinformatics Coordinating Facility as part of the Multiscale Modeling
@@ -433,7 +429,7 @@ as rich types with a numerical factor and exponents for each of the
 base dimensions. They are independent of the particular choice of
 units by which they are assigned.
 
-\note{The format for units and dimensions was copied from NeuroML version 2.0 (\href{http://www.neuroml.org}{http://www.neuroml.org}).}
+\note{The format for units and dimensions is the same as is used for NeuroML version 2.0 (\href{http://www.neuroml.org}{http://www.neuroml.org}).}
 
 \subsection{Dimension}
 \label{sec:Dimension}
@@ -498,7 +494,7 @@ The \textit{j} attribute specifies the power of the luminous-intensity dimension
     \midrule
     symbol & \identifier & yes\\
     dimension & \Dimension{}@name & yes\\
-    power & \primtype{integer} & yes\\
+    power & \primtype{integer} & no\\
     offset & \primtype{real number} & no\\
     \bottomrule
   \end{edtable}
@@ -513,7 +509,7 @@ Each \Unit requires a \textit{symbol} attribute, which should be a valid \identi
 Each \Unit requires a \textit{dimension} attribute. This attribute specifies the dimension of the units and should refer to the name of a \Dimension element in the global scope.
 
 \subsubsection{Power attribute}
-Each \Unit requires a \textit{power} attribute. This attribute specifies the relative scale of the units compared to the equivalent SI units in powers of ten.
+Each \Unit requires a \textit{power} attribute. This attribute specifies the relative scale of the units compared to the equivalent SI units in powers of ten. If omitted the power is zero.
 
 \subsubsection{Offset attribute}
 A \Unit can optionally have an \textit{offset} attribute. This attribute specifies the zero offset of the unit scale. For example,
@@ -606,7 +602,7 @@ The following functions are built in and are defined as per ANSI C89:
 \item \verb|floor(x)|
 \end{itemize}
 
-\draftnote{I removed the "random" namespace since it was proving difficult to parse and didn't seem necessary. Can add it back in if you like though. Actually are these functions still necessary if we have already included the \RandomDistribution elements in this standard?}
+\draftnote{I removed the "random" namespace since it was proving difficult to parse and it is made redundant by adding the \RandomDistribution elements to standard?}
 
 The following symbols are built in, and cannot be redefined,
 \begin{itemize}
@@ -666,7 +662,7 @@ transmitting a current, for example $i=g*(E-V)$.
 \subsubsection{Name attribute}
 Each \Alias requires a \textit{name} attribute, which is a valid \identifier and uniquely identifies the \Alias from all other elements in the \ComponentClass.
 
-\draftnote{Was tossing up whether `PhysicalConstant' was a better name for this or not. Was thinking that this could also be used to remove `pi' from the list of built-in symbols}
+\draftnote{Was tossing up whether `Constant' was a better name for this or not. Was thinking that this could also be used to remove `pi' from the list of built-in symbols and maybe provide some `standardLibrary' attributes.}
 
 \subsection{PhysicalConstant}
 \label{sec:PhysicalConstant}
@@ -728,7 +724,6 @@ Any valid numeric value, including shorthand scientific notation e.g. 1e-5 ($1\t
 \section{Ports}
 \label{sec:Ports}
 
-\draftnote{Is the idea that analog ports are also used to transmit synaptic weights? If so I will mention that here as well}
 Ports allow components to communicate with each
 other during a simulation. Ports can either transmit transmit discrete events or a continuous analog stream of data. Events are typically used to transmit and receive spikes between neutron model, whereas analog ports can be used to model injected current and gap junctions between neuron models. 
 
@@ -1450,7 +1445,7 @@ Each \Property element requires a \emph{units} attribute. The \textit{units} att
   \end{edtable}
 \end{table}
 
-\Reference elements are used to locate User Layer elements in the global scope of the current separate documents. In most cases, User Layer elements (with the exception of \Population elements supplied to \Projection) can be specified inline, i.e. within the element they are required. However, it is often convenient to define a component in the global scope as this allows it to be reused at different places within the model. The \textit{url} attribute can be used to reference a component in a separate document, potentially one published online in a public repository (e.g. \href{http://senselab.med.yale.edu/modeldb/ListByModelName.asp?c=19&lin=-1}{ModelDB (http://senselab.med.yale.edu/modeldb/)}or \href{http://www.opensourcebrain.org/}{Open Source Brain (http://www.opensourcebrain.org/)}).
+\Reference elements are used to locate User Layer elements in the global scope of the current separate documents. In most cases, User Layer elements (with the exception of \Population elements supplied to \Projection) can be specified inline, i.e. within the element they are required. However, it is often convenient to define a component in the global scope as this allows it to be reused at different places within the model. The \textit{url} attribute can be used to reference a component in a separate document, potentially one published online in a public repository (e.g. \href{http://senselab.med.yale.edu/modeldb/ListByModelName.asp?c=19&lin=-1}{ModelDB} or \href{http://www.opensourcebrain.org/}{Open Source Brain}).
 
 \subsubsection{Url attribute}
 The \textit{url} attribute specifies a \URL for the file which contains the User Layer element to be referenced.
@@ -1571,6 +1566,7 @@ The \textit{mimetype} attribute specifies the data format for the external value
 
 Each \ExternalArrayValue must have a \textit{columnName} attribute, which refers to a column header in the external data file. 
 
+\draftnote{What do you think of this? This allows a single component to return two (related) values at different places at the model (e.g. weight and delay in distance dependent rules). It also seemed a bit neater}
 \subsection{ComponentValue}
 \label{sec:ComponentValue}
 
