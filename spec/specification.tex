@@ -50,6 +50,7 @@
 \newcommand{\EventSendPort}{\defRef{\textbf{\class{EventSendPort}}\xspace}{sec:EventSendPort}}
 \newcommand{\AnalogReceivePort}{\defRef{\textbf{\class{AnalogReceivePort}}\xspace}{sec:AnalogReceivePort}}
 \newcommand{\AnalogReducePort}{\defRef{\textbf{\class{AnalogReducePort}}\xspace}{sec:AnalogReducePort}}
+\newcommand{\AnalogArrayPort}{\defRef{\textbf{\class{AnalogArrayPort}}\xspace}{sec:AnalogArrayPort}}
 \newcommand{\EventReceivePort}{\defRef{\textbf{\class{EventReceivePort}}\xspace}{sec:EventReceivePort}}
 \newcommand{\Annotations}{\defRef{\textbf{\class{Annotations}}\xspace}{sec:Annotations}}
 
@@ -1730,7 +1731,10 @@ It is recommended to factor out plasticity rules from post-synaptic response dyn
   \end{edtable}
 \end{table}
 
-The \ReceiveConnection element specifies a receive port which will receive a connection from a port on a remote component. Depending on the context where \ReceiveConnection the components it can receive from vary, hence there are various elements, all named \emph{From*}, specifying the relationship of the remote component to the enclosing element (\FromSource, \FromDestination and \FromSynapse  in \Projection containers).
+The \ReceiveConnection element specifies a receive port which will receive a connection from a port on a remote component. Depending on the context where \ReceiveConnection the components it can receive from vary, hence there are various elements, all named \emph{From*}, specifying the relationship of the remote component to the enclosing element (e.g. \FromSource, \FromDestination and \FromSynapse  in \Projection containers).
+
+\subsubsection{Port attribute}
+Each \ReceiveConnection element requires a \textit{port} attribute. This should refer to the name of a \AnalogReceivePort, \EventReceivePort or \AnalogReducePort in the \ComponentClass associated with the enclosing element.
 
 \subsection{FromSource}
 \label{sec:FromSource}
@@ -1912,6 +1916,10 @@ Multi-component models enable component classes to be constructed out of smaller
   \end{edtable}
 \end{table}
 
+
+\subsubsection{Name attribute}
+Each \ComponentClass requires a \textit{name} attribute, which should be a valid \identifier and uniquely identify the {\ComponentClass} in the global scope.
+
 \subsection{MetaParameter}
 \label{sec:MetaParameter}
 
@@ -1923,14 +1931,14 @@ Multi-component models enable component classes to be constructed out of smaller
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
     name & \identifier & yes\\
-    \midrule
-    \em{Element type} & Multiplicity & \em{Required} \\
-    \midrule \relax
-    \Definition & singleton & yes\\
-    \ReceiveConnection & set & yes\\
+    dimension & \Dimension{}@name & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
+
+
+\subsubsection{Name attribute}
+Each \MetaParameter requires a \textit{name} attribute, which should be a valid \identifier and uniquely identify the \MetaParameter in the \MultiComponentClass scope.
 
 \subsection{PortExposure}
 \label{sec:PortExposure}
@@ -1949,6 +1957,10 @@ Multi-component models enable component classes to be constructed out of smaller
   \end{edtable}
 \end{table}
 
+
+\subsubsection{Name attribute}
+Each \PortExposure requires a \textit{name} attribute, which should be a valid \identifier and uniquely identify the \PortExposure in the \MultiComponentClass scope.
+
 \subsection{SubComponentClass}
 \label{sec:SubComponentClass}
 
@@ -1964,10 +1976,37 @@ Multi-component models enable component classes to be constructed out of smaller
     \em{Element type} & Multiplicity & \em{Required} \\
     \midrule \relax
     \Definition & singleton & yes\\
+    \DerivedProperty & set & no\\    
     \ReceiveConnection & set & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
+
+\subsubsection{Name attribute}
+Each \SubComponentClass requires a \textit{name} attribute, which should be a valid \identifier and uniquely identify the {\SubComponentClass} in the global scope.
+
+
+\subsection{DerivedProperty}
+\label{sec:DerivedProperty}
+
+\begin{table}[H]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{DerivedProperty Structure}}}\\
+    \toprule
+    \em{Attribute name} & \em{Type/Format} & \em{Required} \\
+    \midrule
+    name & \SubComponent\withelem\Definition\withelem\ComponentClass\withelem\Parameter{}@name & yes\\
+    \midrule
+    \em{Element type} & Multiplicity & \em{Required} \\
+    \midrule \relax
+    \MathInline & singleton & yes\\
+    \bottomrule
+  \end{edtable}
+\end{table}
+
+\subsubsection{Name attribute}
+Each \DerivedProperty requires a \textit{name} attribute. This should refer to the name of a \Parameter in the corresponding \SubComponentClass\withelem\ComponentClass.
 
 \subsection{FromPort}
 \label{sec:FromPort}
@@ -2008,6 +2047,10 @@ Multi-component models enable component classes to be constructed out of smaller
 \end{table}
 
 
+\subsubsection{Name attribute}
+Each \MultiComponent requires a \textit{name} attribute, which should be a valid \identifier and uniquely identify the {\MultiComponent} in the global scope.
+
+
 \subsection{MetaProperty}
 \label{sec:MetaProperty}
 
@@ -2028,6 +2071,8 @@ Multi-component models enable component classes to be constructed out of smaller
   \end{edtable}
 \end{table}
 
+\subsubsection{Name attribute}
+Each \MetaProperty requires a \textit{name} attribute. This should refer to the name of a \MetaParameter in the corresponding \MultiComponentClass.
 
 \subsection{SubComponent}
 \label{sec:SubComponent}
@@ -2044,30 +2089,12 @@ Multi-component models enable component classes to be constructed out of smaller
     \em{Element type} & Multiplicity & \em{Required} \\
     \midrule \relax
     \Property & set & no\\
-    \DerivedProperty & set & no\\
     \bottomrule
   \end{edtable}
 \end{table}
 
-\subsection{DerivedProperty}
-\label{sec:DerivedProperty}
-
-\begin{table}[H]
-  \begin{edtable}{tabular}{llr}
-    \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{DerivedProperty Structure}}}\\
-    \toprule
-    \em{Attribute name} & \em{Type/Format} & \em{Required} \\
-    \midrule
-    name & \SubComponent\withelem\Definition\withelem\ComponentClass\withelem\Parameter{}@name & yes\\
-    \midrule
-    \em{Element type} & Multiplicity & \em{Required} \\
-    \midrule \relax
-    \MathInline & singleton & yes\\
-    \bottomrule
-  \end{edtable}
-\end{table}
-
+\subsubsection{Name attribute}
+Each \SubComponent requires a \textit{name} attribute. This should refer to the name of a \Parameter in the \MultiComponent\withelem\MultiComponentClass.
 
 \section{Multi-compartmental models}
 
@@ -2092,9 +2119,92 @@ Note that this format does not contain any positional information about the comp
     \em{Element type} & Multiplicity & \em{Required} \\
     \midrule \relax
     \MetaParameter & set & no\\
-    \PortExposure & set & no\\
+    \PortExposure & set & no\\ 
+    \DomainClass & set & yes\\
+    \bottomrule
+  \end{edtable}
+\end{table}
+
+\subsection{DomainClass}
+\label{sec:DomainClass}
+
+\begin{table}[H]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{DomainClass Structure}}}\\
+    \toprule
+    \em{Attribute name} & \em{Type/Format} & \em{Required} \\
+    \midrule
+    name & \identifier & yes\\
+    mapID & \primtype{integer} & yes\\    
+    \midrule
+    \em{Element type} & Multiplicity & \em{Required} \\
+    \midrule \relax
+    \Definition & singleton & yes\\
+    \DerivedProperty & set & no\\
+    \ReceiveConnection & set & yes\\
+    \bottomrule
+  \end{edtable}
+\end{table}
+
+Domain component classes would contain all the ion channels and concentration dynamics for each "class" of compartment (or potentially another more abstract type of compartment such as an Izhikevich one). 
+
+Like Projections the parameters of the components could either be SingleValues, ArrayValues or Components. The length of the arrays could either be the same as the number of compartments in the model, in which case only the values that map to the domain would be used, or the same as the number of compartments in the domain.
+
+\subsection{FromProximal}
+\label{sec:FromProximal}
+
+\begin{table}[H]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{FromPort Structure}}}\\
+    \toprule
+    \em{Attribute name} & \em{Type/Format} & \em{Required} \\
+    \midrule
+    component & \DomainClass{}@name & yes\\
+    port & [\EventSendPort{} | \AnalogSendPort{}]@name & yes\\
+    \bottomrule
+  \end{edtable}
+\end{table}
+
+\FromProximal elements without a component attribute accept ports from any compartments that are connected to it (assumes ports have the same name in different domains). With a name attribute they are only connected if the compartment is of the corresponding domain. 
+
+\subsection{FromDistal}
+\label{sec:FromDistal}
+
+\begin{table}[H]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{FromPort Structure}}}\\
+    \toprule
+    \em{Attribute name} & \em{Type/Format} & \em{Required} \\
+    \midrule
+    component & \DomainClass{}@name & not\\
+    port & [\EventSendPort{} | \AnalogSendPort{}]@name & yes\\
+    \bottomrule
+  \end{edtable}
+\end{table}
+
+\FromDistal elements without a component attribute accept ports from any compartments that are connected to it (assumes ports have the same name in different domains). With a name attribute they are only connected if the compartment is of the corresponding domain. \ReceiveConnection elements with \FromDistal child elements must be able to handle multiple port connections, i.e. they must be either \EventReceivePort, \AnalogReducePort or \AnalogArrayPort elements.
+
+\subsection{MultiCompartmentalComponent}
+\label{sec:MultiCompartmentalComponent}
+
+\begin{table}[H]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{MultiCompartmentalComponent Structure}}}\\
+    \toprule
+    \em{Attribute name} & \em{Type/Format} & \em{Required} \\
+    \midrule
+    name & \identifier & yes\\
+    \midrule
+    \em{Element type} & Multiplicity & \em{Required} \\
+    \midrule \relax
+    \Definition | \Prototype & singleton & yes \\ 
+    \MetaProperty & set & no\\
     \BranchStructure & singleton & yes\\
-    \Mapping & singleton & yes\\    
+    \Mapping & singleton & yes\\   
     \Domain & set & yes\\
     \bottomrule
   \end{edtable}
@@ -2132,88 +2242,8 @@ The BranchStructure is an array containing the indices of the parent node of the
   \end{edtable}
 \end{table}
 
-The mapping array is a list of indices corresponding to the \emph{mapID}'s of the domains. This layout is analogous to "type" column in the SWC format. In fact it would be nearly be possible to use an SWC file as an ExternalArrayValue file, with the exception that it would need column headers and the root node would need to be omitted. This could also be substituted for a component that algorithmically maps the segments to different domains.
+The mapping array is a list of indices corresponding to the \DomainClass{}@mapID attributes. This layout is analogous to "type" column in the SWC format. In fact it is nearly possible to use an SWC file as an ExternalArrayValue file, with the exception that it would need column headers and the root node would need to be omitted. This could also be substituted for a component that algorithmically maps the segments to different domains.
 
-\subsection{DomainClass}
-\label{sec:DomainClass}
-
-\begin{table}[H]
-  \begin{edtable}{tabular}{llr}
-    \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{DomainClass Structure}}}\\
-    \toprule
-    \em{Attribute name} & \em{Type/Format} & \em{Required} \\
-    \midrule
-    name & \identifier & yes\\
-    mapID & \primtype{integer} & yes\\    
-    \midrule
-    \em{Element type} & Multiplicity & \em{Required} \\
-    \midrule \relax
-    \Definition & singleton & yes\\
-    \ReceiveConnection & set & yes\\
-    \bottomrule
-  \end{edtable}
-\end{table}
-
-Domain component classes would contain all the ion channels and concentration dynamics for each "class" of compartment (or potentially another more abstract type of compartment such as an Izhikevich one).
-\begin{itemize}
-\item Like Projections the parameters of the components could either be SingleValues, ArrayValues or Components. The length of the arrays could either be the same as the number of compartments in the model, in which case only the values that map to the domain would be used, or the same as the number of compartments in the domain.
-\item PortConnection>Sender tags without a name attribute accept ports from any compartments that are connected to it (assumes ports have the same name in different domains). With a name attribute they are only connected if the compartment is of the corresponding domain (probably would need to be a reduce port).
-\item FromDistal>PortConnections should be connected to AnalogReducePorts, EventReceivePorts or ArrayReceivePorts (this is where they come in)
-\end{itemize}
-
-\subsection{FromProximal}
-\label{sec:FromProximal}
-
-\begin{table}[H]
-  \begin{edtable}{tabular}{llr}
-    \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{FromPort Structure}}}\\
-    \toprule
-    \em{Attribute name} & \em{Type/Format} & \em{Required} \\
-    \midrule
-    component & \DomainClass{}@name & yes\\
-    port & [\EventSendPort{} | \AnalogSendPort{}]@name & yes\\
-    \bottomrule
-  \end{edtable}
-\end{table}
-
-\subsection{FromDistal}
-\label{sec:FromDistal}
-
-\begin{table}[H]
-  \begin{edtable}{tabular}{llr}
-    \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{FromPort Structure}}}\\
-    \toprule
-    \em{Attribute name} & \em{Type/Format} & \em{Required} \\
-    \midrule
-    component & \DomainClass{}@name & yes\\
-    port & [\EventSendPort{} | \AnalogSendPort{}]@name & yes\\
-    \bottomrule
-  \end{edtable}
-\end{table}
-
-\subsection{MultiCompartmentalComponent}
-\label{sec:MultiCompartmentalComponent}
-
-\begin{table}[H]
-  \begin{edtable}{tabular}{llr}
-    \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{MultiCompartmentalComponent Structure}}}\\
-    \toprule
-    \em{Attribute name} & \em{Type/Format} & \em{Required} \\
-    \midrule
-    name & \identifier & yes\\
-    \midrule
-    \em{Element type} & Multiplicity & \em{Required} \\
-    \midrule \relax
-    \Definition | \Prototype & singleton & yes \\ 
-    \MetaProperty & set & no\\
-    \SubComponent & set & yes\\
-    \bottomrule
-  \end{edtable}
-\end{table}
 
 \subsection{Domain}
 \label{sec:Domain}
@@ -2230,7 +2260,6 @@ Domain component classes would contain all the ion channels and concentration dy
     \em{Element type} & Multiplicity & \em{Required} \\
     \midrule \relax
     \Property & set & no\\
-    \DerivedProperty & set & no\\
     \bottomrule
   \end{edtable}
 \end{table}
@@ -2660,6 +2689,199 @@ The simulation results is presented in Figure 6.
 in this simulation}
 \label{fig:EX2_Output}
 \end{figure}
+
+\clearpage
+\subsection{Multi-component Hodgkin-Huxley Model}
+
+Abstraction Layer:
+
+\begin{lstlisting}
+  <MultiComponentClass name="HodgkinHuxleyContainer">
+    <MetaParameter name="T" dimension="temperature"/>
+    <PortExposure name="membraneVoltage" component="membrane" port="V"/>
+    <PortExposure name="membraneCurrent" component="membrane" port="i">
+      <Annotations><Comment>This can be used to connect synaptic input</Comment></Annotations>
+    </PortExposure>
+    <SubComponentClass name="Na">
+      <Definition>PyramidalNa</Definition>
+      <DerivedProperty name="T">
+        <MathInline>T</MathInline>
+      </DerivedProperty>
+      <ReceiveConnection port="V">
+        <FromPort component="membrane" port="V"/>
+      </ReceiveConnection>
+    </SubComponentClass>
+    <SubComponentClass name="K">
+      <Definition>PyramidalK</Definition>
+      <DerivedProperty name="T">
+        <MathInline>T</MathInline>
+      </DerivedProperty>
+      <ReceiveConnection port="V">
+        <FromPort component="membrane" port="V"/>
+      </ReceiveConnection>
+    </SubComponentClass>
+    <SubComponentClass name="leak">
+      <Definition>Leak</Definition>
+      <ReceiveConnection port="V">
+        <FromPort component="membrane" port="V"/>
+      </ReceiveConnection>
+    </SubComponentClass>
+    <SubComponentClass name="membrane">
+      <Definition url="http://nineml.net/9ML/2.0/catalog/basicMembrane.xml"
+        >BasicMembrane</Definition>
+      <ReceiveConnection port="i">
+        <FromPort component="Na" name="i"/>
+        <FromPort component="K" name="i"/>
+        <FromPort component="leak" name="i"/>
+      </ReceiveConnection>
+    </SubComponentClass>
+  </MultiComponentClass>
+\end{lstlisting}
+
+User Layer:
+
+\begin{lstlisting}
+  <MultiComponent name="PyramidalCell">
+    <MetaProperty name="T" units="degC">
+      <SingleValue>36</SingleValue>
+    </MetaProperty>
+    <SubComponent target="PyramidalNa">
+      <Property name="gbar" units="uS">
+        <SingleValue>0.0036</SingleValue>
+      </Property>
+    </SubComponent>
+    <SubComponent target="PyramidalK">
+      <Property name="gbar" units="uS">
+        <SingleValue>0.0025</SingleValue>
+      </Property>
+    </SubComponent>
+    <SubComponent target="leak">
+      <Property name="g">
+        <SingleValue>0.001</SingleValue>
+      </Property>
+      <Property name="e_rev">
+        <SingleValue>-21</SingleValue>
+      </Property>
+    </SubComponent>
+    <SubComponent target="membrane">
+      <Property name="C" units="uF">
+        <SingleValue>1.0</SingleValue>
+      </Property>
+    </SubComponent>
+  </MultiComponent>
+\end{lstlisting}
+
+\clearpage
+\subsection{Abstract multi-compartmental model}
+
+Abstraction Layer:
+\begin{lstlisting}
+  <?xml version="1.0" encoding="UTF-8"?>
+  <NineML xmlns="http://nineml.net/9ML/1.0">
+    <MultiCompartmentalClass name="ExampleMultiCompartmentalClass">
+      <DomainClass name="soma" mapID="0">
+          <Definition>somaDynamics</Definition>
+          <ReceiveConnection port="proximalVoltage"> 
+            <FromProximal port="voltage"/>
+          </ReceiveConnection>
+          <ReceiveConnection port="distalVoltage">
+            <FromDistal port="voltage"/>
+          </ReceiveConnection>    
+      </DomainClass>
+      <DomainClass name="dendrites" mapID="1">
+          <Definition>dendriteDynamics</Definition>
+          <ReceiveConnection port="proximalVoltage"> 
+            <FromProximal port="voltage"/>
+          </ReceiveConnection>
+          <ReceiveConnection port="distalVoltage">
+            <FromDistal port="voltage"/>
+          </ReceiveConnection>
+          <ReceiveConnection port="withinDendritesReceivePort">
+            <FromProximal name="dendrites" port="withinDendritesSendPort"/>
+            <FromDistal name="dendrites" port="withinDendritesSendPort"/>
+          </ReceiveConnection>
+          <ReceiveConnection port="fromSomaPort">
+            <FromProximal domain="soma" port="toDendritePort"/>
+          </ReceiveConnection>
+      </DomainClass>
+      <Annotations>
+        <3DPoints>
+          <XCoords><ExternalArrayValue ...></XCoords>
+          <YCoords><ExternalArrayValue ...></YCoords>
+          <ZCoords><ExternalArrayValue ...></ZCoords>
+        </3DPoints>
+      </Annotations>
+    </MultiCompartmentalClass>
+  </NineML>
+\end{lstlisting}
+
+User Layer:
+\begin{lstlisting}
+  <?xml version="1.0" encoding="UTF-8"?>
+  <NineML xmlns="http://nineml.net/9ML/1.0">
+    <MultiCompartmentalComponent name="ExampleMultiCompartmentalModel">
+      <Definition>ExampleMultiCompartmentalClass</Definition>
+      <BranchStructure>
+        <!-- Similar to "parent node" column in SWC --> 
+        <ExternalArrayValue ...>
+      </BranchStructure>
+      <Mapping>
+        <!-- Same as "type" column in SWC with ids that correspond to domain map_ids -->
+        <ExternalArrayValue ...>
+      </Mapping>
+      <Domain name="soma" >
+        <SubComponent target="PyramidalNa">
+          <Property name="gbar" units="uS">
+            <SingleValue>0.0036</SingleValue>
+          </Property>
+        </SubComponent>
+        <SubComponent target="PyramidalK">
+          <Property name="gbar" units="uS">
+            <SingleValue>0.0025</SingleValue>
+          </Property>
+        </SubComponent>
+        <SubComponent target="leak">
+          <Property name="g">
+            <SingleValue>0.001</SingleValue>
+          </Property>
+          <Property name="e_rev">
+            <SingleValue>-21</SingleValue>
+          </Property>
+        </SubComponent>
+        <SubComponent target="membrane">
+          <Property name="C" units="uF">
+            <SingleValue>1.0</SingleValue>
+          </Property>
+        </SubComponent>
+      </Domain>
+      <Domain name="dendrites">
+        <SubComponent target="PyramidalNa">
+          <Property name="gbar" units="uS">
+            <SingleValue>0.0036</SingleValue>
+          </Property>
+        </SubComponent>
+        <SubComponent target="PyramidalK">
+          <Property name="gbar" units="uS">
+            <SingleValue>0.005</SingleValue>
+          </Property>
+        </SubComponent>
+        <SubComponent target="leak">
+          <Property name="g">
+            <SingleValue>0.002</SingleValue>
+          </Property>
+          <Property name="e_rev">
+            <SingleValue>-30</SingleValue>
+          </Property>
+        </SubComponent>
+        <SubComponent target="membrane">
+          <Property name="C" units="uF">
+            <SingleValue>0.9</SingleValue>
+          </Property>
+        </SubComponent>
+      </Domain>
+    </MultiCompartmentalClass>
+  </NineML>
+\end{lstlisting}
 
 \pagebreak
 
