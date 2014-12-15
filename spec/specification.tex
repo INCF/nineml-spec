@@ -5,7 +5,7 @@
 \usepackage{float}
 %% ============================================================================
 %% Description:  Documentation for \lq\lq{}The NineML Specification Document\rq\rq{}
-%% Authors: Ivan Raikov <raikov@oist.jp>, Thomas G. Close <tclose@oist.jp>, Andrew P. Davison <davison@unic.cnrs-gif.fr>
+%% Authors: Thomas G. Close <tclose@oist.jp>, Ivan Raikov <raikov@oist.jp>, Andrew P. Davison <davison@unic.cnrs-gif.fr>
 %% Organization: Okinawa Institute of Science and Technology Graduate University, Centre National de la Recherche Scientifique
 %% Date created: October 2014  <---- should probably be some date in 2010, 2011 or so...
 %% https://github.com/INCF/nineml/master/spec/specification.tex
@@ -118,15 +118,6 @@
 \packageTitle{NineML (9ML) Specification}
 \packageVersion{Version 1.0}
 \packageVersionDate{ \today}
-
-%\title{NineML (9ML) Specification Document}
-%
-%\author{Thomas G. Close\\[0.25em]
-%  \mailto{tclose@oist.jp}\\[0.25em]
-%  Compuational Neuroscience Unit\\
-%  Okinawa Institute of Science and Technology Graduate University\\
-%  Okinawa, Japan
-%}
 
 \pagestyle{empty}
 
@@ -428,7 +419,7 @@ as rich types with a numerical factor and exponents for each of the
 base dimensions. They are independent of the particular choice of
 units by which they are assigned.
 
-\note{The format for units and dimensions is the same as is used for NeuroML version 2.0 (\href{http://www.neuroml.org}{http://www.neuroml.org}).}
+\note{The format for units and dimensions is the same as is used for LEMS/NeuroML v2.0 (\href{http://www.neuroml.org}{http://www.neuroml.org}) \citep{Cannon2014}.}
 
 \subsection{Dimension}
 \label{sec:Dimension}
@@ -693,32 +684,6 @@ Each \PhysicalConstant requires a \textit{units} attribute. The \textit{units} a
 
 \subsubsection{Text format}
 Any valid numeric value, including shorthand scientific notation e.g. 1e-5 ($1\times10^{-5}$).
-
-%\subsection{StandardLibrary}
-%\label{sec:StandardLibrary}
-%
-%\begin{table}[H]
-%  \begin{edtable}{tabular}{llr}
-%    \toprule
-%    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{StandardLibrary Structure}}}\\
-%    \toprule
-%    \em{Attribute name} & \em{Type/Format} & \em{Required} \\
-%    \midrule
-%    url & \href{http://en.wikipedia.org/wiki/Uniform_resource_locator}{URL} & yes\\
-%    \midrule
-%    \em{Text format} & \; & \em{Required} \\
-%    \midrule
-%    member name & \; & yes \\ 
-%    \bottomrule
-%  \end{edtable}
-%\end{table}
-%
-%
-%\subsubsection{Url attribute}
-%\StandardLibrary require a \textit{url} attribute, which specifies a \URL that describes the behaviour of the standard library member.
-%
-%\subsubsection{Text format}
-%The name of the member within the library to use.
 
 \section{Ports}
 \label{sec:Ports}
@@ -1381,50 +1346,6 @@ Each \Property requires a \textit{name} attribute. This should refer to the name
 \subsubsection{Units attribute}
 Each \Property element requires a \emph{units} attribute. The \textit{units} attribute specifies the units of the quantity and should refer to the name of a \Unit element in the global scope. For a dimensionless units a \Unit\withelem\Dimension with no SI dimensions can be used. The SI dimensions of the \Unit\withelem\Dimension should match the SI dimensions of the corresponding \Parameter\withelem\Dimension.
 
-%
-%\subsection{Quantity}
-%\label{sec:Quantity}
-%
-%Quantity is a compound data type object that encapsulates a numerical value
-%and a unit of measurements. Unit has to be of one of the \Unit type.
-%Any numeric quantity in the language (except counters) has to be of this type,
-%dimensionless quantities shall use predefined empty \Unit.
-%\begin{table}[H]
-%  \begin{edtable}{tabular}{llr}
-%    \toprule
-%    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Quantity Structure}}}\\
-%    \toprule
-%    \em{Attribute name} & \em{Type/Format} & \em{Required} \\
-%    \midrule
-%
-%    \midrule
-%    \em{Element type} & \em{Multiplicity} & \em{Required} \\
-%    \midrule
-%   \pbox{12cm}{ \SingleValue | \ArrayValue | \ExternalArrayValue | \ComponentValue} & singleton & yes \\
-%    \bottomrule
-%  \end{edtable}
-%\end{table}
-%
-%There are two kinds of quantities: values of the first kind are given to the
-%model by the user and stay fixed, values of a second kind are computed within
-%the model during simulation. For all practical reasons the syntax of the user
-%layer descriptions is identical for both kinds of quantities. Furthermore,
-%because NineML does not provide any default values for quantities, it is a
-%job of the user to provide initial values for all defined quantities. To
-%ensure the integrity of the model NineML requires all initial values to be
-%set in the User Layer description. For batch simulations and other
-%modifications any of the values given in the User Layer can be overwritten
-%by a simulation setup description, but this is outside of the scope of the
-%current version of NineML.
-%
-%Some quantities can have values drawn from random distribution. In
-%this case User Layer description of the quantities includes a
-%reference to a random distribution component instead of a numeric
-%value.  Other quantities might be calculated according to some
-%function dependent on some other quantities. These can be defined
-%through the type Functionby including inline Abstraction Layer
-%definitions or MathML.
-
 \subsection{Reference}
 \label{sec:Reference}
 
@@ -1559,7 +1480,6 @@ The \textit{mimetype} attribute specifies the data format for the external value
 \item \lstinline|application/vnd.nineml.externalvaluearray.text| - an ASCII text file with a single row of white-space separated column names, followed by arbitrarily many white-space separated data rows of numeric values. Each numeric value is associated with the column name corresponding to the same index the along the row. Therefore, the number of items in each row must be the same.
 \item \lstinline|application/vnd.nineml.externalvaluearray.hdf5| - a \href{http://www.hdfgroup.org/HDF5/}{HDF5} data file containing a single level of named members of \primtype{array->float} or \primtype{array->int} type.
 \end{itemize}
-%\tracingall
 
 \subsubsection{ColumnName attribute}
 
@@ -2054,7 +1974,6 @@ The {\tt RegimeGraph} is shown in Figure~\ref{fig:EX1_RegimeGraph}
 
 \begin{figure}[htb!]
 \center
-%\includegraphics[width=14cm]{al/ParallelisingTransitions.pdf}example_IzRegimeTransGraph.pdf
 \includegraphics[width=8cm]{figures/example_IzRegimeTransGraph.pdf}
 \protect\caption{{\tt RegimeGraph} for the XML model in this section.}
 \label{fig:EX1_RegimeGraph}
@@ -2171,7 +2090,6 @@ User Layer description for the above example:
 Here, we show the simulation results of this XML representation.
 \begin{figure}[htb!]
 \center
-%\includegraphics[width=14cm]{al/ParallelisingTransitions.pdf}example_IzRegimeTransGraph.pdf
 \includegraphics[width=8cm]{figures/example_IzVoltageWave.pdf}
 \protect\caption{Result of simulating of the XML model in
 this section}
@@ -2549,7 +2467,7 @@ Figure~\ref{ParallelisingTransitions}.
 \end{itemize}
 
 \clearpage
-%\bibliography{sbmlpkgspec}
+\bibliography{specification}
 
 % -----------------------------------------------------------------------------
 % End of document
