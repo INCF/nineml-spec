@@ -2756,10 +2756,10 @@ User Layer:
       </Property>
     </SubComponent>
     <SubComponent target="leak">
-      <Property name="g">
+      <Property name="g" units="uS">
         <SingleValue>0.001</SingleValue>
       </Property>
-      <Property name="e_rev">
+      <Property name="e_rev" units="mV">
         <SingleValue>-21</SingleValue>
       </Property>
     </SubComponent>
@@ -2804,13 +2804,6 @@ Abstraction Layer:
             <FromProximal domain="soma" port="toDendritePort"/>
           </ReceiveConnection>
       </DomainClass>
-      <Annotations>
-        <3DPoints>
-          <XCoords><ExternalArrayValue ...></XCoords>
-          <YCoords><ExternalArrayValue ...></YCoords>
-          <ZCoords><ExternalArrayValue ...></ZCoords>
-        </3DPoints>
-      </Annotations>
     </MultiCompartmentalClass>
   </NineML>
 \end{lstlisting}
@@ -2841,10 +2834,10 @@ User Layer:
           </Property>
         </SubComponent>
         <SubComponent target="leak">
-          <Property name="g">
+          <Property name="g" units="uS">
             <SingleValue>0.001</SingleValue>
           </Property>
-          <Property name="e_rev">
+          <Property name="e_rev" units="mV">
             <SingleValue>-21</SingleValue>
           </Property>
         </SubComponent>
@@ -2866,10 +2859,10 @@ User Layer:
           </Property>
         </SubComponent>
         <SubComponent target="leak">
-          <Property name="g">
+          <Property name="g" units="uS">
             <SingleValue>0.002</SingleValue>
           </Property>
-          <Property name="e_rev">
+          <Property name="e_rev" units="mV">
             <SingleValue>-30</SingleValue>
           </Property>
         </SubComponent>
@@ -2879,6 +2872,13 @@ User Layer:
           </Property>
         </SubComponent>
       </Domain>
+      <Annotations>
+        <3DPoints>
+          <XCoords><ExternalArrayValue ...></XCoords>
+          <YCoords><ExternalArrayValue ...></YCoords>
+          <ZCoords><ExternalArrayValue ...></ZCoords>
+        </3DPoints>
+       </Annotations>
     </MultiCompartmentalClass>
   </NineML>
 \end{lstlisting}
