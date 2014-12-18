@@ -1,13 +1,14 @@
 %% Filename:     ninemlspec.cls                         -*- mode: latex -*-
 %%
-%% Slightly modified from:
+%% Description:   LaTeX style file for SBML Level 3 package specifications
+%% Author(s):       Thomas G. Close <tclose@oist.jp>
+%% Organization: Okinawa Institute of Science and Technology Graduate University
+%% Date created: 2014-12-09
 %%
-%% Description:  LaTeX style file for SBML Level 3 package specifications
-%% Author(s):    Michael Hucka <mhucka@caltech.edu>
-%% Organization: California Institute of Technology
-%% Date created: 2011-08-11
+%% NB: This style file is adapted from the "LaTeX style file for SBML Level 3 package specifications"
+%%        developed by Michael Hucka <mhucka@caltech.edu>.
 %%
-%% Copyright 2007-2014 California Institute of Technology, Pasadena, CA, USA.
+%% Copyright 2007-2014 Okinawa Institute of Science and Technology Graduate University
 %% 
 %% This file is free software; you can redistribute it and/or modify it
 %% under the terms of the GNU Lesser General Public License as published
@@ -86,6 +87,7 @@
 \RequirePackage[T1]{fontenc}
 \RequirePackage{suffix}
 \RequirePackage{varwidth}
+\RequirePackage{titlesec}
 
 % We use the "optional" package to indicate whether to generate a grayscale
 % vs a color version of the document without having to alter the .tex file
@@ -298,10 +300,10 @@
 \definecolor{darkblue}{rgb}{0.1,0.4,0.55}
 \definecolor{mediumgreen}{rgb}{0.1,0.6,0.3}
 
-\definecolor{sbmlnormaltextcolor}{gray}{0.27}
-\definecolor{sbmlliteralcolor}{gray}{0}
-\definecolor{sbmllinenumbercolor}{gray}{0.75}
-\definecolor{sbmlchangedcolor}{rgb}{0.69,0.19,0.376}
+\definecolor{ninemlnormaltextcolor}{gray}{0.27}
+\definecolor{ninemlliteralcolor}{gray}{0}
+\definecolor{ninemllinenumbercolor}{gray}{0.75}
+\definecolor{ninemlchangedcolor}{rgb}{0.69,0.19,0.376}
 
 % Macros and settings for making consistent font, color, and other
 % selections.
@@ -310,30 +312,30 @@
 % the result on most printers is text that a hard-to-read light gray color.
 
 \ifgrayscalespec
-  \colorlet{@sbmlchangedcolor}{sbmlnormaltextcolor}
+  \colorlet{@ninemlchangedcolor}{ninemlnormaltextcolor}
 \else
-  \colorlet{@sbmlchangedcolor}{sbmlchangedcolor}
+  \colorlet{@ninemlchangedcolor}{ninemlchangedcolor}
 \fi
-\colorlet{@sectionnumcolor}{sbmlnormaltextcolor}
-\colorlet{@literalcolor}{sbmlliteralcolor}
+\colorlet{@sectionnumcolor}{ninemlnormaltextcolor}
+\colorlet{@literalcolor}{ninemlliteralcolor}
 
 \newcommand{\changed}[1]{%
   \protect\colorlet{@currentliteralcolor}{@literalcolor}%
   \protect\colorlet{@currentsectionnumcolor}{@sectionnumcolor}%
-  \protect\colorlet{@literalcolor}{sbmlchangedcolor}%
-  \protect\colorlet{@sectionnumcolor}{sbmlchangedcolor}%
-  \textcolor{sbmlchangedcolor}{#1}%
+  \protect\colorlet{@literalcolor}{ninemlchangedcolor}%
+  \protect\colorlet{@sectionnumcolor}{ninemlchangedcolor}%
+  \textcolor{ninemlchangedcolor}{#1}%
   \protect\colorlet{@literalcolor}{@currentliteralcolor}%
   \protect\colorlet{@sectionnumcolor}{@currentsectionnumcolor}}
 
 \newenvironment{blockChanged}{%
   \colorlet{@currentliteralcolor}{@literalcolor}%
   \colorlet{@currentsectionnumcolor}{@sectionnumcolor}%
-  \colorlet{@literalcolor}{sbmlchangedcolor}%
-  \colorlet{@sectionnumcolor}{sbmlchangedcolor}%
-  \color{sbmlchangedcolor}%
+  \colorlet{@literalcolor}{ninemlchangedcolor}%
+  \colorlet{@sectionnumcolor}{ninemlchangedcolor}%
+  \color{ninemlchangedcolor}%
 }{%
-  \color{sbmlnormaltextcolor}%
+  \color{ninemlnormaltextcolor}%
   \colorlet{@literalcolor}{@currentliteralcolor}%
   \colorlet{@sectionnumcolor}{@currentsectionnumcolor}}
 
@@ -350,6 +352,7 @@
   \newcommand{\absDefRef}[2]{\textbf{\abstractclass{#1}}\xspace}
 \else
   \newcommand{\defRef}[2]{\class{\hyperref[#2]{#1}}\xspace}
+  \newcommand{\typeDefRef}[2]{\textit{\hyperref[#2]{#1}}\xspace}
   \newcommand{\absDefRef}[2]{\abstractclass{\hyperref[#2]{#1}}\xspace}
   \newcommand{\absDefRefUpright}[2]{\abstractclassUpright{\hyperref[#2]{#1}}\xspace}
 \fi
@@ -369,7 +372,7 @@
 \renewcommand{\linenumberfont}{\tiny\sffamily}
 \renewcommand{\thelinenumber}{%
   \BeginAccSupp{ActualText={}}%
-  \textcolor{sbmllinenumbercolor}{\parbox[b][\height+1.5pt][c]{10pt}{\arabic{linenumber}}}%
+  \textcolor{ninemllinenumbercolor}{\parbox[b][\height+1.5pt][c]{10pt}{\arabic{linenumber}}}%
   \EndAccSupp{}%
 }
 
@@ -705,19 +708,27 @@
 % The "changed" versions put the numbers in red, to indicate a change
 % in section numbers.
 
+\titleformat{\part}[display]
+        {\normalfont\centering\huge\bfseries\sffamily\color{mediumgray}}%
+        {\thispagestyle{empty}\vspace{12.5pc}%
+         \partname~\thepart}%
+        {1em}%
+        {\vspace{-15pt}\Huge\color{ninemlblue}}%
+        []
+
 \renewcommand\@seccntformat[1]{%
   \color{@sectionnumcolor}{\csname the#1\endcsname}\hspace{0.5em}}
 
 \renewcommand{\section}{\@startsection%
   {section}{1}{0pt \@plus 1ex}{-3.5ex \@plus -2ex \@minus -.2ex}%
   {1.2ex}{\clearpage\thispagestyle{footeronly}%
-    \hspace*{-24.25pt}\color{ninemlgray}{\rule[1.8em]{6.84in}{0.6em}}\color{sbmlnormaltextcolor}%
-    \hspace*{-6.84in}\color{ninemlgray}{\rule[-0.8em]{6.84in}{0.1em}}\color{sbmlnormaltextcolor}%
+    \hspace*{-24.25pt}\color{ninemlgray}{\rule[1.8em]{6.84in}{0.6em}}\color{ninemlnormaltextcolor}%
+    \hspace*{-6.84in}\color{ninemlgray}{\rule[-0.8em]{6.84in}{0.1em}}\color{ninemlnormaltextcolor}%
     \noindent\normalfont\LARGE\bfseries\sffamily\hspace*{-6.84in}}}
 
 \newcommand{\sectionChanged}[1]{%
   \colorlet{@currentsectionnumcolor}{@sectionnumcolor}%
-  \colorlet{@sectionnumcolor}{sbmlchangedcolor}%
+  \colorlet{@sectionnumcolor}{ninemlchangedcolor}%
   \section{#1}%
   \colorlet{@sectionnumcolor}{@currentsectionnumcolor}}
 
@@ -726,7 +737,7 @@
   {0.1ex}{\Large\bfseries\sffamily}}
 
 \newcommand{\subsectionChanged}[1]{%
-  \colorlet{@sectionnumcolor}{sbmlchangedcolor}%
+  \colorlet{@sectionnumcolor}{ninemlchangedcolor}%
   \subsection{#1}%
   \colorlet{@sectionnumcolor}{@currentsectionnumcolor}}
 
@@ -735,7 +746,7 @@
   {0.4ex}{\large\bfseries\sffamily\slshape}}
 
 \newcommand{\subsubsectionChanged}[1]{%
-  \colorlet{@sectionnumcolor}{sbmlchangedcolor}%
+  \colorlet{@sectionnumcolor}{ninemlchangedcolor}%
   \subsubsection{#1}%
   \colorlet{@sectionnumcolor}{@currentsectionnumcolor}}
 
@@ -744,7 +755,7 @@
   {0.4ex}{\normalsize\bfseries\sffamily\slshape}}
 
 \newcommand{\paragraphChanged}[1]{%
-  \colorlet{@sectionnumcolor}{sbmlchangedcolor}%
+  \colorlet{@sectionnumcolor}{ninemlchangedcolor}%
   \paragraph{#1}%
   \colorlet{@sectionnumcolor}{@currentsectionnumcolor}}
 
@@ -1167,7 +1178,7 @@
 %
 
 \raggedbottom
-\color{sbmlnormaltextcolor}                % Default body text color.
+\color{ninemlnormaltextcolor}                % Default body text color.
 
 %% -----------------------------------------------------------------------------
 %% End of file `cekarticle.cls'.
