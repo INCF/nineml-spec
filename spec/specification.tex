@@ -91,8 +91,8 @@
 \newcommand{\MetaParameter}{\defRef{\textbf{\class{MetaParameter}}\xspace}{sec:MetaParameter}}
 \newcommand{\MetaProperty}{\defRef{\textbf{\class{MetaProperty}}\xspace}{sec:MetaProperty}}
 \newcommand{\DerivedProperty}{\defRef{\textbf{\class{DerivedProperty}}\xspace}{sec:DerivedProperty}}
-\newcommand{\ReceivesConnection}{\defRef{\textbf{\class{ReceivesConnection}}\xspace}{sec:ReceivesConnection}}
-\newcommand{\FromComponent}{\defRef{\textbf{\class{FromComponent}}\xspace}{sec:FromComponent}}
+\newcommand{\ReceiveConnection}{\defRef{\textbf{\class{ReceiveConnection}}\xspace}{sec:ReceiveConnection}}
+\newcommand{\FromSubComponent}{\defRef{\textbf{\class{FromSubComponent}}\xspace}{sec:FromSubComponent}}
 \newcommand{\MultiComponent}{\defRef{\textbf{\class{MultiComponent}}\xspace}{sec:MultiComponent}}
 
 % Multi-compartment element references
@@ -1648,7 +1648,7 @@ Each \Projection requires a \textit{name} attribute, which should be a valid \id
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
     \Reference{}\pointto\Population | \Reference{}\pointto\Selection & singleton & yes \\
-    \ReceivesConnection & set & no\\
+    \ReceiveConnection & set & no\\
     \bottomrule
   \end{edtable}
 \end{table}
@@ -1666,7 +1666,7 @@ The \Source element specifies the pre-synaptic population or selection (see \Sel
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
     \Reference{}\pointto\Population | \Reference{}\pointto\Selection & singleton & yes \\
-    \ReceivesConnection & set & yes\\
+    \ReceiveConnection & set & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
@@ -1701,7 +1701,7 @@ The \Connectivity element contains a \Component\withelem\ConnectionRule, which d
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
     \Component{}\withelem\Dynamics | \Reference{}\pointto\Component{}\withelem\Dynamics & singleton & yes \\ 
-    \ReceivesConnection & set & yes\\
+    \ReceiveConnection & set & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
@@ -1712,13 +1712,13 @@ The post-synaptic response dynamics can receive incoming port connections from e
 
 It is recommended to factor out plasticity rules from post-synaptic response dynamics and combine them within \MultiComponent element to promote reusability of response and plasticity dynamics. 
 
-\subsection{ReceivesConnection}
-\label{sec:ReceivesConnection}
+\subsection{ReceiveConnection}
+\label{sec:ReceiveConnection}
 
 \begin{table}[H]
   \begin{edtable}{tabular}{llr}
     \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{ReceivesConnection Structure}}}\\
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{ReceiveConnection Structure}}}\\
     \toprule
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule \relax
@@ -1731,10 +1731,10 @@ It is recommended to factor out plasticity rules from post-synaptic response dyn
   \end{edtable}
 \end{table}
 
-The \ReceivesConnection element specifies a receive port which will receive a connection from a port of a remote component. Depending on the context in which \ReceivesConnection is placed, the role of the components it can receive from vary. Therefore, it accepts a range of elements (all named \emph{From*}), which specify the relationship of the remote component to the enclosing element (e.g. \FromSource, \FromDestination and \FromSynapse  in \Projection containers).
+The \ReceiveConnection element specifies a receive port which will receive a connection from a port of a remote component. Depending on the context in which \ReceiveConnection is placed, the role of the components it can receive from vary. Therefore, it accepts a range of elements (all named \emph{From*}), which specify the relationship of the remote component to the enclosing element (e.g. \FromSource, \FromDestination and \FromSynapse  in \Projection containers).
 
 \subsubsection{Port attribute}
-Each \ReceivesConnection element requires a \textit{port} attribute. This should refer to the name of a \AnalogReceivePort, \EventReceivePort or \AnalogReducePort in the \ComponentClass associated with the enclosing element.
+Each \ReceiveConnection element requires a \textit{port} attribute. This should refer to the name of a \AnalogReceivePort, \EventReceivePort or \AnalogReducePort in the \ComponentClass associated with the enclosing element.
 
 \subsection{FromSource}
 \label{sec:FromSource}
@@ -1758,7 +1758,7 @@ Each \ReceivesConnection element requires a \textit{port} attribute. This should
 The \FromSource element specifies a port connection to the projection component (either the destination cell, post-synaptic response or plasticity dynamics) inside which it is inserted from the source cell dynamics. The delay on transmission of the port connection is specified by a \Delay element. If a \Delay element is not provided the delay is zero.
 
 \subsubsection{port attribute}
-Each \FromSource element requires a \textit{port} attribute. This should refer to the name of a \AnalogSendPort or \EventSendPort in the \Source\withelem\Cell{}\withelem\Component{}\withelem\ComponentClass. The transmission mode of the port (i.e. \lq\lq{}analog\rq\rq{} or \lq\lq{}event\rq\rq{}) should match that of the port referenced by the enclosing \ReceivesConnection element.
+Each \FromSource element requires a \textit{port} attribute. This should refer to the name of a \AnalogSendPort or \EventSendPort in the \Source\withelem\Cell{}\withelem\Component{}\withelem\ComponentClass. The transmission mode of the port (i.e. \lq\lq{}analog\rq\rq{} or \lq\lq{}event\rq\rq{}) should match that of the port referenced by the enclosing \ReceiveConnection element.
 
 \subsection{FromDestination}
 \label{sec:FromDestination}
@@ -1781,7 +1781,7 @@ Each \FromSource element requires a \textit{port} attribute. This should refer t
 The \FromDestination element specifies a port connection to the projection component (either the source cell, post-synaptic response or plasticity dynamics) inside which it is inserted from the destination cell dynamics. The delay on transmission of the port connection is specified by a \Delay element. If a \Delay element is not provided the delay is zero.
 
 \subsubsection{port attribute}
-Each \FromDestination element requires a \textit{port} attribute. This should refer to the name of a \AnalogSendPort or \EventSendPort in the \Destination\withelem\Cell\withelem\Component{}\withelem\ComponentClass. The transmission mode of the port (i.e. \lq\lq{}analog\rq\rq{} or \lq\lq{}event\rq\rq{}) should match that of the port referenced by the enclosing \ReceivesConnection element.
+Each \FromDestination element requires a \textit{port} attribute. This should refer to the name of a \AnalogSendPort or \EventSendPort in the \Destination\withelem\Cell\withelem\Component{}\withelem\ComponentClass. The transmission mode of the port (i.e. \lq\lq{}analog\rq\rq{} or \lq\lq{}event\rq\rq{}) should match that of the port referenced by the enclosing \ReceiveConnection element.
 
 
 \subsection{FromSynapse}
@@ -1805,7 +1805,7 @@ Each \FromDestination element requires a \textit{port} attribute. This should re
 The \FromSynapse element specifies a port connection to the source or destination cell component from the \Synapse element. The delay on transmission of the port connection is specified by a \Delay element. If a \Delay element is not provided the delay is zero.
 
 \subsubsection{port attribute}
-Each \FromSynapse element requires a \textit{port} attribute. This should refer to the name of a \AnalogSendPort or \EventSendPort in the \Synapse\withelem\ComponentClass. The transmission mode of the port (i.e. \lq\lq{}analog\rq\rq{} or \lq\lq{}event\rq\rq{}) should match that of the port referenced by the enclosing \ReceivesConnection element.
+Each \FromSynapse element requires a \textit{port} attribute. This should refer to the name of a \AnalogSendPort or \EventSendPort in the \Synapse\withelem\ComponentClass. The transmission mode of the port (i.e. \lq\lq{}analog\rq\rq{} or \lq\lq{}event\rq\rq{}) should match that of the port referenced by the enclosing \ReceiveConnection element.
 
 \subsection{Delay}
 \label{sec:Delay}
@@ -1941,23 +1941,23 @@ Each \ComponentClass requires a \textit{name} attribute, which should be a valid
     \em{Element type} & Multiplicity & \em{Required} \\
     \midrule \relax
     \Component\withelem\Dynamics | \Reference{}\pointto\Component\withelem\Dynamics & singleton & yes\\
-    \ReceivesConnection & set & yes\\
+    \ReceiveConnection & set & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
 
-\SubComponent elements can refer to any \ComponentClass\withelem\Dynamics class. They elements are explicitly connected to other \SubComponent elements via ports specified by \ReceivesConnection\withelem{}\FromComponent elements. Apart from accepting \ReceivesConnection elements, \SubComponent elements are the defined the same as \Component elements.
+\SubComponent elements can refer to any \ComponentClass\withelem\Dynamics class. They elements are explicitly connected to other \SubComponent elements via ports specified by \ReceiveConnection\withelem{}\FromSubComponent elements. Apart from accepting \ReceiveConnection elements, \SubComponent elements are the defined the same as \Component elements.
 
 \subsubsection{Name attribute}
 Each \MultiComponent requires a \textit{name} attribute, which should be a valid \identifier and uniquely identify the {\MultiComponent} in the global scope.
 
-\subsection{FromComponent}
-\label{sec:FromComponent}
+\subsection{FromSubComponent}
+\label{sec:FromSubComponent}
 
 \begin{table}[H]
   \begin{edtable}{tabular}{llr}
     \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{FromComponent Structure}}}\\
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{FromSubComponent Structure}}}\\
     \toprule
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
@@ -1967,13 +1967,13 @@ Each \MultiComponent requires a \textit{name} attribute, which should be a valid
   \end{edtable}
 \end{table}
 
-The \FromComponent element specifies a port connection to the enclosing \SubComponent component from another \SubComponent. 
+The \FromSubComponent element specifies a port connection to the enclosing \SubComponent component from another \SubComponent. 
 
 \subsubsection{Component attribute}
-Each \FromComponent requires a \textit{component} attribute, which should refer to a \SubComponent within the \MultiComponent scope.
+Each \FromSubComponent requires a \textit{component} attribute, which should refer to a \SubComponent within the \MultiComponent scope.
 
 \subsubsection{Port attribute}
-Each \FromComponent requires a \textit{port} attribute, which should refer to the name of a port in the corresponding \SubComponent.
+Each \FromSubComponent requires a \textit{port} attribute, which should refer to the name of a port in the corresponding \SubComponent.
 
 \subsection{PortExposure}
 \label{sec:PortExposure}
@@ -2033,7 +2033,7 @@ The expected technique for flattening to multi-compartmental models to the core,
   \end{edtable}
 \end{table}
 
-The \MultiCompartmentComponent contains all the elements required to specify the multi-compartmental model. It can be only used within \Population\withelem{}\Cell elements. The branching structure of the compartments (i.e. which compartments are connected to which) is specified by the \Branches element, while the dynamics of the compartments is specified in \Domain they are mapped to by the \Mapping element. 
+The \MultiCompartmentComponent is the top-level element for multi-compartmental models. It can be only used within \Population\withelem{}\Cell elements. The branching structure of the compartments (i.e. which compartments are connected to which) is specified by the \Branches element, while the dynamics of the compartments is specified in \Domain they are mapped to by the \Mapping element. 
 
 \subsection{Branches}
 \label{sec:Branches}
@@ -2085,7 +2085,7 @@ The mapping array is a list of indices corresponding to the \Domain{}@mapID attr
     \em{Element type} & Multiplicity & \em{Required} \\
     \midrule \relax
     \Component\withelem\Dynamics | \Reference{}\pointto\Component\withelem\Dynamics & singleton & yes\\
-    \ReceivesConnection & set & yes\\
+    \ReceiveConnection & set & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
@@ -2136,7 +2136,7 @@ Each \PortExposure requires a \textit{port} attribute, which should refer to the
 \begin{table}[H]
   \begin{edtable}{tabular}{llr}
     \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{FromComponent Structure}}}\\
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{FromSubComponent Structure}}}\\
     \toprule
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
@@ -2160,7 +2160,7 @@ Each \FromProximal requires a \textit{port} attribute, which should refer to the
 \begin{table}[H]
   \begin{edtable}{tabular}{llr}
     \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{FromComponent Structure}}}\\
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{FromSubComponent Structure}}}\\
     \toprule
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
@@ -2170,7 +2170,7 @@ Each \FromProximal requires a \textit{port} attribute, which should refer to the
   \end{edtable}
 \end{table}
 
-\FromDistal elements without a component attribute accept ports from any compartments that are connected to it (assumes ports have the same name in different domains). With a name attribute they are only connected if the compartment is of the corresponding domain. \ReceivesConnection elements with \FromDistal child elements must be able to handle multiple port connections, i.e. they must be either \EventReceivePort, \AnalogReducePort or \AnalogArrayPort elements.
+\FromDistal elements without a component attribute accept ports from any compartments that are connected to it (assumes ports have the same name in different domains). With a name attribute they are only connected if the compartment is of the corresponding domain. \ReceiveConnection elements with \FromDistal child elements must be able to handle multiple port connections, i.e. they must be either \EventReceivePort, \AnalogReducePort or \AnalogArrayPort elements.
 
 \subsubsection{Domain attribute}
 Each \FromProximal can define a \textit{domain} attribute. If present the \textit{domain} attribute should refer to a \Domain within the \MultiCompartmentComponent scope.
@@ -2201,9 +2201,9 @@ Each \FromProximal requires a \textit{port} attribute, which should refer to the
   \end{edtable}
 \end{table}
 
-To handle the projections onto dendritic trees with multiple compartments an extension of the \Projection element must be used if either the source or destination populations consist of multi-compartmental models. It receives a \CompartmentConnectivity element which determines which compartments projections are made. 
+An extension of the \Projection object model, \MultiCompartmentProjection, must be used if either the source or destination populations consist of multi-compartmental models. It receives a \CompartmentConnectivity element which determines which compartments projections are made. 
 
-In flattening the \MultiCompartmentProjection elements to Core NineML, a single \MultiCompartmentProjection is split into a set of \Projection elements, one for each possible source/destination compartment pairing.
+In flattening the \MultiCompartmentProjection elements to Core NineML, a single \MultiCompartmentProjection is split into a set of \Projection elements, one for each source/destination compartment pairing that has a non-empty set of connections.
 
 \subsubsection{Name attribute}
 Each \MultiCompartmentProjection requires a \textit{name} attribute, which should be a valid \identifier and uniquely identify the \MultiCompartmentProjection in the global scope.
@@ -2468,9 +2468,7 @@ The corresponding Regime Graph is shown in Figure 5.
 The resulting XML description for the Abstraction Layer is :
 \begin{lstlisting}[label=code:xmliaf2]
 <?xml version='1.0' encoding='UTF-8'?>
-<NineML xmlns="http://nineml.net/9ML/1.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://nineml.net/9ML/1.0/NineML_v1.0.xsd">
+<NineML xmlns="http://nineml.net/9ML/1.0">
   <ComponentClass name="Iaf1Coba">
     <AnalogSendPort dimension="voltage" name="iaf_V" />
     <AnalogReducePort dimension="current" operator="+" name="iaf_ISyn" />
@@ -2548,9 +2546,7 @@ The resulting XML description for the Abstraction Layer is :
 User Layer description for the above example:
 \begin{lstlisting}
 <?xml version='1.0' encoding='UTF-8'?>
-<NineML xmlns="http://nineml.net/9ML/1.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://nineml.net/9ML/1.0/NineML_v1.0.xsd">
+<NineML xmlns="http://nineml.net/9ML/2.0">
   <Component name="IaFNeuron">
     <Definition url="http://nineml.net/catalog/neurons/iafICoba.9ml"
       >Iaf1Coba</Definition>
@@ -2616,144 +2612,145 @@ in this simulation}
 \subsection{Multi-component Hodgkin-Huxley Model}
 
 \begin{lstlisting}
-<?xml version='1.0' encoding='UTF-8'?>
-<NineML xmlns="http://nineml.net/9ML/1.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://nineml.net/9ML/1.0/NineML_v1.0.xsd">
-<MultiComponent name="HodgkinHuxleyContainer">
-  <SubComponent name="Na">
-    <Component>
-      <Definition>PyramidalNa</Definition>
-      <Property name="gbar" units="uS">
-        <SingleValue>0.0025</SingleValue>
-      </Property>
-    </Component>
-    <ReceivesConnection port="V">
-      <FromComponent component="membrane" port="V"/>
-    </ReceivesConnection>
-  </SubComponent>
-  <SubComponent name="K">
-    <Component>
-      <Prototype>PyramidalK</Prototype>
-      <Property name="gbar" units="uS">
-        <SingleValue>0.0036</SingleValue>
-      </Property>
-    </Component>
-    <ReceivesConnection port="V">
-      <FromComponent component="membrane" port="V"/>
-    </ReceivesConnection>
-  </SubComponent>
-  <SubComponent name="leak">
-    <Component>
-      <Definition>Leak</Definition>
-      <Property name="g" units="uS">
-        <SingleValue>0.001</SingleValue>
-      </Property>
-      <Property name="e_rev" units="mV">
-        <SingleValue>-21</SingleValue>
-      </Property>
-    </Component>
-    <ReceivesConnection port="V">
-      <FromComponent component="membrane" port="V"/>
-    </ReceivesConnection>
-  </SubComponent>
-  <SubComponent name="membrane">
-    <Component>
-      <Definition url="http://nineml.net/9ML/2.0/catalog/basicMembrane.xml"
-        >BasicMembrane</Definition>
-      <Property name="length" units="um">
-        <SingleValue>15.0</SingleValue>
-      </Property>
-      <Property name="axialResistance" units="ohm_per_cm">
-        <SingleValue>100.0</SingleValue>
-      </Property>
-      <Property name="diameter" units="um">
-        <SingleValue>15.0</SingleValue>
-      </Property>
-      <Property name="C" units="uF">
-        <SingleValue>1.0</SingleValue>
-      </Property>
-    </Component>
-    <ReceivesConnection port="i">
-      <FromComponent component="Na" name="i"/>
-      <FromComponent component="K" name="i"/>
-      <FromComponent component="leak" name="i"/>
-    </ReceivesConnection>
-  </SubComponent>
-  <PortExposure name="membraneVoltage" component="membrane" port="V"/>
-  <PortExposure name="membraneCurrent" component="membrane" port="i">
-    <Annotations>
-      <Comment>This can be used to connect current synaptic input</Comment>
-    </Annotations>
-  </PortExposure>
-</MultiComponent>
-<Dimension name="time" t="1"/>
-<Dimension name="voltage" m="1" l="2" t="-3" i="-1"/>
-<Dimension name="conductance" m="-1" t="3" l="-2" i="2"/>
-<Dimension name="area" l="2"/>
-<Dimension name="length" l="1"/>
-<Unit symbol="mV" dimension="voltage" power="-3"/>
-<Unit symbol="um" dimension="length" power="-3"/>
-<Unit symbol="ms" dimension="time" power="-3"/>
-<Unit symbol="cm_square" dimension="area" power="-4"/>
-<Unit symbol="mS" dimension="conductance" power="-3"/>
-</NineML>
-\end{lstlisting}
+<?xml version="1.0" encoding="UTF-8"?>
+<NineML xmlns="http://nineml.net/9ML/2.0">
+  <MultiComponent name="HodgkinHuxleyContainer">
+    <SubComponent name="Na">
+      <Component>
+        <Definition>PyramidalNa</Definition>
+        <Property name="gbar" units="uS">
+          <SingleValue>0.0025</SingleValue>
+        </Property>
+      </Component>
+      <ReceiveConnection port="V">
+        <FromSubComponent component="membrane" port="V"/>
+      </ReceiveConnection>
+    </SubComponent>
+    <SubComponent name="K">
+      <Component>
+        <Prototype>PyramidalK</Prototype>
+        <Property name="gbar" units="uS">
+          <SingleValue>0.0036</SingleValue>
+        </Property>
+      </Component>
+      <ReceiveConnection port="V">
+        <FromSubComponent component="membrane" port="V"/>
+      </ReceiveConnection>
+    </SubComponent>
+    <SubComponent name="leak">
+      <Component>
+        <Definition>Leak</Definition>
+        <Property name="g" units="uS">
+          <SingleValue>0.001</SingleValue>
+        </Property>
+        <Property name="e_rev" units="mV">
+          <SingleValue>-21</SingleValue>
+        </Property>
+      </Component>
+      <ReceiveConnection port="V">
+        <FromSubComponent component="membrane" port="V"/>
+      </ReceiveConnection>
+    </SubComponent>
+    <SubComponent name="membrane">
+      <Component>
+        <Definition url="http://nineml.net/9ML/2.0/catalog/basicMembrane.9ml"
+          >BasicMembrane</Definition>
+        <Property name="length" units="um">
+          <SingleValue>15.0</SingleValue>
+        </Property>
+        <Property name="axialResistance" units="ohm_per_cm">
+          <SingleValue>100.0</SingleValue>
+        </Property>
+        <Property name="diameter" units="um">
+          <SingleValue>15.0</SingleValue>
+        </Property>
+        <Property name="C" units="uF">
+          <SingleValue>1.0</SingleValue>
+        </Property>
+      </Component>
+      <ReceiveConnection port="i">
+        <FromSubComponent component="Na" name="i"/>
+        <FromSubComponent component="K" name="i"/>
+        <FromSubComponent component="leak" name="i"/>
+      </ReceiveConnection>
+    </SubComponent>
+    <PortExposure name="membraneVoltage" component="membrane" port="V"/>
+    <PortExposure name="membraneCurrent" component="membrane" port="i">
+      <Annotations>
+        <Comment>This can be used to connect current synaptic input</Comment>
+      </Annotations>
+    </PortExposure>
+  </MultiComponent>
+  <Dimension name="time" t="1"/>
+  <Dimension name="voltage" m="1" l="2" t="-3" i="-1"/>
+  <Dimension name="conductance" m="-1" t="3" l="-2" i="2"/>
+  <Dimension name="area" l="2"/>
+  <Dimension name="length" l="1"/>
+  <Unit symbol="mV" dimension="voltage" power="-3"/>
+  <Unit symbol="um" dimension="length" power="-3"/>
+  <Unit symbol="ms" dimension="time" power="-3"/>
+  <Unit symbol="cm_square" dimension="area" power="-4"/>
+  <Unit symbol="mS" dimension="conductance" power="-3"/>  
+</NineML>\end{lstlisting}
 
 \clearpage
 \subsection{Example multi-compartmental model}
 
 \begin{lstlisting}
 <?xml version="1.0" encoding="UTF-8"?>
-<NineML xmlns="http://nineml.net/9ML/1.0">
+<NineML xmlns="http://nineml.net/9ML/2.0">
   <MultiCompartmentComponent name="ExampleMultiCompartmentModel">
     <Definition>ExampleMultiCompartmentClass</Definition>
     <Branches>
-      <ExternalArrayValue url="./data/dendritic_branches.txt"
+      <ExternalArrayValue url="./example_compartments.txt.txt"
         mimetype="vnd.net.nineml.arrayvalue.text" columnName="parentID"/>
     </Branches>
     <Mapping>
-      <ExternalArrayValue url="./data/dendritic_branches.txt"
+      <ExternalArrayValue url="./example_compartments.txt.txt"
         mimetype="vnd.net.nineml.arrayvalue.text" columnName="domain"/>
     </Mapping>
     <Domain name="soma">
       <MultiComponent name="somaDynamics">
         <SubComponent name="PyramidalNa">
           <Component>
-            <Prototype url="http://nineml.net/catalog/channels">HHPyramidalNa</Prototype>
+            <Prototype url="http://nineml.net/9ML/2.0/catalog/channels"
+              >HHPyramidalNa</Prototype>
             <Property name="gbar" units="uS">
               <SingleValue>0.0036</SingleValue>
             </Property>
           </Component>
-          <ReceivesConnection port="V">
-            <FromComponent component="membrane" port="V"/>
-          </ReceivesConnection>
+          <ReceiveConnection port="V">
+            <FromSubComponent component="membrane" port="V"/>
+          </ReceiveConnection>
         </SubComponent>
         <SubComponent name="PyramidalK">
           <Component>
-            <Prototype url="http://nineml.net/catalog/channels">HHPyramidalK</Prototype>
+            <Prototype url="http://nineml.net/9ML/2.0/catalog/channels"
+              >HHPyramidalK</Prototype>
             <Property name="gbar" units="uS">
               <SingleValue>0.0025</SingleValue>
             </Property>
           </Component>
-          <ReceivesConnection port="V">
-            <FromComponent component="membrane" port="V"/>
-          </ReceivesConnection>
+          <ReceiveConnection port="V">
+            <FromSubComponent component="membrane" port="V"/>
+          </ReceiveConnection>
         </SubComponent>
         <SubComponent name="Kv4">
           <Component>
-            <Prototype url="http://nineml.net/catalog/channels">HHPyramidalK</Prototype>
+            <Prototype url="http://nineml.net/9ML/2.0/catalog/channels"
+              >HHPyramidalK</Prototype>
             <Property name="gbar" units="uS">
               <SingleValue>0.0025</SingleValue>
             </Property>
           </Component>
-          <ReceivesConnection port="V">
-            <FromComponent component="membrane" port="V"/>
-          </ReceivesConnection>
+          <ReceiveConnection port="V">
+            <FromSubComponent component="membrane" port="V"/>
+          </ReceiveConnection>
         </SubComponent>
         <SubComponent name="leak">
           <Component>
-            <Definition url="http://nineml.net/catalog/channels">Leak</Definition>
+            <Definition url="http://nineml.net/9ML/2.0/catalog/channels"
+              >Leak</Definition>
             <Property name="g" units="uS">
               <SingleValue>0.001</SingleValue>
             </Property>
@@ -2761,13 +2758,14 @@ in this simulation}
               <SingleValue>-21</SingleValue>
             </Property>
           </Component>
-          <ReceivesConnection port="V">
-            <FromComponent component="membrane" port="V"/>
-          </ReceivesConnection>
+          <ReceiveConnection port="V">
+            <FromSubComponent component="membrane" port="V"/>
+          </ReceiveConnection>
         </SubComponent>
         <SubComponent name="membrane">
           <Component>
-            <Definition url="http://nineml.net/catalog/channels">DefaultMembrane</Definition>
+            <Definition url="http://nineml.net/9ML/2.0/catalog/channels/basicCompartment.9ml"
+              >BasicCompartment</Definition>
             <Property name="length" units="um">
               <SingleValue>15.0</SingleValue>
             </Property>
@@ -2781,47 +2779,47 @@ in this simulation}
               <SingleValue>1.0</SingleValue>
             </Property>
           </Component>
-          <ReceivesConnection port="i">
-            <FromComponent component="Na" name="i"/>
-            <FromComponent component="K" name="i"/>
-            <FromComponent component="leak" name="i"/>
-          </ReceivesConnection>
+          <ReceiveConnection port="i">
+            <FromSubComponent component="Na" name="i"/>
+            <FromSubComponent component="K" name="i"/>
+            <FromSubComponent component="leak" name="i"/>
+          </ReceiveConnection>
         </SubComponent>
         <PortExposure name="proximalVoltage" component="membrane" port="proximalV"/>
         <PortExposure name="distalVoltage" component="membrane" port="distalV"/>
       </MultiComponent>
-      <ReceivesConnection port="proximalVoltage">
+      <ReceiveConnection port="proximalVoltage">
         <FromProximal port="voltage"/>
-      </ReceivesConnection>
-      <ReceivesConnection port="distalVoltage">
+      </ReceiveConnection>
+      <ReceiveConnection port="distalVoltage">
         <FromDistal port="voltage"/>
-      </ReceivesConnection>
+      </ReceiveConnection>
     </Domain>
     <Domain name="dendrites">
       <Reference>DendriteDynamics</Reference>
-      <ReceivesConnection port="proximalVoltage">
+      <ReceiveConnection port="proximalVoltage">
         <FromProximal port="voltage"/>
-      </ReceivesConnection>
-      <ReceivesConnection port="distalVoltage">
+      </ReceiveConnection>
+      <ReceiveConnection port="distalVoltage">
         <FromDistal port="voltage"/>
-      </ReceivesConnection>
-      <ReceivesConnection port="withinDendritesReducePort">
+      </ReceiveConnection>
+      <ReceiveConnection port="withinDendritesReducePort">
         <FromProximal domain="dendrites" port="withinDendritesSendPort"/>
         <FromDistal domain="dendrites" port="withinDendritesSendPort"/>
-      </ReceivesConnection>
+      </ReceiveConnection>
     </Domain>
     <Annotations>
       <Points3D>
         <XCoords>
-          <ExternalArrayValue url="./data/dendritic_branches.txt"
+          <ExternalArrayValue url="./example_compartments.txt.txt"
             mimetype="vnd.net.nineml.arrayvalue.text" columnName="X"/>
         </XCoords>
         <YCoords>
-          <ExternalArrayValue url="./data/dendritic_branches.txt"
+          <ExternalArrayValue url="./example_compartments.txt.txt"
             mimetype="vnd.net.nineml.arrayvalue.text" columnName="Y"/>
         </YCoords>
         <ZCoords>
-          <ExternalArrayValue url="./data/dendritic_branches.txt"
+          <ExternalArrayValue url="./example_compartments.txt.txt"
             mimetype="vnd.net.nineml.arrayvalue.text" columnName="Z"/>
         </ZCoords>
       </Points3D>
