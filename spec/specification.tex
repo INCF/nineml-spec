@@ -1453,7 +1453,8 @@ Functions are used to define relationships between parameters over members of a 
 \subsection{Function}
 \label{sec:Function}
 
-\draftnote{Could alternatively be called `Static' to contrast with `Dynamics' elements or maybe `Relationship'}
+\draftnote{Could alternatively be called Static to contrast with Dynamics elements or maybe Relationship}
+
 \begin{table}[H]
   \begin{edtable}{tabular}{llr}
     \toprule
@@ -1729,29 +1730,29 @@ Each \ExternalArrayValue must have a \textit{columnName} attribute, which refers
 
 %\draftnote{What do you think of this? This allows a single component to return two (related) values at different places at the model (e.g. weight and delay in distance dependent rules). It also seemed a bit neater}
 
-%\subsection{ComponentValue}
-%\label{sec:ComponentValue}
-%
-%\begin{table}[H]
-%  \begin{edtable}{tabular}{llr}
-%    \toprule
-%    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{ExternalArrayValue Structure}}}\\
-%    \toprule
-%    \em{Attribute name} & \em{Type/Format} & \em{Required} \\
-%    \midrule
-%    port & {\AnalogSendPort}@name & yes\\
-%    \midrule    
-%    \em{Element type} & \em{Multiplicity} & \em{Required} \\
-%    \midrule
-%    \Component{}\withelem\RandomDistribution | \Reference{}\pointto\Component{}\withelem\RandomDistribution & singleton & yes \\
-%    \bottomrule
-%  \end{edtable}
-%\end{table}
-%
-%The array of values represented by a \ComponentValue element is populated from the output port of a component. As of version 1.0, only \RandomDistribution components are supported within \ComponentValue but function and generator components are planned for later versions. The size of the generated array is determined by the size of the container (i.e. \Population or \Projection) the \ComponentValue is nested within.
-%
-%\subsubsection{Port attribute}
-%Each \ComponentValue requires a \textit{port} attribute, which selects which port of the \Component to read.
+%%\subsection{ComponentValue}
+%%\label{sec:ComponentValue}
+%%
+%%\begin{table}[H]
+%%  \begin{edtable}{tabular}{llr}
+%%    \toprule
+%%    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{ExternalArrayValue Structure}}}\\
+%%    \toprule
+%%    \em{Attribute name} & \em{Type/Format} & \em{Required} \\
+%%    \midrule
+%%    port & {\AnalogSendPort}@name & yes\\
+%%    \midrule    
+%%    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+%%    \midrule
+%%    \Component{}\withelem\RandomDistribution | \Reference{}\pointto\Component{}\withelem\RandomDistribution & singleton & yes \\
+%%    \bottomrule
+%%  \end{edtable}
+%%\end{table}
+%%
+%%The array of values represented by a \ComponentValue element is populated from the output port of a component. As of version 1.0, only \RandomDistribution components are supported within \ComponentValue but function and generator components are planned for later versions. The size of the generated array is determined by the size of the container (i.e. \Population or \Projection) the \ComponentValue is nested within.
+%%
+%%\subsubsection{Port attribute}
+%%Each \ComponentValue requires a \textit{port} attribute, which selects which port of the \Component to read.
 
 \section{Populations}
 
