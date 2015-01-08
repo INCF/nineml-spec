@@ -66,6 +66,7 @@
 
 \newcommand{\Component}{\defRef{\textbf{\class{Component}}\xspace}{sec:Component}}
 \newcommand{\Property}{\defRef{\textbf{\class{Property}}\xspace}{sec:Property}}
+\newcommand{\DerivedProperty}{\defRef{\textbf{\class{DerivedProperty}}\xspace}{sec:DerivedProperty}}
 \newcommand{\Quantity}{\defRef{\textbf{\class{Quantity}}\xspace}{sec:Quantity}}
 \newcommand{\SingleValue}{\defRef{\textbf{\class{SingleValue}}\xspace}{sec:SingleValue}}
 \newcommand{\ExternalArrayValue}{\defRef{\textbf{\class{ExternalArrayValue}}\xspace}{sec:ExternalArrayValue}}
@@ -89,6 +90,9 @@
 \newcommand{\FromSource}{\defRef{\textbf{\class{FromSource}}\xspace}{sec:FromSource}}
 \newcommand{\FromDestination}{\defRef{\textbf{\class{FromDestination}}\xspace}{sec:FromDestination}}
 \newcommand{\FromSynapse}{\defRef{\textbf{\class{FromSynapse}}\xspace}{sec:FromSynapse}}
+\newcommand{\FromIndex}{\defRef{\textbf{\class{FromIndex}}\xspace}{sec:FromIndex}}
+\newcommand{\FromCellProperty}{\defRef{\textbf{\class{FromCellProperty}}\xspace}{sec:FromCellProperty}}
+\newcommand{\FromAdditionalProperty}{\defRef{\textbf{\class{FromAdditionalProperty}}\xspace}{sec:FromAdditionalProperty}}
 \newcommand{\Network}{\defRef{\textbf{\class{Network}}\xspace}{sec:Network}}
 \newcommand{\Member}{\defRef{\textbf{\class{Member}}\xspace}{sec:Member}}
 \newcommand{\Selection}{\defRef{\textbf{\class{Selection}}\xspace}{sec:Selection}}
@@ -100,10 +104,9 @@
 \newcommand{\SubComponent}{\defRef{\textbf{\class{SubComponent}}\xspace}{sec:SubComponent}}
 \newcommand{\PortExposure}{\defRef{\textbf{\class{PortExposure}}\xspace}{sec:PortExposure}}
 \newcommand{\MetaParameter}{\defRef{\textbf{\class{MetaParameter}}\xspace}{sec:MetaParameter}}
-\newcommand{\MetaProperty}{\defRef{\textbf{\class{MetaProperty}}\xspace}{sec:MetaProperty}}
-\newcommand{\DerivedProperty}{\defRef{\textbf{\class{DerivedProperty}}\xspace}{sec:DerivedProperty}}
 \newcommand{\ReceiveConnection}{\defRef{\textbf{\class{ReceiveConnection}}\xspace}{sec:ReceiveConnection}}
 \newcommand{\FromSister}{\defRef{\textbf{\class{FromSister}}\xspace}{sec:FromSister}}
+\newcommand{\FromMapID}{\defRef{\textbf{\class{FromMapID}}\xspace}{sec:FromMapID}}
 \newcommand{\MultiComponent}{\defRef{\textbf{\class{MultiComponent}}\xspace}{sec:MultiComponent}}
 
 % Multi-compartment element references
@@ -1558,7 +1561,7 @@ The name of the \Component to be referenced \Component needs to be provided in t
     \midrule
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
-    \SingleValue | \ArrayValue | \ExternalArrayValue | \FromComponent & singleton & yes \\ 
+    \SingleValue | \ArrayValue | \ExternalArrayValue & singleton & yes \\ 
     \bottomrule
   \end{edtable}
 \end{table}
@@ -1571,6 +1574,35 @@ Each \Property requires a \textit{name} attribute. This should refer to the name
 
 \subsubsection{Units attribute}
 Each \Property element requires a \emph{units} attribute. The \textit{units} attribute specifies the units of the quantity and should refer to the name of a \Unit element in the global scope. For a dimensionless units a \Unit\withelem\Dimension with no SI dimensions can be used. The SI dimensions of the \Unit\withelem\Dimension should match the SI dimensions of the corresponding \Parameter\withelem\Dimension.
+
+
+\subsection{DerivedProperty}
+\label{sec:DerivedProperty}
+
+\begin{table}[H]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{DerivedProperty Structure}}}\\
+    \toprule
+    \em{Attribute name} & \em{Type/Format} & \em{Required} \\
+    \midrule
+    name & \Parameter{}@name & yes\\
+    \midrule
+    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \midrule
+    \FromComponent & singleton & yes \\ 
+    \bottomrule
+  \end{edtable}
+\end{table}
+
+\DerivedProperty elements provide values for the parameters defined in the \ComponentClass
+of the \Component that are derived from \ValueSendPort{}s of components. Their \textit{name} attribute should match the name of the corresponding \Parameter element in the \ComponentClass. 
+
+\note{units are not provided to derived properties as they are determined from the component they are derived from}
+
+\subsubsection{Name attribute}
+Each \Property requires a \textit{name} attribute. This should refer to the name of a \Parameter in the corresponding \ComponentClass of the \Component.
+
 
 \subsection{Reference}
 \label{sec:Reference}
@@ -2063,6 +2095,54 @@ In the current version, the \Delay element specifies the delay between the pre-s
 \subsubsection{Units attribute}
 The \textit{units} attribute specifies the units of the delay and should refer to the name of a \Unit element in the global scope. The \Unit{}\withelem\Dimension should be temporal, i.e. have $t=1$ and all other SI dimensions set to 0. 
 
+
+\subsection{FromIndex}
+\label{sec:FromIndex}
+
+\begin{table}[H]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{FromIndex Structure}}}\\
+    \toprule
+     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
+    \midrule
+    of & source | destination | connection & yes\\
+    \bottomrule
+  \end{edtable}
+\end{table}
+
+
+\subsection{FromCellProperty}
+\label{sec:FromCellProperty}
+
+\begin{table}[H]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{FromCellProperty Structure}}}\\
+    \toprule
+     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
+    \midrule
+    parameter & \Parameter{}@name & yes\\
+    \bottomrule
+  \end{edtable}
+\end{table}
+
+
+\subsection{FromAdditionalProperty}
+\label{sec:FromAdditionalProperty}
+
+\begin{table}[H]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{FromAdditionalProperty Structure}}}\\
+    \toprule
+     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
+    \midrule
+    parameter & \Parameter{}@name & yes\\
+    \bottomrule
+  \end{edtable}
+\end{table}
+
 \section{Networks}
 
 Sets of \Population and \Projection elements are collected into networks.
@@ -2070,6 +2150,7 @@ Sets of \Population and \Projection elements are collected into networks.
 \subsection{Network}
 \label{sec:Network}
 
+%\draftnote{could be omitted and just inferred from the source and destination references of the projections}
 \begin{table}[H]
   \begin{edtable}{tabular}{llr}
     \toprule
@@ -2476,6 +2557,21 @@ Each \MultiCompartmentProjection requires a \textit{name} attribute, which shoul
 \end{table}
 
 The \CompartmentConnectivity element specifies the connections between source and destination compartments if the \Connectivity element of the \MultiCompartmentProjection specifies a connection between the source and destination cell models. 
+
+\subsection{FromMapID}
+\label{sec:FromMapID}
+
+\begin{table}[H]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{FromMapID Structure}}}\\
+    \toprule
+    \em{Attribute name} & \em{Type/Format} & \em{Required} \\
+    \midrule
+    of & source | destination & yes\\
+    \bottomrule
+  \end{edtable}
+\end{table}
 
 \clearpage
 \part{Annotations}
