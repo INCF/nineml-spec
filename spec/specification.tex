@@ -689,7 +689,7 @@ Any valid numeric value, including shorthand scientific notation e.g. 1e-5 ($1\t
 \label{sec:Ports}
 
 Ports allow components to communicate with each
-other during a simulation. Ports can either transmit transmit discrete events or a continuous analog stream of data. Events are typically used to transmit and receive spikes between neutron model, whereas analog ports can be used to model injected current and gap junctions between neuron models. 
+other during a simulation. Ports can either transmit discrete events or continuous streams of analog data. Events are typically used to transmit and receive spikes between neutron model, whereas analog ports can be used to model injected current and gap junctions between neuron models. 
 
 Ports are divided into sending, \EventSendPort and \AnalogSendPort, and receiving objects, \EventReceivePort, \AnalogReceivePort and \AnalogReducePort. With the exception of \AnalogReducePort objects, each receive port must be connected to exactly one send port, where as a send port can be connected any number of receive ports. \AnalogReducePort objects can be connected to any number of \AnalogSendPort objects; the values of the connected ports are then ``reduced'' to a single data stream.
 
@@ -704,7 +704,7 @@ Ports are divided into sending, \EventSendPort and \AnalogSendPort, and receivin
     \toprule
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
-    name & \identifier & yes\\
+    name & [\StateVariable | \Alias{}]@name & yes\\
     dimension & \Dimension{}@name & yes\\
     \bottomrule
   \end{edtable}
@@ -713,7 +713,7 @@ Ports are divided into sending, \EventSendPort and \AnalogSendPort, and receivin
 {\AnalogSendPort} objects allow variables from the current component to be published externally to be read by other {\ComponentClass} objects. Each {\AnalogSendPort} can be connected to multiple {\AnalogReceivePort} and {\AnalogReducePort} objects.
 
 \subsubsection{Name attribute}
-Each \AnalogSendPort requires a \textit{name} attribute, which is a valid \identifier and uniquely identifies the \AnalogSendPort from all other elements in the \ComponentClass.
+Each \AnalogSendPort requires a \textit{name} attribute, which should refer to a \StateVariable or \Alias within the current \ComponentClass.
 
 \subsubsection{Dimension attribute}
 Each \AnalogSendPort requires a \textit{dimension} attribute. This attribute specifies the dimension of the units of the quantity that is expected to be passed through the \AnalogSendPort and should refer to the name of a \Dimension element in the global scope.
