@@ -15,6 +15,8 @@
 %%
 %% ============================================================================
 
+\newcommand{\incomplete}{\begin{center}\noindent{\Large\textcolor{incompletered}{\textbf{!! INCOMPLETE !!}}}\end{center}}
+
 % Define misc. references
 \newcommand{\identifier}{\typeDefRef{identifier\xspace}{sec:identifier}}
 \newcommand{\URL}{\href{http://en.wikipedia.org/wiki/Uniform_resource_locator}{URL}\xspace}
@@ -58,8 +60,10 @@
 \newcommand{\AnalogReducePort}{\defRef{\textbf{\class{AnalogReducePort}}\xspace}{sec:AnalogReducePort}}
 \newcommand{\AnalogArrayPort}{\defRef{\textbf{\class{AnalogArrayPort}}\xspace}{sec:AnalogArrayPort}}
 \newcommand{\EventReceivePort}{\defRef{\textbf{\class{EventReceivePort}}\xspace}{sec:EventReceivePort}}
-\newcommand{\ValueSendPort}{\defRef{\textbf{\class{ValueSendPort}}\xspace}{sec:ValueSendPort}}
-\newcommand{\ValueReceivePort}{\defRef{\textbf{\class{ValueReceivePort}}\xspace}{sec:ValueReceivePort}}
+\newcommand{\PropertySendPort}{\defRef{\textbf{\class{PropertySendPort}}\xspace}{sec:PropertySendPort}}
+\newcommand{\PropertyReceivePort}{\defRef{\textbf{\class{PropertyReceivePort}}\xspace}{sec:PropertyReceivePort}}
+\newcommand{\IndexSendPort}{\defRef{\textbf{\class{IndexSendPort}}\xspace}{sec:IndexSendPort}}
+\newcommand{\IndexReceivePort}{\defRef{\textbf{\class{IndexReceivePort}}\xspace}{sec:IndexReceivePort}}
 \newcommand{\Annotations}{\defRef{\textbf{\class{Annotations}}\xspace}{sec:Annotations}}
 
 % Define User Layer element references
@@ -106,7 +110,7 @@
 \newcommand{\MetaParameter}{\defRef{\textbf{\class{MetaParameter}}\xspace}{sec:MetaParameter}}
 \newcommand{\ReceiveConnection}{\defRef{\textbf{\class{ReceiveConnection}}\xspace}{sec:ReceiveConnection}}
 \newcommand{\FromSister}{\defRef{\textbf{\class{FromSister}}\xspace}{sec:FromSister}}
-\newcommand{\FromMapID}{\defRef{\textbf{\class{FromMapID}}\xspace}{sec:FromMapID}}
+\newcommand{\FromDomainID}{\defRef{\textbf{\class{FromDomainID}}\xspace}{sec:FromDomainID}}
 \newcommand{\MultiComponent}{\defRef{\textbf{\class{MultiComponent}}\xspace}{sec:MultiComponent}}
 
 % Multi-compartment element references
@@ -391,8 +395,10 @@ can be used for example to signal action potential firing.
     \AnalogReducePort & set & no \\ 
     \EventSendPort & set & no\\    
     \EventReceivePort & set & no\\ 
-    \ValueSendPort & set & no\\    
-    \ValueReceivePort & set & no\\     
+    \PropertySendPort & set & no\\    
+    \PropertyReceivePort & set & no\\
+    \IndexSendPort & set & no\\
+    \IndexReceivePort & set & no\\
     \Dynamics | \ConnectionRule | \Function & singleton & yes \\
     \bottomrule
   \end{edtable}
@@ -747,8 +753,6 @@ Any valid numeric value, including shorthand scientific notation e.g. 1e-5 ($1\t
 
 The names and arguments of the available random distributions match the UncertML definitions that can be found at \href{http://www.uncertml.org/distributions}{http://www.uncertml.org/distributions}. 
 
-\note{\textit{C} implementations of these distributions are available in the GNU Scientific Library, \href{http://www.gnu.org/software/gsl/}{http://www.gnu.org/software/gsl/}}
-
 \subsubsection{Name attribute}
 Each \Constant requires a \textit{name} attribute, which should be a valid \identifier and uniquely identify the {\Dimension} in current the scope.
 
@@ -783,6 +787,8 @@ The \textit{distribution} attribute is required and should point to a \URL in th
 \item weibull
 \end{itemize}
 
+\note{Open source \textit{C} implementations of these distributions are available in the GNU Scientific Library, \href{http://www.gnu.org/software/gsl/}{http://www.gnu.org/software/gsl/}}
+
 \subsubsection{Units attribute}
 Each \Constant requires a \textit{units} attribute. The \textit{units} attribute specifies the units of the property and should refer to the name of a \Unit element in the global scope. 
 
@@ -805,6 +811,9 @@ Each \Constant requires a \textit{units} attribute. The \textit{units} attribute
   \end{edtable}
 \end{table}
 
+%%%%%%%%%%%
+\incomplete %%%%%
+%%%%%%%%%%%
 
 \subsection{Piecewise}
 \label{sec:Piecewise}
@@ -822,6 +831,10 @@ Each \Constant requires a \textit{units} attribute. The \textit{units} attribute
   \end{edtable}
 \end{table}
 
+%%%%%%%%%%%
+\incomplete %%%%%
+%%%%%%%%%%%
+
 \subsection{Piece}
 \label{sec:Piece}
 
@@ -832,27 +845,15 @@ Each \Constant requires a \textit{units} attribute. The \textit{units} attribute
     \toprule
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
-    \Expression & singleton & yes \\
+    \MathInline & singleton & yes \\
     \Condition & singleton & yes \\    
     \bottomrule
   \end{edtable}
 \end{table}
 
-
-\subsection{Expression}
-\label{sec:Expression}
-
-\begin{table}[H]
-  \begin{edtable}{tabular}{llr}
-    \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Expression Structure}}}\\
-    \toprule
-    \em{Element type} & \em{Multiplicity} & \em{Required} \\
-    \midrule
-    \MathInline & singleton & yes \\
-    \bottomrule
-  \end{edtable}
-\end{table}
+%%%%%%%%%%%
+\incomplete %%%%%
+%%%%%%%%%%%
 
 \subsection{Condition}
 \label{sec:Condition}
@@ -869,6 +870,10 @@ Each \Constant requires a \textit{units} attribute. The \textit{units} attribute
   \end{edtable}
 \end{table}
 
+%%%%%%%%%%%
+\incomplete %%%%%
+%%%%%%%%%%%
+
 \subsection{Otherwise}
 \label{sec:Otherwise}
 
@@ -883,6 +888,10 @@ Each \Constant requires a \textit{units} attribute. The \textit{units} attribute
     \bottomrule
   \end{edtable}
 \end{table}
+
+%%%%%%%%%%%
+\incomplete %%%%%
+%%%%%%%%%%%
 
 \section{Ports}
 \label{sec:Ports}
@@ -1034,35 +1043,37 @@ An \EventReceivePort specifies a channel over which events can be received by a 
 Each \EventReceivePort requires a \textit{name} attribute, which is a valid \identifier and uniquely identifies the \EventReceivePort from all other elements in the \ComponentClass.
 
 
-\subsection{ValueSendPort}
-\label{sec:ValueSendPort}
+\subsection{PropertySendPort}
+\label{sec:PropertySendPort}
 
 \begin{table}[H]
   \begin{edtable}{tabular}{llr}
     \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{ValueSendPort Structure}}}\\
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{PropertySendPort Structure}}}\\
     \toprule
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
-    name & \identifier & yes\\
+    name & \Alias{}@name & yes\\
     dimension & \Dimension{}@name & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
 
+\PropertySendPort{}s are used to return quantities from \Component\withelem\Function{}s to populate \DerivedProperty elements.
+
 \subsubsection{Name attribute}
-Each \ValueSendPort requires a \textit{name} attribute, which is a valid \identifier and uniquely identifies the \ValueSendPort from all other elements in the \ComponentClass.
+Each \PropertySendPort requires a \textit{name} attribute, which is a valid \identifier and uniquely identifies the \PropertySendPort from all other elements in the \ComponentClass.
 
 \subsubsection{Dimension attribute}
-Each \ValueSendPort requires a \textit{dimension} attribute. This attribute specifies the dimension of the units of the quantity that is expected to be communicated through the \ValueSendPort and should refer to the name of a \Dimension element in the global scope.
+Each \PropertySendPort requires a \textit{dimension} attribute. This attribute specifies the dimension of the units of the quantity that is expected to be communicated through the \PropertySendPort and should refer to the name of a \Dimension element in the global scope.
 
-\subsection{ValueReceivePort}
-\label{sec:ValueReceivePort}
+\subsection{PropertyReceivePort}
+\label{sec:PropertyReceivePort}
 
 \begin{table}[H]
   \begin{edtable}{tabular}{llr}
     \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{ValueReceivePort Structure}}}\\
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{PropertyReceivePort Structure}}}\\
     \toprule
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
@@ -1072,11 +1083,58 @@ Each \ValueSendPort requires a \textit{dimension} attribute. This attribute spec
   \end{edtable}
 \end{table}
 
+\PropertyReceivePort{}s are used to read \Property{}s from 
+
 \subsubsection{Name attribute}
-Each \ValueReceivePort requires a \textit{name} attribute, which is a valid \identifier and uniquely identifies the \ValueReceivePort from all other elements in the \ComponentClass.
+Each \PropertyReceivePort requires a \textit{name} attribute, which is a valid \identifier and uniquely identifies the \PropertyReceivePort from all other elements in the \ComponentClass.
 
 \subsubsection{Dimension attribute}
-Each \ValueReceivePort requires a \textit{dimension} attribute. This attribute specifies the dimension of the units of the quantity that is expected to be communicated through the \ValueReceivePort and should refer to the name of a \Dimension element in the global scope.
+Each \PropertyReceivePort requires a \textit{dimension} attribute. This attribute specifies the dimension of the units of the quantity that is expected to be communicated through the \PropertyReceivePort and should refer to the name of a \Dimension element in the global scope.
+
+
+\subsection{IndexSendPort}
+\label{sec:IndexSendPort}
+
+\begin{table}[H]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{IndexSendPort Structure}}}\\
+    \toprule
+    \em{Attribute name} & \em{Type/Format} & \em{Required} \\
+    \midrule
+    name & \identifier & yes\\
+    conversion & `round' | `ceil' | `floor' & yes \\
+    \bottomrule
+  \end{edtable}
+\end{table}
+
+\incomplete
+
+\subsubsection{Name attribute}
+Each \IndexSendPort requires a \textit{name} attribute, which is a valid \identifier and uniquely identifies the \IndexSendPort from all other elements in the \ComponentClass.
+
+\subsubsection{Conversion attribute}
+Each \IndexSendPort requires a \textit{conversion} attribute, which specifies the conversion from floating point to integer numbers.
+
+\subsection{IndexReceivePort}
+\label{sec:IndexReceivePort}
+
+\begin{table}[H]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{IndexReceivePort Structure}}}\\
+    \toprule
+    \em{Attribute name} & \em{Type/Format} & \em{Required} \\
+    \midrule
+    name & \identifier & yes\\
+    \bottomrule
+  \end{edtable}
+\end{table}
+
+\incomplete
+
+\subsubsection{Name attribute}
+Each \IndexReceivePort requires a \textit{name} attribute, which is a valid \identifier and uniquely identifies the \IndexReceivePort from all other elements in the \ComponentClass.
 
 \section{Dynamic Regimes}
 
@@ -1381,7 +1439,7 @@ Network connectivity is defined via extensible components to promote reuse of co
   \end{edtable}
 \end{table}
 
-\ConnectionRule elements are the top-level container for \ComponentClass elements that define network connectivity. Typically, values are read from \AdditionalProperty elements within the source and destination population via \ValueReceivePort{}s .
+\ConnectionRule elements are the top-level container for \ComponentClass elements that define network connectivity. Typically, values are read from \AdditionalProperty elements within the source and destination population via \PropertyReceivePort{}s .
 
 \subsection{ConnectCondition}
 \label{sec:ConnectCondition}
@@ -1398,7 +1456,7 @@ Network connectivity is defined via extensible components to promote reuse of co
   \end{edtable}
 \end{table}
 
-\ConnectCondition elements specify the conditions under which 
+\ConnectCondition elements specify the conditions under which \incomplete
 
 \subsection{PruneConnections}
 \label{sec:PruneConnections}
@@ -1416,6 +1474,8 @@ Network connectivity is defined via extensible components to promote reuse of co
   \end{edtable}
 \end{table}
 
+\incomplete
+
 \subsection{OrderOfPreference}
 \label{sec:OrderOfPreference}
 
@@ -1430,6 +1490,8 @@ Network connectivity is defined via extensible components to promote reuse of co
     \bottomrule
   \end{edtable}
 \end{table}
+
+\incomplete
 
 \section{Functions}
 
@@ -1596,7 +1658,7 @@ Each \Property element requires a \emph{units} attribute. The \textit{units} att
 \end{table}
 
 \DerivedProperty elements provide values for the parameters defined in the \ComponentClass
-of the \Component that are derived from \ValueSendPort{}s of components. Their \textit{name} attribute should match the name of the corresponding \Parameter element in the \ComponentClass. 
+of the \Component that are derived from \PropertySendPort{}s of components. Their \textit{name} attribute should match the name of the corresponding \Parameter element in the \ComponentClass. 
 
 \note{units are not provided to derived properties as they are determined from the component they are derived from}
 
@@ -1694,7 +1756,7 @@ Any valid numeric value in \href{http://en.wikipedia.org/wiki/ANSI_C}{ANSI C89},
     \midrule
     \em{Text format} & \; & \em{Required} \\
     \midrule
-    \primtype{real number} & \; & yes\\
+    \primtype{real number | integer} & \; & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
@@ -1756,7 +1818,7 @@ Each \ExternalArrayValue must have a \textit{columnName} attribute, which refers
     \toprule
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
-    port & {\ValueSendPort}@name & yes\\
+    port & {\PropertySendPort}@name & yes\\
     \midrule
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
@@ -1788,12 +1850,17 @@ Each \FromComponent requires a \textit{port} attribute, which selects which port
     \midrule
     \Number & singleton & yes \\
     \Cell & singleton & yes \\
-    \AdditionalProperty & set & no \\
+    \Property & set & no \\
+    \DerivedProperty & set & no \\    
     \bottomrule
   \end{edtable}
 \end{table}
 
 A \Population defines a set of dynamic components of the same class. The size of the set is specified by the \Number element. The properties of the dynamic components are generated from value types, which can be constant across the population, randomly distributed or individually specified (see \ref{sec:Values}).
+
+%%%%%%%%%%%%%%
+\incomplete %%%%%%%%
+%%%%%%%%%%%%%%
 
 \subsubsection{Name attribute}
 Each \Population requires a \textit{name} attribute, which should be a valid \identifier and uniquely identify the {\Population} from all other elements in the global scope.
@@ -1825,7 +1892,7 @@ The \Cell element specifies the dynamic components that will make up the populat
     \toprule
     \em{Text format} & \; & \em{Required} \\
     \midrule
-    \primtype{integer} & \; & yes\\
+    \primtype{non-negative integer} & \; & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
@@ -1834,34 +1901,6 @@ The number of cells in the population is specified by the integer provided in th
 
 \subsubsection{Text format}
 The text of the \Number element contains an \primtype{integer} representing the size of the population.
-
-\subsection{AdditionalProperty}
-\label{sec:AdditionalProperty}
-
-\begin{table}[H]
-  \begin{edtable}{tabular}{llr}
-    \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{AdditionalProperty Structure}}}\\
-    \toprule
-    \em{Attribute name} & \em{Type/Format} & \em{Required} \\
-    \midrule
-    name & \identifier & yes\\
-    units & \Unit{}@symbol & yes\\    
-    \midrule
-    \em{Element type} & \em{Multiplicity} & \em{Required} \\
-    \midrule
-    \SingleValue | \ArrayValue | \ExternalArrayValue | \FromComponent & singleton & yes \\ 
-    \bottomrule
-  \end{edtable}
-\end{table}
-
-\AdditionalProperty elements are used to append properties to the cells in population that are used by connectivity rules.
-
-\subsubsection{Name attribute}
-Each \AdditionalProperty requires a \textit{name} attribute. This should refer to the name of a \Parameter in the corresponding \ComponentClass of the \Component.
-
-\subsubsection{Units attribute}
-Each \AdditionalProperty element requires a \emph{units} attribute. The \textit{units} attribute specifies the units of the quantity and should refer to the name of a \Unit element in the global scope. For a dimensionless units a \Unit\withelem\Dimension with no SI dimensions can be used. The SI dimensions of the \Unit\withelem\Dimension should match the SI dimensions of the corresponding \Parameter\withelem\Dimension.
 
 \section{Projections}
 
@@ -1947,7 +1986,8 @@ The \Destination element specifies the post-synaptic or selection (see \Selectio
     \toprule
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
-    \Component{}\withelem\ConnectionRule & singleton & yes \\ 
+    \Component{}\withelem\ConnectionRule | \Reference{}\pointto{}\Component\withelem\ConnectionRule& singleton & yes \\
+    \ReceiveConnection & set & yes\\ 
     \bottomrule
   \end{edtable}
 \end{table}
@@ -2085,7 +2125,7 @@ Each \FromSynapse element requires a \textit{port} attribute. This should refer 
     \midrule
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
-    \SingleValue | \ArrayValue | \ExternalArrayValue | \FromComponent & singleton & yes \\ 
+    \SingleValue | \ArrayValue | \ExternalArrayValue & singleton & yes \\ 
     \bottomrule
   \end{edtable}
 \end{table}
@@ -2095,6 +2135,23 @@ In the current version, the \Delay element specifies the delay between the pre-s
 \subsubsection{Units attribute}
 The \textit{units} attribute specifies the units of the delay and should refer to the name of a \Unit element in the global scope. The \Unit{}\withelem\Dimension should be temporal, i.e. have $t=1$ and all other SI dimensions set to 0. 
 
+
+\subsection{DerivedDelay}
+\label{sec:DerivedDelay}
+
+\begin{table}[H]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{DerivedDelay Structure}}}\\
+    \toprule
+    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \midrule
+    \FromComponent & singleton & yes \\ 
+    \bottomrule
+  \end{edtable}
+\end{table}
+
+In the current version, the \Delay element specifies the delay between the pre-synaptic cell port and the \Synapse. In future versions, it is planned to expand the delay architecture to allow delays on any port connections to allow finer control of the delay between the different components.
 
 \subsection{FromIndex}
 \label{sec:FromIndex}
@@ -2106,42 +2163,37 @@ The \textit{units} attribute specifies the units of the delay and should refer t
     \toprule
      \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
-    of & source | destination | connection & yes\\
+    of & `source' | `destination' | `connection' | `sourceDomain' | 'destinationDomain' & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
 
+\subsubsection{Of attribute}
+The \textit{of} attribute specifies the index and should refer to the name of a \Unit element in the global scope. The \Unit{}\withelem\Dimension should be temporal, i.e. have $t=1$ and all other SI dimensions set to 0. 
 
-\subsection{FromCellProperty}
-\label{sec:FromCellProperty}
+
+%%%%%%%%%%%%%
+\incomplete %%%%%%%
+%%%%%%%%%%%%%
+
+\subsection{FromProperty}
+\label{sec:FromProperty}
 
 \begin{table}[H]
   \begin{edtable}{tabular}{llr}
     \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{FromCellProperty Structure}}}\\
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{FromProperty Structure}}}\\
     \toprule
      \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
-    parameter & \Parameter{}@name & yes\\
+    name & \Property{}@name & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
 
-
-\subsection{FromAdditionalProperty}
-\label{sec:FromAdditionalProperty}
-
-\begin{table}[H]
-  \begin{edtable}{tabular}{llr}
-    \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{FromAdditionalProperty Structure}}}\\
-    \toprule
-     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
-    \midrule
-    parameter & \Parameter{}@name & yes\\
-    \bottomrule
-  \end{edtable}
-\end{table}
+%%%%%%%%%%%%%
+\incomplete %%%%%%%
+%%%%%%%%%%%%%
 
 \section{Networks}
 
@@ -2211,7 +2263,7 @@ The \Concatenate element is used to add populations to a selection. It contains 
     \toprule
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
-    index & \primtype{integer} & yes\\
+    index & \primtype{non-negative integer} & yes\\
     \midrule
     \em{Element type} & Multiplicity & \em{Required} \\
     \midrule \relax
@@ -2320,7 +2372,7 @@ Each \FromSister requires a \textit{port} attribute, which should refer to the n
     \midrule
     name & \identifier & yes\\
     component & \SubComponent{}@name & yes\\
-    port & [\EventSendPort{} | \AnalogSendPort{}]@name & yes\\
+    port & *Port{}@name & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
@@ -2400,7 +2452,7 @@ The Branches is an array containing the indices of the parent node of the segmen
   \end{edtable}
 \end{table}
 
-The mapping array is a list of indices corresponding to the \Domain{}@mapID attributes. This layout is analogous to "type" column in the SWC format. In fact it is nearly possible to use an SWC file as an ExternalArrayValue file, with the exception that it would need column headers and the root node would need to be omitted. This could also be substituted for a component that algorithmically maps the segments to different domains.
+The mapping array is a list of indices corresponding to the \Domain{}@index attributes. This layout is analogous to "type" column in the SWC format. In fact it is nearly possible to use an SWC file as an ExternalArrayValue file, with the exception that it would need column headers and the root node would need to be omitted. This could also be substituted for a component that algorithmically maps the segments to different domains.
 
 \subsection{Domain}
 \label{sec:Domain}
@@ -2413,7 +2465,7 @@ The mapping array is a list of indices corresponding to the \Domain{}@mapID attr
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
     name & \identifier & yes\\
-    mapID & \primtype{integer} & yes\\    
+    index & \primtype{non-negative integer} & yes\\    
     \midrule
     \em{Element type} & Multiplicity & \em{Required} \\
     \midrule \relax
@@ -2430,8 +2482,8 @@ The parameters of the components can either be SingleValues, ArrayValues or Comp
 \subsubsection{Name attribute}
 Each \Domain requires a \textit{name} attribute, which should be a valid \identifier and uniquely identify the \Domain in the \MultiCompartmental scope.
 
-\subsubsection{MapID attribute}
-Each \Domain requires a \text{mapID} attribute, which should be a non-negative integer and unique amongst the \Domain element in the enclosing \MultiCompartmental. The \textit{mapID} is used to map the compartments onto the domain.
+\subsubsection{Index attribute}
+Each \Domain requires a \text{index} attribute, which should be a non-negative integer and unique amongst the \Domain element in the enclosing \MultiCompartmental. The \textit{index} is used to map the compartments onto the domain.
 
 \subsection{MultiPortExposure}
 \label{sec:MultiPortExposure}
@@ -2556,22 +2608,11 @@ Each \MultiCompartmentProjection requires a \textit{name} attribute, which shoul
   \end{edtable}
 \end{table}
 
+%%%%%%%%%%%
+\incomplete %%%%%
+%%%%%%%%%%%
+
 The \CompartmentConnectivity element specifies the connections between source and destination compartments if the \Connectivity element of the \MultiCompartmentProjection specifies a connection between the source and destination cell models. 
-
-\subsection{FromMapID}
-\label{sec:FromMapID}
-
-\begin{table}[H]
-  \begin{edtable}{tabular}{llr}
-    \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{FromMapID Structure}}}\\
-    \toprule
-    \em{Attribute name} & \em{Type/Format} & \em{Required} \\
-    \midrule
-    of & source | destination & yes\\
-    \bottomrule
-  \end{edtable}
-\end{table}
 
 \clearpage
 \part{Annotations}

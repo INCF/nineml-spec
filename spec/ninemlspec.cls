@@ -284,6 +284,7 @@
 
 % Local color definitions.
 
+\definecolor{incompletered}{rgb}{0.85,0.0,0.0}
 \definecolor{INCFBlue}{rgb}{0.0,0.59,1.0}
 \definecolor{ninemlblue}{rgb}{0.07,0.50,0.78}
 \definecolor{ninemlgray}{gray}{0.7}
