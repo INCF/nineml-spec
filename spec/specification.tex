@@ -20,6 +20,7 @@
 % Define misc. references
 \newcommand{\identifier}{\typeDefRef{identifier\xspace}{sec:identifier}}
 \newcommand{\URL}{\href{http://en.wikipedia.org/wiki/Uniform_resource_locator}{URL}\xspace}
+\newcommand{\MathML}{\href{http://www.w3.org/Math/}{MathML}\xspace}
 
 % Define Abstraction Layer element references
 
@@ -604,6 +605,8 @@ and has the highest level of precedence.
 \begin{itemize}
 \item Greater than \verb|>|
 \item Lesser than \verb|<|
+\item Greater than \verb|>=|
+\item Lesser than \verb|<=|
 \end{itemize}
 
 \item Logical operators
@@ -660,7 +663,7 @@ where $t$ is the elapsed simulation time within a \Dynamics block and `true' and
     \midrule
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
-    \MathInline | \Piecewise & singleton & yes \\ 
+    \MathInline & singleton & yes \\ 
     \bottomrule
   \end{edtable}
 \end{table}
@@ -739,25 +742,20 @@ Any valid numeric value, including shorthand scientific notation e.g. 1e-5 ($1\t
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
     name & \identifier & yes\\
-    distribution & \textit{uncertml-distribution}@name & yes\\    
     units & \Unit{}@name & yes\\
     \midrule
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
-    \Argument & set & no \\    
+   \href{http://www.uncertml.org/distributions}{UncertMLDistribution} & singleton & yes\\  
     \bottomrule
   \end{edtable}
 \end{table}
 
-\draftnote{Realised that this can't be a component if we are going to separate the Abstraction and User Layers (i.e. It would require using a \Component within a \ComponentClass) so I have separated it out. Also random distributions derived from standard distributions (the only ones I can see people wanting to manually define), can be specified using \Function elements and passed to \Component\withelem{}\Property elements}
+\draftnote{I realised that RandomDistributions can't be components if we are going to separate the Abstraction and User Layers (i.e. It would require using a \Component within a \ComponentClass) so I have separated it out. Also random distributions derived from standard distributions (the only ones I can see people wanting to manually define), can be specified using \Function elements in this scheme.}
 
-The names and arguments of the available random distributions match the UncertML definitions that can be found at \href{http://www.uncertml.org/distributions}{http://www.uncertml.org/distributions}. 
+\RandomVariable elements represent randomly varying quantities, which are drawn from standard families of random distributions. The random distributions are defined via \href{http://www.uncertml.org/distributions}{UncertML (http://www.uncertml.org/distributions)}, with the caveats that the "multi-values" are not permitted and numerical arguments passed to UncertML distributions can be substituted for the names of dimensionless properties and aliases of the enclosing \ComponentClass.
 
-\subsubsection{Name attribute}
-Each \Constant requires a \textit{name} attribute, which should be a valid \identifier and uniquely identify the {\Dimension} in current the scope.
-
-\subsubsection{Distribution attribute}
-The \textit{distribution} attribute is required and should point to a \URL in the \href{http://www.uncertml.org/distributions/}{http://www.uncertml.org/distributions/} directory. The subset of the UncertML distributions that should be implemented are by NineML compliant packages are,
+The subset of UncertML distributions available in NineML is
 
 \begin{itemize}
 \item bernoulli
@@ -787,33 +785,13 @@ The \textit{distribution} attribute is required and should point to a \URL in th
 \item weibull
 \end{itemize}
 
-\note{Open source \textit{C} implementations of these distributions are available in the GNU Scientific Library, \href{http://www.gnu.org/software/gsl/}{http://www.gnu.org/software/gsl/}}
+\note{Open source \textit{C} implementations of these distributions are available in the GNU Scientific Library, \href{http://www.gnu.org/software/gsl/}{http://www.gnu.org/software/gsl/}.}
+
+\subsubsection{Name attribute}
+Each \Constant requires a \textit{name} attribute, which should be a valid \identifier and uniquely identify the {\Dimension} in current the scope.
 
 \subsubsection{Units attribute}
-Each \Constant requires a \textit{units} attribute. The \textit{units} attribute specifies the units of the property and should refer to the name of a \Unit element in the global scope. 
-
-\subsection{Argument}
-\label{sec:Argument}
-
-\begin{table}[H]
-  \begin{edtable}{tabular}{llr}
-    \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Argument Structure}}}\\
-    \toprule
-    \em{Attribute name} & \em{Type/Format} & \em{Required} \\
-    \midrule
-    name & \textit{uncertml-argument}@name & yes\\
-    \midrule
-    \em{Text format} & \; & \em{Required} \\
-    \midrule
-    \primtype{real number} & \; & yes \\    
-    \bottomrule
-  \end{edtable}
-\end{table}
-
-%%%%%%%%%%%
-\incomplete %%%%%
-%%%%%%%%%%%
+Each \Constant requires a \textit{units} attribute. The \textit{units} attribute specifies the units of the property and should refer to the name of a \Unit element in the global scope.
 
 \subsection{Piecewise}
 \label{sec:Piecewise}
@@ -823,6 +801,10 @@ Each \Constant requires a \textit{units} attribute. The \textit{units} attribute
     \toprule
     \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Piecewise Structure}}}\\
     \toprule
+    \em{Attribute name} & \em{Type/Format} & \em{Required} \\
+    \midrule
+    name & \identifier & yes\\
+    \midrule
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
     \Piece & set & yes \\
@@ -831,9 +813,9 @@ Each \Constant requires a \textit{units} attribute. The \textit{units} attribute
   \end{edtable}
 \end{table}
 
-%%%%%%%%%%%
-\incomplete %%%%%
-%%%%%%%%%%%
+\Piecewise elements are used to describe piecewise mathematical functions. The syntax is inspired by the \MathML format for piecewise functions. Each \Piece element describes a continuous segment of the function that is valid over the range its condition (see \Condition) evaluates to true. It is critical that the combination of parameters and states under which the \Piece\withelem\Condition blocks in a single \Piecewise element evaluate to true are exclusive. As in \MathML, the onus is on the model designer to ensure that the conditions blocks do not overlap. For combinations of parameters and states that are not covered by any \Piece\withelem{}\Condition block the \Piecewise function evaluates to the value of the \Otherwise\withelem{}\MathInline expression.
+
+\note{Piecewise expressions do not appear within \Dynamics\withelem{}\Regime elements. Discontinuous expressions within \Dynamics blocks, require transitions to a new \Dynamics\withelem{}\Regime.}
 
 \subsection{Piece}
 \label{sec:Piece}
@@ -851,9 +833,7 @@ Each \Constant requires a \textit{units} attribute. The \textit{units} attribute
   \end{edtable}
 \end{table}
 
-%%%%%%%%%%%
-\incomplete %%%%%
-%%%%%%%%%%%
+\Piece elements represent a continuous section of a piecewise function defined by the expression in \MathInline sub-element over the range of conditions that the \Condition block evaluates to true.
 
 \subsection{Condition}
 \label{sec:Condition}
@@ -870,9 +850,7 @@ Each \Constant requires a \textit{units} attribute. The \textit{units} attribute
   \end{edtable}
 \end{table}
 
-%%%%%%%%%%%
-\incomplete %%%%%
-%%%%%%%%%%%
+The \MathInline expression within \Condition element must be evaluate to a boolean. It determines when the enclosing \Piece of the \Piecewise expression is active.
 
 \subsection{Otherwise}
 \label{sec:Otherwise}
@@ -889,18 +867,17 @@ Each \Constant requires a \textit{units} attribute. The \textit{units} attribute
   \end{edtable}
 \end{table}
 
-%%%%%%%%%%%
-\incomplete %%%%%
-%%%%%%%%%%%
+The \Otherwise block is active within a \Piecewise expression whenever all other \Piece\withelem{}\Condition blocks evaluate to false.
 
 \section{Ports}
 \label{sec:Ports}
 
 Ports allow components to communicate with each
-other during a simulation. Ports can either transmit discrete events or continuous streams of analog data. Events are typically used to transmit and receive spikes between neutron model, whereas analog ports can be used to model injected current and gap junctions between neuron models. 
+other during a simulation. Ports can either transmit discrete events (see \EventSendPort and \EventReceivePort), continuous streams of analog data (see \AnalogSendPort, \AnalogReceivePort and \AnalogReducePort), properties of a component (see \PropertySendPort and \PropertyReceivePort) or the indices of a cells, connections or compartments within a container (see \IndexSendPort and \IndexReceivePort).
 
-Ports are divided into sending, \EventSendPort and \AnalogSendPort, and receiving objects, \EventReceivePort, \AnalogReceivePort and \AnalogReducePort. With the exception of \AnalogReducePort objects, each receive port must be connected to exactly one send port, where as a send port can be connected any number of receive ports. \AnalogReducePort objects can be connected to any number of \AnalogSendPort objects; the values of the connected ports are then ``reduced'' to a single data stream.
+Events are typically used to model synaptic transmission but can be used more generally to model any instantaneous communication between components. On the other hand analog ports are used to model continuous communication between components, typically injected current, gap junctions or internal quantities shared between sub-components of a multi-component model. Property ports are used in several distinct situations: in order to pass parameters of cells in a population (such as their spatial coordinates) to \ConnectionRule or \Function components, to return properties from \Function components and to read properties of neighbouring compartments in multi-compartmental models.
 
+For each type of information communicated there is a sending a receiving port. For dynamic ports, which handle events and analog data streams, the send and receive ports are connected directly to each other. Whereas the send and receive property ports are connected to \DerivedProperty and \Property elements respectively. \IndexReceivePort{}s receive connections from sources that are implicit to the container, whereas \IndexSendPort{}s are used in \Function elements used to generate multi-compartmental models.
 
 \subsection{AnalogSendPort}
 \label{sec:AnalogSendPort}
@@ -912,7 +889,7 @@ Ports are divided into sending, \EventSendPort and \AnalogSendPort, and receivin
     \toprule
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
-    name & [\StateVariable | \Alias{}]@name & yes\\
+    name & [\StateVariable | \Alias | \RandomVariable{}]@name & yes\\
     dimension & \Dimension{}@name & yes\\
     \bottomrule
   \end{edtable}
@@ -1108,7 +1085,7 @@ Each \PropertyReceivePort requires a \textit{dimension} attribute. This attribut
   \end{edtable}
 \end{table}
 
-\incomplete
+
 
 \subsubsection{Name attribute}
 Each \IndexSendPort requires a \textit{name} attribute, which is a valid \identifier and uniquely identifies the \IndexSendPort from all other elements in the \ComponentClass.
@@ -1131,7 +1108,7 @@ Each \IndexSendPort requires a \textit{conversion} attribute, which specifies th
   \end{edtable}
 \end{table}
 
-\incomplete
+ \IndexReceivePort{}s can receive connections from sources that are implicit to the container such as the index of a cell, connection or compartment. The integer indices are implicitly converted to real numbers, which can then be used in \MathInline expressions.
 
 \subsubsection{Name attribute}
 Each \IndexReceivePort requires a \textit{name} attribute, which is a valid \identifier and uniquely identifies the \IndexReceivePort from all other elements in the \ComponentClass.
@@ -1259,7 +1236,7 @@ Each \Regime requires a \textit{name} attribute, which is a valid \identifier an
     \midrule
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
-    \MathInline | \Piecewise & singleton & yes \\ 
+    \MathInline & singleton & yes \\ 
     \bottomrule
   \end{edtable}
 \end{table}
@@ -1307,6 +1284,7 @@ Multiple state assignments can be sent and multiple events can be sent within a 
     \StateAssignment & set & no\\
     \EventOut & set & no\\
     \RandomVariable & set & no\\
+    \Piecewise & set & no\\    
     \bottomrule
   \end{edtable}
 \end{table}
@@ -1335,6 +1313,7 @@ An \OnEvent can have a \textit{targetRegime} attribute, which should refer to th
     \midrule   
     \StateAssignment & set & no\\
     \RandomVariable & set & no\\
+    \Piecewise & set & no\\    
     \EventOut & set & no\\
     \bottomrule
   \end{edtable}
@@ -1384,7 +1363,7 @@ The inequality expression may contain references to
     \midrule
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
-    \MathInline | \Piecewise & singleton & yes \\     
+    \MathInline  & singleton & yes \\     
     \bottomrule
   \end{edtable}
 \end{table}
@@ -1435,6 +1414,7 @@ Network connectivity is defined via extensible components to promote reuse of co
     \Alias & set & no\\
     \Constant & set & no\\
     \RandomVariable & set & no\\
+    \Piecewise & set & no\\    
     \bottomrule
   \end{edtable}
 \end{table}
@@ -1512,6 +1492,7 @@ Functions are used to define relationships between parameters over members of a 
     \Alias & set & no\\
     \Constant & set & no\\
     \RandomVariable & set & no\\
+    \Piecewise & set & no\\
     \bottomrule
   \end{edtable}
 \end{table}
@@ -3439,6 +3420,9 @@ In addition to the built-in mathematical functions and symbols (see \MathInline)
 \item do
 \item double
 \item dynamic\_cast
+\item if
+\item then
+\item else
 \item elif
 \item else
 \item elseif
