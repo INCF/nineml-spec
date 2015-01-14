@@ -32,9 +32,9 @@
 \newcommand{\BuiltInDistribution}{\defRef{\textbf{\class{BuiltInDistribution}}\xspace}{sec:BuiltInDistribution}}
 \newcommand{\ConnectionRule}{\defRef{\textbf{\class{ConnectionRule}}\xspace}{sec:ConnectionRule}}
 \newcommand{\ConnectCondition}{\defRef{\textbf{\class{ConnectCondition}}\xspace}{sec:ConnectCondition}}
-\newcommand{\PruneConnections}{\defRef{\textbf{\class{PruneConnections}}\xspace}{sec:PruneConnections}}
+\newcommand{\SelectConnections}{\defRef{\textbf{\class{SelectConnections}}\xspace}{sec:SelectConnections}}
 \newcommand{\TargetNumber}{\defRef{\textbf{\class{TargetNumber}}\xspace}{sec:TargetNumber}}
-\newcommand{\OrderOfPreference}{\defRef{\textbf{\class{OrderOfPreference}}\xspace}{sec:OrderOfPreference}}
+\newcommand{\Preference}{\defRef{\textbf{\class{Preference}}\xspace}{sec:Preference}}
 \newcommand{\MathInline}{\defRef{\textbf{\class{MathInline}}\xspace}{sec:MathInline}}
 \newcommand{\Piecewise}{\defRef{\textbf{\class{Piecewise}}\xspace}{sec:Piecewise}}
 \newcommand{\Piece}{\defRef{\textbf{\class{Piece}}\xspace}{sec:Piece}}
@@ -75,7 +75,7 @@
 \newcommand{\Quantity}{\defRef{\textbf{\class{Quantity}}\xspace}{sec:Quantity}}
 \newcommand{\SingleValue}{\defRef{\textbf{\class{SingleValue}}\xspace}{sec:SingleValue}}
 \newcommand{\ExternalArrayValue}{\defRef{\textbf{\class{ExternalArrayValue}}\xspace}{sec:ExternalArrayValue}}
-\newcommand{\FromComponent}{\defRef{\textbf{\class{FromComponent}}\xspace}{sec:FromComponent}}
+\newcommand{\FromFunction}{\defRef{\textbf{\class{FromFunction}}\xspace}{sec:FromFunction}}
 \newcommand{\ArrayValue}{\defRef{\textbf{\class{ArrayValue}}\xspace}{sec:ArrayValue}}
 \newcommand{\ArrayValueRow}{\defRef{\textbf{\class{ArrayValueRow}}\xspace}{sec:ArrayValueRow}}
 \newcommand{\ListColumn}{\defRef{\textbf{\class{ListColumn}}\xspace}{sec:ListColumn}}
@@ -1397,7 +1397,7 @@ Each \EventOut requires a \textit{port} attribute. This should refer to the name
 
 \section{Network Connectivity}
 
-Network connectivity is defined via extensible components to promote reuse of connection logic. Connections are provisionally connected if the \ConnectCondition evaluates to true for a given connection, and then can be PruneConnectionsd to a fixed number (which can be derived from a random value) if a \PruneConnections element is provided.
+Network connectivity is defined via extensible components to promote reuse of connection logic. Connections are provisionally connected if the \ConnectCondition evaluates to true for a given connection, which can then be pruned to a number (which can be derived from a random value) if a \SelectConnections element is provided.
 
 \subsection{ConnectionRule}
 \label{sec:ConnectionRule}
@@ -1410,7 +1410,7 @@ Network connectivity is defined via extensible components to promote reuse of co
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
     \ConnectCondition & singleton & no\\
-    \PruneConnections & singleton & no\\
+    \SelectConnections & singleton & no\\
     \Alias & set & no\\
     \Constant & set & no\\
     \RandomVariable & set & no\\
@@ -1436,33 +1436,33 @@ Network connectivity is defined via extensible components to promote reuse of co
   \end{edtable}
 \end{table}
 
-\ConnectCondition elements specify the conditions under which \incomplete
+\ConnectCondition elements specify the conditions under which a source and destination cell should be connected. If the \MathInline expression in it evaluates to true then the cells are provisionally connected.
 
-\subsection{PruneConnections}
-\label{sec:PruneConnections}
+\subsection{SelectConnections}
+\label{sec:SelectConnections}
 
 \begin{table}[H]
   \begin{edtable}{tabular}{llr}
     \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{PruneConnections Structure}}}\\
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{SelectConnections Structure}}}\\
     \toprule
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
     \Number & singleton & yes \\
-    \OrderOfPreference & singleton & no\\
+    \Preference & singleton & no\\
     \bottomrule
   \end{edtable}
 \end{table}
 
 \incomplete
 
-\subsection{OrderOfPreference}
-\label{sec:OrderOfPreference}
+\subsection{Preference}
+\label{sec:Preference}
 
 \begin{table}[H]
   \begin{edtable}{tabular}{llr}
     \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{OrderOfPreference Structure}}}\\
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Preference Structure}}}\\
     \toprule
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
@@ -1633,7 +1633,7 @@ Each \Property element requires a \emph{units} attribute. The \textit{units} att
     \midrule
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
-    \FromComponent & singleton & yes \\ 
+    \FromFunction & singleton & yes \\ 
     \bottomrule
   \end{edtable}
 \end{table}
@@ -1684,7 +1684,7 @@ In NineML, ``values'' are arrays that implicitly grow to fill the size of the co
 \item \ExternalArrayValue, an explicit array defined in text (space delimited) or HDF5 format.
 \end{itemize}
 
-or derived from a \Component via a \FromComponent element.
+or derived from a \Component via a \FromFunction element.
 
 \subsection{SingleValue}
 \label{sec:SingleValue}
@@ -1789,8 +1789,8 @@ Each \ExternalArrayValue must have a \textit{columnName} attribute, which refers
 
 %\draftnote{What do you think of this? This allows a single component to return two (related) values at different places at the model (e.g. weight and delay in distance dependent rules). It also seemed a bit neater}
 
-\subsection{FromComponent}
-\label{sec:FromComponent}
+\subsection{FromFunction}
+\label{sec:FromFunction}
 
 \begin{table}[H]
   \begin{edtable}{tabular}{llr}
@@ -1808,10 +1808,10 @@ Each \ExternalArrayValue must have a \textit{columnName} attribute, which refers
   \end{edtable}
 \end{table}
 
-The array of values represented by a \FromComponent element is populated from the output port of a component. The size of the generated array is determined by the size of the container (i.e. \Population or \Projection) the \FromComponent is nested within.
+The array of values represented by a \FromFunction element is populated from the output port of a component. The size of the generated array is determined by the size of the container (i.e. \Population or \Projection) the \FromFunction is nested within.
 
 \subsubsection{Port attribute}
-Each \FromComponent requires a \textit{port} attribute, which selects which port of the \Component to read.
+Each \FromFunction requires a \textit{port} attribute, which selects which port of the \Component to read.
 
 \section{Populations}
 
@@ -1871,23 +1871,27 @@ The \Cell element specifies the dynamic components that will make up the populat
     \toprule
     \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Number Structure}}}\\
     \toprule
+    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \midrule
+    \FromFunction & singleton & no \\
+    \midrule    
     \em{Text format} & \; & \em{Required} \\
     \midrule
-    \primtype{non-negative integer} & \; & yes\\
+    \primtype{non-negative integer} & \; & no\\
     \bottomrule
   \end{edtable}
 \end{table}
 
-The number of cells in the population is specified by the integer provided in the text of the \Number element. In future versions this may be extended to allow the size of a population to be derived from other features of the \Population. 
+The number of cells in the population is specified either by a non-negative integer provided in the text of the \Number element or from an \IndexSendPort within a \Function component.
 
 \subsubsection{Text format}
-The text of the \Number element contains an \primtype{integer} representing the size of the population.
+The text of the \Number element should contain an \primtype{integer} representing the size of the population if and only if it isn't derived from a \FromFunction\withelem\IndexSendPort port. 
 
 \section{Projections}
 
 Projections define the synaptic connectivity between two populations, the post-synaptic response of the connections, the plasticity rules that modulate the post-synaptic response and the transmission delays. Synaptic and plasticity dynamic components are created and connected to and from explicitly defined ports of the cell components in the source and projection populations if the connection rule determines there is a connection between a particular source and destination cell pair. 
 
-\SingleValue and \FromComponent elements used in properties of a projection (in the \Connectivity and \Synapse elements) take the size of the number of connections made. While \ArrayValue and \ExternalArrayValue elements can either be the size of the number of connections made or the number of possible unique connections (i.e. $N_{\mathrm{source}} * N_{\mathrm{dest}}$). In either case, the expected array data is ordered by the indices
+\SingleValue and \FromFunction elements used in properties of a projection (in the \Connectivity and \Synapse elements) take the size of the number of connections made. While \ArrayValue and \ExternalArrayValue elements can either be the size of the number of connections made or the number of possible unique connections (i.e. $N_{\mathrm{source}} * N_{\mathrm{dest}}$). In either case, the expected array data is ordered by the indices
 \begin{equation}
 i_{\mathrm{value}} = i_{\mathrm{source}} * N_{\mathrm{dest}} + i_{\mathrm{dest}}
 \end{equation}
@@ -2127,7 +2131,7 @@ The \textit{units} attribute specifies the units of the delay and should refer t
     \toprule
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
-    \FromComponent & singleton & yes \\ 
+    \FromFunction & singleton & yes \\ 
     \bottomrule
   \end{edtable}
 \end{table}
@@ -2411,7 +2415,7 @@ The \MultiCompartmental is the top-level element for multi-compartmental models.
     \toprule
     \em{Element type} & Multiplicity & \em{Required} \\
     \midrule \relax
-    \SingleValue | \ArrayValue | \ExternalArrayValue | \FromComponent & singleton & yes\\
+    \SingleValue | \ArrayValue | \ExternalArrayValue | \FromFunction & singleton & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
@@ -2428,7 +2432,7 @@ The Branches is an array containing the indices of the parent node of the segmen
     \toprule
     \em{Element type} & Multiplicity & \em{Required} \\
     \midrule \relax
-    \SingleValue | \ArrayValue | \ExternalArrayValue | \FromComponent & singleton & yes\\
+    \SingleValue | \ArrayValue | \ExternalArrayValue | \FromFunction & singleton & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
