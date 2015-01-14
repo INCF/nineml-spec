@@ -619,27 +619,31 @@ and has the highest level of precedence.
 \end{itemize}
 
 The following functions are built in and are defined as per ANSI C89:
+
 \begin{itemize}
-\item \verb|exp(x)|
-\item \verb|sin(x)|
+\item \verb|acos(x)|
+\item \verb|acosh(x)|
+\item \verb|asin(x)|
+\item \verb|asinh(x)|
+\item \verb|atan(x)|
+\item \verb|atan2(x)|
+\item \verb|atanh(x)|
+\item \verb|ceil(x)|
 \item \verb|cos(x)|
+\item \verb|cosh(x)|
+\item \verb|exp(x)|
+\item \verb|floor(x)|
 \item \verb|log(x)|
 \item \verb|log10(x)|
 \item \verb|pow(x, p)|
+\item \verb|sin(x)|
 \item \verb|sinh(x)|
-\item \verb|cosh(x)|
-\item \verb|tanh(x)|
+\item \verb|round(x)|
 \item \verb|sqrt(x)|
-\item \verb|atan(x)|
-\item \verb|asin(x)|
-\item \verb|acos(x)|
-\item \verb|asinh(x)|
-\item \verb|acosh(x)|
-\item \verb|atanh(x)|
-\item \verb|atan2(x)|
-\item \verb|ceil(x)|
-\item \verb|floor(x)|
+\item \verb|tanh(x)|
 \end{itemize}
+
+with the exception of `\verb|round|', which has the same function as `\verb|nearbyint|' in the C89 standard, with `round-to-nearest' set in the floating point parameters (see \href{http://www.gnu.org/software/libc/manual/html\_node/Rounding-Functions.html}{http://www.gnu.org/software/libc/manual/html\_node/Rounding-Functions.html}).
 
 The following symbols refer to built-in values,
 \begin{itemize}
@@ -813,7 +817,7 @@ Each \Constant requires a \textit{units} attribute. The \textit{units} attribute
   \end{edtable}
 \end{table}
 
-\Piecewise elements are used to describe piecewise mathematical functions. The syntax is inspired by the \MathML format for piecewise functions. Each \Piece element describes a continuous segment of the function that is valid over the range its condition (see \Condition) evaluates to true. It is critical that the combination of parameters and states under which the \Piece\withelem\Condition blocks in a single \Piecewise element evaluate to true are exclusive. As in \MathML, the onus is on the model designer to ensure that the conditions blocks do not overlap. For combinations of parameters and states that are not covered by any \Piece\withelem{}\Condition block the \Piecewise function evaluates to the value of the \Otherwise\withelem{}\MathInline expression.
+\Piecewise elements are used to describe piecewise mathematical functions. The syntax is inspired by the \MathML format for piecewise functions. Each \Piece element describes a continuous segment of the function that is valid over the range its condition evaluates to true (see \Condition). It is critical that the combination of parameters and states under which the \Piece\withelem\Condition blocks evaluate to true are exclusive within a \Piecewise element. As in \MathML, the onus is on the model designer to ensure that the conditions do not overlap. For combinations of parameters and states that are not covered by any \Piece\withelem{}\Condition block, the \Piecewise function evaluates to the value of the \Otherwise\withelem{}\MathInline expression.
 
 \note{Piecewise expressions do not appear within \Dynamics\withelem{}\Regime elements. Discontinuous expressions within \Dynamics blocks, require transitions to a new \Dynamics\withelem{}\Regime.}
 
@@ -867,7 +871,7 @@ The \MathInline expression within \Condition element must be evaluate to a boole
   \end{edtable}
 \end{table}
 
-The \Otherwise block is active within a \Piecewise expression whenever all other \Piece\withelem{}\Condition blocks evaluate to false.
+The \Otherwise block is active within a \Piecewise expression whenever all other \Piece\withelem{}\Condition blocks within the \Piecewise element evaluate to false.
 
 \section{Ports}
 \label{sec:Ports}
@@ -875,9 +879,9 @@ The \Otherwise block is active within a \Piecewise expression whenever all other
 Ports allow components to communicate with each
 other during a simulation. Ports can either transmit discrete events (see \EventSendPort and \EventReceivePort), continuous streams of analog data (see \AnalogSendPort, \AnalogReceivePort and \AnalogReducePort), properties of a component (see \PropertySendPort and \PropertyReceivePort) or the indices of a cells, connections or compartments within a container (see \IndexSendPort and \IndexReceivePort).
 
-Events are typically used to model synaptic transmission but can be used more generally to model any instantaneous communication between components. On the other hand analog ports are used to model continuous communication between components, typically injected current, gap junctions or internal quantities shared between sub-components of a multi-component model. Property ports are used in several distinct situations: in order to pass parameters of cells in a population (such as their spatial coordinates) to \ConnectionRule or \Function components, to return properties from \Function components and to read properties of neighbouring compartments in multi-compartmental models.
+Events are typically used to model synaptic transmission but can be used more generally to model any instantaneous communication between components. Analog ports are used to model continuous communication between components, typically injected current, gap junctions or internal quantities shared between sub-components of a multi-component model. Property ports are used in several distinct situations: in order to pass parameters of cells in a population (such as their spatial coordinates) to \ConnectionRule or \Function components, to return properties from \Function components and to read properties of neighbouring compartments in multi-compartmental models.
 
-For each type of information communicated there is a sending a receiving port. For dynamic ports, which handle events and analog data streams, the send and receive ports are connected directly to each other. Whereas the send and receive property ports are connected to \DerivedProperty and \Property elements respectively. \IndexReceivePort{}s receive connections from sources that are implicit to the container, whereas \IndexSendPort{}s are used in \Function elements used to generate multi-compartmental models.
+For each mode of communication there is a sending a receiving port. For dynamic ports, which handle events and analog data streams, the send and receive ports are connected directly to each other. Whereas the \PropertySendPort and \PropertyReceivePort{}s are connected to \DerivedProperty and \Property elements respectively. \IndexReceivePort{}s receive connections from sources that are implicit to the container, whereas \IndexSendPort{}s are used in \Function elements used to generate multi-compartmental models.
 
 \subsection{AnalogSendPort}
 \label{sec:AnalogSendPort}
@@ -1080,18 +1084,14 @@ Each \PropertyReceivePort requires a \textit{dimension} attribute. This attribut
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
     name & \identifier & yes\\
-    conversion & `round' | `ceil' | `floor' & yes \\
     \bottomrule
   \end{edtable}
 \end{table}
 
-
+\IndexSendPort{}s are used to return indices generated within \ComponentClass\withelem{}\Function elements, which can be used in \MultiCompartmental models to generate branch structures and domain-to-compartment mappings. Before sending, real numbers are floored to the nearest integer (\MathInline expressions provide, 
 
 \subsubsection{Name attribute}
 Each \IndexSendPort requires a \textit{name} attribute, which is a valid \identifier and uniquely identifies the \IndexSendPort from all other elements in the \ComponentClass.
-
-\subsubsection{Conversion attribute}
-Each \IndexSendPort requires a \textit{conversion} attribute, which specifies the conversion from floating point to integer numbers.
 
 \subsection{IndexReceivePort}
 \label{sec:IndexReceivePort}

@@ -950,7 +950,7 @@
 
 % Misc symbols
 
-\newcommand{\withelem}{{\textcolor{ninemlblue}{$\mathbf{>}$}}}
+\newcommand{\withelem}{{\textcolor{ninemlblue}{$\mathbf{>}${}}}}
 \newcommand{\pointto}{$\to$}
 
 % Spacing adjustments when using the symbols inside regular 'description' env.
