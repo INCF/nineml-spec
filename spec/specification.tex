@@ -28,7 +28,7 @@
 \newcommand{\Dimension}{\defRef{\textbf{\class{Dimension}}\xspace}{sec:Dimension}}
 \newcommand{\ComponentClass}{\defRef{\textbf{\class{ComponentClass}}\xspace}{sec:ComponentClass}}
 \newcommand{\Dynamics}{\defRef{\defRef{\textbf{\class{Dynamics}}\xspace}{sec:Dynamics}}{sec:Dynamics}}
-\newcommand{\Function}{\defRef{\textbf{\class{Function}}\xspace}{sec:Function}}
+\newcommand{\Distribution}{\defRef{\textbf{\class{Distribution}}\xspace}{sec:Distribution}}
 \newcommand{\BuiltInDistribution}{\defRef{\textbf{\class{BuiltInDistribution}}\xspace}{sec:BuiltInDistribution}}
 \newcommand{\ConnectionRule}{\defRef{\textbf{\class{ConnectionRule}}\xspace}{sec:ConnectionRule}}
 \newcommand{\ConnectCondition}{\defRef{\textbf{\class{ConnectCondition}}\xspace}{sec:ConnectCondition}}
@@ -78,7 +78,7 @@
 \newcommand{\Quantity}{\defRef{\textbf{\class{Quantity}}\xspace}{sec:Quantity}}
 \newcommand{\SingleValue}{\defRef{\textbf{\class{SingleValue}}\xspace}{sec:SingleValue}}
 \newcommand{\ExternalArrayValue}{\defRef{\textbf{\class{ExternalArrayValue}}\xspace}{sec:ExternalArrayValue}}
-\newcommand{\FromFunction}{\defRef{\textbf{\class{FromFunction}}\xspace}{sec:FromFunction}}
+\newcommand{\FromDistribution}{\defRef{\textbf{\class{FromDistribution}}\xspace}{sec:FromDistribution}}
 \newcommand{\ArrayValue}{\defRef{\textbf{\class{ArrayValue}}\xspace}{sec:ArrayValue}}
 \newcommand{\ArrayValueRow}{\defRef{\textbf{\class{ArrayValueRow}}\xspace}{sec:ArrayValueRow}}
 \newcommand{\ListColumn}{\defRef{\textbf{\class{ListColumn}}\xspace}{sec:ListColumn}}
@@ -403,7 +403,7 @@ can be used for example to signal action potential firing.
     \PropertyReceivePort & set & no\\
     \IndexSendPort & set & no\\
     \IndexReceivePort & set & no\\
-    \Dynamics | \ConnectionRule | \Function & singleton & yes \\
+    \Dynamics | \ConnectionRule | \Distribution & singleton & yes \\
     \bottomrule
   \end{edtable}
 \end{table}
@@ -416,7 +416,7 @@ A \ComponentClass is composed of:
 \begin{itemize} 
 \item \Dynamics, the component class defines a dynamic element such as neutron or post-synaptic response.
 \item \ConnectionRule, the component class defines a rule by which populations are connected in projections.
-\item \Function, the component class defines random distribution.
+\item \Distribution, the component class defines random distribution.
 \end{itemize}}
 \end{itemize}
 
@@ -651,7 +651,7 @@ The following functions are built in,
 \item \verb|tanh(x)|
 \end{itemize}
 \end{multicols}
-All built-in functions are defined as per ANSI C89 with the exception of `\verb|round|', which has the same function as `\verb|nearbyint|' in the C89 standard, with `round-to-nearest' set in the floating point parameters \\(see \href{http://www.gnu.org/software/libc/manual/html\_node/Rounding-Functions.html}{http://www.gnu.org/software/libc/manual/html\_node/Rounding-Functions.html}).
+All built-in functions are defined as per ANSI C89 with the exception of `\verb|round|', which has the same function as `\verb|nearbyint|' in the C89 standard, with `round-to-nearest' set in the floating point parameters \\(see \href{http://www.gnu.org/software/libc/manual/html\_node/Rounding-Distributions.html}{http://www.gnu.org/software/libc/manual/html\_node/Rounding-Distributions.html}).
 
 The following symbols refer to built-in values,
 \begin{itemize}
@@ -763,7 +763,7 @@ Any valid numeric value, including shorthand scientific notation e.g. 1e-5 ($1\t
   \end{edtable}
 \end{table}
 
-\draftnote{I realised that RandomDistributions can't be components if we are going to separate the Abstraction and User Layers (i.e. It would require using a \Component within a \ComponentClass) so I have separated it out. Also random distributions derived from standard distributions (the only ones I can see people wanting to manually define), can be specified using \Function elements in this scheme.}
+\draftnote{I realised that RandomDistributions can't be components if we are going to separate the Abstraction and User Layers (i.e. It would require using a \Component within a \ComponentClass) so I have separated it out. Also random distributions derived from standard distributions (the only ones I can see people wanting to manually define), can be specified using \Distribution elements in this scheme.}
 
 \RandomVariable elements represent randomly varying quantities, which are drawn from standard families of random distributions. The random distributions are defined via \href{http://www.uncertml.org/distributions}{UncertML (http://www.uncertml.org/distributions)}, with the caveats that the "multi-values" are not permitted and the numerical arguments passed to UncertML distributions can be substituted for the names of dimensionless properties and aliases of the enclosing \ComponentClass.
 
@@ -889,9 +889,9 @@ The \Otherwise block is active within a \Piecewise expression whenever all other
 Ports allow components to communicate with each
 other during a simulation. Ports can either transmit discrete events (see \EventSendPort and \EventReceivePort), continuous streams of analog data (see \AnalogSendPort, \AnalogReceivePort and \AnalogReducePort), properties of a component (see \PropertySendPort and \PropertyReceivePort) or the indices of a cells, connections or compartments within a container (see \IndexSendPort and \IndexReceivePort).
 
-Events are typically used to model synaptic transmission but can be used more generally to model any instantaneous communication between components. Analog ports are used to model continuous communication between components, typically injected current, gap junctions or internal quantities shared between sub-components of a multi-component model. Property ports are used in several distinct situations: in order to pass parameters of cells in a population (such as their spatial coordinates) to \ConnectionRule or \Function components, to return properties from \Function components and to read properties of neighbouring compartments in multi-compartmental models.
+Events are typically used to model synaptic transmission but can be used more generally to model any instantaneous communication between components. Analog ports are used to model continuous communication between components, typically injected current, gap junctions or internal quantities shared between sub-components of a multi-component model. Property ports are used in several distinct situations: in order to pass parameters of cells in a population (such as their spatial coordinates) to \ConnectionRule or \Distribution components, to return properties from \Distribution components and to read properties of neighbouring compartments in multi-compartmental models.
 
-For each mode of communication there is a sending a receiving port. For dynamic ports, which handle events and analog data streams, the send and receive ports are connected directly to each other. Whereas the \PropertySendPort and \PropertyReceivePort{}s are connected to \DerivedProperty and \Property elements respectively. \IndexReceivePort{}s receive connections from sources that are implicit to the container, whereas \IndexSendPort{}s are used in \Function elements used to generate multi-compartmental models.
+For each mode of communication there is a sending a receiving port. For dynamic ports, which handle events and analog data streams, the send and receive ports are connected directly to each other. Whereas the \PropertySendPort and \PropertyReceivePort{}s are connected to \DerivedProperty and \Property elements respectively. \IndexReceivePort{}s receive connections from sources that are implicit to the container, whereas \IndexSendPort{}s are used in \Distribution elements used to generate multi-compartmental models.
 
 \subsection{AnalogSendPort}
 \label{sec:AnalogSendPort}
@@ -1050,7 +1050,7 @@ Each \EventReceivePort requires a \textit{name} attribute, which is a valid \ide
   \end{edtable}
 \end{table}
 
-\PropertySendPort{}s are used to return quantities from \Component\withelem\Function{}s to populate \DerivedProperty elements.
+\PropertySendPort{}s are used to return quantities from \Component\withelem\Distribution{}s to populate \DerivedProperty elements.
 
 \subsubsection{Name attribute}
 Each \PropertySendPort requires a \textit{name} attribute, which is a valid \identifier and uniquely identifies the \PropertySendPort from all other elements in the \ComponentClass.
@@ -1098,7 +1098,7 @@ Each \PropertyReceivePort requires a \textit{dimension} attribute. This attribut
   \end{edtable}
 \end{table}
 
-\IndexSendPort{}s are used to return indices generated within \ComponentClass\withelem{}\Function elements, which can be used in \MultiCompartmental models to generate branch structures and domain-to-compartment mappings. Before sending, real numbers are floored to the nearest integer (\MathInline expressions provide, 
+\IndexSendPort{}s are used to return indices generated within \ComponentClass\withelem{}\Distribution elements, which can be used in \MultiCompartmental models to generate branch structures and domain-to-compartment mappings. Before sending, real numbers are floored to the nearest integer (\MathInline expressions provide, 
 
 \subsubsection{Name attribute}
 Each \IndexSendPort requires a \textit{name} attribute, which is a valid \identifier and uniquely identifies the \IndexSendPort from all other elements in the \ComponentClass.
@@ -1544,17 +1544,17 @@ Which subset to select from the provisional connections is determined by the \Ma
 %\subsubsection{Source attribute}
 %Each \ExplicitConnections requires a \textit{source} attribute, which should be refer to the name of a property.
 
-\section{Functions}
+\section{Distributions}
 
-Functions are used to define relationships between parameters over members of a container.
+Distributions are used to define relationships between parameters over members of a container.
 
-\subsection{Function}
-\label{sec:Function}
+\subsection{Distribution}
+\label{sec:Distribution}
 
 \begin{table}[H]
   \begin{edtable}{tabular}{llr}
     \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Function Structure}}}\\
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Distribution Structure}}}\\
     \toprule
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
@@ -1701,7 +1701,7 @@ Each \Property element requires a \emph{units} attribute. The \textit{units} att
     \midrule
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
-    \FromFunction & singleton & yes \\ 
+    \FromDistribution & singleton & yes \\ 
     \bottomrule
   \end{edtable}
 \end{table}
@@ -1715,8 +1715,8 @@ of the \Component that are derived from \PropertySendPort{}s of components. Thei
 Each \Property requires a \textit{name} attribute. This should refer to the name of a \Parameter in the corresponding \ComponentClass of the \Component.
 
 
-\subsection{FromFunction}
-\label{sec:FromFunction}
+\subsection{FromDistribution}
+\label{sec:FromDistribution}
 
 \begin{table}[H]
   \begin{edtable}{tabular}{llr}
@@ -1729,15 +1729,15 @@ Each \Property requires a \textit{name} attribute. This should refer to the name
     \midrule
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
-    \Component{}\withelem\Function | \Reference{}\pointto\Component{}\withelem\Function & singleton & yes \\
+    \Component{}\withelem\Distribution | \Reference{}\pointto\Component{}\withelem\Distribution & singleton & yes \\
     \bottomrule
   \end{edtable}
 \end{table}
 
-The values of \DerivedProperty elements are populated from \PropertySendPort{}s of \Component{}\withelem\Function{}s, as specified by \FromFunction elements. The function is evaluated for each item in the container (i.e. \Population, \Projection or \MultiCompartmental) it is enclosed by.
+The values of \DerivedProperty elements are populated from \PropertySendPort{}s of \Component{}\withelem\Distribution{}s, as specified by \FromDistribution elements. The function is evaluated for each item in the container (i.e. \Population, \Projection or \MultiCompartmental) it is enclosed by.
 
 \subsubsection{Port attribute}
-Each \FromFunction requires a \textit{port} attribute, which selects which port of the \Component to read.
+Each \FromDistribution requires a \textit{port} attribute, which selects which port of the \Component to read.
 
 
 \subsection{Reference}
@@ -1900,7 +1900,7 @@ Each \ExternalArrayValue must have a \textit{columnName} attribute, which refers
     \Cell & singleton & yes \\
     \Property & set & no \\
     \DerivedProperty & set & no \\
-    \Component{}\withelem{}\Function & set & no\\
+    \Component{}\withelem{}\Distribution & set & no\\
     \bottomrule
   \end{edtable}
 \end{table}
@@ -1924,7 +1924,7 @@ Each \Population requires a \textit{name} attribute, which should be a valid \id
     \toprule
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
-    \FromFunction & singleton & no \\
+    \FromDistribution & singleton & no \\
     \midrule    
     \em{Text format} & \; & \em{Required} \\
     \midrule
@@ -1933,10 +1933,15 @@ Each \Population requires a \textit{name} attribute, which should be a valid \id
   \end{edtable}
 \end{table}
 
-The number of cells in the population is specified either by a non-negative integer provided in the text of the \Size element or from an \IndexSendPort within a \Function component.
+
+
+The number of cells in the population is specified either by a non-negative integer provided in the text of the \Size element or from an \IndexSendPort within a \Distribution component. The value of the \FromDistribution{}@port should not depend on any \IndexReceivePort or \PropertyReceivePort only the \Parameter{}s of the \Component{}\withelem{}\Distribution. 
+\draftnote{This is a little bit messy, any suggestions? I am thinking of creating a ``SizeSendPort'' but this seems a little strange}
+
+It is envsaged that deriving the size of the population from a \Component{}\withelem{}\Distribution port would be useful when parameters to the spatial layout of the population (e.g. length, width and depth) determines the total number of cells in the population.
 
 \subsubsection{Text format}
-The text of the \Size element should contain an \primtype{integer} representing the size of the population if and only if it isn't derived from a \FromFunction{}\withelem\IndexSendPort port. 
+The text of the \Size element should contain an \primtype{integer} representing the size of the population if and only if it isn't derived from a \FromDistribution{}\withelem\IndexSendPort port. 
 
 \subsection{Cell}
 \label{sec:Cell}
@@ -1983,7 +1988,7 @@ where $N$ is the size of the population and $i$ the index of the cell/connection
     \Destination & singleton & yes \\
     \Connectivity & singleton & yes \\
     \Synapse & singleton & yes \\
-    \Component{}\withelem{}\Function & set & no\\
+    \Component{}\withelem{}\Distribution & set & no\\
     \bottomrule
   \end{edtable}
 \end{table}
@@ -2200,7 +2205,7 @@ The \textit{units} attribute specifies the units of the delay and should refer t
     \toprule
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
-    \FromFunction & singleton & yes \\ 
+    \FromDistribution & singleton & yes \\ 
     \bottomrule
   \end{edtable}
 \end{table}
@@ -2465,7 +2470,7 @@ The \MultiCompartmental is the top-level element for multi-compartmental models.
     \toprule
     \em{Element type} & Multiplicity & \em{Required} \\
     \midrule \relax
-    \SingleValue | \ArrayValue | \ExternalArrayValue | \FromFunction & singleton & yes\\
+    \SingleValue | \ArrayValue | \ExternalArrayValue | \FromDistribution & singleton & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
@@ -2482,7 +2487,7 @@ The Branches is an array containing the indices of the parent node of the segmen
     \toprule
     \em{Element type} & Multiplicity & \em{Required} \\
     \midrule \relax
-    \SingleValue | \ArrayValue | \ExternalArrayValue | \FromFunction & singleton & yes\\
+    \SingleValue | \ArrayValue | \ExternalArrayValue | \FromDistribution & singleton & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
