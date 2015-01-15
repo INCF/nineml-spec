@@ -1546,7 +1546,9 @@ Which subset to select from the provisional connections is determined by the \Ma
 
 \section{Distributions}
 
-Distributions are used to define relationships between parameters over members of a container.
+\Distribution{}s define how the value of parameters varying over members of a container (\Population, \Projection or \MultiCompartmental). The values can be dependent on any combination of random variables, the properties of members of the containers (see \PropertyReceivePort) and their indices (see \IndexReceivePort). The values provided via \PropertyReceivePort{}s and \IndexReceivePort{}s are iterated over each member of the container and the expressions are reevaluated, drawing new instances of each \RandomVariable{}.
+
+\Component{}\withelem{}\Distribution elements are connected to \DerivedProperty elements via \PropertySendPort{}s. A single distribution component can be used to populate multiple \DerivedProperty elements via multiple \PropertySendPort{}s, allowing the same random variable instance to be shared between properties. 
 
 \subsection{Distribution}
 \label{sec:Distribution}
@@ -1566,6 +1568,7 @@ Distributions are used to define relationships between parameters over members o
   \end{edtable}
 \end{table}
 
+\Distribution is the top-level element for distribution component classes and defines all expressions.
 
 \clearpage
 \part{User Layer}
@@ -1739,6 +1742,26 @@ The values of \DerivedProperty elements are populated from \PropertySendPort{}s 
 \subsubsection{Port attribute}
 Each \FromDistribution requires a \textit{port} attribute, which selects which port of the \Component to read.
 
+\subsection{FromIndex}
+\label{sec:FromIndex}
+
+\begin{table}[H]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{FromIndex Structure}}}\\
+    \toprule
+     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
+    \midrule
+    of & `cell' | `source' | `destination' | `connection' | `sourceDomain' | 'destinationDomain' & yes\\
+    \bottomrule
+  \end{edtable}
+\end{table}
+
+\draftnote{Not quite happy with this either. Was thinking of reusing \FromSource, \FromDestination, etc... to provide the indices instead}
+The \FromIndex element provides various indices for use in \ConnectionRule and \Distribution components. The indices that are available to use varies depending on the container the \FromIndex is located in. 
+
+\subsubsection{Of attribute}
+The \textit{of} attribute specifies which index should be supplied. Within a \Population, the only index available is that of the `cell'. For any element in a \Projection the `source', `destination' and `connection' indices are available. Whereas `sourceDomain' and `destinationDomain' are only valid in the \CompartmentConnectivity block and refer to the domain index of the source and destination compartments to determine the connectivity of.
 
 \subsection{Reference}
 \label{sec:Reference}
@@ -1905,11 +1928,8 @@ Each \ExternalArrayValue must have a \textit{columnName} attribute, which refers
   \end{edtable}
 \end{table}
 
-A \Population defines a set of dynamic components of the same class. The size of the set is specified by the \Size element. The properties of the dynamic components are generated from value types, which can be constant across the population, randomly distributed or individually specified (see \ref{sec:Values}).
+A \Population defines a set of dynamic components of the same class. The size of the set is specified by the \Size element. The properties of the dynamic components are either specified directly via single or array values or derived from other \Component{}\withelem{}\Distribution{}s. \Component{}\withelem{}\Distribution{}s included within the \Projection container are evaluated once for each member in the container so that multiple \DerivedProperty elements can reference (see \Reference) the same random variable instance for each member.
 
-%%%%%%%%%%%%%%
-\incomplete %%%%%%%%
-%%%%%%%%%%%%%%
 
 \subsubsection{Name attribute}
 Each \Population requires a \textit{name} attribute, which should be a valid \identifier and uniquely identify the {\Population} from all other elements in the global scope.
@@ -1932,8 +1952,6 @@ Each \Population requires a \textit{name} attribute, which should be a valid \id
     \bottomrule
   \end{edtable}
 \end{table}
-
-
 
 The number of cells in the population is specified either by a non-negative integer provided in the text of the \Size element or from an \IndexSendPort within a \Distribution component. The value of the \FromDistribution{}@port should not depend on any \IndexReceivePort or \PropertyReceivePort only the \Parameter{}s of the \Component{}\withelem{}\Distribution. 
 \draftnote{This is a little bit messy, any suggestions? I am thinking of creating a ``SizeSendPort'' but this seems a little strange}
@@ -1993,7 +2011,7 @@ where $N$ is the size of the population and $i$ the index of the cell/connection
   \end{edtable}
 \end{table}
 
-The \Projection element contains all the elements that define a projection between two populations and should be uniquely identified in the scope of the document.
+The \Projection element contains all the elements that define a projection between two populations and should be uniquely identified in the scope of the document. \Component{}\withelem{}\Distribution{}s included within the \Projection container are evaluated once for each member in the container so that multiple \DerivedProperty elements can reference (see \Reference) the same random variable instance for each member.
 
 \subsubsection{Name attribute}
 Each \Projection requires a \textit{name} attribute, which should be a valid \identifier and uniquely identify the {\Projection} from all other elements in the global scope.
@@ -2211,29 +2229,6 @@ The \textit{units} attribute specifies the units of the delay and should refer t
 \end{table}
 
 In the current version, the \Delay element specifies the delay between the pre-synaptic cell port and the \Synapse. In future versions, it is planned to expand the delay architecture to allow delays on any port connections to allow finer control of the delay between the different components.
-
-\subsection{FromIndex}
-\label{sec:FromIndex}
-
-\begin{table}[H]
-  \begin{edtable}{tabular}{llr}
-    \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{FromIndex Structure}}}\\
-    \toprule
-     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
-    \midrule
-    of & `source' | `destination' | `connection' | `sourceDomain' | 'destinationDomain' & yes\\
-    \bottomrule
-  \end{edtable}
-\end{table}
-
-\subsubsection{Of attribute}
-The \textit{of} attribute specifies the index and should refer to the name of a \Unit element in the global scope. The \Unit{}\withelem\Dimension should be temporal, i.e. have $t=1$ and all other SI dimensions set to 0. 
-
-
-%%%%%%%%%%%%%
-\incomplete %%%%%%%
-%%%%%%%%%%%%%
 
 \section{Networks}
 
@@ -2647,10 +2642,6 @@ Each \MultiCompartmentProjection requires a \textit{name} attribute, which shoul
     \bottomrule
   \end{edtable}
 \end{table}
-
-%%%%%%%%%%%
-\incomplete %%%%%
-%%%%%%%%%%%
 
 The \CompartmentConnectivity element specifies the connections between source and destination compartments if the \Connectivity element of the \MultiCompartmentProjection specifies a connection between the source and destination cell models. 
 
