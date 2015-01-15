@@ -20,7 +20,7 @@
 % Define misc. references
 \newcommand{\identifier}{\typeDefRef{identifier\xspace}{sec:identifier}}
 \newcommand{\URL}{\href{http://en.wikipedia.org/wiki/Uniform_resource_locator}{URL}\xspace}
-\newcommand{\MathML}{\href{http://www.w3.org/Math/}{MathML}\xspace}
+\newcommand{\MathML}{\href{http://mathml.org}{MathML (http://mathml.org)}\xspace}
 
 % Define Abstraction Layer element references
 
@@ -32,8 +32,11 @@
 \newcommand{\BuiltInDistribution}{\defRef{\textbf{\class{BuiltInDistribution}}\xspace}{sec:BuiltInDistribution}}
 \newcommand{\ConnectionRule}{\defRef{\textbf{\class{ConnectionRule}}\xspace}{sec:ConnectionRule}}
 \newcommand{\ConnectCondition}{\defRef{\textbf{\class{ConnectCondition}}\xspace}{sec:ConnectCondition}}
+\newcommand{\ExplicitConnections}{\defRef{\textbf{\class{ExplicitConnections}}\xspace}{sec:ExplicitConnections}}
+\newcommand{\SourceIndices}{\defRef{\textbf{\class{SourceIndices}}\xspace}{sec:SourceIndices}}
+\newcommand{\DestinationIndices}{\defRef{\textbf{\class{DestinationIndices}}\xspace}{sec:DestinationIndices}}
 \newcommand{\SelectConnections}{\defRef{\textbf{\class{SelectConnections}}\xspace}{sec:SelectConnections}}
-\newcommand{\TargetNumber}{\defRef{\textbf{\class{TargetNumber}}\xspace}{sec:TargetNumber}}
+\newcommand{\Number}{\defRef{\textbf{\class{Number}}\xspace}{sec:Number}}
 \newcommand{\Preference}{\defRef{\textbf{\class{Preference}}\xspace}{sec:Preference}}
 \newcommand{\MathInline}{\defRef{\textbf{\class{MathInline}}\xspace}{sec:MathInline}}
 \newcommand{\Piecewise}{\defRef{\textbf{\class{Piecewise}}\xspace}{sec:Piecewise}}
@@ -84,7 +87,7 @@
 \newcommand{\Reference}{\defRef{\textbf{\class{Reference}}\xspace}{sec:Reference}}
 \newcommand{\Population}{\defRef{\textbf{\class{Population}}\xspace}{sec:Population}}
 \newcommand{\Cell}{\defRef{\textbf{\class{Cell}}\xspace}{sec:Cell}}
-\newcommand{\Number}{\defRef{\textbf{\class{Number}}\xspace}{sec:Number}}
+\newcommand{\Size}{\defRef{\textbf{\class{Size}}\xspace}{sec:Size}}
 \newcommand{\AdditionalProperty}{\defRef{\textbf{\class{AdditionalProperty}}\xspace}{sec:AdditionalProperty}}
 \newcommand{\Projection}{\defRef{\textbf{\class{Projection}}\xspace}{sec:Projection}}
 \newcommand{\Source}{\defRef{\textbf{\class{Source}}\xspace}{sec:Source}}
@@ -559,7 +562,7 @@ If omitted, the offset is zero.
 
 \section{Mathematical Expressions}
 
-As of NineML version 1.0, only inline mathematical expressions, which have similar syntax to the ANSI C89 standard, are supported. In future versions it is envisaged that inline expressions will be either augmented or replaced with MathML (\href{http://mathml.org}{http://mathml.org}) expressions.
+As of NineML version 2.0, only inline mathematical expressions, which have similar syntax to the ANSI C89 standard, are supported. In future versions, it is envisaged that inline expressions will be either augmented or replaced with \MathML expressions.
 
 
 \subsection{MathInline}
@@ -584,7 +587,6 @@ evaluates to either a \primtype{bool} (when used as the trigger for
 right-hand-side for {\Alias}, {\TimeDerivative} and {\StateAssignment} objects). All numbers/variables in inline maths expressions are assumed to be \primtype{real numbers}.
 
 The following operators are supported in inline maths expressions,
-
 \begin{itemize}
 \item Arithmetic operators
 \begin{itemize}
@@ -595,18 +597,19 @@ The following operators are supported in inline maths expressions,
 \item Exponent \verb|^|
 \end{itemize}
 
-The `\verb|+|', `\verb|-|', `\verb|/|' and `\verb|*|' operators have the same interpretation and precedence levels as in the ANSI C89 standard. `\verb|^|', which is not part of the ANSI C89 standard, is the exponent operator e.g.
- \begin{lstlisting}
-a^3 = a*a*a
-\end{lstlisting}
-and has the highest level of precedence.
+\item Grouping operators
+\begin{itemize}
+\item (
+\item )
+\end{itemize}
 
-\item Inequality operators
+\item Equality/inequality operators
 \begin{itemize}
 \item Greater than \verb|>|
 \item Lesser than \verb|<|
 \item Greater than \verb|>=|
 \item Lesser than \verb|<=|
+\item Lesser than \verb|==|
 \end{itemize}
 
 \item Logical operators
@@ -617,9 +620,14 @@ and has the highest level of precedence.
 \end{itemize}
 
 \end{itemize}
+All operators have the same interpretation and precedence levels as in the ANSI C89 standard with the exception of the exponent operator, `\verb|^|', which is not part of the ANSI C89 standard. The exponent operator is the equivalent of
+ \begin{lstlisting}
+a^3 = a*a*a
+\end{lstlisting}
+and has the highest level of precedence of the arithmetic operators.
 
-The following functions are built in and are defined as per ANSI C89:
-
+The following functions are built in,
+\begin{multicols}{4}
 \begin{itemize}
 \item \verb|acos(x)|
 \item \verb|acosh(x)|
@@ -642,8 +650,8 @@ The following functions are built in and are defined as per ANSI C89:
 \item \verb|sqrt(x)|
 \item \verb|tanh(x)|
 \end{itemize}
-
-with the exception of `\verb|round|', which has the same function as `\verb|nearbyint|' in the C89 standard, with `round-to-nearest' set in the floating point parameters (see \href{http://www.gnu.org/software/libc/manual/html\_node/Rounding-Functions.html}{http://www.gnu.org/software/libc/manual/html\_node/Rounding-Functions.html}).
+\end{multicols}
+All built-in functions are defined as per ANSI C89 with the exception of `\verb|round|', which has the same function as `\verb|nearbyint|' in the C89 standard, with `round-to-nearest' set in the floating point parameters \\(see \href{http://www.gnu.org/software/libc/manual/html\_node/Rounding-Functions.html}{http://www.gnu.org/software/libc/manual/html\_node/Rounding-Functions.html}).
 
 The following symbols refer to built-in values,
 \begin{itemize}
@@ -651,7 +659,7 @@ The following symbols refer to built-in values,
 \item true
 \item false
 \end{itemize}
-where $t$ is the elapsed simulation time within a \Dynamics block and `true' and 'false' are the logical identities. 
+where $t$ is the elapsed simulation time within a \Dynamics block and `true' and 'false' are the logical identities. The true and false logical identities can also be represented by numerical values of $1$ and $0$, respectively.
 
 \subsection{Alias}
 \label{sec:Alias}
@@ -757,10 +765,11 @@ Any valid numeric value, including shorthand scientific notation e.g. 1e-5 ($1\t
 
 \draftnote{I realised that RandomDistributions can't be components if we are going to separate the Abstraction and User Layers (i.e. It would require using a \Component within a \ComponentClass) so I have separated it out. Also random distributions derived from standard distributions (the only ones I can see people wanting to manually define), can be specified using \Function elements in this scheme.}
 
-\RandomVariable elements represent randomly varying quantities, which are drawn from standard families of random distributions. The random distributions are defined via \href{http://www.uncertml.org/distributions}{UncertML (http://www.uncertml.org/distributions)}, with the caveats that the "multi-values" are not permitted and numerical arguments passed to UncertML distributions can be substituted for the names of dimensionless properties and aliases of the enclosing \ComponentClass.
+\RandomVariable elements represent randomly varying quantities, which are drawn from standard families of random distributions. The random distributions are defined via \href{http://www.uncertml.org/distributions}{UncertML (http://www.uncertml.org/distributions)}, with the caveats that the "multi-values" are not permitted and the numerical arguments passed to UncertML distributions can be substituted for the names of dimensionless properties and aliases of the enclosing \ComponentClass.
 
 The subset of UncertML distributions available in NineML is
 
+\begin{multicols}{3}
 \begin{itemize}
 \item bernoulli
 \item beta
@@ -788,6 +797,7 @@ The subset of UncertML distributions available in NineML is
 \item uniform
 \item weibull
 \end{itemize}
+\end{multicols}
 
 \note{Open source \textit{C} implementations of these distributions are available in the GNU Scientific Library, \href{http://www.gnu.org/software/gsl/}{http://www.gnu.org/software/gsl/}.}
 
@@ -819,7 +829,7 @@ Each \Constant requires a \textit{units} attribute. The \textit{units} attribute
 
 \Piecewise elements are used to describe piecewise mathematical functions. The syntax is inspired by the \MathML format for piecewise functions. Each \Piece element describes a continuous segment of the function that is valid over the range its condition evaluates to true (see \Condition). It is critical that the combination of parameters and states under which the \Piece\withelem\Condition blocks evaluate to true are exclusive within a \Piecewise element. As in \MathML, the onus is on the model designer to ensure that the conditions do not overlap. For combinations of parameters and states that are not covered by any \Piece\withelem{}\Condition block, the \Piecewise function evaluates to the value of the \Otherwise\withelem{}\MathInline expression.
 
-\note{Piecewise expressions do not appear within \Dynamics\withelem{}\Regime elements. Discontinuous expressions within \Dynamics blocks, require transitions to a new \Dynamics\withelem{}\Regime.}
+\note{Piecewise expressions do not appear within \Dynamics{}\withelem{}\Regime elements. Discontinuous expressions within \Dynamics blocks, require transitions to a new \Dynamics{}\withelem{}\Regime.}
 
 \subsection{Piece}
 \label{sec:Piece}
@@ -871,7 +881,7 @@ The \MathInline expression within \Condition element must be evaluate to a boole
   \end{edtable}
 \end{table}
 
-The \Otherwise block is active within a \Piecewise expression whenever all other \Piece\withelem{}\Condition blocks within the \Piecewise element evaluate to false.
+The \Otherwise block is active within a \Piecewise expression whenever all other \Piece{}\withelem{}\Condition blocks within the \Piecewise element evaluate to false.
 
 \section{Ports}
 \label{sec:Ports}
@@ -1397,7 +1407,10 @@ Each \EventOut requires a \textit{port} attribute. This should refer to the name
 
 \section{Network Connectivity}
 
-Network connectivity is defined via extensible components to promote reuse of connection logic. Connections are provisionally connected if the \ConnectCondition evaluates to true for a given connection, which can then be pruned to a number (which can be derived from a random value) if a \SelectConnections element is provided.
+Network connectivity is defined via extensible components to promote reuse of connection logic. Connections are provisionally connected if the \ConnectCondition evaluates to true for a given connection. If \ConnectCondition is omitted then all possible connections are connected (i.e. all-to-all).  If a \SelectConnections element is provided the set of provisional connections will be pruned to a reduced size, which can be fixed or derived from other values. 
+%Additionally, connections can be specified explicitly via \ExplicitConnections, which can either be in addition to the selected connections or replace the least preferred connections.
+
+The expressions for \ConnectCondition and \SelectConnections can be derived from the indices of, or properties received from either the source or destination populations, or the projection itself (see \Projection for the way properties and indices of the projection are mapped onto source and destination cell pairs).
 
 \subsection{ConnectionRule}
 \label{sec:ConnectionRule}
@@ -1410,7 +1423,8 @@ Network connectivity is defined via extensible components to promote reuse of co
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
     \ConnectCondition & singleton & no\\
-    \SelectConnections & singleton & no\\
+    \SelectConnections & set & no\\
+%    \ExplicitConnections & singleton & no\\
     \Alias & set & no\\
     \Constant & set & no\\
     \RandomVariable & set & no\\
@@ -1419,7 +1433,7 @@ Network connectivity is defined via extensible components to promote reuse of co
   \end{edtable}
 \end{table}
 
-\ConnectionRule elements are the top-level container for \ComponentClass elements that define network connectivity. Typically, values are read from \AdditionalProperty elements within the source and destination population via \PropertyReceivePort{}s .
+\ConnectionRule is the top-level element for network connectivity component classes. 
 
 \subsection{ConnectCondition}
 \label{sec:ConnectCondition}
@@ -1436,7 +1450,9 @@ Network connectivity is defined via extensible components to promote reuse of co
   \end{edtable}
 \end{table}
 
-\ConnectCondition elements specify the conditions under which a source and destination cell should be connected. If the \MathInline expression in it evaluates to true then the cells are provisionally connected.
+\ConnectCondition elements specify the conditions under which a source and destination cell should be connected. If the provided \MathInline expression in it evaluates to true then the cells are provisionally connected (but can be pruned later as specified by the \SelectConnections element).
+\draftnote{For explicit connection masks to be practical we will probably need a sparse format for array values. However, this is something we would probably want anyway I imagine (for accompanying connection weights for example).}
+\note{Explicit connections between specific source and destination cells can be specified via a binary mask parameter passed directly to the \ConnectCondition expression.}
 
 \subsection{SelectConnections}
 \label{sec:SelectConnections}
@@ -1445,7 +1461,12 @@ Network connectivity is defined via extensible components to promote reuse of co
   \begin{edtable}{tabular}{llr}
     \toprule
     \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{SelectConnections Structure}}}\\
-    \toprule
+    \toprule    
+    \em{Attribute name} & \em{Type/Format} & \em{Required} \\
+    \midrule
+    from & `fanOut' | `fanIn' | `total' & yes\\
+    index & \primtype{non-negative integer} & yes\\
+    \midrule
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
     \Number & singleton & yes \\
@@ -1454,7 +1475,35 @@ Network connectivity is defined via extensible components to promote reuse of co
   \end{edtable}
 \end{table}
 
-\incomplete
+\SelectConnections is used to select a subset of the provisionally connected connections (see \ConnectCondition). The number of connections to be selected is determined by the expression in the \Number element. Which connections are selected is determined by their rank as specified by the \Preference element. If no \Preference element is connected then the connections are selected at random. If there are insufficient provisional connections for the number requested, then all provisional connections are accepted but no additional connections are made.
+
+The selections can be made from one of three different ``perspectives'': that of a cell in the source population, which fixes the number of connections that originate from single source cell (`fanOut'), that of a cell in the destination population, which fixes the number connections that are received by a single destination cell (`fanIn'), and that of the `total' number of connections in the projection. 
+
+
+\subsubsection{From attribute}
+Each \Component requires a \textit{from} attribute, which specifies the set of connections to be selected from. This can be the connections from each source sell, `fanOut', the connections to each destination cell, `fanIn', or all connections in the population `total'.
+
+\subsubsection{Index attribute}
+The \textit{index} attribute specifies the order in which multiple \SelectConnections are performed. It must be non-negative, unique amongst the set of \SelectConnections{}@index in the \ComponentClass{}\withelem{}\ConnectionRule, and the set of indices must be contiguous.
+
+\subsection{Number}
+\label{sec:Number}
+
+\begin{table}[H]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Number Structure}}}\\
+    \toprule
+    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \midrule
+    \MathInline & singleton & yes \\
+    \bottomrule
+  \end{edtable}
+\end{table}
+
+The number of cells in the population is specified by a \MathInline expression that must evaluate to a integer value. The onus is on the model designer to ensure the expression always evaluates to an integer value.
+%
+%\note{Built-in \primtype{real number}$\to$\primtype{integer} conversion functions, i.e. `\verb|ceil|', `\verb|floor|' and `\verb|round|' can be used to ensure the expression in the \Number element always evaluates to an integer.}
 
 \subsection{Preference}
 \label{sec:Preference}
@@ -1471,7 +1520,29 @@ Network connectivity is defined via extensible components to promote reuse of co
   \end{edtable}
 \end{table}
 
-\incomplete
+Which subset to select from the provisional connections is determined by the \MathInline expression in the \Preference element, which can evaluate to any real number. Provisional connections are selected in order of preference from lowest to highest. Within subsets of equal preference, connections are selected in a random order.
+
+%
+%\subsection{ExplicitConnections}
+%\label{sec:ExplicitConnections}
+%
+%\begin{table}[H]
+%  \begin{edtable}{tabular}{llr}
+%    \toprule
+%    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{ExplicitConnections Structure}}}\\
+%    \toprule
+%    \em{Attribute name} & \em{Type/Format} & \em{Required} \\
+%    \midrule
+%    source & \Parameter{}@name & yes\\
+%    destination & \Parameter{}@name & yes\\
+%    inAddition & `yes' | `no' & yes\\
+%    \bottomrule
+%  \end{edtable}
+%\end{table}
+%
+%
+%\subsubsection{Source attribute}
+%Each \ExplicitConnections requires a \textit{source} attribute, which should be refer to the name of a property.
 
 \section{Functions}
 
@@ -1479,8 +1550,6 @@ Functions are used to define relationships between parameters over members of a 
 
 \subsection{Function}
 \label{sec:Function}
-
-\draftnote{Could alternatively be called Static to contrast with Dynamics elements or maybe Relationship}
 
 \begin{table}[H]
   \begin{edtable}{tabular}{llr}
@@ -1518,6 +1587,7 @@ Functions are used to define relationships between parameters over members of a 
     \midrule
     \Definition | \Prototype & singleton & yes \\ 
     \Property & set & no\\
+    \DerivedProperty & set & no\\
     \bottomrule
   \end{edtable}
 \end{table}
@@ -1579,15 +1649,13 @@ The name of the \ComponentClass to be referenced \ComponentClass needs to be pro
 \end{table}
 
 The \Prototype element establishes a link to an existing User Layer \Component, which defines the \ComponentClass and default properties of the \Component.  The reference \Component can be located either in the current
-document or in another file if a \textit{url} attribute is provided.
+document or in another file if a \textit{url} attribute is provided. Selected properties provided by the \Prototype\pointto\Component are then overridden by the referencing \Component.
 
 \subsubsection{Url attribute}
 If the prototype \Component is defined outside the current file, the \textit{URL} attribute specifies a \URL for the file which contains the prototype \Component.
 
 \subsubsection{Text format}
 The name of the \Component to be referenced \Component needs to be provided in the text of \Prototype element.
-
-\draftnote{I have removed the \Quantity{s} in favour of adding units to the \Property elements as it seemed superfluous and incongruous with the AL (i.e. \Parameter s define the dimension). I will create a GitHub issue about this where we can discuss this and potentially decide to change it back if you like}
 
 \subsection{Property}
 \label{sec:Property}
@@ -1647,6 +1715,31 @@ of the \Component that are derived from \PropertySendPort{}s of components. Thei
 Each \Property requires a \textit{name} attribute. This should refer to the name of a \Parameter in the corresponding \ComponentClass of the \Component.
 
 
+\subsection{FromFunction}
+\label{sec:FromFunction}
+
+\begin{table}[H]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{ExternalArrayValue Structure}}}\\
+    \toprule
+    \em{Attribute name} & \em{Type/Format} & \em{Required} \\
+    \midrule
+    port & {\PropertySendPort}@name & yes\\
+    \midrule
+    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \midrule
+    \Component{}\withelem\Function | \Reference{}\pointto\Component{}\withelem\Function & singleton & yes \\
+    \bottomrule
+  \end{edtable}
+\end{table}
+
+The values of \DerivedProperty elements are populated from \PropertySendPort{}s of \Component{}\withelem\Function{}s, as specified by \FromFunction elements. The function is evaluated for each item in the container (i.e. \Population, \Projection or \MultiCompartmental) it is enclosed by.
+
+\subsubsection{Port attribute}
+Each \FromFunction requires a \textit{port} attribute, which selects which port of the \Component to read.
+
+
 \subsection{Reference}
 \label{sec:Reference}
 
@@ -1677,14 +1770,12 @@ The name of the User Layer element to be referenced should be included in the te
 \section{Values}
 \label{sec:Values}
 
-In NineML, ``values'' are arrays that implicitly grow to fill the size of the container (i.e. \Population or \Projection) they are located within. Where located within \Property elements, values must represent \primtype{real numbers}, whereas values located within \Number, \Source, \Destination, \Branches and \Mapping elements they must be \primtype{integers}. Values can be one of three types:
+In NineML, ``values'' are arrays that implicitly grow to fill the size of the container (i.e. \Population or \Projection) they are located within. Where located within \Property elements, values must represent \primtype{real numbers}, whereas values located within \Size, \Source, \Destination, \Branches and \Mapping elements they must be \primtype{integers}. Values can be one of three types:
 \begin{itemize}
 \item \SingleValue, a consistent value across the container
 \item \ArrayValue, an explicit array defined in NineML
 \item \ExternalArrayValue, an explicit array defined in text (space delimited) or HDF5 format.
 \end{itemize}
-
-or derived from a \Component via a \FromFunction element.
 
 \subsection{SingleValue}
 \label{sec:SingleValue}
@@ -1789,30 +1880,6 @@ Each \ExternalArrayValue must have a \textit{columnName} attribute, which refers
 
 %\draftnote{What do you think of this? This allows a single component to return two (related) values at different places at the model (e.g. weight and delay in distance dependent rules). It also seemed a bit neater}
 
-\subsection{FromFunction}
-\label{sec:FromFunction}
-
-\begin{table}[H]
-  \begin{edtable}{tabular}{llr}
-    \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{ExternalArrayValue Structure}}}\\
-    \toprule
-    \em{Attribute name} & \em{Type/Format} & \em{Required} \\
-    \midrule
-    port & {\PropertySendPort}@name & yes\\
-    \midrule
-    \em{Element type} & \em{Multiplicity} & \em{Required} \\
-    \midrule
-    \Component | \Reference{}\pointto\Component & singleton & yes \\
-    \bottomrule
-  \end{edtable}
-\end{table}
-
-The array of values represented by a \FromFunction element is populated from the output port of a component. The size of the generated array is determined by the size of the container (i.e. \Population or \Projection) the \FromFunction is nested within.
-
-\subsubsection{Port attribute}
-Each \FromFunction requires a \textit{port} attribute, which selects which port of the \Component to read.
-
 \section{Populations}
 
 \subsection{Population}
@@ -1829,15 +1896,16 @@ Each \FromFunction requires a \textit{port} attribute, which selects which port 
     \midrule
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
-    \Number & singleton & yes \\
+    \Size & singleton & yes \\
     \Cell & singleton & yes \\
     \Property & set & no \\
-    \DerivedProperty & set & no \\    
+    \DerivedProperty & set & no \\
+    \Component{}\withelem{}\Function & set & no\\
     \bottomrule
   \end{edtable}
 \end{table}
 
-A \Population defines a set of dynamic components of the same class. The size of the set is specified by the \Number element. The properties of the dynamic components are generated from value types, which can be constant across the population, randomly distributed or individually specified (see \ref{sec:Values}).
+A \Population defines a set of dynamic components of the same class. The size of the set is specified by the \Size element. The properties of the dynamic components are generated from value types, which can be constant across the population, randomly distributed or individually specified (see \ref{sec:Values}).
 
 %%%%%%%%%%%%%%
 \incomplete %%%%%%%%
@@ -1845,6 +1913,30 @@ A \Population defines a set of dynamic components of the same class. The size of
 
 \subsubsection{Name attribute}
 Each \Population requires a \textit{name} attribute, which should be a valid \identifier and uniquely identify the {\Population} from all other elements in the global scope.
+
+\subsection{Size}
+\label{sec:Size}
+
+\begin{table}[H]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Size Structure}}}\\
+    \toprule
+    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \midrule
+    \FromFunction & singleton & no \\
+    \midrule    
+    \em{Text format} & \; & \em{Required} \\
+    \midrule
+    \primtype{non-negative integer} & \; & no\\
+    \bottomrule
+  \end{edtable}
+\end{table}
+
+The number of cells in the population is specified either by a non-negative integer provided in the text of the \Size element or from an \IndexSendPort within a \Function component.
+
+\subsubsection{Text format}
+The text of the \Size element should contain an \primtype{integer} representing the size of the population if and only if it isn't derived from a \FromFunction{}\withelem\IndexSendPort port. 
 
 \subsection{Cell}
 \label{sec:Cell}
@@ -1863,39 +1955,15 @@ Each \Population requires a \textit{name} attribute, which should be a valid \id
 
 The \Cell element specifies the dynamic components that will make up the population. The \Component can be defined inline or via a \Reference element. 
 
-\subsection{Number}
-\label{sec:Number}
-
-\begin{table}[H]
-  \begin{edtable}{tabular}{llr}
-    \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Number Structure}}}\\
-    \toprule
-    \em{Element type} & \em{Multiplicity} & \em{Required} \\
-    \midrule
-    \FromFunction & singleton & no \\
-    \midrule    
-    \em{Text format} & \; & \em{Required} \\
-    \midrule
-    \primtype{non-negative integer} & \; & no\\
-    \bottomrule
-  \end{edtable}
-\end{table}
-
-The number of cells in the population is specified either by a non-negative integer provided in the text of the \Number element or from an \IndexSendPort within a \Function component.
-
-\subsubsection{Text format}
-The text of the \Number element should contain an \primtype{integer} representing the size of the population if and only if it isn't derived from a \FromFunction\withelem\IndexSendPort port. 
-
 \section{Projections}
 
 Projections define the synaptic connectivity between two populations, the post-synaptic response of the connections, the plasticity rules that modulate the post-synaptic response and the transmission delays. Synaptic and plasticity dynamic components are created and connected to and from explicitly defined ports of the cell components in the source and projection populations if the connection rule determines there is a connection between a particular source and destination cell pair. 
 
-\SingleValue and \FromFunction elements used in properties of a projection (in the \Connectivity and \Synapse elements) take the size of the number of connections made. While \ArrayValue and \ExternalArrayValue elements can either be the size of the number of connections made or the number of possible unique connections (i.e. $N_{\mathrm{source}} * N_{\mathrm{dest}}$). In either case, the expected array data is ordered by the indices
+Array values passed to properties of the projection (e.g. synaptic weights and delays) can either be the size of the number of connections made or the number of possible unique connections (i.e. $N_{\mathrm{source}} * N_{\mathrm{dest}}$). In either case, the expected array data is ``destination population major'' (like \href{http://en.wikipedia.org/wiki/Row-major_order}{``row major order'', http://en.wikipedia.org/wiki/Row-major\_order}), i.e. it first iterates the destination population then the source population,
 \begin{equation}
-i_{\mathrm{value}} = i_{\mathrm{source}} * N_{\mathrm{dest}} + i_{\mathrm{dest}}
+i_{\mathrm{connection}} =  i_{\mathrm{destination}} + i_{\mathrm{source}} * N_{\mathrm{source}}
 \end{equation}
-where $i_{\mathrm{value}}$, $i_{\mathrm{source}}$ and $i_{\mathrm{dest}}$ are the indices of the array entry, and the source and destination cells respectively (starting from 0), and $N_{\mathrm{dest}}$ is the size of the destination population. For the case of the explicit arrays being the size of the number connections made, data for $i_{\mathrm{value}}$ indices that do not correspond to connected pairs are omitted.
+where $N$ is the size of the population and $i$ the index of the cell/connection (starting from 0). For the case of the explicit arrays being the size of the number connections made, data for $i_{\mathrm{value}}$ indices that do not correspond to connected pairs are omitted.
 
 \subsection{Projection}
 \label{sec:Projection}
@@ -1915,6 +1983,7 @@ where $i_{\mathrm{value}}$, $i_{\mathrm{source}}$ and $i_{\mathrm{dest}}$ are th
     \Destination & singleton & yes \\
     \Connectivity & singleton & yes \\
     \Synapse & singleton & yes \\
+    \Component{}\withelem{}\Function & set & no\\
     \bottomrule
   \end{edtable}
 \end{table}
@@ -2059,7 +2128,7 @@ Each \FromSource element requires a \textit{port} attribute. This should refer t
     \toprule
      \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
-    port & [\AnalogSendPort | \EventSendPort{}]@name & yes\\
+    port & [\AnalogSendPort | \EventSendPort{} | \Parameter{}@name]@name & yes\\
     \midrule
     \em{Element type} & Multiplicity & \em{Required} \\
     \Delay & singleton & no\\
@@ -2083,7 +2152,7 @@ Each \FromDestination element requires a \textit{port} attribute. This should re
     \toprule
      \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
-    port & [\AnalogSendPort | \EventSendPort{}]@name & yes\\
+    port & [\AnalogSendPort | \EventSendPort{} | \Parameter{}@name]@name & yes\\
     \midrule \relax
     \em{Element type} & Multiplicity & \em{Required} \\
     \Delay & singleton & no\\
@@ -2156,25 +2225,6 @@ In the current version, the \Delay element specifies the delay between the pre-s
 \subsubsection{Of attribute}
 The \textit{of} attribute specifies the index and should refer to the name of a \Unit element in the global scope. The \Unit{}\withelem\Dimension should be temporal, i.e. have $t=1$ and all other SI dimensions set to 0. 
 
-
-%%%%%%%%%%%%%
-\incomplete %%%%%%%
-%%%%%%%%%%%%%
-
-\subsection{FromProperty}
-\label{sec:FromProperty}
-
-\begin{table}[H]
-  \begin{edtable}{tabular}{llr}
-    \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{FromProperty Structure}}}\\
-    \toprule
-     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
-    \midrule
-    name & \Property{}@name & yes\\
-    \bottomrule
-  \end{edtable}
-\end{table}
 
 %%%%%%%%%%%%%
 \incomplete %%%%%%%

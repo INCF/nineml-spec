@@ -950,8 +950,8 @@
 
 % Misc symbols
 
-\newcommand{\withelem}{{\textcolor{ninemlblue}{$\mathbf{>}${}}}}
-\newcommand{\pointto}{$\to$}
+\newcommand{\withelem}{\textcolor{ninemlblue}{$\mathbf{>}${}}}
+\newcommand{\pointto}{\textcolor{ninemlblue}{$\to$}}
 
 % Spacing adjustments when using the symbols inside regular 'description' env.
 % Note: *not* used in \ninemlrule below.
