@@ -2621,7 +2621,7 @@ Each \FromProximal requires a \textit{port} attribute, which should refer to the
   \end{edtable}
 \end{table}
 
-An extension of the \Projection object model, \MultiCompartmentProjection, must be used if either the source or destination populations consist of multi-compartmental models. It receives a \CompartmentConnectivity element which determines which compartments projections are made. 
+For connecting populations with \MultiCompartmental cell models, \MultiCompartmentProjection must be used. \MultiCompartmentProjection extends the \Projection element by including \CompartmentConnectivity connection-rule which determines which compartments projections are connected by synapses when two cells are connected. 
 
 In flattening the \MultiCompartmentProjection elements to Core NineML, a single \MultiCompartmentProjection is split into a set of \Projection elements, one for each source/destination compartment pairing that has a non-empty set of connections.
 
@@ -3668,6 +3668,7 @@ In addition to the built-in mathematical functions and symbols (see \MathInline)
 
 \section{Acknowledgments}
 \subsection{Former NineML INCF Task Force members}
+\begin{multicols}{2}
 \begin{itemize}
 \item Abigail Morrison
 \item Alex Cope
@@ -3695,6 +3696,7 @@ In addition to the built-in mathematical functions and symbols (see \MathInline)
 \item Valentin Haenel
 \item Yann Le Franc
 \end{itemize}
+\end{multicols}
 
 \clearpage
 \bibliography{specification}
