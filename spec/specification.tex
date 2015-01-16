@@ -2234,7 +2234,7 @@ In the current version, the \Delay element specifies the delay between the pre-s
 
 \section{Networks}
 
-Sets of \Population and \Projection elements are collected into networks.
+Sets of \Population and \Projection elements are collected into networks, which are the top-level NineML object model. \Network{}s can also consist of smaller sub-networks allowing complex networks to be built up incrementally.
 
 \subsection{Network}
 \label{sec:Network}
@@ -2249,9 +2249,12 @@ Sets of \Population and \Projection elements are collected into networks.
     \midrule
     \Reference{}\pointto{}\Population & set & yes\\    
     \Reference{}\pointto{}\Projection & set & yes\\
+    \Reference{}\pointto{}\Network & set & yes\\    
     \bottomrule
   \end{edtable}
 \end{table}
+
+The \Network object is the highest level NineML container.
 
 \section{Selections: combining populations and subsets}
 
