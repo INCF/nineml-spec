@@ -717,7 +717,7 @@ Each \AnalogSendPort requires a \textit{name} attribute, which should refer to a
 
 \subsubsection{Dimension attribute}
 Each \AnalogSendPort requires a \textit{dimension} attribute. This attribute specifies the dimension of the units of the quantity that is expected to be passed through the \AnalogSendPort and should refer to the name of a \Dimension element in the global scope.
-
+\note{"Dimensionless" parameters can be defined by referring to an empty \Dimension object, i.e. one without any \textit{power} or offset attributes} 
 
 \subsection{AnalogReceivePort}
 \label{sec:AnalogReceivePort}
