@@ -414,7 +414,7 @@ A \ComponentClass is composed of:
 \item An unordered collection of port objects, which either publish or read state variables or derived values published from other components in the case of analog send and receive ports, or emit events or listen for events emitted from components. \EventSendPort and \EventReceivePort objects raise and listen for events passed between dynamic components.
 \item {A `main' block, which specifies the nature of the component class:
 \begin{itemize} 
-\item \Dynamics, the component class defines a dynamic element such as neutron or post-synaptic response.
+\item \Dynamics, the component class defines a dynamic element such as neuron or post-synaptic response.
 \item \ConnectionRule, the component class defines a rule by which populations are connected in projections.
 \item \Distribution, the component class defines random distribution.
 \end{itemize}}
@@ -1223,7 +1223,7 @@ Each \StateVariable requires a \textit{dimension} attribute. This attribute spec
 
 A \Regime element represents a system of ODEs in time
 on \StateVariable.  As such, \Regime defines how the state variables
-change (propagate in time) between subsequent transitions. \Regime is
+change (propagate in time) between subsequent transitions. \Regime elements 
 must have non-vanishing temporal extent. Once construction of
 the \Regime is complete, it should have defined the following
 properties:
@@ -3684,7 +3684,7 @@ In addition to the built-in mathematical functions and symbols (see \MathInline)
 \item Hugo Cornelis
 \item Ivan Raikov
 \item Lars Schwabe
-\item Malin Sandström
+\item Malin Sandstrï¿½m
 \item Michael Hull
 \item Mikael Djurfeldt
 \item Padraig Gleeson
