@@ -162,7 +162,7 @@
 
 \begin{document}
 
-\packageTitle{NineML (9ML) Specification}
+\packageTitle{Kinetic Extension to NineML (9ML) Specification}
 \packageVersion{Version 2.0dev}
 \packageVersionDate{ \today}
 
@@ -198,6 +198,7 @@
 
 {\Large\bf Editors: }
 \begin{itemize}
+\item Tom Close %probably 
 \item Russell Jarvis
 \end{itemize}
 
@@ -221,7 +222,7 @@ This document is under the Common Creative license BY-NC-SA:\\ http://creativeco
 \end{normalsize}
 }
 
-\title{NineML Kinetic Extension Specification}
+\title{Kinetic Extension to NineML Specification}
 
 \newpage
 \pagestyle{plain}
@@ -267,7 +268,7 @@ The purpose of the kinetic extension to NINEML is to provide a convenient means 
 
 
 \subsection{NMDOL}
-The purpose of NMODL is to provide a means of expanding the library of mechanisms available to NEURON simulator. The nervous system of any animal is typically made up of many species of neurons. Each species of neuron can be described by its own ionic and molecular properties. For example the concentration of Sodium ion channels may vary along the length of apical and distal dendrites. In the context of the NEURON simulator these ion channel and molecular properties are called mechanisms, and the NMODL language specifies a means to create new models of ionic and molecular mechanisms. By using a collection of compiled NMODL files the combined effects of many mechanisms can contribute to the resulting model output \cite{carnevale2006neuron}. 
+NMODL provides a means of expanding the library of mechanisms available to NEURON simulator. The nervous system of any animal is typically made up of many species of neurons. Each species of neuron can be described by its own ionic and molecular properties. For example the concentration of Sodium ion channels may vary along the length of apical and distal dendrites. In the context of the NEURON simulator these ion channel and molecular properties are called mechanisms, and the NMODL language specifies a means to create new models of ionic and molecular mechanisms. By using a collection of compiled NMODL files the combined effects of many mechanisms can contribute to the resulting model output \cite{carnevale2006neuron}. 
 %\label{sec:\item NMODL}
 
 \section{NMODL Blocks}
@@ -309,7 +310,7 @@ The procedure block provides an opportunity to define a procedure called $rates(
 
 \subsection{KINETIC block}
 
-Longitudinal and radial diffusion.
+%Simple schemes which do not include Longitudinal and radial diffusion will be considered here.
 
 
 The kinetics block interfaces with a procedure $rates()$
@@ -1388,7 +1389,7 @@ In addition to the built-in mathematical functions and symbols (see \MathInline)
 \end{itemize}
 
 \clearpage
-\bibliography{kinetics}
+\bibliography{specification}
 
 % -----------------------------------------------------------------------------
 % End of document
