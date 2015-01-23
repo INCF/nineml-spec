@@ -1720,76 +1720,6 @@ of the \Component that are derived from \PropertySendPort{}s of components. Thei
 
 \subsubsection{Name attribute}
 Each \Property requires a \textit{name} attribute. This should refer to the name of a \Parameter in the corresponding \ComponentClass of the \Component.
-
-\subsection{ReceiveConnection}
-\label{sec:ReceiveConnection}
-
-\begin{table}[H]
-  \begin{edtable}{tabular}{llr}
-    \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{ReceiveConnection Structure}}}\\
-    \toprule
-    \em{Attribute name} & \em{Type/Format} & \em{Required} \\
-    \midrule \relax
-    port & *Port{}@name & yes\\
-    \midrule \relax
-    \em{Element type} & Multiplicity & \em{Required} \\
-    \midrule \relax
-    From* & set & yes\\
-    \bottomrule
-  \end{edtable}
-\end{table}
-
-The \ReceiveConnection element specifies a receive port which will receive a connection from a port of a remote component or container. Depending on the type of the \Component{}\withelem{}\ComponentClass the source of remote port to be connected can vary and are specified by different ``port source'' objects, e.g. \FromSource, \FromDestination and \FromSynapse  in \Projection containers.
-
-\subsubsection{Port attribute}
-Each \ReceiveConnection element requires a \textit{port} attribute. This should refer to the name of a port in the class definition of the component.
-
-\subsection{FromDistribution}
-\label{sec:FromDistribution}
-
-\begin{table}[H]
-  \begin{edtable}{tabular}{llr}
-    \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{ExternalArrayValue Structure}}}\\
-    \toprule
-    \em{Attribute name} & \em{Type/Format} & \em{Required} \\
-    \midrule
-    port & {\PropertySendPort}@name & yes\\
-    \midrule
-    \em{Element type} & \em{Multiplicity} & \em{Required} \\
-    \midrule
-    \Component{}\withelem\Distribution | \Reference{}\pointto\Component{}\withelem\Distribution & singleton & yes \\
-    \bottomrule
-  \end{edtable}
-\end{table}
-
-The values of \DerivedProperty elements are populated from \PropertySendPort{}s of \Component{}\withelem\Distribution{}s, as specified by \FromDistribution elements. The function is evaluated for each item in the container (i.e. \Population, \Projection or \MultiCompartmental) it is enclosed by.
-
-\subsubsection{Port attribute}
-Each \FromDistribution requires a \textit{port} attribute, which selects which port of the \Component to read.
-
-\subsection{FromIndex}
-\label{sec:FromIndex}
-
-\begin{table}[H]
-  \begin{edtable}{tabular}{llr}
-    \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{FromIndex Structure}}}\\
-    \toprule
-     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
-    \midrule
-    of & `cell' | `source' | `destination' | `connection' | `sourceDomain' | 'destinationDomain' & yes\\
-    \bottomrule
-  \end{edtable}
-\end{table}
-
-\draftnote{Not quite happy with this either. Was thinking of reusing \FromSource, \FromDestination, etc... to provide the indices instead}
-The \FromIndex element provides various indices for use in \ConnectionRule and \Distribution components. The indices that are available to use varies depending on the container the \FromIndex is located in. 
-
-\subsubsection{Of attribute}
-The \textit{of} attribute specifies which index should be supplied. Within a \Population, the only index available is that of the `cell'. For any element in a \Projection the `source', `destination' and `connection' indices are available. Whereas `sourceDomain' and `destinationDomain' are only valid in the \CompartmentConnectivity block and refer to the domain index of the source and destination compartments to determine the connectivity of.
-
 \subsection{Reference}
 \label{sec:Reference}
 
@@ -1929,6 +1859,195 @@ The \textit{mimetype} attribute specifies the data format for the external value
 Each \ExternalArrayValue must have a \textit{columnName} attribute, which refers to a column header in the external data file. 
 
 %\draftnote{What do you think of this? This allows a single component to return two (related) values at different places at the model (e.g. weight and delay in distance dependent rules). It also seemed a bit neater}
+
+
+\section{Port Connections}
+
+\subsection{ReceiveConnection}
+\label{sec:ReceiveConnection}
+
+\begin{table}[H]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{ReceiveConnection Structure}}}\\
+    \toprule
+    \em{Attribute name} & \em{Type/Format} & \em{Required} \\
+    \midrule \relax
+    port & *Port{}@name & yes\\
+    \midrule \relax
+    \em{Element type} & Multiplicity & \em{Required} \\
+    \midrule \relax
+    From* & set & yes\\
+    \bottomrule
+  \end{edtable}
+\end{table}
+
+The \ReceiveConnection element specifies a receive port which will receive a connection from a port of a remote component or container. Depending on the type of the \Component{}\withelem{}\ComponentClass the source of remote port to be connected can vary and are specified by different ``port source'' objects, e.g. \FromSource, \FromDestination and \FromSynapse  in \Projection containers.
+
+\subsubsection{Port attribute}
+Each \ReceiveConnection element requires a \textit{port} attribute. This should refer to the name of a port in the class definition of the component.
+
+\subsection{FromDistribution}
+\label{sec:FromDistribution}
+
+\begin{table}[H]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{ExternalArrayValue Structure}}}\\
+    \toprule
+    \em{Attribute name} & \em{Type/Format} & \em{Required} \\
+    \midrule
+    port & {\PropertySendPort}@name & yes\\
+    \midrule
+    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \midrule
+    \Component{}\withelem\Distribution | \Reference{}\pointto\Component{}\withelem\Distribution & singleton & yes \\
+    \bottomrule
+  \end{edtable}
+\end{table}
+
+The values of \DerivedProperty elements are populated from \PropertySendPort{}s of \Component{}\withelem\Distribution{}s, as specified by \FromDistribution elements. The function is evaluated for each item in the container (i.e. \Population, \Projection or \MultiCompartmental) it is enclosed by.
+
+\subsubsection{Port attribute}
+Each \FromDistribution requires a \textit{port} attribute, which selects which port of the \Component to read.
+
+\subsection{FromIndex}
+\label{sec:FromIndex}
+
+\begin{table}[H]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{FromIndex Structure}}}\\
+    \toprule
+     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
+    \midrule
+    of & `cell' | `source' | `destination' | `connection' | `sourceDomain' | 'destinationDomain' & yes\\
+    \bottomrule
+  \end{edtable}
+\end{table}
+
+\draftnote{Not quite happy with this either. Was thinking of reusing \FromSource, \FromDestination, etc... to provide the indices instead}
+The \FromIndex element provides various indices for use in \ConnectionRule and \Distribution components. The indices that are available to use varies depending on the container the \FromIndex is located in. 
+
+\subsubsection{Of attribute}
+The \textit{of} attribute specifies which index should be supplied. Within a \Population, the only index available is that of the `cell'. For any element in a \Projection the `source', `destination' and `connection' indices are available. Whereas `sourceDomain' and `destinationDomain' are only valid in the \CompartmentConnectivity block and refer to the domain index of the source and destination compartments to determine the connectivity of.
+
+
+\subsection{FromSource}
+\label{sec:FromSource}
+
+\begin{table}[H]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{FromSource Structure}}}\\
+    \toprule
+     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
+    \midrule
+    port & [\AnalogSendPort | \EventSendPort{}]@name & yes\\
+    \midrule \relax
+    \em{Element type} & Multiplicity & \em{Required} \\
+    \midrule \relax
+    \Delay & singleton & no\\
+    \bottomrule
+  \end{edtable}
+\end{table}
+
+The \FromSource element specifies a port connection to the projection component (either the destination cell, post-synaptic response or plasticity dynamics) inside which it is inserted from the source cell dynamics. The delay on transmission of the port connection is specified by a \Delay element. If a \Delay element is not provided the delay is zero.
+
+\subsubsection{port attribute}
+Each \FromSource element requires a \textit{port} attribute. This should refer to the name of a \AnalogSendPort or \EventSendPort in the \Source\withelem\Cell{}\withelem\Component{}\withelem\ComponentClass. The transmission mode of the port (i.e. \lq\lq{}analog\rq\rq{} or \lq\lq{}event\rq\rq{}) should match that of the port referenced by the enclosing \ReceiveConnection element.
+
+\subsection{FromDestination}
+\label{sec:FromDestination}
+
+\begin{table}[H]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{FromDestination Structure}}}\\
+    \toprule
+     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
+    \midrule
+    port & [\AnalogSendPort | \EventSendPort{} | \Parameter{}]@name & yes\\
+    \midrule
+    \em{Element type} & Multiplicity & \em{Required} \\
+    \midrule
+    \Delay & singleton & no\\
+    \bottomrule
+  \end{edtable}
+\end{table}
+
+The \FromDestination element specifies a port connection to the projection component (either the source cell, post-synaptic response or plasticity dynamics) inside which it is inserted from the destination cell dynamics. The delay on transmission of the port connection is specified by a \Delay element. If a \Delay element is not provided the delay is zero.
+
+\subsubsection{port attribute}
+Each \FromDestination element requires a \textit{port} attribute. This should refer to the name of a \AnalogSendPort or \EventSendPort in the \Destination\withelem\Cell\withelem\Component{}\withelem\ComponentClass. The transmission mode of the port (i.e. \lq\lq{}analog\rq\rq{} or \lq\lq{}event\rq\rq{}) should match that of the port referenced by the enclosing \ReceiveConnection element.
+
+
+\subsection{FromSynapse}
+\label{sec:FromSynapse}
+
+\begin{table}[H]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{FromSynapse Structure}}}\\
+    \toprule
+     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
+    \midrule
+    port & [\AnalogSendPort | \EventSendPort{} | \Parameter{}]@name & yes\\
+    \midrule \relax
+    \em{Element type} & Multiplicity & \em{Required} \\
+    \midrule
+    \Delay & singleton & no\\
+    \bottomrule
+  \end{edtable}
+\end{table}
+
+The \FromSynapse element specifies a port connection to the source or destination cell component from the \Synapse element. The delay on transmission of the port connection is specified by a \Delay element. If a \Delay element is not provided the delay is zero.
+
+\subsubsection{port attribute}
+Each \FromSynapse element requires a \textit{port} attribute. This should refer to the name of a \AnalogSendPort or \EventSendPort in the \Synapse\withelem\ComponentClass. The transmission mode of the port (i.e. \lq\lq{}analog\rq\rq{} or \lq\lq{}event\rq\rq{}) should match that of the port referenced by the enclosing \ReceiveConnection element.
+
+\subsection{Delay}
+\label{sec:Delay}
+
+\begin{table}[H]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Delay Structure}}}\\
+    \toprule
+     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
+    \midrule
+    units & \Unit{}@symbol & yes\\
+    \midrule
+    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \midrule
+    \SingleValue | \ArrayValue | \ExternalArrayValue & singleton & yes \\ 
+    \bottomrule
+  \end{edtable}
+\end{table}
+
+In the current version, the \Delay element specifies the delay between the pre-synaptic cell port and the \Synapse. In future versions, it is planned to expand the delay architecture to allow delays on any port connections to allow finer control of the delay between the different components.
+
+\subsubsection{Units attribute}
+The \textit{units} attribute specifies the units of the delay and should refer to the name of a \Unit element in the global scope. The \Unit{}\withelem\Dimension should be temporal, i.e. have $t=1$ and all other SI dimensions set to 0. 
+
+
+\subsection{DerivedDelay}
+\label{sec:DerivedDelay}
+
+\begin{table}[H]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{DerivedDelay Structure}}}\\
+    \toprule
+    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \midrule
+    \FromDistribution & singleton & yes \\ 
+    \bottomrule
+  \end{edtable}
+\end{table}
+
+In the current version, the \Delay element specifies the delay between the pre-synaptic cell port and the \Synapse. In future versions, it is planned to expand the delay architecture to allow delays on any port connections to allow finer control of the delay between the different components.
+
 
 \section{Populations}
 
@@ -2120,122 +2239,6 @@ The \Synapse defines the effect on the post-synaptic cell dynamics of an incomin
 The post-synaptic response dynamics can receive incoming port connections from either the pre or post synaptic populations (see \FromSource and \FromDestination). A \Synapse object is implicitly created and connected to these ports if the \Connectivity\withelem\ConnectionRule determines that the source and destination cells should be connected.
 
 It is recommended to factor out plasticity rules from post-synaptic response dynamics and combine them within \MultiComponent element to promote reusability of response and plasticity dynamics. 
-
-\subsection{FromSource}
-\label{sec:FromSource}
-
-\begin{table}[H]
-  \begin{edtable}{tabular}{llr}
-    \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{FromSource Structure}}}\\
-    \toprule
-     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
-    \midrule
-    port & [\AnalogSendPort | \EventSendPort{}]@name & yes\\
-    \midrule \relax
-    \em{Element type} & Multiplicity & \em{Required} \\
-    \midrule \relax
-    \Delay & singleton & no\\
-    \bottomrule
-  \end{edtable}
-\end{table}
-
-The \FromSource element specifies a port connection to the projection component (either the destination cell, post-synaptic response or plasticity dynamics) inside which it is inserted from the source cell dynamics. The delay on transmission of the port connection is specified by a \Delay element. If a \Delay element is not provided the delay is zero.
-
-\subsubsection{port attribute}
-Each \FromSource element requires a \textit{port} attribute. This should refer to the name of a \AnalogSendPort or \EventSendPort in the \Source\withelem\Cell{}\withelem\Component{}\withelem\ComponentClass. The transmission mode of the port (i.e. \lq\lq{}analog\rq\rq{} or \lq\lq{}event\rq\rq{}) should match that of the port referenced by the enclosing \ReceiveConnection element.
-
-\subsection{FromDestination}
-\label{sec:FromDestination}
-
-\begin{table}[H]
-  \begin{edtable}{tabular}{llr}
-    \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{FromDestination Structure}}}\\
-    \toprule
-     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
-    \midrule
-    port & [\AnalogSendPort | \EventSendPort{} | \Parameter{}]@name & yes\\
-    \midrule
-    \em{Element type} & Multiplicity & \em{Required} \\
-    \midrule
-    \Delay & singleton & no\\
-    \bottomrule
-  \end{edtable}
-\end{table}
-
-The \FromDestination element specifies a port connection to the projection component (either the source cell, post-synaptic response or plasticity dynamics) inside which it is inserted from the destination cell dynamics. The delay on transmission of the port connection is specified by a \Delay element. If a \Delay element is not provided the delay is zero.
-
-\subsubsection{port attribute}
-Each \FromDestination element requires a \textit{port} attribute. This should refer to the name of a \AnalogSendPort or \EventSendPort in the \Destination\withelem\Cell\withelem\Component{}\withelem\ComponentClass. The transmission mode of the port (i.e. \lq\lq{}analog\rq\rq{} or \lq\lq{}event\rq\rq{}) should match that of the port referenced by the enclosing \ReceiveConnection element.
-
-
-\subsection{FromSynapse}
-\label{sec:FromSynapse}
-
-\begin{table}[H]
-  \begin{edtable}{tabular}{llr}
-    \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{FromSynapse Structure}}}\\
-    \toprule
-     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
-    \midrule
-    port & [\AnalogSendPort | \EventSendPort{} | \Parameter{}]@name & yes\\
-    \midrule \relax
-    \em{Element type} & Multiplicity & \em{Required} \\
-    \midrule
-    \Delay & singleton & no\\
-    \bottomrule
-  \end{edtable}
-\end{table}
-
-The \FromSynapse element specifies a port connection to the source or destination cell component from the \Synapse element. The delay on transmission of the port connection is specified by a \Delay element. If a \Delay element is not provided the delay is zero.
-
-\subsubsection{port attribute}
-Each \FromSynapse element requires a \textit{port} attribute. This should refer to the name of a \AnalogSendPort or \EventSendPort in the \Synapse\withelem\ComponentClass. The transmission mode of the port (i.e. \lq\lq{}analog\rq\rq{} or \lq\lq{}event\rq\rq{}) should match that of the port referenced by the enclosing \ReceiveConnection element.
-
-\subsection{Delay}
-\label{sec:Delay}
-
-\begin{table}[H]
-  \begin{edtable}{tabular}{llr}
-    \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Delay Structure}}}\\
-    \toprule
-     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
-    \midrule
-    units & \Unit{}@symbol & yes\\
-    \midrule
-    \em{Element type} & \em{Multiplicity} & \em{Required} \\
-    \midrule
-    \SingleValue | \ArrayValue | \ExternalArrayValue & singleton & yes \\ 
-    \bottomrule
-  \end{edtable}
-\end{table}
-
-In the current version, the \Delay element specifies the delay between the pre-synaptic cell port and the \Synapse. In future versions, it is planned to expand the delay architecture to allow delays on any port connections to allow finer control of the delay between the different components.
-
-\subsubsection{Units attribute}
-The \textit{units} attribute specifies the units of the delay and should refer to the name of a \Unit element in the global scope. The \Unit{}\withelem\Dimension should be temporal, i.e. have $t=1$ and all other SI dimensions set to 0. 
-
-
-\subsection{DerivedDelay}
-\label{sec:DerivedDelay}
-
-\begin{table}[H]
-  \begin{edtable}{tabular}{llr}
-    \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{DerivedDelay Structure}}}\\
-    \toprule
-    \em{Element type} & \em{Multiplicity} & \em{Required} \\
-    \midrule
-    \FromDistribution & singleton & yes \\ 
-    \bottomrule
-  \end{edtable}
-\end{table}
-
-In the current version, the \Delay element specifies the delay between the pre-synaptic cell port and the \Synapse. In future versions, it is planned to expand the delay architecture to allow delays on any port connections to allow finer control of the delay between the different components.
-
 \section{Networks}
 
 Sets of \Population and \Projection elements are collected into networks, which are the top-level NineML object model. \Network{}s can also consist of smaller sub-networks allowing complex networks to be built up incrementally.
