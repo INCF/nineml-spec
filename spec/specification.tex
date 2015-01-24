@@ -37,7 +37,7 @@
 \newcommand{\StateAssignment}{\defRef{\textbf{\class{StateAssignment}}\xspace}{sec:StateAssignment}}
 \newcommand{\TimeDerivative}{\defRef{\textbf{\class{TimeDerivative}}\xspace}{sec:TimeDerivative}}
 \newcommand{\Alias}{\defRef{\textbf{\class{Alias}}\xspace}{sec:Alias}}
-\newcommand{\PhysicalConstant}{\defRef{\textbf{\class{PhysicalConstant}}\xspace}{sec:PhysicalConstant}}
+\newcommand{\Constant}{\defRef{\textbf{\class{Constant}}\xspace}{sec:Constant}}
 \newcommand{\StandardLibrary}{\defRef{\textbf{\class{StandardLibrary}}\xspace}{sec:StandardLibrary}}
 \newcommand{\Regime}{\defRef{\textbf{\class{Regime}}\xspace}{sec:Regime}}
 \newcommand{\Trigger}{\defRef{\textbf{\class{Trigger}}\xspace}{sec:Trigger}}
@@ -654,13 +654,13 @@ Each \Alias requires a \textit{name} attribute, which is a valid \identifier and
 
 \draftnote{Was tossing up whether `Constant' was a better name for this or not. Was thinking that this could also be used to remove `pi' from the list of built-in symbols and maybe provide some `standardLibrary' attributes.}
 
-\subsection{PhysicalConstant}
-\label{sec:PhysicalConstant}
+\subsection{Constant}
+\label{sec:Constant}
 
 \begin{table}[H]
   \begin{edtable}{tabular}{llr}
     \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{PhysicalConstant Structure}}}\\
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Constant Structure}}}\\
     \toprule
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
@@ -674,13 +674,13 @@ Each \Alias requires a \textit{name} attribute, which is a valid \identifier and
   \end{edtable}
 \end{table}
 
-\PhysicalConstant objects are used to specify physical constants such as the Ideal Gas Constant (i.e. 8.314462175 JK$^{-1}$mol$^{-1}$) or Avogadro's number (i.e. 6.0221412927$\times$10$^{23}$mol$^{-1}$).
+\Constant objects are used to specify physical constants such as the Ideal Gas Constant (i.e. 8.314462175 JK$^{-1}$mol$^{-1}$) or Avogadro's number (i.e. 6.0221412927$\times$10$^{23}$mol$^{-1}$).
 
 \subsubsection{Name attribute}
-Each \PhysicalConstant requires a \textit{name} attribute, which should be a valid \identifier and uniquely identify the {\Dimension} in current the scope.
+Each \Constant requires a \textit{name} attribute, which should be a valid \identifier and uniquely identify the {\Dimension} in current the scope.
 
 \subsubsection{Units attribute}
-Each \PhysicalConstant requires a \textit{units} attribute. The \textit{units} attribute specifies the units of the property and should refer to the name of a \Unit element in the global scope. 
+Each \Constant requires a \textit{units} attribute. The \textit{units} attribute specifies the units of the property and should refer to the name of a \Unit element in the global scope. 
 
 \subsubsection{Text format}
 Any valid numeric value, including shorthand scientific notation e.g. 1e-5 ($1\times10^{-5}$).
@@ -860,7 +860,7 @@ Component classes that contain a \Dynamics block define dynamic models such as n
     \StateVariable & set & no \\ 
     \Regime & set & yes\\
     \Alias & set & no\\
-    \PhysicalConstant & set & no\\    
+    \Constant & set & no\\    
     \bottomrule
   \end{edtable}
 \end{table}
