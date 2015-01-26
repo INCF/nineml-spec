@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--XSD for NineML v1.0-->
+
+<xs:schema targetNamespace="http://nineml.net/9ML/1.0" xmlns="http://nineml.net/9ML/1.0"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+    attributeFormDefault="unqualified" vc:minVersion="1.1"
+    xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning">
+
+
+
+
+    <xs:complexType name="NineML">
+
+        <xs:sequence>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="ComponentClass"
+                type="ComponentClass"/>
+            <!--<xs:element name="node" type="Node" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="structure" type="Structure" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="group" type="Group" minOccurs="0" maxOccurs="unbounded"/>-->
+            <xs:element name="Component" type="Component"/>
+            <xs:element name="Population" type="Population"/>
+            <xs:element name="Projection" type="Projection"/>
+            <xs:element name="Selection" type="Selection"/>
+        </xs:sequence>
+
+    </xs:complexType>
+    <xs:complexType name="ComponentClass">
+
+        <xs:sequence>
+            <xs:element maxOccurs="unbounded" minOccurs="1" name="Parameter" type="Parameter"/>
+            <xs:element name="EventSendPort" type="EventSendPort"/>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="EventReceivePort"
+                type="EventReceivePort"/>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="AnalogSendPort"
+                type="AnalogSendPort"/>
+            <xs:element name="AnalogReceivePort" type="AnalogReceivePort"/>
+            <xs:element name="AnalogReducePort" type="AnalogReducePort"/>
+            <xs:choice>
+                <xs:element name="Dynamics" type="Dynamics"/>
+                <xs:element name="ConnectionRule" type="ConnectionRule"/>
+                <xs:element name="RandomDistribution" type="RandomDistribution"/>
+            </xs:choice>
+        </xs:sequence>
+
+        <xs:attribute name="name" type="xs:string" use="required"/>
+    </xs:complexType>
+    <xs:complexType name="Parameter">
+        <xs:attribute name="name" type="xs:string" use="required"/>
+        <xs:attribute name="dimension" type="xs:string" use="required"/>
+    </xs:complexType>
+    <xs:complexType name="EventSendPort">
+        <xs:attribute name="name" type="xs:string" use="required"/>
+        <!-- Prob should be restriction to enum -->
+    </xs:complexType>
+    <xs:complexType name="EventReceivePort">
+        <xs:attribute name="name" type="xs:string" use="required"/>
+        <!-- Prob should be restriction to enum -->
+    </xs:complexType>
+    <xs:complexType name="AnalogSendPort">
+        <xs:attribute name="name" type="xs:string" use="required"/>
+        <!-- Prob should be restriction to enum -->
+        <xs:attribute name="dimension" type="xs:string" use="required"/>
+        <!-- <xs:attribute name="op" type="xs:string" use="optional"/>  Prob should be restriction to enum -->
+    </xs:complexType>
+    <xs:complexType name="AnalogReceivePort">
+        <xs:attribute name="name" type="xs:string" use="required"/>
+        <!-- Prob should be restriction to enum -->
+        <xs:attribute name="dimension" type="xs:string" use="required"/>
+        <!-- <xs:attribute name="op" type="xs:string" use="optional"/>  Prob should be restriction to enum -->
+    </xs:complexType>
+    <xs:complexType name="AnalogReducePort">
+        <xs:attribute name="name" type="xs:string" use="required"/>
+        <xs:attribute name="operator" type="xs:string" use="required"/>
+        <!-- Prob should be restriction to enum -->
+        <xs:attribute name="dimension" type="xs:string" use="required"/>
+        <!-- <xs:attribute name="op" type="xs:string" use="optional"/>  Prob should be restriction to enum -->
+    </xs:complexType>
+    <xs:simpleType name="MathInline">
+        <xs:restriction base="xs:string"/>
+    </xs:simpleType>
+    <xs:complexType name="Alias">
+        <xs:all>
+            <xs:element name="MathInline" type="MathInline"/>
+        </xs:all>
+    </xs:complexType>
+    <xs:complexType name="Dynamics">
+        <xs:sequence>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="StateVariable"
+                type="StateVariable"/>
+            <xs:element maxOccurs="unbounded" minOccurs="1" name="Regime" type="Regime"/>
+            <xs:element name="Alias" type="Alias"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="TimeDerivative">
+        <xs:sequence>
+            <xs:element maxOccurs="1" minOccurs="1" name="MathInline" type="MathInline"/>
+        </xs:sequence>
+
+        <!--<xs:attribute name="independent_variable" type="xs:string" use="required"/>-->
+        <xs:attribute name="variable" type="xs:string" use="required"/>
+    </xs:complexType>
+    <xs:complexType name="StateVariable">
+        <xs:attribute name="name" type="xs:string" use="required"/>
+        <xs:attribute name="dimension" type="xs:string" use="required"/>
+    </xs:complexType>
+    <xs:complexType name="Regime">
+        <xs:sequence>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="TimeDerivative"
+                type="TimeDerivative"/>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="OnCondition" type="OnCondition"/>
+            <xs:element name="OnEvent" type="OnEvent"/>
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:string" use="required"/>
+    </xs:complexType>
+    <xs:complexType name="OnCondition">
+        <xs:sequence>
+            <xs:element maxOccurs="1" minOccurs="1" name="Trigger" type="Trigger"/>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="StateAssignment"
+                type="StateAssignment"/>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="EventOut" type="EventOut"/>
+        </xs:sequence>
+        <xs:attribute name="target" type="xs:string"/>
+    </xs:complexType>
+    <xs:complexType name="OnEvent">
+        <xs:sequence>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="StateAssignment"
+                type="StateAssignment"/>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="EventOut" type="EventOut"/>
+        </xs:sequence>
+        <xs:attribute name="target" type="xs:string"/>
+    </xs:complexType>
+    <xs:complexType name="Trigger">
+        <xs:sequence>
+            <xs:element maxOccurs="1" minOccurs="1" name="MathInline" type="MathInline"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="StateAssignment">
+        <xs:sequence>
+            <xs:element maxOccurs="1" minOccurs="1" name="MathInline" type="MathInline"/>
+        </xs:sequence>
+        <xs:attribute name="variable" type="xs:string" use="required"/>
+    </xs:complexType>
+    <xs:complexType name="EventOut">
+        <xs:attribute name="port" use="required"/>
+    </xs:complexType>
+    <xs:complexType name="ConnectionRule">
+        <xs:attribute name="standard_library"/>
+    </xs:complexType>
+    <xs:complexType name="RandomDistribution">
+        <xs:attribute name="standard_library"/>
+    </xs:complexType>
+    <xs:complexType name="Component">
+        <xs:sequence>
+            <xs:element name="Definition" type="Reference" minOccurs="1"/>
+            <xs:element name="Property" type="Property" minOccurs="1" maxOccurs="unbounded"/>
+        </xs:sequence>
+
+        <xs:attribute name="name" type="xs:string" use="required"/>
+    </xs:complexType>
+
+
+
+    <xs:complexType name="Reference">
+        <xs:all>
+            <!-- Further elements will be specified!! -->
+            <xs:element name="name" type="xs:string"/>
+        </xs:all>
+        <xs:attribute name="url" type="xs:anyURI" use="required"/>
+    </xs:complexType>
+
+
+
+    <xs:complexType name="Property">
+        <xs:choice>
+            <xs:element name="SingleValue" type="SingleValue" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="ArrayValue" type="ArrayValue"/>
+            <xs:element name="ExternalArrayValue" type="ExternalArrayValue"/>
+            <xs:element name="ComponentValue" type="ComponentValue"/>
+        </xs:choice>
+        <xs:attribute name="name" type="xs:string" use="required"/>
+        <xs:attribute name="units" type="xs:string"/>
+    </xs:complexType>
+    <xs:simpleType name="SingleValue">
+        <xs:restriction base="xs:double"/>
+    </xs:simpleType>
+    <xs:complexType name="ExternalArrayValue">
+        <xs:attribute name="url" type="xs:anyURI"/>
+        <xs:attribute name="column_name" type="xs:string"/>
+        <xs:attribute name="mimetype" type="xs:string"/>
+    </xs:complexType>
+    <xs:complexType name="ArrayValue">
+        <xs:sequence>
+            <xs:element name="ArrayValueRow" type="ArrayValueRow"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="ArrayValueRow">
+        <xs:attribute name="index" type="xs:integer"/>
+    </xs:complexType>
+    <xs:complexType name="ComponentValue">
+        <xs:choice>
+            <xs:element name="Reference" type="Reference"/>
+            <xs:element name="Component" type="Component"/>
+        </xs:choice>
+        <xs:attribute name="port"/>
+    </xs:complexType>
+    <xs:complexType name="Population">
+        <xs:sequence>
+            <xs:element name="Number" type="xs:integer" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="Cell" minOccurs="1" maxOccurs="1">
+                <xs:complexType>
+                    <xs:choice>
+                        <xs:element name="Reference" type="Reference"/>
+                        <xs:element name="Component" type="Component"/>
+                    </xs:choice>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:string" use="required"/>
+    </xs:complexType>
+
+
+    <xs:complexType name="Projection">
+        <xs:all>
+            <!-- Further elements will be specified!! -->
+            <xs:element name="Source">
+                <xs:complexType>
+                    <xs:all>
+                        <xs:element name="Reference" type="Reference"/>
+                    </xs:all>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="Destination">
+                <xs:complexType>
+                    <xs:all>
+                        <xs:element name="Reference" type="Reference"/>
+                    </xs:all>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="Response" minOccurs="1" maxOccurs="1">
+                <xs:complexType>
+                    <xs:choice>
+                        <xs:element name="Reference" type="Reference"/>
+                        <xs:element name="Component" type="Component"/>
+                    </xs:choice>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="Plasticity" minOccurs="1" maxOccurs="1">
+                <xs:complexType>
+                    <xs:choice>
+                        <xs:element name="Reference" type="Reference"/>
+                        <xs:element name="Component" type="Component"/>
+                    </xs:choice>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="Delay">
+                <xs:complexType>
+                    <xs:choice>
+                        <xs:element name="SingleValue" type="SingleValue"/>
+                        <xs:element name="ArrayValue" type="ArrayValue"/>
+                        <xs:element name="ExternalArrayValue" type="ExternalArrayValue"/>
+                    </xs:choice>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="Connectivity">
+                <xs:complexType>
+                    <xs:choice>
+                        <xs:element name="Reference" type="Reference"/>
+                        <xs:element name="Component" type="Component"/>
+                    </xs:choice>
+                </xs:complexType>
+            </xs:element>
+        </xs:all>
+        <xs:attribute name="name" type="xs:string" use="required"/>
+    </xs:complexType>
+    <xs:complexType name="Selection">
+        <xs:choice>
+            <!-- Further elements will be specified!! -->
+            <xs:element name="Concatenate" type="Concatenate"/>
+        </xs:choice>
+        <xs:attribute name="name" type="xs:string" use="required"/>
+    </xs:complexType>
+    <xs:complexType name="Concatenate">
+        <xs:sequence>
+            <xs:element name="Item" type="Item"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="Item">
+        <xs:all>
+            <xs:element name="Reference" type="Reference"/>
+        </xs:all>
+        <xs:attribute name="index" type="xs:integer"/>
+    </xs:complexType>
+</xs:schema>
