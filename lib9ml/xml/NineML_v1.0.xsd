@@ -152,8 +152,11 @@
     </xs:complexType>
     <xs:complexType name="Component">
         <xs:sequence>
-            <xs:element name="Definition" type="Reference" minOccurs="1"/>
             <xs:element name="Property" type="Property" minOccurs="1" maxOccurs="unbounded"/>
+            <xs:choice>
+                <xs:element name="Definition" type="Reference" minOccurs="1"/>
+                <xs:element name="Prototype" type="Reference"/>
+            </xs:choice>
         </xs:sequence>
 
         <xs:attribute name="name" type="xs:string" use="required"/>
@@ -225,32 +228,60 @@
             <!-- Further elements will be specified!! -->
             <xs:element name="Source">
                 <xs:complexType>
-                    <xs:all>
-                        <xs:element name="Reference" type="Reference"/>
-                    </xs:all>
+                    <xs:sequence>
+                        <xs:sequence>
+                            <xs:element name="FromDestination" type="PortSource"/>
+                            <xs:element name="FromPlasticity" type="PortSource"/>
+                            <xs:element name="FromResponse" type="PortSource"/>
+                        </xs:sequence>
+                        <xs:choice>
+                            <xs:element name="Reference" type="Reference"/>
+                        </xs:choice>
+                    </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="Destination">
                 <xs:complexType>
-                    <xs:all>
-                        <xs:element name="Reference" type="Reference"/>
-                    </xs:all>
+                    <xs:sequence>
+                        <xs:sequence>
+                            <xs:element name="FromResponse" type="PortSource"/>
+                            <xs:element name="FromPlasticity" type="PortSource"/>
+                            <xs:element name="FromSource" type="PortSource"/>
+                        </xs:sequence>
+                        <xs:choice>
+                            <xs:element name="Reference" type="Reference"/>
+                        </xs:choice>
+                    </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="Response" minOccurs="1" maxOccurs="1">
                 <xs:complexType>
-                    <xs:choice>
-                        <xs:element name="Reference" type="Reference"/>
-                        <xs:element name="Component" type="Component"/>
-                    </xs:choice>
+                    <xs:sequence>
+                        <xs:choice>
+                            <xs:element name="Reference" type="Reference"/>
+                            <xs:element name="Component" type="Component"/>
+                        </xs:choice>
+                        <xs:sequence>
+                            <xs:element name="FromDestination" type="PortSource"/>
+                            <xs:element name="FromPlasticity" type="PortSource"/>
+                            <xs:element name="FromSource" type="PortSource"/>
+                        </xs:sequence>
+                    </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="Plasticity" minOccurs="1" maxOccurs="1">
                 <xs:complexType>
-                    <xs:choice>
-                        <xs:element name="Reference" type="Reference"/>
-                        <xs:element name="Component" type="Component"/>
-                    </xs:choice>
+                    <xs:sequence>
+                        <xs:choice>
+                            <xs:element name="Reference" type="Reference"/>
+                            <xs:element name="Component" type="Component"/>
+                        </xs:choice>
+                        <xs:sequence>
+                            <xs:element name="FromDestination" type="PortSource"/>
+                            <xs:element name="FromResponse" type="PortSource"/>
+                            <xs:element name="FromSource" type="PortSource"/>
+                        </xs:sequence>
+                    </xs:sequence>
                 </xs:complexType>
             </xs:element>
             <xs:element name="Delay">
@@ -290,5 +321,9 @@
             <xs:element name="Reference" type="Reference"/>
         </xs:all>
         <xs:attribute name="index" type="xs:integer"/>
+    </xs:complexType>
+    <xs:complexType name="PortSource">
+        <xs:attribute name="sender"/>
+        <xs:attribute name="receiver"/>
     </xs:complexType>
 </xs:schema>
