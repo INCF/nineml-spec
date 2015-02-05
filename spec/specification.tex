@@ -37,11 +37,11 @@
 \newcommand{\StateAssignment}{\defRef{\textbf{\class{StateAssignment}}\xspace}{sec:StateAssignment}}
 \newcommand{\TimeDerivative}{\defRef{\textbf{\class{TimeDerivative}}\xspace}{sec:TimeDerivative}}
 \newcommand{\Alias}{\defRef{\textbf{\class{Alias}}\xspace}{sec:Alias}}
-\newcommand{\PhysicalConstant}{\defRef{\textbf{\class{PhysicalConstant}}\xspace}{sec:PhysicalConstant}}
+\newcommand{\Constant}{\defRef{\textbf{\class{Constant}}\xspace}{sec:Constant}}
 \newcommand{\StandardLibrary}{\defRef{\textbf{\class{StandardLibrary}}\xspace}{sec:StandardLibrary}}
 \newcommand{\Regime}{\defRef{\textbf{\class{Regime}}\xspace}{sec:Regime}}
 \newcommand{\Trigger}{\defRef{\textbf{\class{Trigger}}\xspace}{sec:Trigger}}
-\newcommand{\EventOut}{\defRef{\textbf{\class{EventOut}}\xspace}{sec:EventOut}}
+\newcommand{\OutputEvent}{\defRef{\textbf{\class{OutputEvent}}\xspace}{sec:OutputEvent}}
 \newcommand{\OnEvent}{\defRef{\textbf{\class{OnEvent}}\xspace}{sec:OnEvent}}
 \newcommand{\OnCondition}{\defRef{\textbf{\class{OnCondition}}\xspace}{sec:OnCondition}}
 \newcommand{\Parameter}{\defRef{\textbf{\class{Parameter}}\xspace}{sec:Parameter}}
@@ -654,13 +654,13 @@ Each \Alias requires a \textit{name} attribute, which is a valid \identifier and
 
 \draftnote{Was tossing up whether `Constant' was a better name for this or not. Was thinking that this could also be used to remove `pi' from the list of built-in symbols and maybe provide some `standardLibrary' attributes.}
 
-\subsection{PhysicalConstant}
-\label{sec:PhysicalConstant}
+\subsection{Constant}
+\label{sec:Constant}
 
 \begin{table}[H]
   \begin{edtable}{tabular}{llr}
     \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{PhysicalConstant Structure}}}\\
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Constant Structure}}}\\
     \toprule
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
@@ -674,13 +674,13 @@ Each \Alias requires a \textit{name} attribute, which is a valid \identifier and
   \end{edtable}
 \end{table}
 
-\PhysicalConstant objects are used to specify physical constants such as the Ideal Gas Constant (i.e. 8.314462175 JK$^{-1}$mol$^{-1}$) or Avogadro's number (i.e. 6.0221412927$\times$10$^{23}$mol$^{-1}$).
+\Constant objects are used to specify physical constants such as the Ideal Gas Constant (i.e. 8.314462175 JK$^{-1}$mol$^{-1}$) or Avogadro's number (i.e. 6.0221412927$\times$10$^{23}$mol$^{-1}$).
 
 \subsubsection{Name attribute}
-Each \PhysicalConstant requires a \textit{name} attribute, which should be a valid \identifier and uniquely identify the {\Dimension} in current the scope.
+Each \Constant requires a \textit{name} attribute, which should be a valid \identifier and uniquely identify the {\Dimension} in current the scope.
 
 \subsubsection{Units attribute}
-Each \PhysicalConstant requires a \textit{units} attribute. The \textit{units} attribute specifies the units of the property and should refer to the name of a \Unit element in the global scope. 
+Each \Constant requires a \textit{units} attribute. The \textit{units} attribute specifies the units of the property and should refer to the name of a \Unit element in the global scope. 
 
 \subsubsection{Text format}
 Any valid numeric value, including shorthand scientific notation e.g. 1e-5 ($1\times10^{-5}$).
@@ -860,7 +860,7 @@ Component classes that contain a \Dynamics block define dynamic models such as n
     \StateVariable & set & no \\ 
     \Regime & set & yes\\
     \Alias & set & no\\
-    \PhysicalConstant & set & no\\    
+    \Constant & set & no\\    
     \bottomrule
   \end{edtable}
 \end{table}
@@ -982,7 +982,7 @@ During either type of transition three instantaneous actions will/can occur:
 \begin{itemize}
 \item The component transitions to a target regime (can be the same as the current regime)
 \item State variables can be assigned new values (see \StateAssignment)
-\item The component can send events (see \EventOut).
+\item The component can send events (see \OutputEvent).
 \end{itemize}
 
 Multiple state assignments can be sent and multiple events can be sent within a single transition block
@@ -1004,7 +1004,7 @@ Multiple state assignments can be sent and multiple events can be sent within a 
     \midrule
     \Trigger & singleton & yes \\
     \StateAssignment & set & no\\
-    \EventOut & set & no\\
+    \OutputEvent & set & no\\
     \bottomrule
   \end{edtable}
 \end{table}
@@ -1032,7 +1032,7 @@ An \OnEvent can have a \textit{targetRegime} attribute, which should refer to th
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule   
     \StateAssignment & set & no\\
-    \EventOut & set & no\\
+    \OutputEvent & set & no\\
     \bottomrule
   \end{edtable}
 \end{table}
@@ -1094,13 +1094,13 @@ elements derived from random distributions. State assignments are typically used
 \subsubsection{Variable attribute}
 Each \StateAssignment requires a \textit{variable} attribute. This should refer to the name of a \StateVariable in the \ComponentClass. Only one \StateAssignment is allow per \textit{variable} in each \OnEvent or \OnCondition block.
 
-\subsection{EventOut}
-\label{sec:EventOut}
+\subsection{OutputEvent}
+\label{sec:OutputEvent}
 
 \begin{table}[H]
   \begin{edtable}{tabular}{llr}
     \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{EventOut Structure}}}\\
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{OutputEvent Structure}}}\\
     \toprule
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
@@ -1109,10 +1109,10 @@ Each \StateAssignment requires a \textit{variable} attribute. This should refer 
   \end{edtable}
 \end{table}
 
-\EventOut elements specify events to be raised during a transition. They are typically used to raise spike events from within \OnCondition elements.
+\OutputEvent elements specify events to be raised during a transition. They are typically used to raise spike events from within \OnCondition elements.
 
 \subsubsection{Port attribute}
-Each \EventOut requires a \textit{port} attribute. This should refer to the name of an \EventSendPort in the \ComponentClass interface.
+Each \OutputEvent requires a \textit{port} attribute. This should refer to the name of an \EventSendPort in the \ComponentClass interface.
 
 \section{Random Distributions}
 
@@ -1191,7 +1191,7 @@ In Version 1.0 of the NineML standard, connection rules must be one of 6 standar
 \item AllToAll
 \item OneToOne
 \item ProbabilisticConnectivity
-\item ExplicityConnectionList
+\item ExplicitConnectionList
 \item RandomFanOut
 \item RandomFanIn
 \end{itemize}
@@ -2029,7 +2029,7 @@ The corresponding Abstraction Layer XML description for this model is the follow
             <StateAssignment variable="U" >
               <MathInline>U+d</MathInline>
             </StateAssignment>
-            <EventOut port="spikeOutput" />
+            <OutputEvent port="spikeOutput" />
           </OnCondition>
         </Regime>
     </Dynamics>
@@ -2209,7 +2209,7 @@ The resulting XML description for the Abstraction Layer is :
           <StateAssignment variable="iaf_V">
             <MathInline>iaf_vreset</MathInline>
           </StateAssignment>
-          <EventOut port="iaf_spikeoutput"/>
+          <OutputEvent port="iaf_spikeoutput"/>
           <Trigger>
             <MathInline>iaf_V &gt; iaf_vthresh</MathInline>
           </Trigger>
@@ -2412,7 +2412,7 @@ assignment \textsl{V=V*V}, and both transitions are triggered simultaneously, th
 guarantee about the value of V. It is up the user to ensure this does not
 happen.
 
-\draftnote{I am not sure this is a good idea, we could just not allow \EventOut in \OnEvent transitions}
+\draftnote{I am not sure this is a good idea, we could just not allow \OutputEvent in \OnEvent transitions}
 \item This Resolution System allows \emph{cascading} of Events, which in theory
 could be recursive through components, depending on connectivity. The
 implementation allows for this; and it is the users responsibility to ensure
