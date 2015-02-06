@@ -118,7 +118,7 @@
             <xs:element maxOccurs="1" minOccurs="1" name="Trigger" type="Trigger"/>
             <xs:element maxOccurs="unbounded" minOccurs="0" name="StateAssignment"
                 type="StateAssignment"/>
-            <xs:element maxOccurs="unbounded" minOccurs="0" name="EventOut" type="EventOut"/>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="OutputEvent" type="OutputEvent"/>
         </xs:sequence>
         <xs:attribute name="target" type="xs:string"/>
     </xs:complexType>
@@ -126,7 +126,7 @@
         <xs:sequence>
             <xs:element maxOccurs="unbounded" minOccurs="0" name="StateAssignment"
                 type="StateAssignment"/>
-            <xs:element maxOccurs="unbounded" minOccurs="0" name="EventOut" type="EventOut"/>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="OutputEvent" type="OutputEvent"/>
         </xs:sequence>
         <xs:attribute name="target" type="xs:string"/>
     </xs:complexType>
@@ -141,7 +141,7 @@
         </xs:sequence>
         <xs:attribute name="variable" type="xs:string" use="required"/>
     </xs:complexType>
-    <xs:complexType name="EventOut">
+    <xs:complexType name="OutputEvent">
         <xs:attribute name="port" use="required"/>
     </xs:complexType>
     <xs:complexType name="ConnectionRule">
