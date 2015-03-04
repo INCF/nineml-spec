@@ -2,6 +2,7 @@
 \usepackage{microtype}
 \usepackage{pbox}
 \usepackage{multirow}
+\usepackage{multicol}
 \usepackage{float}
 %% ============================================================================
 %% Description:  Documentation for \lq\lq{}The NineML Specification Document\rq\rq{}
@@ -206,7 +207,7 @@ common object model describing the different elements of neuronal network
 models. It was initiated and supported by the International
 Neuroinformatics Coordinating Facility as part of the Multiscale Modeling
 Program, and has benefitted from wide-ranging input from computational neuroscientists,
-simulator developers and developers of simulator-independent languages (NeuroML, PyNN) (see \ref{sec:task_force}).
+simulator developers and developers of simulator-independent languages (e.g. NeuroML, PyNN) (see \ref{sec:task_force}).
 
 \subsection{Scope}
 
@@ -268,7 +269,7 @@ parametrization of model elements that have been defined in the
 Abstraction Layer, the two layers should share
 a complementary and compatible design philosophy. Which aspects of a model
 are defined in the Abtraction Layer and which are in the User Layer
-Layer are clearly defined (each element type belongs to either one).
+Layer are clearly defined (each Child elements belongs to either one).
 In order to simplify their interpretation and maintain compatibility with a wide 
 range of data formats (e.g. JSON, Python objects), NineML documents are 
 not sensitive to the order that objects appear in.
@@ -276,7 +277,7 @@ not sensitive to the order that objects appear in.
 \subsection{Identifiers}
 \label{sec:identifier}
 
-Elements are identified by \emph{names}, which are unique in the scope they are enclosed by (either within a component class or in the global scope of the file). For a name to be a valid NineML identifier, it must meet the requirements for a \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 identifiers}. Additionally, identifiers are not permitted to begin or end with an underscore character (i.e. `\_') to allow special variables to be defined in the same scope as identified variables/objects in generated code.
+Elements are identified by \emph{names}, which are unique in the scope they are enclosed by (either within a component class or in the document scope of the file). For a name to be a valid NineML identifier, it must meet the requirements for a \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 identifiers}. Additionally, identifiers are not permitted to begin or end with an underscore character (i.e. `\_') to allow special variables to be defined in the same scope as identified variables/objects in generated code.
 
 NineML identifiers are case-sensitive in the sense that they must be referred to with the same case as they are defined. However, two identifiers that are identical with the exception of case, e.g. `v\_threshold' and `v\_Threshold', are not permitted within the same scope. Identifiers used within component classes also cannot be the same (case-sensitive) as one of the built-in symbols or functions (see \MathInline).
 
@@ -284,7 +285,7 @@ NineML identifiers are case-sensitive in the sense that they must be referred to
 \part{General Elements}
 \section{Document layout}
 
-NineML documents must be enclosed within \NineML XML tags.
+NineML documents must be enclosed within an \NineML element.
 
 \subsection{NineML}
 \label{sec:NineML}
@@ -298,7 +299,7 @@ NineML documents must be enclosed within \NineML XML tags.
     \midrule
     xmlns & "http://nineml.net/9ML/1.0" & yes\\
     \midrule
-    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \em{Child elements} & \em{Multiplicity} & \em{Required} \\
     \midrule
     \Component & set & no \\ 
     \ComponentClass & set & no \\
@@ -311,13 +312,13 @@ NineML documents must be enclosed within \NineML XML tags.
   \end{edtable}
 \end{table}
 
-Only seven document-level elements are allowed to reside directly within \NineML elements: \Component, \ComponentClass, \Unit, \Dimension, \Population, \Projection and \Selection. Each element should be uniquely identified by its \textit{name} attribute within the scope of the document (see \identifier). 
+Seven \emph{document-level} elements are allowed to reside directly within \NineML elements: \Component, \ComponentClass, \Unit, \Dimension, \Population, \Projection and \Selection. Each element should be uniquely identified by its \textit{name} attribute within the scope of the document (see \identifier). 
 
-\Unit \notice and \Dimension elements must be defined within the document they are referenced, whereas the remaining elements can be referred to in other NineML documents (see \Reference and \Definition).
+\Unit \notice and \Dimension elements must be defined within the document they are referenced, whereas the remaining element types can also be referenced from other NineML documents (see \Reference and \Definition).
 
 \subsubsection{Xmlns attribute}
 
-The \textit{xmlns} attribute is required and should refer to the \URL corresponding to the correct NineML version, which for version 1.0 is \textit{http://nineml.net/9ML/1.0} (see \href{http://www.w3.org/TR/REC-xml-names/}{http://www.w3.org/TR/REC-xml-names/}).
+The \textit{xmlns} attribute is required and should refer to the \URL corresponding to the correct NineML version, which for version 1.0 is `http://nineml.net/9ML/1.0' (see \href{http://www.w3.org/TR/REC-xml-names/}{http://www.w3.org/TR/REC-xml-names/}).
 
 
 \section{Units and Dimensions}
@@ -415,7 +416,7 @@ The \textit{j} attribute specifies the power of the luminous-intensity dimension
 Each \Unit requires a \textit{symbol} attribute, which should be a valid \identifier and uniquely identify the {\Unit} in current the scope.
 
 \subsubsection{Dimension attribute}
-Each \Unit requires a \textit{dimension} attribute. This attribute specifies the dimension of the units and should refer to the name of a \Dimension element in the global scope.
+Each \Unit requires a \textit{dimension} attribute. This attribute specifies the dimension of the units and should refer to the name of a \Dimension element in the document scope.
 
 \subsubsection{Power attribute}
 Each \Unit requires a \textit{power} attribute. This attribute specifies the relative scale of the units compared to the equivalent SI units in powers of ten. If omitted the power is zero.
@@ -474,7 +475,7 @@ can be used for example to signal action potential firing.
     \midrule
     name & \identifier & yes\\
     \midrule
-    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \em{Child elements} & \em{Multiplicity} & \em{Required} \\
     \midrule
     \Parameter & set & no \\ 
     \AnalogSendPort & set & no\\
@@ -500,7 +501,7 @@ A \ComponentClass is composed of:
 \end{itemize}
 
 \subsubsection{Name attribute}
-Each \ComponentClass requires a \textit{name} attribute, which should be a valid \identifier and uniquely identify the {\ComponentClass} in the global scope.
+Each \ComponentClass requires a \textit{name} attribute, which should be a valid \identifier and uniquely identify the {\ComponentClass} in the document scope.
 
 \subsection{Parameter}
 \label{sec:Parameter}
@@ -528,7 +529,7 @@ start of the simulation, and remain constant throughout.
 Each \Parameter requires a \textit{name} attribute, which is a valid \identifier and uniquely identifies the \Parameter within the \ComponentClass.
 
 \subsubsection{Dimension attribute}
-\Parameter elements must have a \textit{dimension} attribute. This attribute specifies the dimension of the units of the quantity that is expected to be passed to the \Parameter and should refer to the name of a \Dimension element in the global scope. For a dimensionless parameters a \Dimension with all attributes of power 0 can be used.
+\Parameter elements must have a \textit{dimension} attribute. This attribute specifies the dimension of the units of the quantity that is expected to be passed to the \Parameter and should refer to the name of a \Dimension element in the document scope. For a dimensionless parameters a \Dimension with all attributes of power 0 can be used.
 
 \section{Mathematical Expressions}
 
@@ -543,7 +544,7 @@ As of NineML version 1.0, only inline mathematical expressions, which have simil
     \toprule
     \multicolumn{2}{c}{\parbox{0.55\linewidth}{\center\textbf{MathInline Structure}}}\\
     \toprule
-    \em{Description of text} & \em{Required} \\
+    \em{Body} & \em{Required} \\
     \midrule
     Inline mathematical expression & yes\\
     \bottomrule
@@ -575,6 +576,7 @@ The following inequality and logical operators are only supported in inline math
 \end{itemize}
 
 The following functions are built in and are defined as per ANSI C89:
+\begin{multicols}{4}
 \begin{itemize}
 \item \verb|exp(x)|
 \item \verb|sin(x)|
@@ -596,14 +598,17 @@ The following functions are built in and are defined as per ANSI C89:
 \item \verb|ceil(x)|
 \item \verb|floor(x)|
 \end{itemize}
+\end{multicols}
 
 \draftnote{I removed the "random" namespace since it was proving difficult to parse and it is made redundant by adding the \RandomDistribution elements to standard?}
 
 The following symbols are built in, and cannot be redefined,
+\begin{multicols}{2}
 \begin{itemize}
 \item pi
 \item t
 \end{itemize}
+\end{multicols}
 where $pi$ is the mathematical constant $\pi$, and $t$ is the elapsed simulation time within a \Dynamics block.
 
 \subsection{Alias}
@@ -618,7 +623,7 @@ where $pi$ is the mathematical constant $\pi$, and $t$ is the elapsed simulation
     \midrule
     name & \identifier & yes\\
     \midrule
-    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \em{Child elements} & \em{Multiplicity} & \em{Required} \\
     \midrule
     \MathInline & singleton & yes \\ 
     \bottomrule
@@ -657,8 +662,6 @@ transmitting a current, for example $i=g*(E-V)$.
 \subsubsection{Name attribute}
 Each \Alias requires a \textit{name} attribute, which is a valid \identifier and uniquely identifies the \Alias from all other elements in the \ComponentClass.
 
-\draftnote{Was tossing up whether `Constant' was a better name for this or not. Was thinking that this could also be used to remove `pi' from the list of built-in symbols and maybe provide some `standardLibrary' attributes.}
-
 \subsection{Constant}
 \label{sec:Constant}
 
@@ -678,14 +681,14 @@ Each \Alias requires a \textit{name} attribute, which is a valid \identifier and
     \bottomrule
   \end{edtable}
 \end{table}
-
+\draftnote{Was tossing up whether `Constant' was a better name for this or not. Was thinking that this could also be used to remove `pi' from the list of built-in symbols and maybe provide some `standardLibrary' attributes.}
 \Constant objects are used to specify physical constants such as the Ideal Gas Constant (i.e. 8.314462175 JK$^{-1}$mol$^{-1}$) or Avogadro's number (i.e. 6.0221412927$\times$10$^{23}$mol$^{-1}$).
 
 \subsubsection{Name attribute}
 Each \Constant requires a \textit{name} attribute, which should be a valid \identifier and uniquely identify the {\Dimension} in current the scope.
 
 \subsubsection{Units attribute}
-Each \Constant requires a \textit{units} attribute. The \textit{units} attribute specifies the units of the property and should refer to the name of a \Unit element in the global scope. 
+Each \Constant requires a \textit{units} attribute. The \textit{units} attribute specifies the units of the property and should refer to the name of a \Unit element in the document scope. 
 
 \subsubsection{Text format}
 Any valid numeric value, including shorthand scientific notation e.g. 1e-5 ($1\times10^{-5}$).
@@ -721,7 +724,7 @@ Ports are divided into sending, \EventSendPort and \AnalogSendPort, and receivin
 Each \AnalogSendPort requires a \textit{name} attribute, which should refer to a \StateVariable or \Alias within the current \ComponentClass.
 
 \subsubsection{Dimension attribute}
-Each \AnalogSendPort requires a \textit{dimension} attribute. This attribute specifies the dimension of the units of the quantity that is expected to be passed through the \AnalogSendPort and should refer to the name of a \Dimension element in the global scope.
+Each \AnalogSendPort requires a \textit{dimension} attribute. This attribute specifies the dimension of the units of the quantity that is expected to be passed through the \AnalogSendPort and should refer to the name of a \Dimension element in the document scope.
 \note{"Dimensionless" parameters can be defined by referring to an empty \Dimension object, i.e. one without any \textit{power} or offset attributes} 
 
 \subsection{AnalogReceivePort}
@@ -746,7 +749,7 @@ Each \AnalogSendPort requires a \textit{dimension} attribute. This attribute spe
 Each \AnalogReceivePort requires a \textit{name} attribute, which is a valid \identifier and uniquely identifies the \AnalogReceivePort from all other elements in the \ComponentClass.
 
 \subsubsection{Dimension attribute}
-Each \AnalogReceivePort requires a \textit{dimension} attribute. This attribute specifies the dimension of the units of the quantity that is expected to be passed through the \AnalogReceivePort and should refer to the name of a \Dimension element in the global scope.
+Each \AnalogReceivePort requires a \textit{dimension} attribute. This attribute specifies the dimension of the units of the quantity that is expected to be passed through the \AnalogReceivePort and should refer to the name of a \Dimension element in the document scope.
 
 
 \subsection{AnalogReducePort}
@@ -786,7 +789,7 @@ to change our original \ComponentClass definitions.
 Each \AnalogReducePort requires a \textit{name} attribute, which is a valid \identifier and uniquely identifies the \AnalogReducePort from all other elements in the \ComponentClass.
 
 \subsubsection{Dimension attribute}
-Each \AnalogReducePort requires a \textit{dimension} attribute. This attribute specifies the dimension of the units of the quantity that is expected to be communicated through the \AnalogReducePort and should refer to the name of a \Dimension element in the global scope.
+Each \AnalogReducePort requires a \textit{dimension} attribute. This attribute specifies the dimension of the units of the quantity that is expected to be communicated through the \AnalogReducePort and should refer to the name of a \Dimension element in the document scope.
 
 \subsubsection{Operator attribute}
 Each \AnalogReducePort requires an \textit{operator} attribute. The operator \lq\lq{}reduces\rq\rq{} the connected inputs to a single value at each time point. For example the following port,
@@ -860,7 +863,7 @@ Component classes that contain a \Dynamics block define dynamic models such as n
     \toprule
     \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Dynamics Structure}}}\\
     \toprule
-    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \em{Child elements} & \em{Multiplicity} & \em{Required} \\
     \midrule
     \StateVariable & set & no \\ 
     \Regime & set & yes\\
@@ -913,7 +916,7 @@ which make discrete changes to a \StateVariable value, e.g. $X = X + 1$.
 Each \StateVariable requires a \textit{name} attribute, which is a valid \identifier and uniquely identifies the \StateVariable from all other elements in the \ComponentClass.
 
 \subsubsection{Dimension attribute}
-Each \StateVariable requires a \textit{dimension} attribute. This attribute specifies the dimension of the units of the quantities that \StateVariable is expected to be initialised and updated with and should refer to the name of a \Dimension element in the global scope.
+Each \StateVariable requires a \textit{dimension} attribute. This attribute specifies the dimension of the units of the quantities that \StateVariable is expected to be initialised and updated with and should refer to the name of a \Dimension element in the document scope.
 
 
 \subsection{Regime}
@@ -928,7 +931,7 @@ Each \StateVariable requires a \textit{dimension} attribute. This attribute spec
     \midrule
     name & \identifier & yes\\
     \midrule
-    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \em{Child elements} & \em{Multiplicity} & \em{Required} \\
     \midrule
     \TimeDerivative & set & no \\ 
     \OnCondition & set & no\\
@@ -960,7 +963,7 @@ Each \Regime requires a \textit{name} attribute, which is a valid \identifier an
     \midrule
     variable & \StateVariable{}@name & yes\\
     \midrule
-    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \em{Child elements} & \em{Multiplicity} & \em{Required} \\
     \midrule
     \MathInline & singleton & yes \\ 
     \bottomrule
@@ -1009,7 +1012,7 @@ implementations should emit a warning when they are detected.
     \midrule
     targetRegime & \Regime{}@name & no \\
     \midrule
-    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \em{Child elements} & \em{Multiplicity} & \em{Required} \\
     \midrule
     \Trigger & singleton & yes \\
     \StateAssignment & set & no\\
@@ -1038,7 +1041,7 @@ An \OnEvent can have a \textit{targetRegime} attribute, which should refer to th
     targetRegime & \Regime{}@name & no \\    
     port & \EventReceivePort{}@name & yes\\
     \midrule
-    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \em{Child elements} & \em{Multiplicity} & \em{Required} \\
     \midrule   
     \StateAssignment & set & no\\
     \OutputEvent & set & no\\
@@ -1069,7 +1072,7 @@ loops, but such limits should be modifiable by the user.
     \toprule
     \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Trigger Structure}}}\\
     \toprule
-    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \em{Child elements} & \em{Multiplicity} & \em{Required} \\
     \midrule
     \MathInline & singleton & yes \\ 
     \bottomrule
@@ -1096,7 +1099,7 @@ derived from random distributions. \notice The \OnCondition block is triggered w
     \midrule
     variable & \StateVariable{}@name & yes\\
     \midrule
-    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \em{Child elements} & \em{Multiplicity} & \em{Required} \\
     \midrule
     \MathInline & singleton & yes \\     
     \bottomrule
@@ -1149,6 +1152,7 @@ Each \OutputEvent requires a \textit{port} attribute. This should refer to the n
 
 As of version 1.0, the only random distributions available to the user are those defined in the standard library. The names and parameters of the random distribution in the standard library match the UncertML definitions that can be found at \href{http://www.uncertml.org/distributions}{http://www.uncertml.org/distributions}. The subset of the UncertML distributions that should be implemented are by NineML compliant packages are,
 
+\begin{multicols}{2}
 \begin{itemize}
 \item BernoulliDistribution
 \item BetaDistribution
@@ -1176,6 +1180,7 @@ As of version 1.0, the only random distributions available to the user are those
 \item UniformDistribution
 \item WeibullDistribution
 \end{itemize}
+\end{multicols}
 
 ~
 
@@ -1259,7 +1264,7 @@ Cells in the destination population are connected to cells in the source populat
     \midrule
     name & \identifier & yes\\
     \midrule
-    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \em{Child elements} & \em{Multiplicity} & \em{Required} \\
     \midrule
     \Definition | \Prototype & singleton & yes \\ 
     \Property & set & no\\
@@ -1273,7 +1278,7 @@ class by a \Definition element, which locates the component class. A \Component
 that instantiates a \ComponentClass directly must supply matching \Property elements for each \Parameter in the \ComponentClass. Alternatively, a \Component can inherit a \ComponentClass and set of \Property elements from an existing component by substituting the \Definition for a \Prototype element, which locates the reference \Component. In this case, only the properties that differ from the reference component need to be specified.
 
 \subsubsection{Name attribute}
-Each \Component requires a \textit{name} attribute, which should be a valid \identifier and uniquely identify the {\Component} from all other elements in the global scope.
+Each \Component requires a \textit{name} attribute, which should be a valid \identifier and uniquely identify the {\Component} from all other elements in the document scope.
 
 \subsection{Definition}
 \label{sec:Definition}
@@ -1345,7 +1350,7 @@ The name of the \Component to be referenced \Component needs to be provided in t
     name & \Parameter{}@name & yes\\
     units & \Unit{}@symbol & yes\\
     \midrule
-    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \em{Child elements} & \em{Multiplicity} & \em{Required} \\
     \midrule
     \SingleValue | \ArrayValue | \ExternalArrayValue | \RandomValue & singleton & yes \\ 
     \bottomrule
@@ -1359,7 +1364,7 @@ of the \Component. Their \textit{name} attribute should match the name of the co
 Each \Property requires a \textit{name} attribute. This should refer to the name of a \Parameter in the corresponding \ComponentClass of the \Component.
 
 \subsubsection{Units attribute}
-Each \Property element requires a \emph{units} attribute. The \textit{units} attribute specifies the units of the quantity and should refer to the name of a \Unit element in the global scope. For a dimensionless units a \Unit\withelem\Dimension with no SI dimensions can be used. The SI dimensions of the \Unit\withelem\Dimension should match the SI dimensions of the corresponding \Parameter\withelem\Dimension.
+Each \Property element requires a \emph{units} attribute. The \textit{units} attribute specifies the units of the quantity and should refer to the name of a \Unit element in the document scope. For a dimensionless units a \Unit\withelem\Dimension with no SI dimensions can be used. The SI dimensions of the \Unit\withelem\Dimension should match the SI dimensions of the corresponding \Parameter\withelem\Dimension.
 
 \subsection{Reference}
 \label{sec:Reference}
@@ -1380,7 +1385,7 @@ Each \Property element requires a \emph{units} attribute. The \textit{units} att
   \end{edtable}
 \end{table}
 
-\Reference elements are used to locate User Layer elements in the global scope of the current separate documents. In most cases, User Layer elements (with the exception of \Population elements supplied to \Projection) can be specified inline, i.e. within the element they are required. However, it is often convenient to define a component in the global scope as this allows it to be reused at different places within the model. The \textit{url} attribute can be used to reference a component in a separate document, potentially one published online in a public repository (e.g. \href{http://senselab.med.yale.edu/modeldb/ListByModelName.asp?c=19&lin=-1}{ModelDB} or \href{http://www.opensourcebrain.org/}{Open Source Brain}).
+\Reference elements are used to locate User Layer elements in the document scope of the current separate documents. In most cases, User Layer elements (with the exception of \Population elements supplied to \Projection) can be specified inline, i.e. within the element they are required. However, it is often convenient to define a component in the document scope as this allows it to be reused at different places within the model. The \textit{url} attribute can be used to reference a component in a separate document, potentially one published online in a public repository (e.g. \href{http://senselab.med.yale.edu/modeldb/ListByModelName.asp?c=19&lin=-1}{ModelDB} or \href{http://www.opensourcebrain.org/}{Open Source Brain}).
 
 \subsubsection{Url attribute}
 The \textit{url} attribute specifies a \URL for the file which contains the User Layer element to be referenced.
@@ -1427,7 +1432,7 @@ Any valid numeric value in \href{http://en.wikipedia.org/wiki/ANSI_C}{ANSI C89},
     \toprule
     \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{ArrayValue Structure}}}\\
     \toprule
-    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \em{Child elements} & \em{Multiplicity} & \em{Required} \\
     \midrule
     \ArrayValueRow & set & no \\
     \bottomrule
@@ -1512,7 +1517,7 @@ Each \ExternalArrayValue must have a \textit{columnName} attribute, which refers
     \midrule
     port & {\AnalogSendPort}@name & yes\\
     \midrule    
-    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \em{Child elements} & \em{Multiplicity} & \em{Required} \\
     \midrule
     \Component{}\withelem\RandomDistribution | \Reference{}\pointto\Component{}\withelem\RandomDistribution & singleton & yes \\
     \bottomrule
@@ -1538,7 +1543,7 @@ Each \RandomValue requires a \textit{port} attribute, which selects which port o
     \midrule
     name & \identifier & yes\\
     \midrule
-    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \em{Child elements} & \em{Multiplicity} & \em{Required} \\
     \midrule
     \Number & singleton & yes \\
     \Cell & singleton & yes \\
@@ -1549,7 +1554,7 @@ Each \RandomValue requires a \textit{port} attribute, which selects which port o
 A \Population defines a set of dynamic components of the same class. The size of the set is specified by the \Number element. The properties of the dynamic components are generated from value types, which can be constant across the population, randomly distributed or individually specified (see \ref{sec:Values}).
 
 \subsubsection{Name attribute}
-Each \Population requires a \textit{name} attribute, which should be a valid \identifier and uniquely identify the {\Population} from all other elements in the global scope.
+Each \Population requires a \textit{name} attribute, which should be a valid \identifier and uniquely identify the {\Population} from all other elements in the document scope.
 
 \subsection{Cell}
 \label{sec:Cell}
@@ -1559,7 +1564,7 @@ Each \Population requires a \textit{name} attribute, which should be a valid \id
     \toprule
     \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Cell Structure}}}\\
     \toprule
-    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \em{Child elements} & \em{Multiplicity} & \em{Required} \\
     \midrule
     \Component{}\withelem\Dynamics | \Reference{}\pointto\Component{}\withelem\Dynamics & singleton & yes \\
     \bottomrule
@@ -1610,7 +1615,7 @@ where $i_{\mathrm{value}}$, $i_{\mathrm{source}}$ and $i_{\mathrm{dest}}$ are th
     \midrule
     name & \identifier & yes\\
     \midrule
-    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \em{Child elements} & \em{Multiplicity} & \em{Required} \\
     \midrule
     \Source & singleton & yes \\ 
     \Destination & singleton & yes \\
@@ -1625,7 +1630,7 @@ where $i_{\mathrm{value}}$, $i_{\mathrm{source}}$ and $i_{\mathrm{dest}}$ are th
 The \Projection element contains all the elements that define a projection between two populations and should be uniquely identified in the scope of the document.
 
 \subsubsection{Name attribute}
-Each \Projection requires a \textit{name} attribute, which should be a valid \identifier and uniquely identify the {\Projection} from all other elements in the global scope.
+Each \Projection requires a \textit{name} attribute, which should be a valid \identifier and uniquely identify the {\Projection} from all other elements in the document scope.
 
 
 \subsection{Connectivity}
@@ -1636,7 +1641,7 @@ Each \Projection requires a \textit{name} attribute, which should be a valid \id
     \toprule
     \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Connectivity Structure}}}\\
     \toprule
-    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \em{Child elements} & \em{Multiplicity} & \em{Required} \\
     \midrule
     \Component{}\withelem\ConnectionRule & singleton & yes \\ 
     \bottomrule
@@ -1653,7 +1658,7 @@ The \Connectivity element contains a \Component\withelem\ConnectionRule, which d
     \toprule
     \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Source Structure}}}\\
     \toprule
-    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \em{Child elements} & \em{Multiplicity} & \em{Required} \\
     \midrule
     \Reference{}\pointto\Population | \Reference{}\pointto\Selection & singleton & yes \\
     \FromDestination & set & no \\
@@ -1673,7 +1678,7 @@ The \Source element specifies the pre-synaptic population or selection (see \Sel
     \toprule
     \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Destination Structure}}}\\
     \toprule
-    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \em{Child elements} & \em{Multiplicity} & \em{Required} \\
     \midrule
     \Reference{}\pointto\Population | \Reference{}\pointto\Selection & singleton & yes \\
     \FromSource & set & no \\
@@ -1693,7 +1698,7 @@ The \Destination element specifies the post-synaptic or selection (see \Selectio
     \toprule
     \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Response Structure}}}\\
     \toprule
-    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \em{Child elements} & \em{Multiplicity} & \em{Required} \\
     \midrule
     \Component{}\withelem\Dynamics | \Reference{}\pointto\Component{}\withelem\Dynamics & singleton & yes \\ 
     \FromSource & set & no \\
@@ -1716,7 +1721,7 @@ The post-synaptic response dynamics can receive incoming port connections from t
     \toprule
     \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Plasticity Structure}}}\\
     \toprule
-    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \em{Child elements} & \em{Multiplicity} & \em{Required} \\
     \midrule
     \Component{}\withelem\Dynamics | \Reference{}\pointto\Component{}\withelem\Dynamics & singleton & yes \\ 
     \FromSource & set & no \\
@@ -1846,7 +1851,7 @@ Each \FromResponse element requires a \textit{receiver} attribute. This should r
     \midrule
     units & \Unit{}@symbol & yes\\
     \midrule
-    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \em{Child elements} & \em{Multiplicity} & \em{Required} \\
     \midrule
     \SingleValue | \ArrayValue | \ExternalArrayValue | \RandomValue & singleton & yes \\ 
     \bottomrule
@@ -1856,7 +1861,7 @@ Each \FromResponse element requires a \textit{receiver} attribute. This should r
 In version 1.0, the \Delay element specifies the delay between the pre-synaptic cell port and both the \Plasticity\withelem\Component and \Response\withelem\Component. In future versions, it is planned to include the delay directly into the port-connection objects (i.e. \FromSource, \FromDestination, etc...) to allow finer control of the delay between the different components.
 
 \subsubsection{Units attribute}
-The \textit{units} attribute specifies the units of the delay and should refer to the name of a \Unit element in the global scope. The \Unit{}\withelem\Dimension should be temporal, i.e. have $t=1$ and all other SI dimensions set to 0. 
+The \textit{units} attribute specifies the units of the delay and should refer to the name of a \Unit element in the document scope. The \Unit{}\withelem\Dimension should be temporal, i.e. have $t=1$ and all other SI dimensions set to 0. 
 
 \section{Selections: combining populations and subsets}
 
@@ -1870,7 +1875,11 @@ Selections are designed to allow sub and super-sets of cell populations to be pr
     \toprule
     \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Selection Structure}}}\\
     \toprule
-    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
+    \midrule
+    name & \identifier & yes\\
+    \midrule
+    \em{Child elements} & \em{Multiplicity} & \em{Required} \\
     \midrule
     \Concatenate & singleton & yes \\ 
     \bottomrule
@@ -1878,6 +1887,11 @@ Selections are designed to allow sub and super-sets of cell populations to be pr
 \end{table}
 
 The \Selection element contains the operations that are used to select the cells to add to the selection.
+
+
+\subsubsection{Name attribute}
+Each \Selection requires a \textit{name} attribute, which should be a valid \identifier and uniquely identify the {\Selection} from all other elements in the document scope.
+
 \subsection{Concatenate}
 \label{sec:Concatenate}
 
@@ -1886,7 +1900,7 @@ The \Selection element contains the operations that are used to select the cells
     \toprule
     \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Concatenate Structure}}}\\
     \toprule
-    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \em{Child elements} & \em{Multiplicity} & \em{Required} \\
     \midrule
     \Item & set & yes \\ 
     \bottomrule
@@ -1907,7 +1921,7 @@ The \Concatenate element is used to add populations to a selection. It contains 
     \midrule
     index & \primtype{integer} & yes\\
     \midrule
-    \em{Element type} & Multiplicity & \em{Required} \\
+    \em{Child elements} & Multiplicity & \em{Required} \\
     \midrule \relax
     \Reference{}\pointto{}[\Population | \Selection{}] & singleton & yes\\
     \bottomrule
@@ -1939,7 +1953,7 @@ In order to be compliant with the NineML specification any tool handling NineML 
     \toprule
     \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Annotations Structure}}}\\
     \toprule
-    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \em{Child elements} & \em{Multiplicity} & \em{Required} \\
     \midrule
     * & set & no\\
     \bottomrule
@@ -2311,10 +2325,35 @@ in this simulation}
 \section{Acknowledgments}
 \subsection{Former NineML INCF Task Force members}
 \label{sec:task_force}
+\begin{multicols}{2}
 \begin{itemize}
-\item     Robert    Cannon\item     Robert    Clewley\item     Alex      Cope\item     Hugo      Cornelis
-\item     Andrew    P. Davison\item     Erik      De Schutter\item     Mikael    Djurfeldt\item     Damien    Drix\item     Hans      Ekkehard Plesser\item     Padraig   Gleeson\item     Anatoli   Gorchetchnikov\item     Valentin  Haenel\item     Sean      Hill\item     Michael   Hull\item     Birgit    Kriener\item     Yann      Le Franc\item     Chung-ChuaLo\item     Abigail   Morrison\item     Eilif     Muller\item     Dragan    Nikolic\item     Ivan      Raikov\item     Subhasis  Ray\item     Raphael   Ritz\item     Malin     Sandström\item     Lars      Schwabe
+\item     Robert    Cannon
+\item     Robert    Clewley
+\item     Alex      Cope
+\item     Hugo      Cornelis
+\item     Andrew    P. Davison
+\item     Erik      De Schutter
+\item     Mikael    Djurfeldt
+\item     Damien    Drix
+\item     Hans      Ekkehard Plesser
+\item     Padraig   Gleeson
+\item     Anatoli   Gorchetchnikov
+\item     Valentin  Haenel
+\item     Sean      Hill
+\item     Michael   Hull
+\item     Birgit    Kriener
+\item     Yann      Le Franc
+\item     Chung-ChuaLo
+\item     Abigail   Morrison
+\item     Eilif     Muller
+\item     Dragan    Nikolic
+\item     Ivan      Raikov
+\item     Subhasis  Ray
+\item     Raphael   Ritz
+\item     Malin     Sandström
+\item     Lars      Schwabe
 \end{itemize}
+\end{multicols}
 
 \clearpage
 \bibliography{specification}
