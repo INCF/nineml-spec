@@ -210,6 +210,7 @@ Program, and has benefitted from wide-ranging input from computational neuroscie
 simulator developers and developers of simulator-independent languages (e.g. NeuroML, PyNN) (see \ref{sec:task_force}).
 
 \subsection{Scope}
+\label{sec:scope}
 
 The purpose of NineML is to provide a computer language for
 succinct and unambiguous description of computational neuroscience models of neuronal networks.
@@ -279,7 +280,7 @@ not sensitive to the order that objects appear in.
 
 Elements are identified by \emph{names}, which are unique in the scope they are enclosed by (either within a component class or in the document scope of the file). For a name to be a valid NineML identifier, it must meet the requirements for a \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 identifiers}. Additionally, identifiers are not permitted to begin or end with an underscore character (i.e. `\_') to allow special variables to be defined in the same scope as identified variables/objects in generated code.
 
-NineML identifiers are case-sensitive in the sense that they must be referred to with the same case as they are defined. However, two identifiers that are identical with the exception of case, e.g. `v\_threshold' and `v\_Threshold', are not permitted within the same scope. Identifiers used within component classes also cannot be the same (case-sensitive) as one of the built-in symbols or functions (see \MathInline).
+NineML identifiers are case-sensitive in the sense that they must be referred to with the same case as they are defined. However, two identifiers that are identical with the exception of case, e.g. `v\_threshold' and `v\_Threshold', are not permitted within the same scope. Identifiers used within component classes also cannot be the same (case-insensitive) as one of the built-in symbols or functions (see \MathInline).
 
 \clearpage
 \part{General Elements}
@@ -600,8 +601,6 @@ The following functions are built in and are defined as per ANSI C89:
 \end{itemize}
 \end{multicols}
 
-\draftnote{I removed the "random" namespace since it was proving difficult to parse and it is made redundant by adding the \RandomDistribution elements to standard?}
-
 The following symbols are built in, and cannot be redefined,
 \begin{multicols}{2}
 \begin{itemize}
@@ -610,6 +609,17 @@ The following symbols are built in, and cannot be redefined,
 \end{itemize}
 \end{multicols}
 where $pi$ is the mathematical constant $\pi$, and $t$ is the elapsed simulation time within a \Dynamics block.
+
+The following random distributions are available in \StateAssignment elements via the \verb|random| namespace, :
+\begin{itemize}
+\item \verb|random.uniform| (see \href{http://uncertml.org/distributions/uniform}{http://uncertml.org/distributions/uniform})
+\item \verb|random.normal| (see \href{http://uncertml.org/distributions/normal}{http://uncertml.org/distributions/normal})
+\item \verb|random.binomial(N,P)| (see \href{http://uncertml.org/distributions/binomial}{http://uncertml.org/distributions/binomial})
+\item \verb|random.poisson(L)| (see \href{http://uncertml.org/distributions/poisson}{http://uncertml.org/distributions/poisson})
+\item \verb|random.exponential(L)| (see \href{http://uncertml.org/distributions/exponential}{http://uncertml.org/distributions/exponential})
+\end{itemize}
+
+\note{\textit{C} implementations of these distributions are available in the GNU Scientific Library, \href{http://www.gnu.org/software/gsl/}{http://www.gnu.org/software/gsl/}}
 
 \subsection{Alias}
 \label{sec:Alias}
@@ -631,6 +641,7 @@ where $pi$ is the mathematical constant $\pi$, and $t$ is the elapsed simulation
 \end{table}
 
 An alias corresponds to an alternative name for a variable or part of an expression. 
+
 
 \textbf{Aliases} are motivated by two use cases:
 
@@ -681,8 +692,10 @@ Each \Alias requires a \textit{name} attribute, which is a valid \identifier and
     \bottomrule
   \end{edtable}
 \end{table}
-\draftnote{Was tossing up whether `Constant' was a better name for this or not. Was thinking that this could also be used to remove `pi' from the list of built-in symbols and maybe provide some `standardLibrary' attributes.}
-\Constant objects are used to specify physical constants such as the Ideal Gas Constant (i.e. 8.314462175 JK$^{-1}$mol$^{-1}$) or Avogadro's number (i.e. 6.0221412927$\times$10$^{23}$mol$^{-1}$).
+
+\Constant objects are used to specify physical constants such as the Ideal Gas Constant (i.e. 8.314462175 JK$^{-1}$mol$^{-1}$) or Avogadro's number (i.e. 6.0221412927$\times$10$^{23}$mol$^{-1}$), and to convert unit dimensions between abstract mathematical quantities.
+
+The \notice use of \Constant elements to hold fixed model parameters is \emph{highly discouraged} since this breaks the division of semantic layers (abstraction and user), which is a key feature of NineML (see \ref{sec:scope}).
 
 \subsubsection{Name attribute}
 Each \Constant requires a \textit{name} attribute, which should be a valid \identifier and uniquely identify the {\Dimension} in current the scope.
@@ -997,8 +1010,8 @@ that the order of resolution of state assignments can be ambiguous. \warning If,
 example, we have two transitions, T1 and T2, originating from the same \Regime,
 in which T1 contains the state assignment \textsl{V=V+1} and T2 contains the
 assignment \textsl{V=V*V}, and both transitions are triggered simultaneously, then there is no
-guarantee about the value of V. It is left to the user to ensure such situations do not occur, and
-implementations should emit a warning when they are detected.
+guarantee about the value of V. It is left to the user to ensure such situations do not occur.
+Implementations should emit a warning when they are detected.
 
 \subsection{OnCondition}
 \label{sec:OnCondition}
@@ -1061,7 +1074,7 @@ Each \OnEvent requires a \textit{port} attribute. This should refer to the name 
 could be recursive through components depending on their connectivity. 
 \warning It is the users responsibility to ensure
 that this does not occur with zero delay. Implementations may decide to terminate after 
-a given number of recursive cascades (say 1000) to prevent infinite
+a given number of recursive cascades of zero delay (say 1000) to prevent infinite
 loops, but such limits should be modifiable by the user.
 
 \subsection{Trigger}
@@ -1085,7 +1098,7 @@ operations} (`$\&\&$', `$||$' and `$!$' respectively) on the
 result of pure inequality \emph{relational operations} (`$>$' and `$<$').
 The inequality expression may contain references to 
 \StateVariable, \AnalogReceivePort, \AnalogReducePort, \Parameter and {\Alias} elements, with the exception of {\Alias} elements
-derived from random distributions. \notice The \OnCondition block is triggered when the boolean result of the \Trigger statement changes from \emph{false} to \emph{true}.  
+derived from random distributions. The \OnCondition block is triggered when the boolean result of the \Trigger statement changes from \notice \emph{false} to \emph{true}.  
 
 \subsection{StateAssignment}
 \label{sec:StateAssignment}
@@ -1181,8 +1194,6 @@ As of version 1.0, the only random distributions available to the user are those
 \item WeibullDistribution
 \end{itemize}
 \end{multicols}
-
-~
 
 \note{\textit{C} implementations of these distributions are available in the GNU Scientific Library, \href{http://www.gnu.org/software/gsl/}{http://www.gnu.org/software/gsl/}}
 
@@ -1401,7 +1412,7 @@ In NineML, ``values'' are arrays that implicitly grow to fill the size of the co
 \item \SingleValue, a consistent value across the container
 \item \ArrayValue, an explicit array defined in NineML
 \item \ExternalArrayValue, an explicit array defined in text (space delimited) or HDF5 format.
-\item \RandomValue, a return value derived from a random distribution.
+\item \RandomValue, an array of values derived from a random distribution.
 \end{itemize}
 
 \subsection{SingleValue}
@@ -1595,13 +1606,13 @@ The text of the \Number element contains an \primtype{integer} representing the 
 
 \section{Projections}
 
-Projections define the synaptic connectivity between two populations, the post-synaptic response of the connections, the plasticity rules that modulate the post-synaptic response and the transmission delays. Synaptic and plasticity dynamic components are created and connected to and from explicitly defined ports of the cell components in the source and projection populations if the connection rule determines there is a connection between a particular source and destination cell pair. 
+Projections define the synaptic connectivity between two populations, the post-synaptic response of the connections, the plasticity rules that modulate the post-synaptic response and the transmission delays. Synaptic and plasticity dynamic components are created if the connection rule determines there is a connection between a particular source and destination cell pair. The synaptic and plasticity components are then connected to and from explicitly defined ports of the cell components in the source and projection populations
 
-\draftnote{I just drafted this so it will need checking}\SingleValue and \RandomValue elements used in properties of a projection (in the \Connectivity, \Response, \Plasticity and \Delay elements) take the size of the number of connections made. While \ArrayValue and \ExternalArrayValue elements can either be the size of the number of connections made or the number of possible unique connections (i.e. $N_{\mathrm{source}} * N_{\mathrm{dest}}$). In either case, the expected array data is ordered by the indices
+\SingleValue and \RandomValue elements used in properties of a projection (in the \Connectivity, \Response, \Plasticity and \Delay elements) take the size of the number of connections made. Explicitly array values, \ArrayValue and \ExternalArrayValue, are only permitted with \Connectivity rules where the number of connections is predetermined (i.e. \emph{OneToOne}, \emph{AllToAll} and \emph{ExplicitConnectionList}) and must be the same size as the number of connections made. \notice Explicit arrays are ordered by the indices
 \begin{equation}
 i_{\mathrm{value}} = i_{\mathrm{source}} * N_{\mathrm{dest}} + i_{\mathrm{dest}}
 \end{equation}
-where $i_{\mathrm{value}}$, $i_{\mathrm{source}}$ and $i_{\mathrm{dest}}$ are the indices of the array entry, and the source and destination cells respectively and $N_{\mathrm{dest}}$ is the size of the destination population. For the case of the explicit arrays being the size of the number connections made, data for $i_{\mathrm{value}}$ indices that do not correspond to connected pairs are omitted.
+where $i_{\mathrm{value}}$, $i_{\mathrm{source}}$ and $i_{\mathrm{dest}}$ are the indices of the array entry, and the source and destination cells respectively, and $N_{\mathrm{dest}}$ is the size of the destination population. Indices that do not correspond to connected pairs are omitted.
 
 \subsection{Projection}
 \label{sec:Projection}
@@ -2350,7 +2361,7 @@ in this simulation}
 \item     Ivan      Raikov
 \item     Subhasis  Ray
 \item     Raphael   Ritz
-\item     Malin     Sandström
+\item     Malin     Sandstrï¿½m
 \item     Lars      Schwabe
 \end{itemize}
 \end{multicols}
