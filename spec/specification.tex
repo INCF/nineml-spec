@@ -20,6 +20,7 @@
 
 % Define Abstraction Layer element references
 
+\newcommand{\NineML}{\defRef{\textbf{\class{NineML}}\xspace}{sec:NineML}}
 \newcommand{\Unit}{\defRef{\textbf{\class{Unit}}\xspace}{sec:Unit}}
 \newcommand{\Dimension}{\defRef{\textbf{\class{Dimension}}\xspace}{sec:Dimension}}
 \newcommand{\ComponentClass}{\defRef{\textbf{\class{ComponentClass}}\xspace}{sec:ComponentClass}}
@@ -59,7 +60,7 @@
 \newcommand{\Quantity}{\defRef{\textbf{\class{Quantity}}\xspace}{sec:Quantity}}
 \newcommand{\SingleValue}{\defRef{\textbf{\class{SingleValue}}\xspace}{sec:SingleValue}}
 \newcommand{\ExternalArrayValue}{\defRef{\textbf{\class{ExternalArrayValue}}\xspace}{sec:ExternalArrayValue}}
-\newcommand{\ComponentValue}{\defRef{\textbf{\class{ComponentValue}}\xspace}{sec:ComponentValue}}
+\newcommand{\RandomValue}{\defRef{\textbf{\class{RandomValue}}\xspace}{sec:RandomValue}}
 \newcommand{\ArrayValue}{\defRef{\textbf{\class{ArrayValue}}\xspace}{sec:ArrayValue}}
 \newcommand{\ArrayValueRow}{\defRef{\textbf{\class{ArrayValueRow}}\xspace}{sec:ArrayValueRow}}
 \newcommand{\ListColumn}{\defRef{\textbf{\class{ListColumn}}\xspace}{sec:ListColumn}}
@@ -152,12 +153,12 @@
 
 {\Large\bf Editors: }
 \begin{itemize}
+\item Thomas G. Close
 \item Alex Cope
 \item Andrew P. Davison
 \item Erik De Schutter
 \item Ivan Raikov
 \item Paul Richmond
-\item Thomas G. Close
 \end{itemize}
 
 \vspace*{0.25cm}
@@ -195,31 +196,28 @@ This document is under the Common Creative license BY-NC-SA:\\ http://creativeco
 \section{Introduction}
 % -----------------------------------------------------------------------------
 \vspace{-12.5pc} % A bit of a hack to reverse the vspace added by the Appendix name
-The increasing diversity of neuronal network models and the software/hardware platforms used to simulate them,
+The increasing diversity of neuronal network models and the software/hardware platforms used to simulate them
 presents a significant challenge for sharing, replicability and reusability of models in computational neuroscience.
-To address this problem, we propose a common description language to facilitate the exchange neuronal network models between researchers and simulator platforms.
+To address this problem, we propose a common description language, \emph{Network Interchange for Neuroscience Modeling
+Language (NineML)}, to facilitate the exchange neuronal network models between researchers and simulator platforms.
 
-This description language is based on a
-common object model describing the different elements of network
-models. This work, initiated and supported by the International
+NineML is based on a
+common object model describing the different elements of neuronal network
+models. It was initiated and supported by the International
 Neuroinformatics Coordinating Facility as part of the Multiscale Modeling
-Program, involve computational neuroscientists, simulator developers and
-developers of simulator-independent languages (NeuroML, PyNN).  The name of the
-proposed language is NineML (Network Interchange for Neuroscience Modeling
-Language).
+Program, and has benefitted from wide-ranging input from computational neuroscientists,
+simulator developers and developers of simulator-independent languages (NeuroML, PyNN) (see \ref{sec:task_force}).
 
 \subsection{Scope}
 
 The purpose of NineML is to provide a computer language for
 succinct and unambiguous description of computational neuroscience models of neuronal networks.
-
 NineML is intended to describe the network architecture, parameters
 and equations that govern the dynamics of a neuronal network, without
 taking into account model implementation details such as numerical integration
 methods.
 
-As of version 1.0, the following neuronal
-network objects can be described in NineML:
+The following neuronal network objects can be described in NineML,
 \begin{enumerate}
 \item spiking and non-spiking neurons
 \item synapses
@@ -229,6 +227,8 @@ network objects can be described in NineML:
 \item Long-term synaptic modifications (STDP, learning, etc.)
 \item Gap-junctions
 \end{enumerate}
+\item populations of neurons
+\item synaptic projections between populations of neurons
 \end{enumerate}
 
 \subsection{Design considerations}
@@ -280,126 +280,45 @@ Elements are identified by \emph{names}, which are unique in the scope they are 
 
 NineML identifiers are case-sensitive in the sense that they must be referred to with the same case as they are defined. However, two identifiers that are identical with the exception of case, e.g. `v\_threshold' and `v\_Threshold', are not permitted within the same scope. Identifiers used within component classes also cannot be the same (case-sensitive) as one of the built-in symbols or functions (see \MathInline).
 
-\subsection{Extensions}
-\label{sec:extensions}
-
-``Extensions'' increase the descriptive power of NineML by providing syntax for compact, high-level descriptions of models that can also be expressed in ``Core'' NineML (i.e. syntactic sugar). Envisaged examples include concise forms for kinetic equations and multi-component/compartment dynamic models. 
-
-Core NineML is everything defined by this document, except those parts specifically described as Extensions. To be classified as a NineML Extension, a modelling language must meet the following requirements.
-\begin{itemize}
-\item Models written in the Extension format (or part thereof) must be collapsible to Core NineML without change in behaviour.
-\item The flattened (to Core NineML) descriptions must be convertible back to their original form (the additional information required to perform the reverse conversion can be stored in \Annotations).
-\item Stand-alone tools that perform the two-way conversion between the extended and core forms (preferably written in commonly used languages such as XSLT, Python, Java, etc...) must be downloadable from a publicly available \URL (a section of the NineML website, \href{http://nineml.net}{http://nineml.net}, is available for this purpose).
-\item Non-standard extensions must be defined within a unique namespace
-\item Detailed specifications, preferably in the same format as this document (see the `ninemlspec.cls' latex class), must be made publicly available along with the conversion tools.
- \label{item:collapsible}
-\end{itemize}
-
-One of the rationales behind the division between core and extended NineML is to minimise the set of features that a tool needs to support to be NineML compliant, i.e. as long as the core is supported all extensions should also be supported via flattening to core NineML. However, tool builders may want to take advantage of the additional structure provided by the extensions to optimise the implementation of the model or provide more intuitive interfaces to the user. 
-
-\note{To facilitate the reverse conversion from core to extended formats, NineML compliant tools must preserve all annotations during reading, writing and transformation, with the exception of when the return conversion is no longer possible due to the applied transformation or the annotations are explicitly added/deleted by the user.}
-
 \clearpage
-\part{Abstraction Layer}
-\section{Component Classes and Parameters}
+\part{General Elements}
+\section{Document layout}
 
-The main building block of the Abstraction Layer is the \ComponentClass.
-The \ComponentClass is intended to package together a collection of
-objects that relate to the definition of a model (e.g. cells, synapses, synaptic
-plasticity rules, random spike trains, inputs).
-All equations and event declarations that are part of particular entity
-model, such as neuron model, belong in a single \ComponentClass.
-A \ComponentClass can be used to represent either a specific model of a neuron or a
-composite model, including synaptic mechanisms.
+NineML documents must be enclosed within \NineML XML tags.
 
-The interface is the \emph{external} view of the \ComponentClass that defines
-what inputs and outputs the component exposes to other {\ComponentClass} elements and the
-parameters that can be set for the \ComponentClass. The interface consists of
-instances of ports and \Parameter (see \ref{fig:component_class_overview}).
-
-\begin{figure}[htb]
-\center
-\includegraphics[width=8cm]{figures/component_simple.pdf}
-\protect\caption{ComponentClass Overview}
-\label{fig:component_class_overview}
-\end{figure}
-
-As well as being able to specify the communication of continuous values,
-{\ComponentClass} elements are also able to specify the emission and the reception
-of events. Events are discrete notifications
-that are transmitted over event ports. Since
-Event ports have names, saying that we transmit `event1' for example
-would mean transmitting an event on the EventPort called `event1'. Events
-can be used for example to signal action potential firing.
-
-\subsection{ComponentClass}
-\label{sec:ComponentClass}
+\subsection{NineML}
+\label{sec:NineML}
 
 \begin{table}[H]
   \begin{edtable}{tabular}{llr}
     \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{ComponentClass Structure}}}\\
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{NineML Structure}}}\\
     \toprule
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
-    name & \identifier & yes\\
+    xmlns & "http://nineml.net/9ML/1.0" & yes\\
     \midrule
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
-    \Parameter & set & no \\ 
-    \AnalogSendPort & set & no\\
-    \AnalogReceivePort & set & no\\
-    \AnalogReducePort & set & no \\ 
-    \EventSendPort & set & no\\    
-    \EventReceivePort & set & no\\    
-    \Dynamics | \ConnectionRule | \RandomDistribution & singleton & yes \\
+    \Component & set & no \\ 
+    \ComponentClass & set & no \\
+    \Unit & set & no \\
+    \Dimension & set & no \\
+    \Population & set & no \\
+    \Projection & set & no \\
+    \Selection & set & no \\
     \bottomrule
   \end{edtable}
 \end{table}
 
-A \ComponentClass is composed of:
-\begin{itemize}
-\item {\Parameter} objects for the \ComponentClass, which specify which values are required to be provided in the User Layer.
-\item An unordered collection of port objects, which either publish or read state variables or derived values published from other components in the case of analog send and receive ports, or emit events or listen for events emitted from components. \EventSendPort and \EventReceivePort objects raise and listen for events passed between dynamic components.
-\item {A `main' block, which specifies the nature of the component class:
-\begin{itemize} 
-\item \Dynamics, the component class defines a dynamic element such as neutron or post-synaptic response.
-\item \ConnectionRule, the component class defines a rule by which populations are connected in projections.
-\item \RandomDistribution, the component class defines random distribution.
-\end{itemize}}
-\end{itemize}
+Only seven document-level elements are allowed to reside directly within \NineML elements: \Component, \ComponentClass, \Unit, \Dimension, \Population, \Projection and \Selection. Each element should be uniquely identified by its \textit{name} attribute within the scope of the document (see \identifier). 
 
-\subsubsection{Name attribute}
-Each \ComponentClass requires a \textit{name} attribute, which should be a valid \identifier and uniquely identify the {\ComponentClass} in the global scope.
+\Unit \notice and \Dimension elements must be defined within the document they are referenced, whereas the remaining elements can be referred to in other NineML documents (see \Reference and \Definition).
 
-\subsection{Parameter}
-\label{sec:Parameter}
+\subsubsection{Xmlns attribute}
 
-\draftnote{On reading through the old specs it is pretty clear that requiring dimensions for parameters and properties, including dimensionless ones, was deemed pretty important. I have also realised that it makes them easier to handle as you don't have to test for the case when they are not there.}
-\begin{table}[H]
-  \begin{edtable}{tabular}{llr}
-    \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Parameter Structure}}}\\
-    \toprule
-    \em{Attribute name} & \em{Type/Format} & \em{Required} \\
-    \midrule
-    name & \identifier & yes\\
-    dimension & \Dimension{}@name & yes\\
-    \bottomrule
-  \end{edtable}
-\end{table}
+The \textit{xmlns} attribute is required and should refer to the \URL corresponding to the correct NineML version, which for version 1.0 is \textit{http://nineml.net/9ML/1.0} (see \href{http://www.w3.org/TR/REC-xml-names/}{http://www.w3.org/TR/REC-xml-names/}).
 
-\Parameter objects are placeholders for numerical values within a \ComponentClass.
-They define particular qualities of the model,
-such as the firing threshold, reset voltage or the
-decay time constant of a synapse model. By definition, Parameters are set at the
-start of the simulation, and remain constant throughout.
-
-\subsubsection{Name attribute}
-Each \Parameter requires a \textit{name} attribute, which is a valid \identifier and uniquely identifies the \Parameter within the \ComponentClass.
-
-\subsubsection{Dimension attribute}
-\Parameter elements must have a \textit{dimension} attribute. This attribute specifies the dimension of the units of the quantity that is expected to be passed to the \Parameter and should refer to the name of a \Dimension element in the global scope. For a dimensionless parameters a \Dimension with all attributes of power 0 can be used.
 
 \section{Units and Dimensions}
 
@@ -510,6 +429,107 @@ A \Unit can optionally have an \textit{offset} attribute. This attribute specifi
 
 If omitted, the offset is zero.
 
+\clearpage
+\part{Abstraction Layer}
+\section{Component Classes and Parameters}
+
+The main building block of the Abstraction Layer is the \ComponentClass.
+The \ComponentClass is intended to package together a collection of
+objects that relate to the definition of a model (e.g. cells, synapses, synaptic
+plasticity rules, random spike trains, inputs).
+All equations and event declarations that are part of particular entity
+model, such as neuron model, belong in a single \ComponentClass.
+A \ComponentClass can be used to represent either a specific model of a neuron or a
+composite model, including synaptic mechanisms.
+
+The interface is the \emph{external} view of the \ComponentClass that defines
+what inputs and outputs the component exposes to other {\ComponentClass} elements and the
+parameters that can be set for the \ComponentClass. The interface consists of
+instances of ports and \Parameter (see \ref{fig:component_class_overview}).
+
+\begin{figure}[htb]
+\center
+\includegraphics[width=8cm]{figures/component_simple.pdf}
+\protect\caption{ComponentClass Overview}
+\label{fig:component_class_overview}
+\end{figure}
+
+As well as being able to specify the communication of continuous values,
+{\ComponentClass} elements are also able to specify the emission and the reception
+of events. Events are discrete notifications
+that are transmitted over event ports. Since
+Event ports have names, saying that we transmit `event1' for example
+would mean transmitting an event on the EventPort called `event1'. Events
+can be used for example to signal action potential firing.
+
+\subsection{ComponentClass}
+\label{sec:ComponentClass}
+
+\begin{table}[H]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{ComponentClass Structure}}}\\
+    \toprule
+    \em{Attribute name} & \em{Type/Format} & \em{Required} \\
+    \midrule
+    name & \identifier & yes\\
+    \midrule
+    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \midrule
+    \Parameter & set & no \\ 
+    \AnalogSendPort & set & no\\
+    \AnalogReceivePort & set & no\\
+    \AnalogReducePort & set & no \\ 
+    \EventSendPort & set & no\\    
+    \EventReceivePort & set & no\\    
+    \Dynamics | \ConnectionRule | \RandomDistribution & singleton & yes \\
+    \bottomrule
+  \end{edtable}
+\end{table}
+
+A \ComponentClass is composed of:
+\begin{itemize}
+\item {\Parameter} objects for the \ComponentClass, which specify which values are required to be provided in the User Layer.
+\item An unordered collection of port objects, which either publish or read state variables or derived values published from other components in the case of analog send and receive ports, or emit events or listen for events emitted from components. \EventSendPort and \EventReceivePort objects raise and listen for events passed between dynamic components.
+\item {A `main' block, which specifies the nature of the component class:
+\begin{itemize} 
+\item \Dynamics, the component class defines a dynamic element such as neutron or post-synaptic response.
+\item \ConnectionRule, the component class defines a rule by which populations are connected in projections.
+\item \RandomDistribution, the component class defines random distribution.
+\end{itemize}}
+\end{itemize}
+
+\subsubsection{Name attribute}
+Each \ComponentClass requires a \textit{name} attribute, which should be a valid \identifier and uniquely identify the {\ComponentClass} in the global scope.
+
+\subsection{Parameter}
+\label{sec:Parameter}
+
+\begin{table}[H]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Parameter Structure}}}\\
+    \toprule
+    \em{Attribute name} & \em{Type/Format} & \em{Required} \\
+    \midrule
+    name & \identifier & yes\\
+    dimension & \Dimension{}@name & yes\\
+    \bottomrule
+  \end{edtable}
+\end{table}
+
+\Parameter objects are placeholders for numerical values within a \ComponentClass.
+They define particular qualities of the model,
+such as the firing threshold, reset voltage or the
+decay time constant of a synapse model. By definition, Parameters are set at the
+start of the simulation, and remain constant throughout.
+
+\subsubsection{Name attribute}
+Each \Parameter requires a \textit{name} attribute, which is a valid \identifier and uniquely identifies the \Parameter within the \ComponentClass.
+
+\subsubsection{Dimension attribute}
+\Parameter elements must have a \textit{dimension} attribute. This attribute specifies the dimension of the units of the quantity that is expected to be passed to the \Parameter and should refer to the name of a \Dimension element in the global scope. For a dimensionless parameters a \Dimension with all attributes of power 0 can be used.
+
 \section{Mathematical Expressions}
 
 As of NineML version 1.0, only inline mathematical expressions, which have similar syntax to the ANSI C89 standard, are supported. In future versions it is envisaged that inline expressions will be either augmented or replaced with MathML (\href{http://mathml.org}{http://mathml.org}) expressions.
@@ -536,37 +556,22 @@ evaluates to either a \primtype{bool} (when used as the trigger for
 {\OnCondition} objects) or a \primtype{real number} (when used  as a
 right-hand-side for {\Alias}, {\TimeDerivative} and {\StateAssignment} objects). All numbers/variables in inline maths expressions are assumed to be \primtype{real numbers}.
 
-The following operators are supported in inline maths expressions,
-\draftnote{I have added exponent operator since it is commonly used in neutron models and is quite convenient but it is not ANSI C89 so I am not sure whether you guys think this is a good idea}
-\begin{itemize}
-\item Arithmetic operators
+The following arithmetic operators are supported in all inline maths expressions and have the same interpretation and precedence levels as in the ANSI C89 standard,
 \begin{itemize}
 \item Addition \verb|+|
 \item Subtraction \verb|-|
 \item Division \verb|/|
 \item Multiplication \verb|*|
-\item Exponent \verb|^|
 \end{itemize}
 
-The `\verb|+|', `\verb|-|', `\verb|/|' and `\verb|*|' operators have the same interpretation and precedence levels as in the ANSI C89 standard. `\verb|^|', which is not part of the ANSI C89 standard, is the exponent operator e.g.
- \begin{lstlisting}
-a^3 = a*a*a
-\end{lstlisting}
-and has the highest level of precedence.
+The following inequality and logical operators are only supported in inline maths expressions within \Trigger elements. They also have the same interpretation and precedence levels as in ANSI C89 standard.
 
-\item Inequality operators
 \begin{itemize}
 \item Greater than \verb|>|
 \item Lesser than \verb|<|
-\end{itemize}
-
-\item Logical operators
-\begin{itemize}
 \item Logical And: \verb|&&|
 \item Logical Or:  \verb+||+
 \item Logical Not: \verb|!|
-\end{itemize}
-
 \end{itemize}
 
 The following functions are built in and are defined as per ANSI C89:
@@ -975,18 +980,22 @@ Each \TimeDerivative requires a \textit{variable} attribute. This should refer t
 \section{Transitions}
 \label{sec:Transition}
 
-Movements between dynamic regimes occurs via transitions, and have vanishing temporal extents (i.e. they are event-like). There are two types of transitions, condition-triggered transitions (see \OnCondition), which are evoked when an associated trigger expression becomes true, or event-triggered transitions (see \OnEvent), which are evoked when an associated event port receives an event from an external component.
+Movements between dynamic regimes occurs via transitions, and have vanishing temporal extents (i.e. they are event-like). There are two types of transitions, condition-triggered transitions (see \OnCondition), which are evoked when an associated trigger expression becomes true, or event-triggered transitions (see \OnEvent), which are evoked when an associated event port receives an event from an external component. Multiple state assignments can be sent and multiple events can be sent within a single transition block.
 
-\draftnote{Should \OnEvent transitions be able to emit new events or would this be unnecessarily complex to handle?}
-During either type of transition three instantaneous actions will/can occur:
+During either type of transition three instantaneous actions can occur:
 \begin{itemize}
 \item The component transitions to a target regime (can be the same as the current regime)
 \item State variables can be assigned new values (see \StateAssignment)
 \item The component can send events (see \OutputEvent).
 \end{itemize}
 
-Multiple state assignments can be sent and multiple events can be sent within a single transition block
-(for more on the resolution of transitions see Appendix~\ref{resolution}).
+There is no order defined in transitions; this means
+that the order of resolution of state assignments can be ambiguous. \warning If, for
+example, we have two transitions, T1 and T2, originating from the same \Regime,
+in which T1 contains the state assignment \textsl{V=V+1} and T2 contains the
+assignment \textsl{V=V*V}, and both transitions are triggered simultaneously, then there is no
+guarantee about the value of V. It is left to the user to ensure such situations do not occur, and
+implementations should emit a warning when they are detected.
 
 \subsection{OnCondition}
 \label{sec:OnCondition}
@@ -1045,6 +1054,13 @@ Each \OnEvent requires a \textit{port} attribute. This should refer to the name 
 \subsubsection{TargetRegime attribute}
 \OnEvent can have a \textit{targetRegime} attribute, which should refer to the name of a \Regime element in the \ComponentClass that the dynamics block will transition to when the \OnEvent block is triggered by an incoming event. If the \textit{targetRegime} attribute is omitted the regime will transition to itself.
 
+\emph{Cascading} of events is permitted, which in theory 
+could be recursive through components depending on their connectivity. 
+\warning It is the users responsibility to ensure
+that this does not occur with zero delay. Implementations may decide to terminate after 
+a given number of recursive cascades (say 1000) to prevent infinite
+loops, but such limits should be modifiable by the user.
+
 \subsection{Trigger}
 \label{sec:Trigger}
 
@@ -1066,7 +1082,7 @@ operations} (`$\&\&$', `$||$' and `$!$' respectively) on the
 result of pure inequality \emph{relational operations} (`$>$' and `$<$').
 The inequality expression may contain references to 
 \StateVariable, \AnalogReceivePort, \AnalogReducePort, \Parameter and {\Alias} elements, with the exception of {\Alias} elements
-derived from random distributions. The \OnCondition block is triggered when the boolean result of the \Trigger statement changes from false to true. 
+derived from random distributions. \notice The \OnCondition block is triggered when the boolean result of the \Trigger statement changes from \emph{false} to \emph{true}.  
 
 \subsection{StateAssignment}
 \label{sec:StateAssignment}
@@ -1316,7 +1332,6 @@ If the prototype \Component is defined outside the current file, the \textit{URL
 \subsubsection{Text format}
 The name of the \Component to be referenced \Component needs to be provided in the text of \Prototype element.
 
-\draftnote{I have removed the \Quantity{s} in favour of adding units to the \Property elements as it seemed superfluous and incongruous with the AL (i.e. \Parameter s define the dimension). I will create a GitHub issue about this where we can discuss this and potentially decide to change it back if you like}
 \subsection{Property}
 \label{sec:Property}
 
@@ -1332,7 +1347,7 @@ The name of the \Component to be referenced \Component needs to be provided in t
     \midrule
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
-    \SingleValue | \ArrayValue | \ExternalArrayValue | \ComponentValue & singleton & yes \\ 
+    \SingleValue | \ArrayValue | \ExternalArrayValue | \RandomValue & singleton & yes \\ 
     \bottomrule
   \end{edtable}
 \end{table}
@@ -1381,7 +1396,7 @@ In NineML, ``values'' are arrays that implicitly grow to fill the size of the co
 \item \SingleValue, a consistent value across the container
 \item \ArrayValue, an explicit array defined in NineML
 \item \ExternalArrayValue, an explicit array defined in text (space delimited) or HDF5 format.
-\item \ComponentValue, a return value from a \RandomDistribution component.
+\item \RandomValue, a return value derived from a random distribution.
 \end{itemize}
 
 \subsection{SingleValue}
@@ -1485,9 +1500,8 @@ The \textit{mimetype} attribute specifies the data format for the external value
 
 Each \ExternalArrayValue must have a \textit{columnName} attribute, which refers to a column header in the external data file. 
 
-\draftnote{What do you think of this? This allows a single component to return two (related) values at different places at the model (e.g. weight and delay in distance dependent rules). It also seemed a bit neater}
-\subsection{ComponentValue}
-\label{sec:ComponentValue}
+\subsection{RandomValue}
+\label{sec:RandomValue}
 
 \begin{table}[H]
   \begin{edtable}{tabular}{llr}
@@ -1505,10 +1519,10 @@ Each \ExternalArrayValue must have a \textit{columnName} attribute, which refers
   \end{edtable}
 \end{table}
 
-The array of values represented by a \ComponentValue element is populated from the output port of a component. As of version 1.0, only \RandomDistribution components are supported within \ComponentValue but function and generator components are planned for later versions. The size of the generated array is determined by the size of the container (i.e. \Population or \Projection) the \ComponentValue is nested within.
+The array of values represented by a \RandomValue element is populated from the output port of a component. As of version 1.0, only \RandomDistribution components are supported within \RandomValue but function and generator components are planned for later versions. The size of the generated array is determined by the size of the container (i.e. \Population or \Projection) the \RandomValue is nested within.
 
 \subsubsection{Port attribute}
-Each \ComponentValue requires a \textit{port} attribute, which selects which port of the \Component to read.
+Each \RandomValue requires a \textit{port} attribute, which selects which port of the \Component to read.
 
 \section{Populations}
 
@@ -1578,7 +1592,7 @@ The text of the \Number element contains an \primtype{integer} representing the 
 
 Projections define the synaptic connectivity between two populations, the post-synaptic response of the connections, the plasticity rules that modulate the post-synaptic response and the transmission delays. Synaptic and plasticity dynamic components are created and connected to and from explicitly defined ports of the cell components in the source and projection populations if the connection rule determines there is a connection between a particular source and destination cell pair. 
 
-\draftnote{I just drafted this so it will need checking}\SingleValue and \ComponentValue elements used in properties of a projection (in the \Connectivity, \Response, \Plasticity and \Delay elements) take the size of the number of connections made. While \ArrayValue and \ExternalArrayValue elements can either be the size of the number of connections made or the number of possible unique connections (i.e. $N_{\mathrm{source}} * N_{\mathrm{dest}}$). In either case, the expected array data is ordered by the indices
+\draftnote{I just drafted this so it will need checking}\SingleValue and \RandomValue elements used in properties of a projection (in the \Connectivity, \Response, \Plasticity and \Delay elements) take the size of the number of connections made. While \ArrayValue and \ExternalArrayValue elements can either be the size of the number of connections made or the number of possible unique connections (i.e. $N_{\mathrm{source}} * N_{\mathrm{dest}}$). In either case, the expected array data is ordered by the indices
 \begin{equation}
 i_{\mathrm{value}} = i_{\mathrm{source}} * N_{\mathrm{dest}} + i_{\mathrm{dest}}
 \end{equation}
@@ -1834,7 +1848,7 @@ Each \FromResponse element requires a \textit{receiver} attribute. This should r
     \midrule
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
-    \SingleValue | \ArrayValue | \ExternalArrayValue | \ComponentValue & singleton & yes \\ 
+    \SingleValue | \ArrayValue | \ExternalArrayValue | \RandomValue & singleton & yes \\ 
     \bottomrule
   \end{edtable}
 \end{table}
@@ -2294,176 +2308,12 @@ in this simulation}
 \label{fig:EX2_Output}
 \end{figure}
 
-\pagebreak
-
-\newpage
-
-\section{Transition resolution}
-\label{resolution}
-
-\draftnote{Do we really want to include this here? Transitions (with the exception of those which just emit spikes) should really be wound back to the exact time point in my opinion because handling multiple simultaneous (in terms of time steps) transitions doesn't seem well defined to me.}
-This section outlines pseudo code which defines the order of
-transition-triggering, state assignment execution, event emission,
-transmission and resolution in a system of connected components.
-Implementations do not need to implement this algorithm but should produce
-the same behaviours.
-
-A {\tt TransitionResolutionBlock} represents an instant in time. It begins
-before any transitions occur and ends after each component has moved
-into its new \Regime, all \textbf{StateAssignments} have been executed
-and all Events generated and resolved in the system.
-
-\subsection{Serial implementation of transition resolution}
-
-\newcommand{\CN}[0]{\textsl{C\_n}}
-
-We have a system of \textsl{N} components \textsl{\{C\_1,C\_2,...,C\_N\}},
-at time, \textsl{t}, where each component, \CN, is in \Regime
-$R^{t}_{n}$.
-
-\noindent From \Regime $R^{t}_{n}$, there are:
-\begin{itemize}
-\item OnEvent transitions $OnEv^{t}_{n} = \{ ... \}$
-\item OnCondition transitions $OnCond^{t}_{n} = \{ ... \}$
-\end{itemize}
-
-\newcommand{\send}[0]{\texttt{send} }
-\newcommand{\recv}[0]{\texttt{recv} }
-
-\noindent Component \CN
-has:
-\begin{itemize}
-\item \send EventPorts \textsl{EvSend = \{$EvSend_{n,1,}$, $EvSend_{n,2,}$, ... \}}
-\item \recv EventPorts \textsl{EvRecv = \{$EvRecv_{n,1,}$, $EvRecv_{n,2,}$, ... \}}
-\end{itemize}
-
-\noindent EventPort connections are stored in a a map,
-\textsl{EvPortConnections}, which maps EvSend to a list of EvRecv ports. i.e.,
-
-\textsl{\{EvSend $\rightarrow$ [EvRecv,EvRecv,..,EvRecv], EvSend $\rightarrow$
-[EvRecv,EvRecv,EvRecv,...,EvRecv]\}}.
-
-\newcommand{\RCLn}{$RCL_n$}
-\newcommand{\AUTQn}{$AUTQ_n$}
-\newcommand{\EQn}{$EQ_n$}
-
-\noindent Each component has 3 associated data structures
-\begin{itemize}
-\item RegimeChangeList (\RCLn) (This list will contain target-regimes of
-triggered transitions)
-\item ActiveUnresolvedTransitionsQueue (\AUTQn) (This queue will
-contain transitions which will occur, but their effects have not be
-evaluated yet)
-\item EventQueue (\EQn) (This list contains events delivered to this
-component from other components via EventPort-connections)
-\end{itemize}
-
-\subsubsection{Algorithm}
-
-\begin{enumerate}
-\item Enter {\tt TransitionResolutionBlock}
-\item For each component, \CN: clear \RCLn, \AUTQn and \EQn.
-\item For each component, \CN: for each \textsl{oncond} in $OnCond^{t}_{n}$ : if
-\textsl{oncond.trigger} evaluates to true, add \textsl{oncond} to \AUTQn.
-\item For each component, \CN:  for each \textsl{tr} in \AUTQn :
-\begin{itemize}
-\item
-remove \textsl{tr} from \AUTQn
-\item add the target\_regime to \RCLn
-\item for each
-\textsl{action} in \textsl{tr.do}:
-\begin{itemize}
-\item if \textsl{action} is an OutputEvent: test
-if the OutputEvent port is a key in \textsl{EvPortConnections}. If so, add the
-    OutputEvent to the EventQueue (\textsl{EQ\_{target}}) corresponding to each
-    \textsl{EvRecv} in the \textsl{EvPortConnections} map.
-
-\item  if \textsl{action}  is a StateAssignment, execute that state-assignment
-immediately.
-\end{itemize}
-\end{itemize}
-
-\item For each component \CN: for each event, \textsl{EvRecv} in \EQn: test
-whether there is a transition, \textsl{tr} triggered by this event, i.e an
-OnEvent in $OnEv^t_n$ from $R^t_n$ ; if so; then add it to \AUTQn.
-
-\item While any component has a non-empty \textsl{AUTQ}: Goto (4).
-
-\item For each component, \CN, check that all the target-regimes in the \RCLn
-are the same regime. (If not raise a RuntimeError). Each component moves into
-this target-regime, or remains in the same regime if \RCLn is empty.
-
-\item Leave {\tt TransitionResolutionBlock}
-
-\end{enumerate}
-
-\subsubsection{Notes}
-
-\begin{enumerate}
-\item \draftnote{Not sure about this either. Since a transition can also mean transitioning to a new regime it would
-be very bad if two conditions were met at the same time and it was ambiguous which was applied first. Should
-we not require an order of execution if there are multiple {\OnCondition}s in the same regime. Could be quite difficult
-for the user to handle this otherwise}
-There is no order defined in transitions; this means
-that the order of resolution of state assignments can be ambiguous. If, for
-example, we have two transitions, T1 and T2, originating from the same \Regime,
-in which T1 contains the state assignment \textsl{V=V+1} and T2 contains the
-assignment \textsl{V=V*V}, and both transitions are triggered simultaneously, then there is no
-guarantee about the value of V. It is up the user to ensure this does not
-happen.
-
-\draftnote{I am not sure this is a good idea, we could just not allow \OutputEvent in \OnEvent transitions}
-\item This Resolution System allows \emph{cascading} of Events, which in theory
-could be recursive through components, depending on connectivity. The
-implementation allows for this; and it is the users responsibility to ensure
-that there are not such issues. The implementation may decided to terminate
-Step (6) after a given number (say 1000) of iterations to prevent infinite
-loops.
-
-\end{enumerate}
-
-\subsection{Parallelising of event resolution}
-
-This algorithm can be parallelised as following. We create a thread for each
-Component, which can independently execute Steps (3 to 6). The threads need
-to be synchronized after steps (4) and (5) as shown in
-Figure~\ref{ParallelisingTransitions}.
-
-\begin{figure}[htb!]
-\center
-\includegraphics[width=14cm]{images/ParallelisingTransitions.pdf}
-\protect\caption{Parallelising of Event Resolution.}
-\label{ParallelisingTransitions}
-\end{figure}
-
 \section{Acknowledgments}
 \subsection{Former NineML INCF Task Force members}
+\label{sec:task_force}
 \begin{itemize}
-\item Abigail Morrison
-\item Alex Cope
-\item Anatoli Gorchetchnikov
-\item Andrew P. Davison
-\item Birgit Kriener
-\item Chung-Chuan Lo
-\item Damien Drix
-\item Dragan Nikolic
-\item Eilif Muller
-\item Erik De Schutter
-\item Hans Ekkehard Plesser
-\item Hugo Cornelis
-\item Ivan Raikov
-\item Lars Schwabe
-\item Malin Sandström
-\item Michael Hull
-\item Mikael Djurfeldt
-\item Padraig Gleeson
-\item Raphael Ritz
-\item Robert Cannon
-\item Robert Clewley
-\item Sean Hill
-\item Subhasis Ray
-\item Valentin Haenel
-\item Yann Le Franc
+\item     Robert    Cannon\item     Robert    Clewley\item     Alex      Cope\item     Hugo      Cornelis
+\item     Andrew    P. Davison\item     Erik      De Schutter\item     Mikael    Djurfeldt\item     Damien    Drix\item     Hans      Ekkehard Plesser\item     Padraig   Gleeson\item     Anatoli   Gorchetchnikov\item     Valentin  Haenel\item     Sean      Hill\item     Michael   Hull\item     Birgit    Kriener\item     Yann      Le Franc\item     Chung-ChuaLo\item     Abigail   Morrison\item     Eilif     Muller\item     Dragan    Nikolic\item     Ivan      Raikov\item     Subhasis  Ray\item     Raphael   Ritz\item     Malin     Sandström\item     Lars      Schwabe
 \end{itemize}
 
 \clearpage
