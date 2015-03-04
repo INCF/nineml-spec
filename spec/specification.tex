@@ -298,7 +298,7 @@ NineML documents must be enclosed within an \NineML element.
     \toprule
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
-    xmlns & "http://nineml.net/9ML/1.0" & yes\\
+    xmlns & `http://nineml.net/9ML/1.0' & yes\\
     \midrule
     \em{Child elements} & \em{Multiplicity} & \em{Required} \\
     \midrule
@@ -1524,10 +1524,6 @@ Each \ExternalArrayValue must have a \textit{columnName} attribute, which refers
     \toprule
     \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{ExternalArrayValue Structure}}}\\
     \toprule
-    \em{Attribute name} & \em{Type/Format} & \em{Required} \\
-    \midrule
-    port & {\AnalogSendPort}@name & yes\\
-    \midrule    
     \em{Child elements} & \em{Multiplicity} & \em{Required} \\
     \midrule
     \Component{}\withelem\RandomDistribution | \Reference{}\pointto\Component{}\withelem\RandomDistribution & singleton & yes \\
@@ -1535,10 +1531,7 @@ Each \ExternalArrayValue must have a \textit{columnName} attribute, which refers
   \end{edtable}
 \end{table}
 
-The array of values represented by a \RandomValue element is populated from the output port of a component. As of version 1.0, only \RandomDistribution components are supported within \RandomValue but function and generator components are planned for later versions. The size of the generated array is determined by the size of the container (i.e. \Population or \Projection) the \RandomValue is nested within.
-
-\subsubsection{Port attribute}
-Each \RandomValue requires a \textit{port} attribute, which selects which port of the \Component to read.
+\RandomValue elements represent arrays of values drawn from random distributions, which are defined by a \Component{}\withelem\RandomDistribution elements. The size of the generated array is determined by the size of the container (i.e. \Population or \Projection) the \RandomValue is nested within.
 
 \section{Populations}
 
