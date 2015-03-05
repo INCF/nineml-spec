@@ -541,9 +541,9 @@ As of NineML version 1.0, only inline mathematical expressions, which have simil
     \toprule
     \multicolumn{2}{c}{\parbox{0.55\linewidth}{\center\textbf{MathInline Structure}}}\\
     \toprule
-    \em{Body} & \em{Required} \\
+    \em{Body format} & \em{Required} \\
     \midrule
-    Inline mathematical expression & yes\\
+    Inline-maths expression & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
@@ -553,6 +553,8 @@ As of NineML version 1.0, only inline mathematical expressions, which have simil
 evaluates to either a \primtype{bool} (when used as the trigger for
 {\OnCondition} objects) or a \primtype{real number} (when used  as a
 right-hand-side for {\Alias}, {\TimeDerivative} and {\StateAssignment} objects). All numbers/variables in inline maths expressions are assumed to be \primtype{real numbers}.
+
+\subsubsection{Body format}
 
 The following arithmetic operators are supported in all inline maths expressions and have the same interpretation and precedence levels as in the ANSI C89 standard,
 \begin{itemize}
@@ -680,7 +682,7 @@ Each \Alias requires a \textit{name} attribute, which is a valid \identifier and
     name & \identifier & yes\\
     units & \Unit@name & yes\\
     \midrule
-    \em{Text format} & \; & \em{Required} \\
+    \em{Body format} & \; & \em{Required} \\
     \midrule
     \primtype{real number} & \; & yes \\ 
     \bottomrule
@@ -697,7 +699,7 @@ Each \Constant requires a \textit{name} attribute, which should be a valid \iden
 \subsubsection{Units attribute}
 Each \Constant requires a \textit{units} attribute. The \textit{units} attribute specifies the units of the property and should refer to the name of a \Unit element in the document scope. 
 
-\subsubsection{Text format}
+\subsubsection{Body format}
 Any valid numeric value, including shorthand scientific notation e.g. 1e-5 ($1\times10^{-5}$).
 
 \section{Ports}
@@ -1214,7 +1216,7 @@ The \textit{standardLibrary} attribute is required and should point to a \URL in
 
 Connection rules must be one of 6 standard library types, \textit{all-to-all}, \textit{one-to-one}, \textit{probabilistic}, \textit{explicit}, \\\textit{random-fan-out} and \textit{random-fan-in}, provided to the \textit{standardLibarary} attribute.
 
-\note{In future versions, built-in connectivity rules are to be replaced with arbitrary connection rule generators.}
+\note{In future versions, built-in connectivity rules are to be replaced with mathematically expressed connection rules.}
 
 \subsubsection{StandardLibrary attribute}
 The \textit{standardLibrary} attribute is required and should point to the \URL in the \\\href{http://nineml.net/9ML/1.0/\-connectionrules/}{http://nineml.net/9ML/1.0/connectionrules/} directory that corresponds to the desired connection rule.
@@ -1296,7 +1298,7 @@ Each \Component requires a \textit{name} attribute, which should be a valid \ide
     \midrule
     url & \URL & no\\
     \midrule
-    \em{Text format} & \; & \em{Required} \\
+    \em{Body format} & \; & \em{Required} \\
     \midrule
     \ComponentClass{}@name & \; & yes \\ 
     \bottomrule
@@ -1308,10 +1310,10 @@ The \Definition element establishes a link between a User Layer component and Ab
 document or in another file if a \textit{url} attribute is provided.
 
 \subsubsection{Url attribute}
-If the \ComponentClass referenced by the definition element is defined outside the current document, the \textit{url} attribute specifies a \URL for the file which contains the \ComponentClass definition. If it is omitted the \ComponentClass is assumed to be in the current document.
+If the \ComponentClass referenced by the definition element is defined outside the current document, the \textit{url} attribute specifies a \URL for the file which contains the \ComponentClass definition. \notice If the \textit{url} attribute is omitted the \ComponentClass is referenced from the current document.
 
-\subsubsection{Text format}
-The name of the \ComponentClass to be referenced \ComponentClass needs to be provided in the text of \Definition element.
+\subsubsection{Body format}
+The name of the \ComponentClass to be referenced \ComponentClass needs to be provided in the body of the \Definition element.
 
 \subsection{Prototype}
 \label{sec:Prototype}
@@ -1325,7 +1327,7 @@ The name of the \ComponentClass to be referenced \ComponentClass needs to be pro
     \midrule
     url & \href{http://en.wikipedia.org/wiki/Uniform_resource_locator}{URL} & no\\
     \midrule
-    \em{Text format} & \; & \em{Required} \\
+    \em{Body format} & \; & \em{Required} \\
     \midrule
     \Component{}@name & \; & yes \\ 
     \bottomrule
@@ -1336,10 +1338,10 @@ The \Prototype element establishes a link to an existing User Layer \Component, 
 document or in another file if a \textit{url} attribute is provided.
 
 \subsubsection{Url attribute}
-If the prototype \Component is defined outside the current file, the \textit{URL} attribute specifies a \URL for the file which contains the prototype \Component.
+If the prototype \Component is defined outside the current file, the \textit{URL} attribute specifies a \URL for the file which contains the prototype \Component. \notice If the \textit{url} attribute is omitted the \Component is referenced from the current document.
 
-\subsubsection{Text format}
-The name of the \Component to be referenced \Component needs to be provided in the text of \Prototype element.
+\subsubsection{Body format}
+The name of the \Component to be referenced \Component needs to be provided in the body of the \Prototype element.
 
 \subsection{Property}
 \label{sec:Property}
@@ -1382,7 +1384,7 @@ Each \Property element requires a \emph{units} attribute. The \textit{units} att
     \midrule
     url &  \href{http://en.wikipedia.org/wiki/Uniform_resource_locator}{URL}  & no\\
     \midrule
-    \em{Text format} & \; & \em{Required} \\
+    \em{Body format} & \; & \em{Required} \\
     \midrule
     *@name & \; & yes\\
     \bottomrule
@@ -1392,10 +1394,10 @@ Each \Property element requires a \emph{units} attribute. The \textit{units} att
 \Reference elements are used to locate User Layer elements in the document scope of the current separate documents. In most cases, User Layer elements (with the exception of \Population elements supplied to \Projection) can be specified inline, i.e. within the element they are required. However, it is often convenient to define a component in the document scope as this allows it to be reused at different places within the model. The \textit{url} attribute can be used to reference a component in a separate document, potentially one published online in a public repository (e.g. \href{http://senselab.med.yale.edu/modeldb/ListByModelName.asp?c=19&lin=-1}{ModelDB} or \href{http://www.opensourcebrain.org/}{Open Source Brain}).
 
 \subsubsection{Url attribute}
-The \textit{url} attribute specifies a \URL for the file which contains the User Layer element to be referenced.
+The \textit{url} attribute specifies a \URL for the file which contains the User Layer element to be referenced. \notice If the \textit{url} attribute is omitted the element is referenced from the current document.
 
-\subsubsection{Text format}
-The name of the User Layer element to be referenced should be included in the text of the \Reference element.
+\subsubsection{Body format}
+The name of the User Layer element to be referenced should be included in the body of the \Reference element.
 
 \section{Values}
 \label{sec:Values}
@@ -1416,7 +1418,7 @@ In NineML, ``values'' are arrays that implicitly grow to fill the size of the co
     \toprule
     \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{SingleValue Structure}}}\\
     \toprule
-    \em{Text format} & \; & \em{Required} \\
+    \em{Body format} & \; & \em{Required} \\
     \midrule
     \primtype{real number} & \; & yes \\ 
     \bottomrule
@@ -1425,7 +1427,7 @@ In NineML, ``values'' are arrays that implicitly grow to fill the size of the co
 
 A \SingleValue element represents an array filled with a single value.
 
-\subsubsection{Text format}
+\subsubsection{Body format}
 Any valid numeric value in \href{http://en.wikipedia.org/wiki/ANSI_C}{ANSI C89}, including shorthand scientific notation  e.g. 1e-5 ($1\times10^{-5}$).
 
 \subsection{ArrayValue}
@@ -1457,7 +1459,7 @@ Any valid numeric value in \href{http://en.wikipedia.org/wiki/ANSI_C}{ANSI C89},
     \midrule
     index & integer & yes \\
     \midrule
-    \em{Text format} & \; & \em{Required} \\
+    \em{Body format} & \; & \em{Required} \\
     \midrule
     \primtype{real number} & \; & yes\\
     \bottomrule
@@ -1470,7 +1472,7 @@ The \textit{index} attribute specifies the index of the \ArrayValueRow in the \A
 
 \note{The order of {\ArrayValueRow} elements within an \ArrayValue element does not effect the interpreted order of the values in the array in keeping with the order non-specific design philosophy of NineML (see \ref{sec:design_considerations}).}
 
-\subsubsection{Text format}
+\subsubsection{Body format}
 Any valid numeric value in \href{http://en.wikipedia.org/wiki/ANSI_C}{ANSI C89}, including shorthand scientific notation  e.g. 1e-5 ($1\times10^{-5}$).
 
 \subsection{ExternalArrayValue}
@@ -1578,16 +1580,16 @@ The \Cell element specifies the dynamic components that will make up the populat
     \toprule
     \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Number Structure}}}\\
     \toprule
-    \em{Text format} & \; & \em{Required} \\
+    \em{Body format} & \; & \em{Required} \\
     \midrule
     \primtype{integer} & \; & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
 
-The number of cells in the population is specified by the integer provided in the text of the \Number element. In future versions this may be extended to allow the size of a population to be derived from other features of the \Population. 
+The number of cells in the population is specified by the integer provided in the body of the \Number element. In future versions this may be extended to allow the size of a population to be derived from other features of the \Population. 
 
-\subsubsection{Text format}
+\subsubsection{Body format}
 The text of the \Number element contains an \primtype{integer} representing the size of the population.
 
 \section{Projections}
@@ -2015,7 +2017,7 @@ condition, we emit a spike, and the \StateAssignment of $V \leftarrow c$ resets
 the value of $V$.
 \clearpage
 The corresponding Abstraction Layer XML description for this model is the following:
-\begin{lstlisting}
+\begin{lstlisting}[style=listXML]
 <?xml version="1.0" encoding='UTF-8'?>
 <NineML xmlns="http://nineml.net/9ML/1.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -2070,7 +2072,7 @@ The corresponding Abstraction Layer XML description for this model is the follow
 \clearpage
 User Layer description for the above example:
 
-\begin{lstlisting}
+\begin{lstlisting}[style=listXML]
 <?xml version='1.0' encoding='UTF-8'?>
 <NineML xmlns="http://nineml.net/9ML/1.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -2173,7 +2175,7 @@ The corresponding Regime Graph is shown in Figure 5.
 \end{figure}
 \clearpage
 The resulting XML description for the Abstraction Layer is :
-\begin{lstlisting}[label=code:xmliaf2]
+\begin{lstlisting}[style=listXML]
 <?xml version='1.0' encoding='UTF-8'?>
 <NineML xmlns="http://nineml.net/9ML/1.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -2253,7 +2255,7 @@ The resulting XML description for the Abstraction Layer is :
 \end{lstlisting}
 
 User Layer description for the above example:
-\begin{lstlisting}
+\begin{lstlisting}[style=listXML]
 <?xml version='1.0' encoding='UTF-8'?>
 <NineML xmlns="http://nineml.net/9ML/1.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -2318,6 +2320,216 @@ The simulation results is presented in Figure 6.
 in this simulation}
 \label{fig:EX2_Output}
 \end{figure}
+
+\newpage
+\subsection{Network example}
+
+\begin{lstlisting}[style=listXML]
+<?xml version='1.0' encoding='UTF-8'?>
+<NineML xmlns="http://nineml.net/9ML/1.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://nineml.net/9ML/1.0/NineML_v1.0.xsd">
+  <ComponentClass name="CoBa">
+    <EventReceivePort name="coba_spikeinput"/>
+    <AnalogReceivePort name="coba_vrev"/>
+    <AnalogSendPort dimension="current" name="coba_I" />
+    <Parameter dimension="time" name="coba_tau"/>
+    <Parameter dimension="conductance" name="coba_q"/>
+    <Dynamics>
+			<StateVariable dimension="conductance" name="coba_g"/>
+			<Regime name="RegularRegime">
+				<OnEvent target_regime="RegularRegime" src_port="coba_spikeinput">
+					<StateAssignment variable="coba_g">
+						<MathInline>coba_g+coba_q</MathInline>
+					</StateAssignment>
+				</OnEvent>
+				<TimeDerivative variable="coba_g">
+					<MathInline>-coba_g/coba_tau</MathInline>
+				</TimeDerivative>
+			</Regime>
+      <Alias name="coba_I">
+        <MathInline>coba_g*(coba_vrev-iaf_V)</MathInline>
+      </Alias>
+    </Dynamics>
+  </ComponentClass>
+  <Dimension name="time" t="1"/>
+  <Dimension name="voltage" m="1" l="2" t="-3" i="-1"/>
+  <Dimension name="conductance" m="-1" t="3" l="-2" i="2"/>
+  <Dimension name="area" l="2"/>
+</NineML>
+\end{lstlisting}
+
+\begin{lstlisting}[style=listXML]
+<?xml version='1.0' encoding='UTF-8'?>
+<NineML xmlns="http://nineml.net/9ML/1.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://nineml.net/9ML/1.0/NineML_v1.0.xsd">
+  <ComponentClass name="IaF">
+    <AnalogSendPort dimension="voltage" name="iaf_V" />
+    <AnalogReducePort dimension="current" operator="+" name="iaf_ISyn" />
+    <EventSendPort name="iaf_spikeoutput"/>
+    <Parameter dimension="area" name="iaf_cm"/>
+    <Parameter dimension="time" name="iaf_taurefrac"/>
+    <Parameter dimension="voltage" name="iaf_vreset"/>
+    <Parameter dimension="voltage" name="iaf_vrest"/>
+    <Parameter dimension="voltage" name="iaf_vthresh"/>
+    <Parameter dimension="conductance" name="iaf_gl"/>
+    <Dynamics>
+      <StateVariable dimension="voltage" name="iaf_V"/>
+      <StateVariable dimension="time" name="iaf_tspike"/>
+      <Regime name="RefractoryRegime">
+        <TimeDerivative variable="iaf_V">
+          <MathInline>0</MathInline>
+        </TimeDerivative>
+        <OnCondition target_regime="RegularRegime">
+          <Trigger>
+            <MathInline>t &gt;= iaf_tspike + iaf_taurefrac</MathInline>
+          </Trigger>
+        </OnCondition>
+      </Regime>
+      <Regime name="RegularRegime">
+        <TimeDerivative variable="iaf_V">
+          <MathInline>( iaf_gl*( iaf_vrest - iaf_V ) + iaf_ISyn)/(iaf_cm)</MathInline>
+        </TimeDerivative>
+        <OnCondition target_regime="RefractoryRegime">
+          <StateAssignment variable="iaf_tspike">
+            <MathInline>t</MathInline>
+          </StateAssignment>
+          <StateAssignment variable="iaf_V">
+            <MathInline>iaf_vreset</MathInline>
+          </StateAssignment>
+          <OutputEvent port="iaf_spikeoutput"/>
+          <Trigger>
+            <MathInline>iaf_V &gt; iaf_vthresh</MathInline>
+          </Trigger>
+        </OnCondition>
+      </Regime>
+    </Dynamics>
+  </ComponentClass>
+  <Dimension name="time" t="1"/>
+  <Dimension name="voltage" m="1" l="2" t="-3" i="-1"/>
+  <Dimension name="conductance" m="-1" t="3" l="-2" i="2"/>
+  <Dimension name="area" l="2"/>
+</NineML>
+\end{lstlisting}
+
+\begin{lstlisting}[style=listXML]
+<?xml version='1.0' encoding='UTF-8'?>
+<NineML xmlns="http://nineml.net/9ML/1.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://nineml.net/9ML/1.0/NineML_v1.0.xsd">
+  <Component name="IaFNeuron">
+    <Definition url="./iaf.9ml"
+      >IaF</Definition>
+    <Property name="iaf_V" units="mV">
+      <SingleValue>-60</SingleValue>
+    </Property>
+    <Property name="iaf_tspike" units="ms">
+      <SingleValue>-1</SingleValue>
+    </Property>
+    <Property name="iaf_cm" units="cm_square">
+      <SingleValue>0.2</SingleValue>
+    </Property>
+    <Property name="iaf_taurefrac" units="ms">
+      <SingleValue>5</SingleValue>
+    </Property>
+    <Property name="iaf_gl" units="mS">
+      <SingleValue>0.05</SingleValue>
+    </Property>
+    <Property name="iaf_vreset" units="mV">
+      <SingleValue>-60</SingleValue>
+    </Property>
+    <Property name="iaf_vrest" units="mV">
+      <SingleValue>-60</SingleValue>
+    </Property>
+    <Property name="iaf_vthresh" units="mV">
+      <SingleValue>-50</SingleValue>
+    </Property>
+  </Component>
+  <Component name="IaFSynapseExcitatory">
+    <Definition url="./coba.9ml">CoBa</Definition>
+    <Property name="coba_g" units="mS">
+      <SingleValue>0</SingleValue>
+    </Property>
+    <Property name="coba_tau" units="ms">
+      <SingleValue>5</SingleValue>
+    </Property>
+    <Property name="coba_q" units="ms">
+      <SingleValue>0.004</SingleValue>
+    </Property>
+    <Property name="coba_vrev" units="mV">
+      <SingleValue>0</SingleValue>
+    </Property>
+  </Component>
+  <Component name="IaFSynapseInhibitory">
+    <Definition url="./coba.9ml">CoBa</Definition>
+    <Property name="coba_g" units="mS">
+      <SingleValue>0</SingleValue>
+    </Property>
+    <Property name="coba_tau" units="ms">
+      <SingleValue>5</SingleValue>
+    </Property>
+    <Property name="coba_q" units="ms">
+      <SingleValue>0.051</SingleValue>
+    </Property>
+    <Property name="coba_vrev" units="mV">
+      <SingleValue>-80</SingleValue>
+    </Property>
+  </Component>
+  <Population name="Excitatory">
+  	<Size>3200</Size>
+  	<Cell>
+  		<Reference>IaFNeuron</Reference>
+  	</Cell>
+  </Population>
+  <Population name="Inhibitory">
+  	<Size>800</Size>
+  	<Cell>
+  		<Reference>IaFNeuron</Reference>
+  	</Cell>
+  </Population>
+  <Selection name="AllNeurons">
+  	<Concatonate>
+  		<Item index="0">Excitatory</Item>
+  		<Item index="1">Inhibitory</Item>
+  	</Concatonate>
+  </Selection>
+  <Projection>
+  	<Source>
+  		<Reference>Excitatory</Reference>
+  	</Source>
+  	<Destination>
+  		<Reference>AllNeurons</Reference>
+  	</Destination>
+  	<Response>
+  		<Reference>IaFSynapseExcitatory</Reference>
+  		<FromDestination sender="iaf_V" receiver="coba_vrev"/>
+  	</Response>
+  	<Connectivity>
+  		<ConnectionRule standardlibrary="http://nineml.net/9ML/1.0/connectionrules/onetoone.9ml"/>
+  	</Connectivity>
+  </Projection>
+  <Projection>
+  	<Source>
+  		<Reference>Inhibitory</Reference>
+  	</Source>
+  	<Destination>
+  		<Reference>AllNeurons</Reference>
+  	</Destination>
+  	<Response>
+  		<Reference>IaFSynapseInhibitory</Reference>
+  		<FromDestination sender="iaf_V" receiver="coba_vrev"/>
+  	</Response>
+  	<Connectivity>
+  		<ConnectionRule standardlibrary="http://nineml.net/9ML/1.0/connectionrules/onetoone.9ml"/>
+  	</Connectivity>
+  </Projection>
+  <Unit symbol="mV" dimension="voltage" power="-3"/>
+  <Unit symbol="ms" dimension="time" power="-3"/>
+  <Unit symbol="cm_square" dimension="area" power="-4"/>
+  <Unit symbol="mS" dimension="conductance" power="-3"/>
+</NineML>
+\end{lstlisting}
 
 \section{Acknowledgments}
 \subsection{Former NineML INCF Task Force members}
