@@ -1,9 +1,5 @@
 \documentclass[draftspec]{ninemlspec}
-\usepackage{microtype}
-\usepackage{pbox}
-\usepackage{multirow}
-\usepackage{multicol}
-\usepackage{float}
+
 %% ============================================================================
 %% Description:  Documentation for \lq\lq{}The NineML Specification Document\rq\rq{}
 %% Authors: Thomas G. Close <tclose@oist.jp>, Ivan Raikov <raikov@oist.jp>, Andrew P. Davison <davison@unic.cnrs-gif.fr>
@@ -270,7 +266,7 @@ parametrization of model elements that have been defined in the
 Abstraction Layer, the two layers should share
 a complementary and compatible design philosophy. Which aspects of a model
 are defined in the Abtraction Layer and which are in the User Layer
-Layer are clearly defined (each Child elements belongs to either one).
+Layer are clearly defined (each element type belongs to only one layer with the exception of units and dimensions).
 In order to simplify their interpretation and maintain compatibility with a wide 
 range of data formats (e.g. JSON, Python objects), NineML documents are 
 not sensitive to the order that objects appear in.
@@ -596,8 +592,6 @@ The following functions are built in and are defined as per ANSI C89:
 \item \verb|acosh(x)|
 \item \verb|atanh(x)|
 \item \verb|atan2(x)|
-\item \verb|ceil(x)|
-\item \verb|floor(x)|
 \end{itemize}
 \end{multicols}
 
@@ -695,7 +689,7 @@ Each \Alias requires a \textit{name} attribute, which is a valid \identifier and
 
 \Constant objects are used to specify physical constants such as the Ideal Gas Constant (i.e. 8.314462175 JK$^{-1}$mol$^{-1}$) or Avogadro's number (i.e. 6.0221412927$\times$10$^{23}$mol$^{-1}$), and to convert unit dimensions between abstract mathematical quantities.
 
-The \notice use of \Constant elements to hold fixed model parameters is \emph{highly discouraged} since this breaks the division of semantic layers (abstraction and user), which is a key feature of NineML (see \ref{sec:scope}).
+The \notice use of \Constant elements to hold fixed model parameters is \emph{strongly discouraged} since this breaks the division of semantic layers (abstraction and user), which is a key feature of NineML (see \ref{sec:scope}).
 
 \subsubsection{Name attribute}
 Each \Constant requires a \textit{name} attribute, which should be a valid \identifier and uniquely identify the {\Dimension} in current the scope.
@@ -712,7 +706,7 @@ Any valid numeric value, including shorthand scientific notation e.g. 1e-5 ($1\t
 Ports allow components to communicate with each
 other during a simulation. Ports can either transmit discrete events or continuous streams of analog data. Events are typically used to transmit and receive spikes between neutron model, whereas analog ports can be used to model injected current and gap junctions between neuron models. 
 
-Ports are divided into sending, \EventSendPort and \AnalogSendPort, and receiving objects, \EventReceivePort, \AnalogReceivePort and \AnalogReducePort. With the exception of \AnalogReducePort objects, each receive port must be connected to exactly one send port, where as a send port can be connected any number of receive ports. \AnalogReducePort objects can be connected to any number of \AnalogSendPort objects; the values of the connected ports are then ``reduced'' to a single data stream.
+Ports are divided into sending, \EventSendPort and \AnalogSendPort, and receiving objects, \EventReceivePort, \AnalogReceivePort and \AnalogReducePort. With the exception of \AnalogReducePort objects, each receive port must be connected to exactly one matching (i.e. analog$\to$analog, event$\to$event) send port, where as a send port can be connected any number of receive ports. \AnalogReducePort objects can be connected to any number of \AnalogSendPort objects; the values of the connected ports are then ``reduced'' to a single data stream using the \textit{operator} provided to the \AnalogReducePort.
 
 
 \subsection{AnalogSendPort}
@@ -731,14 +725,14 @@ Ports are divided into sending, \EventSendPort and \AnalogSendPort, and receivin
   \end{edtable}
 \end{table}
 
-{\AnalogSendPort} objects allow variables from the current component to be published externally to be read by other {\ComponentClass} objects. Each {\AnalogSendPort} can be connected to multiple {\AnalogReceivePort} and {\AnalogReducePort} objects.
+{\AnalogSendPort} objects allow variables from the current component to be published externally so they can be read by other {\ComponentClass} objects. Each {\AnalogSendPort} can be connected to multiple {\AnalogReceivePort} and {\AnalogReducePort} objects.
 
 \subsubsection{Name attribute}
 Each \AnalogSendPort requires a \textit{name} attribute, which should refer to a \StateVariable or \Alias within the current \ComponentClass.
 
 \subsubsection{Dimension attribute}
 Each \AnalogSendPort requires a \textit{dimension} attribute. This attribute specifies the dimension of the units of the quantity that is expected to be passed through the \AnalogSendPort and should refer to the name of a \Dimension element in the document scope.
-\note{"Dimensionless" parameters can be defined by referring to an empty \Dimension object, i.e. one without any \textit{power} or offset attributes} 
+\note{"Dimensionless" parameters can be defined by referring to an empty \Dimension object, i.e. one without any \textit{power} or \textit{offset} attributes} 
 
 \subsection{AnalogReceivePort}
 \label{sec:AnalogReceivePort}
@@ -1218,32 +1212,31 @@ The \textit{standardLibrary} attribute is required and should point to a \URL in
   \end{edtable}
 \end{table}
 
-In Version 1.0 of the NineML standard, connection rules must be one of 6 standard library types (in future versions, built-in connectivity rules are to be replaced with arbitrary connection rule generators):
-\begin{itemize}
-\item AllToAll
-\item OneToOne
-\item ProbabilisticConnectivity
-\item ExplicitConnectionList
-\item RandomFanOut
-\item RandomFanIn
-\end{itemize}
+Connection rules must be one of 6 standard library types, \textit{all-to-all}, \textit{one-to-one}, \textit{probabilistic}, \textit{explicit}, \\\textit{random-fan-out} and \textit{random-fan-in}, provided to the \textit{standardLibarary} attribute.
+
+\note{In future versions, built-in connectivity rules are to be replaced with arbitrary connection rule generators.}
 
 \subsubsection{StandardLibrary attribute}
-The \textit{standardLibrary} attribute is required and should point to a \URL in the \href{http://nineml.net/standardlibraries/connectionrules/}{http://nineml.net/standardlibraries/connectionrules/} directory.
+The \textit{standardLibrary} attribute is required and should point to the \URL in the \\\href{http://nineml.net/9ML/1.0/\-connectionrules/}{http://nineml.net/9ML/1.0/connectionrules/} directory that corresponds to the desired connection rule.
 
-\emph{\textbf{http://nineml.net/standardlibraries/connectionrules/AllToAll}}
+\subsubsubsection{http://nineml.net/9ML/1.0/connectionrules/alltoall}
 
 All cells in the source population are connected to all cells in the destination population.
 
-\emph{\textbf{http://nineml.net/standardlibraries/connectionrules/OneToOne}}
+\subsubsubsection{http://nineml.net/9ML/1.0/connectionrules/onetoone}
 
 Each cell in the source population is connected to the cell in the destination population with the corresponding index. Note that this requires that the source and destination populations be the same size.
 
-\emph{\textbf{http://nineml.net/standardlibraries/connectionrules/ProbabilisticConnectivity}}
+\subsubsubsection{http://nineml.net/9ML/1.0/connectionrules/probabilistic}
 
-All cells in the source population are connected to cells in the destination population with a probability defined by a parameter, which should be named \textit{probability}. The properties supplied to the \textit{probability} parameter should either be a \SingleValue representing the probability of a connection between all source and destination cell pairs, or a \ArrayValue or \ExternalArrayValue of size $M{\times}N$, where $M$ and $N$ are the size of the source and destination populations respectively. In the case of the \ArrayValue or \ExternalArrayValue properties, the list represents probabilities of connections existing between the first cell in the source population with every cell in the destination population in order of their index, followed by the second cell in the source with with every cell in the destination population in order of their index and so forth for each cell in the source population.
+All cells in the source population are connected to cells in the destination population with a probability defined by a parameter, which should be named \textit{probability}. The properties supplied to the \textit{probability} parameter should either be a \SingleValue representing the probability of a connection between all source and destination cell pairs, or a \ArrayValue or \ExternalArrayValue of size $M{\times}N$, where $M$ and $N$ are the size of the source and destination populations respectively. \notice For array probabilities, the data in the \ArrayValue or \ExternalArrayValue are ordered by the indices
 
-\emph{\textbf{http://nineml.net/standardlibraries/connectionrules/ExplicitConnectionList}}
+\begin{equation}
+i_{\mathrm{prob}} = i_{\mathrm{source}} * N_{\mathrm{dest}} + i_{\mathrm{dest}}
+\end{equation}
+where $i_{\mathrm{prob}}$, $i_{\mathrm{source}}$ and $i_{\mathrm{dest}}$ are the indices of the probability entry, and the source and destination cells respectively, and $N_{\mathrm{dest}}$ is the size of the destination population.
+
+\subsubsubsection{http://nineml.net/9ML/1.0/connectionrules/explicit}
 
 Cells in the source population are connected to cells in the destination population as specified by an explicit arrays. The source and destination are defined via parameters, which should be named \textit{sourceIndicies} and \textit{destinationIndicies} parameters respectively.
 
@@ -1251,11 +1244,11 @@ The properties supplied to the \textit{sourceIndicies} parameter should be a \Ar
 
 The properties supplied to the \textit{destinationIndicies} parameter should be a \ArrayValue or \ExternalArrayValue drawn from the set $\{1,\ldots,N\}$ where $N$ is the size of the source population and be the same length as the property supplied to the \textit{source-indices} parameter.
 
-\emph{\textbf{http://nineml.net/standardlibraries/connectionrules/RandomFanOut}}
+\subsubsubsection{http://nineml.net/9ML/1.0/connectionrules/randomfanout}
 
 Cells in the source population are connected to cells in the destination population with a probability defined by a parameter, which should be named \textit{probability}. The property supplied to the \textit{probability} parameter should be a \SingleValue.
 
-\emph{\textbf{http://nineml.net/standardlibraries/connectionrules/RandomFanIn}}
+\subsubsubsection{http://nineml.net/9ML/1.0/connectionrules/randomfanin}
 
 Cells in the destination population are connected to cells in the source population with a probability defined by a parameter, which should be named \textit{probability}. The property supplied to the \textit{probability} parameter should be a \SingleValue.
 
@@ -2354,7 +2347,7 @@ in this simulation}
 \item     Ivan      Raikov
 \item     Subhasis  Ray
 \item     Raphael   Ritz
-\item     Malin     Sandstr�m
+\item     Malin     Sandstr\"{o}m
 \item     Lars      Schwabe
 \end{itemize}
 \end{multicols}

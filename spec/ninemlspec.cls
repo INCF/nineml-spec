@@ -88,6 +88,10 @@
 \RequirePackage{suffix}
 \RequirePackage{varwidth}
 \RequirePackage{titlesec}
+\RequirePackage{multirow}
+\RequirePackage{microtype}
+\RequirePackage{pbox}
+\RequirePackage{float}
 
 % We use the "optional" package to indicate whether to generate a grayscale
 % vs a color version of the document without having to alter the .tex file
@@ -1171,8 +1175,16 @@
 
 \newcommand{\dblquote}    {\verb|"|} %"
 
+% subsubsubsection definition
 
+\setcounter{secnumdepth}{4}
 
+\titleformat{\paragraph}
+{\normalfont\normalsize\bfseries}{\theparagraph}{1em}{}
+\titlespacing*{\paragraph}
+{0pt}{3.25ex plus 1ex minus .2ex}{1.5ex plus .2ex}
+
+\newcommand{\subsubsubsection}{\paragraph}
 
 % 
 % Final settings before the body begins.
