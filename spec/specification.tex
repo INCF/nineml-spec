@@ -1594,11 +1594,11 @@ The text of the \Number element contains an \primtype{integer} representing the 
 
 Projections define the synaptic connectivity between two populations, the post-synaptic response of the connections, the plasticity rules that modulate the post-synaptic response and the transmission delays. Synaptic and plasticity dynamic components are created if the connection rule determines there is a connection between a particular source and destination cell pair. The synaptic and plasticity components are then connected to and from explicitly defined ports of the cell components in the source and projection populations
 
-\SingleValue and \RandomValue elements used in properties of a projection (in the \Connectivity, \Response, \Plasticity and \Delay elements) take the size of the number of connections made. Explicitly array values, \ArrayValue and \ExternalArrayValue, are only permitted with \Connectivity rules where the number of connections is predetermined (i.e. \emph{OneToOne}, \emph{AllToAll} and \emph{ExplicitConnectionList}) and must be the same size as the number of connections made. \notice Explicit arrays are ordered by the indices
+\SingleValue and \RandomValue elements used in properties of a projection (in the \Connectivity, \Response, \Plasticity and \Delay elements) take the size of the number of connections made. Explicitly array values, \ArrayValue and \ExternalArrayValue, are only permitted with \Connectivity rules where the number of connections is predetermined (i.e. \emph{one-to-one}, \emph{all-to-all} and \emph{explicit}). \notice Explicit arrays are ordered by the indices
 \begin{equation}
 i_{\mathrm{value}} = i_{\mathrm{source}} * N_{\mathrm{dest}} + i_{\mathrm{dest}}
 \end{equation}
-where $i_{\mathrm{value}}$, $i_{\mathrm{source}}$ and $i_{\mathrm{dest}}$ are the indices of the array entry, and the source and destination cells respectively, and $N_{\mathrm{dest}}$ is the size of the destination population. Indices that do not correspond to connected pairs are omitted.
+where $i_{\mathrm{value}}$, $i_{\mathrm{source}}$ and $i_{\mathrm{dest}}$ are the indices of the array entry, and the source and destination cells respectively, and $N_{\mathrm{dest}}$ is the size of the destination population. Value indices that do not correspond to connected pairs are omitted, and therefore the arrays are the same size as the number of connections.
 
 \subsection{Projection}
 \label{sec:Projection}
