@@ -200,10 +200,9 @@ Language (NineML)}, to facilitate the exchange neuronal network models between r
 
 NineML is based on a
 common object model describing the different elements of neuronal network
-models. It was initiated and supported by the International
-Neuroinformatics Coordinating Facility as part of the Multiscale Modeling
-Program, and has benefitted from wide-ranging input from computational neuroscientists,
-simulator developers and developers of simulator-independent languages (e.g. NeuroML, PyNN) (see \ref{sec:task_force}).
+models. It was initiated and supported by the \href{http://www.incf.org}{International
+Neuroinformatics Coordinating Facility (INCF) (http://www.incf.org)} as part of the \href{https://www.incf.org/activities/our-programs/modeling/people}{Multiscale Modeling Program}, and has benefitted from wide-ranging input from computational neuroscientists,
+simulator developers and developers of simulator-independent languages (e.g. NeuroML, PyNN) (see \ref{sec:task_force}) \citep{Goddard2001, Davison2008}.
 
 \subsection{Scope}
 \label{sec:scope}
@@ -1971,7 +1970,7 @@ The \Annotations element is the top-level of the annotations attached to a NineM
 \subsection{Izhikevich Model}
 
 \noindent
-In this first example, we are describing how to represent the Izhikevich model in NineML.
+In this first example, we are describing how to represent the Izhikevich model in NineML \cite{Izhikevich2003}.
 The model is composed of single \ComponentClass, containing a single \Regime, \emph{subthresholdRegime}, and two
 state variables, $U$ \& $V$.
 
@@ -2017,7 +2016,7 @@ condition, we emit a spike, and the \StateAssignment of $V \leftarrow c$ resets
 the value of $V$.
 \clearpage
 The corresponding Abstraction Layer XML description for this model is the following:
-\begin{lstlisting}[style=listXML]
+\begin{lstlisting}[style=XML]
 <?xml version="1.0" encoding='UTF-8'?>
 <NineML xmlns="http://nineml.net/9ML/1.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -2069,16 +2068,16 @@ The corresponding Abstraction Layer XML description for this model is the follow
 </NineML>
 \end{lstlisting}
 
-\clearpage
+~
 User Layer description for the above example:
 
-\begin{lstlisting}[style=listXML]
+\begin{lstlisting}[style=XML]
 <?xml version='1.0' encoding='UTF-8'?>
 <NineML xmlns="http://nineml.net/9ML/1.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://nineml.net/9ML/1.0/NineML_v1.0.xsd">
   <Component name="IzhikevichNeuron">
-    <Definition url="http://nineml.net/catalog/izhikevichCell.9ml"
+    <Definition url="http://nineml.net/9ML/1.0/catalog/neurons/izhikevichCell.9ml"
       >IzhikevichCell</Definition>
     <Property name="V" units="mV">
       <SingleValue>-60</SingleValue>
@@ -2123,11 +2122,10 @@ this section}
 \label{fig:Ex1_Output}
 \end{figure}
 
-\newpage
 \subsection{Leaky Integrate and Fire model}
 
 In this example, we build a representation of a integrate-and-fire neuron, with
-an attached input synapse.
+an attached input synapse \citep{Abbott1999}.
 \noindent
 We have a single \StateVariable, \emph{iaf\_V}.
 This time, the neuron has an absolute refractory period; which is implemented
@@ -2175,12 +2173,12 @@ The corresponding Regime Graph is shown in Figure 5.
 \end{figure}
 \clearpage
 The resulting XML description for the Abstraction Layer is :
-\begin{lstlisting}[style=listXML]
+\begin{lstlisting}[style=XML]
 <?xml version='1.0' encoding='UTF-8'?>
 <NineML xmlns="http://nineml.net/9ML/1.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://nineml.net/9ML/1.0/NineML_v1.0.xsd">
-  <ComponentClass name="Iaf1Coba">
+  <ComponentClass name="IafCoba">
     <AnalogSendPort dimension="voltage" name="iaf_V" />
     <AnalogReducePort dimension="current" operator="+" name="iaf_ISyn" />
     <AnalogSendPort dimension="current" name="cobaExcit_I" />
@@ -2188,17 +2186,17 @@ The resulting XML description for the Abstraction Layer is :
     <EventReceivePort name="cobaExcit_spikeinput"/>
     <Parameter dimension="area" name="iaf_cm"/>
     <Parameter dimension="time" name="iaf_taurefrac"/>
-    <Parameter dimension="conductance" name="iaf_gl"/>
+    <Parameter dimension="conductanceDensity" name="iaf_gl"/>
     <Parameter dimension="voltage" name="iaf_vreset"/>
     <Parameter dimension="voltage" name="iaf_vrest"/>
     <Parameter dimension="voltage" name="iaf_vthresh"/>
     <Parameter dimension="time" name="cobaExcit_tau"/>
-    <Parameter dimension="conductance" name="cobaExcit_q"/>
+    <Parameter dimension="conductanceDensity" name="cobaExcit_q"/>
     <Parameter dimension="voltage" name="cobaExcit_vrev"/>
     <Dynamics>
       <StateVariable dimension="voltage" name="iaf_V"/>
       <StateVariable dimension="time" name="iaf_tspike"/>
-      <StateVariable dimension="conductance" name="cobaExcit_g"/>
+      <StateVariable dimension="conductanceDensity" name="cobaExcit_g"/>
       <Regime name="RefractoryRegime">
         <TimeDerivative variable="iaf_V">
           <MathInline>0</MathInline>
@@ -2213,7 +2211,7 @@ The resulting XML description for the Abstraction Layer is :
         </OnEvent>
         <OnCondition target_regime="RegularRegime">
           <Trigger>
-            <MathInline>t &gt;= iaf_tspike + iaf_taurefrac</MathInline>
+            <MathInline>t &gt; iaf_tspike + iaf_taurefrac</MathInline>
           </Trigger>
         </OnCondition>
       </Regime>
@@ -2249,20 +2247,22 @@ The resulting XML description for the Abstraction Layer is :
   </ComponentClass>
   <Dimension name="time" t="1"/>
   <Dimension name="voltage" m="1" l="2" t="-3" i="-1"/>
-  <Dimension name="conductance" m="-1" t="3" l="-2" i="2"/>
+  <Dimension name="conductanceDensity" m="-1" t="3" l="-2" i="2"/>
   <Dimension name="area" l="2"/>
 </NineML>
 \end{lstlisting}
 
-User Layer description for the above example:
-\begin{lstlisting}[style=listXML]
+~
+
+The User Layer description for the above example:
+\begin{lstlisting}[style=XML]
 <?xml version='1.0' encoding='UTF-8'?>
 <NineML xmlns="http://nineml.net/9ML/1.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://nineml.net/9ML/1.0/NineML_v1.0.xsd">
   <Component name="IaFNeuron">
-    <Definition url="http://nineml.net/catalog/neurons/iafICoba.9ml"
-      >Iaf1Coba</Definition>
+    <Definition url="http://nineml.net/catalog/neurons/IafCoba.9ml"
+      >IafCoba</Definition>
     <Property name="iaf_V" units="mV">
       <SingleValue>-60</SingleValue>
     </Property>
@@ -2302,14 +2302,15 @@ User Layer description for the above example:
   </Component>
   <Dimension name="time" t="1"/>
   <Dimension name="voltage" m="1" l="2" t="-3" i="-1"/>
-  <Dimension name="conductance" m="-1" t="3" l="-2" i="2"/>
+  <Dimension name="conductanceDensity" m="-1" t="3" l="-2" i="2"/>
   <Dimension name="area" l="2"/>
   <Unit symbol="mV" dimension="voltage" power="-3"/>
   <Unit symbol="ms" dimension="time" power="-3"/>
   <Unit symbol="cm_square" dimension="area" power="-4"/>
-  <Unit symbol="mS" dimension="conductance" power="-3"/>
+  <Unit symbol="mS" dimension="conductanceDensity" power="-3"/>
 </NineML>
 \end{lstlisting}
+~
 
 The simulation results is presented in Figure 6.
 \begin{figure}[htb!]
@@ -2322,48 +2323,16 @@ in this simulation}
 \end{figure}
 
 \newpage
-\subsection{Network example}
+\subsection{COBA IAF Network example}
 
-\begin{lstlisting}[style=listXML]
+This example is an implementation of \emph{Benchmark 1} from \cite{Brette2009}, which consists of a network of an excitatory and inhibitory IAF populations randomly connected with COBA synapses \citep{Vogels2005}. The excitatory and inhibitory \Population elements are created with 3,200 and 800 cells respectively. Both populations are then concatenated into a single \Selection element, ``AllNeurons'', which is used to randomly connect both populations to every other neuron in the network with a 2\% probability.
+
+The abstraction layer description of the IAF input neuron \ComponentClass{}\withelem\Dynamics is:
+\begin{lstlisting}[style=XML]
 <?xml version='1.0' encoding='UTF-8'?>
 <NineML xmlns="http://nineml.net/9ML/1.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://nineml.net/9ML/1.0/NineML_v1.0.xsd">
-  <ComponentClass name="CoBa">
-    <EventReceivePort name="coba_spikeinput"/>
-    <AnalogReceivePort name="coba_vrev"/>
-    <AnalogSendPort dimension="current" name="coba_I" />
-    <Parameter dimension="time" name="coba_tau"/>
-    <Parameter dimension="conductance" name="coba_q"/>
-    <Dynamics>
-			<StateVariable dimension="conductance" name="coba_g"/>
-			<Regime name="RegularRegime">
-				<OnEvent target_regime="RegularRegime" src_port="coba_spikeinput">
-					<StateAssignment variable="coba_g">
-						<MathInline>coba_g+coba_q</MathInline>
-					</StateAssignment>
-				</OnEvent>
-				<TimeDerivative variable="coba_g">
-					<MathInline>-coba_g/coba_tau</MathInline>
-				</TimeDerivative>
-			</Regime>
-      <Alias name="coba_I">
-        <MathInline>coba_g*(coba_vrev-iaf_V)</MathInline>
-      </Alias>
-    </Dynamics>
-  </ComponentClass>
-  <Dimension name="time" t="1"/>
-  <Dimension name="voltage" m="1" l="2" t="-3" i="-1"/>
-  <Dimension name="conductance" m="-1" t="3" l="-2" i="2"/>
-  <Dimension name="area" l="2"/>
-</NineML>
-\end{lstlisting}
-
-\begin{lstlisting}[style=listXML]
-<?xml version='1.0' encoding='UTF-8'?>
-<NineML xmlns="http://nineml.net/9ML/1.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://nineml.net/9ML/1.0/NineML_v1.0.xsd">
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://nineml.net/9ML/1.0/NineML_v1.0.xsd">
   <ComponentClass name="IaF">
     <AnalogSendPort dimension="voltage" name="iaf_V" />
     <AnalogReducePort dimension="current" operator="+" name="iaf_ISyn" />
@@ -2373,7 +2342,7 @@ in this simulation}
     <Parameter dimension="voltage" name="iaf_vreset"/>
     <Parameter dimension="voltage" name="iaf_vrest"/>
     <Parameter dimension="voltage" name="iaf_vthresh"/>
-    <Parameter dimension="conductance" name="iaf_gl"/>
+    <Parameter dimension="conductanceDensity" name="iaf_gl"/>
     <Dynamics>
       <StateVariable dimension="voltage" name="iaf_V"/>
       <StateVariable dimension="time" name="iaf_tspike"/>
@@ -2383,7 +2352,7 @@ in this simulation}
         </TimeDerivative>
         <OnCondition target_regime="RegularRegime">
           <Trigger>
-            <MathInline>t &gt;= iaf_tspike + iaf_taurefrac</MathInline>
+            <MathInline>t &gt; iaf_tspike + iaf_taurefrac</MathInline>
           </Trigger>
         </OnCondition>
       </Regime>
@@ -2408,16 +2377,59 @@ in this simulation}
   </ComponentClass>
   <Dimension name="time" t="1"/>
   <Dimension name="voltage" m="1" l="2" t="-3" i="-1"/>
-  <Dimension name="conductance" m="-1" t="3" l="-2" i="2"/>
+  <Dimension name="conductanceDensity" m="-1" t="3" l="-2" i="2"/>
   <Dimension name="area" l="2"/>
 </NineML>
 \end{lstlisting}
 
-\begin{lstlisting}[style=listXML]
+~
+
+and the description of the COBA \ComponentClass{}\withelem\Dynamics is:
+\begin{lstlisting}[style=XML]
 <?xml version='1.0' encoding='UTF-8'?>
 <NineML xmlns="http://nineml.net/9ML/1.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://nineml.net/9ML/1.0/NineML_v1.0.xsd">
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ 	xsi:schemaLocation="http://nineml.net/9ML/1.0/NineML_v1.0.xsd">
+	<ComponentClass name="CoBa">
+		<EventReceivePort name="coba_spikeinput"/>
+		<AnalogReceivePort name="coba_vrev"/>
+		<AnalogSendPort dimension="current" name="coba_I" />
+		<Parameter dimension="time" name="coba_tau"/>
+		<Parameter dimension="conductanceDensity" name="coba_q"/>
+		<Dynamics>
+			<StateVariable dimension="conductanceDensity" name="coba_g"/>
+			<Regime name="RegularRegime">
+				<OnEvent target_regime="RegularRegime" src_port="coba_spikeinput">
+					<StateAssignment variable="coba_g">
+						<MathInline>coba_g+coba_q</MathInline>
+					</StateAssignment>
+				</OnEvent>
+				<TimeDerivative variable="coba_g">
+					<MathInline>-coba_g/coba_tau</MathInline>
+				</TimeDerivative>
+			</Regime>
+			<Alias name="coba_I">
+				<MathInline>coba_g*(coba_vrev-iaf_V)</MathInline>
+			</Alias>
+		</Dynamics>
+	</ComponentClass>
+	<Dimension name="time" t="1"/>
+	<Dimension name="voltage" m="1" l="2" t="-3" i="-1"/>
+	<Dimension name="conductanceDensity" m="-1" t="3" l="-2" i="2"/>
+	<Dimension name="area" l="2"/>
+</NineML>
+\end{lstlisting}
+
+~
+
+The cell \Component{}\withelem\Dynamics are parameterized and connected together in the User Layer via \Population, \Selection and 
+\Projection elements:
+
+\begin{lstlisting}[style=XML]
+<?xml version='1.0' encoding='UTF-8'?>
+<NineML xmlns="http://nineml.net/9ML/1.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://nineml.net/9ML/1.0/NineML_v1.0.xsd">
   <Component name="IaFNeuron">
     <Definition url="./iaf.9ml"
       >IaF</Definition>
@@ -2462,7 +2474,7 @@ in this simulation}
     </Property>
   </Component>
   <Component name="IaFSynapseInhibitory">
-    <Definition url="./coba.9ml">CoBa</Definition>
+    <Definition url="./coba.xml">CoBa</Definition>
     <Property name="coba_g" units="mS">
       <SingleValue>0</SingleValue>
     </Property>
@@ -2506,7 +2518,13 @@ in this simulation}
   		<FromDestination sender="iaf_V" receiver="coba_vrev"/>
   	</Response>
   	<Connectivity>
-  		<ConnectionRule standardlibrary="http://nineml.net/9ML/1.0/connectionrules/onetoone.9ml"/>
+  		<Component>
+			<Definition url="http://nineml.net/9ML/1.0/catalog/connectionrules/Probabilistic.9ml"
+				>Probabilistic</Definition>
+			<Property name="probability" units="unitless">
+				<SingleValue>0.02</SingleValue>
+			</Property>
+		</Component>
   	</Connectivity>
   </Projection>
   <Projection>
@@ -2521,13 +2539,25 @@ in this simulation}
   		<FromDestination sender="iaf_V" receiver="coba_vrev"/>
   	</Response>
   	<Connectivity>
-  		<ConnectionRule standardlibrary="http://nineml.net/9ML/1.0/connectionrules/onetoone.9ml"/>
+  		<Component>
+			<Definition url="http://nineml.net/9ML/1.0/catalog/connectionrules/Probabilistic.9ml"
+				>Probabilistic</Definition>
+			<Property name="probability" units="unitless">
+				<SingleValue>0.02</SingleValue>
+			</Property>				
+		</Component>
   	</Connectivity>
   </Projection>
   <Unit symbol="mV" dimension="voltage" power="-3"/>
   <Unit symbol="ms" dimension="time" power="-3"/>
   <Unit symbol="cm_square" dimension="area" power="-4"/>
-  <Unit symbol="mS" dimension="conductance" power="-3"/>
+  <Unit symbol="mS" dimension="conductanceDensity" power="-3"/>
+  <Unit name="unitless" dimension="dimensionless" power="0"/>
+  <Dimension name="time" t="1"/>
+  <Dimension name="voltage" m="1" l="2" t="-3" i="-1"/>
+  <Dimension name="conductanceDensity" m="-1" t="3" l="-2" i="2"/>
+  <Dimension name="area" l="2"/>
+  <Dimension name="dimensionless"/>
 </NineML>
 \end{lstlisting}
 
@@ -2536,31 +2566,31 @@ in this simulation}
 \label{sec:task_force}
 \begin{multicols}{2}
 \begin{itemize}
-\item     Robert    Cannon
-\item     Robert    Clewley
-\item     Alex      Cope
-\item     Hugo      Cornelis
-\item     Andrew    P. Davison
-\item     Erik      De Schutter
-\item     Mikael    Djurfeldt
-\item     Damien    Drix
-\item     Hans      Ekkehard Plesser
-\item     Padraig   Gleeson
-\item     Anatoli   Gorchetchnikov
-\item     Valentin  Haenel
-\item     Sean      Hill
-\item     Michael   Hull
-\item     Birgit    Kriener
-\item     Yann      Le Franc
+\item     Robert Cannon
+\item     Robert Clewley
+\item     Alex Cope
+\item     Hugo Cornelis
+\item     Andrew P. Davison
+\item     Erik De Schutter
+\item     Mikael Djurfeldt
+\item     Damien Drix
+\item     Hans Ekkehard Plesser
+\item     Padraig Gleeson
+\item     Anatoli Gorchetchnikov
+\item     Valentin Haenel
+\item     Sean Hill
+\item     Michael Hull
+\item     Birgit Kriener
+\item     Yann Le Franc
 \item     Chung-ChuaLo
-\item     Abigail   Morrison
-\item     Eilif     Muller
-\item     Dragan    Nikolic
-\item     Ivan      Raikov
-\item     Subhasis  Ray
-\item     Raphael   Ritz
-\item     Malin     Sandstr\"{o}m
-\item     Lars      Schwabe
+\item     Abigail Morrison
+\item     Eilif Muller
+\item     Dragan Nikolic
+\item     Ivan Raikov
+\item     Subhasis Ray
+\item     Raphael Ritz
+\item     Malin Sandstr\"{o}m
+\item     Lars Schwabe
 \end{itemize}
 \end{multicols}
 

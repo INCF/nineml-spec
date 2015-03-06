@@ -294,7 +294,7 @@
 \definecolor{ninemlgray}{gray}{0.7}
 \definecolor{ninemlrowgray}{gray}{0.96}
 \definecolor{extremelylightgray}{gray}{0.97}
-\definecolor{veryverylightgray}{gray}{0.975}
+\definecolor{veryverylightgray}{gray}{0.985}
 \definecolor{verylightgray}{gray}{0.9}
 \definecolor{lightgray}{gray}{0.8}
 \definecolor{mediumgray}{gray}{0.5}
@@ -992,18 +992,36 @@
     rulecolor=\color{ninemlgray},%
     frame=single,%
     numberstyle=\tiny\sffamily,%
-    basicstyle=\small\ttfamily\color{black},%
+    basicstyle=\small\ttfamily\color{darkdarkgray},
     keywordstyle=\ttfamily,%
     xleftmargin=3.5pt,%
     xrightmargin=3.5pt,%
     aboveskip=1\baselineskip,%
     belowskip=0.4\baselineskip,%
-    commentstyle=\footnotesize\itshape\color{mediumgray},%
+    commentstyle=\footnotesize\itshape\color{darkgray},%
     tabsize=2,%
-    captionpos=b}
-
-\lstdefinestyle{XML}{%
-    language=XML}
+    captionpos=b
+    extendedchars=true,
+    belowcaptionskip=5pt,
+    breaklines=true,
+    breakatwhitespace=true,
+    breakindent=0pt,
+    emph={},
+    emphstyle=\color{red},
+    showstringspaces=false,
+    numbers=left,
+    morestring=[b]",
+    morecomment=[s]{<?}{?>},
+    morecomment=[s][\color{orange}]{<!--}{-->},
+    keywordstyle=\color{ninemlblue},
+    stringstyle=\color{red},
+    tagstyle=\color{navy}
+    }
+    
+\lstdefinestyle{XML}{
+    language=XML, 
+    morekeywords={xmlns,version,type,xmlns:xsi,xsi:schemaLocation,encoding}    
+}
 
 \lstdefinestyle{bash}{%
     language=bash}%
@@ -1189,43 +1207,6 @@
 {0pt}{3.25ex plus 1ex minus .2ex}{1.5ex plus .2ex}
 
 \newcommand{\subsubsubsection}{\paragraph}
-
-% Xml syntax highlighting
-
-
-%\definecolor{incompletered}{rgb}{0.85,0.0,0.0}
-%\definecolor{INCFBlue}{rgb}{0.0,0.59,1.0}
-%\definecolor{ninemlblue}{rgb}{0.07,0.50,0.78}
-%\definecolor{ninemlgray}{gray}{0.7}
-%\definecolor{ninemlrowgray}{gray}{0.96}
-%\definecolor{extremelylightgray}{gray}{0.97}
-%\definecolor{veryverylightgray}{gray}{0.95}
-%\definecolor{verylightgray}{gray}{0.9}
-%\definecolor{lightgray}{gray}{0.8}
-%\definecolor{mediumgray}{gray}{0.5}
-%\definecolor{darkgray}{gray}{0.3}
-%\definecolor{almostblack}{gray}{0.23}
-%\definecolor{lightyellow}{rgb}{0.98,0.94,0.7}
-%\definecolor{verylightyellow}{rgb}{0.97,0.95,0.85}
-%\definecolor{darkblue}{rgb}{0.1,0.4,0.55}
-%\definecolor{mediumgreen}{rgb}{0.1,0.6,0.3}
-%
-%\definecolor{ninemlnormaltextcolor}{gray}{0.27}
-%\definecolor{ninemlliteralcolor}{gray}{0}
-%\definecolor{ninemllinenumbercolor}{gray}{0.75}
-%\definecolor{ninemlchangedcolor}{rgb}{0.69,0.19,0.376}
-
-\lstdefinestyle{listXML}{language=XML, extendedchars=true,  belowcaptionskip=5pt, xleftmargin=1.8em, xrightmargin=0.5em, frame=single, breaklines=true, breakatwhitespace=true, breakindent=0pt, emph={}, emphstyle=\color{red}, basicstyle=\small\ttfamily\color{darkdarkgray}, columns=fullflexible, showstringspaces=false, commentstyle=\color{darkdarkgray}\upshape,
-morestring=[b]",
-morecomment=[s]{<?}{?>},
-morecomment=[s][\color{orange}]{<!--}{-->},
-keywordstyle=\color{ninemlblue},
-stringstyle=\color{red},
-tagstyle=\color{navy},
-morekeywords={xmlns,version,type,xmlns:xsi,xsi:schemaLocation}
-}
-
-%numbers=left, numberstyle=\small\ttfamily\bf,
 
 % 
 % Final settings before the body begins.
