@@ -2021,50 +2021,54 @@ The corresponding Abstraction Layer XML description for this model is the follow
 <NineML xmlns="http://nineml.net/9ML/1.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://nineml.net/9ML/1.0/NineML_v1.0.xsd">
-  <ComponentClass name="IzhikevichCell">
-    <Parameter name="a" dimension="dimensionless"/>
-    <Parameter name="c" dimension="voltage"/>
-    <Parameter name="b" dimension="per_time"/>
-    <Parameter name="d" dimension="voltage_per_time"/>
-    <Parameter name="theta" dimension="voltage"/>
-    <Parameter name="i_injected" dimension="current"/>
-    <AnalogReducePort name="i_synapse" operator="+" dimension="current"/>
-    <AnalogSendPort name="U" dimension="dimensionless"/>
-    <AnalogSendPort name="V" dimension="voltage"/>
-    <EventPort name="spikeOutput" mode="send"/>
-    <Dynamics>
-        <StateVariable name="V" dimension="voltage"/>
-        <StateVariable name="U" dimension="voltage_per_time"/>
-        <Alias name="rv">
-            <MathInline>V*U</MathInline>
-        </Alias>
-        <Regime name="subthresholdRegime">
-          <TimeDerivative variable="U">
-            <MathInline>a*(b*V - U)</MathInline>
-          </TimeDerivative>
-          <TimeDerivative variable="V">
-            <MathInline>0.04*V*V + 5*V + 140.0 - U + i_synapse + i_injected</MathInline>
-          </TimeDerivative>
-          <OnCondition>
-            <Trigger>
-              <MathInline>V &gt; theta </MathInline>
-            </Trigger>
-            <StateAssignment variable="V" >
-              <MathInline>c</MathInline>
-            </StateAssignment>
-            <StateAssignment variable="U" >
-              <MathInline>U+d</MathInline>
-            </StateAssignment>
-            <OutputEvent port="spikeOutput" />
-          </OnCondition>
-        </Regime>
-    </Dynamics>
-  </ComponentClass>
-  <Dimension name="per_time" t="-1"/>
-  <Dimension name="voltage" m="1" l="2" t="-3" i="-1"/>
-  <Dimension name="voltage_per_time" m="1" l="2" t="-4" i="-1"/>
-  <Dimension name="current" i="1"/>
-  <Dimension name="dimensionless"/>  
+	<ComponentClass name="IzhikevichCell">
+		<Parameter name="a" dimension="dimensionless"/>
+		<Parameter name="c" dimension="voltage"/>
+		<Parameter name="b" dimension="per_voltage_time"/>
+		<Parameter name="d" dimension="dimensionless"/>
+		<Parameter name="theta" dimension="voltage"/>
+		<Parameter name="iInj" dimension="current"/>
+		<AnalogReducePort name="iSyn" operator="+" dimension="current"/>
+		<AnalogSendPort name="U" dimension="dimensionless"/>
+		<AnalogSendPort name="V" dimension="voltage"/>
+		<EventPort name="spikeOutput" mode="send"/>
+		<Dynamics>
+			<StateVariable name="V" dimension="voltage"/>
+			<StateVariable name="U" dimension="dimensionless"/>
+			<Regime name="subthresholdRegime">
+				<TimeDerivative variable="U">
+					<MathInline>a*(b*V - U)</MathInline>
+				</TimeDerivative>
+				<TimeDerivative variable="V">
+					<MathInline>0.04*V*V/unitV + 5*V + (140.0 - U)*unitV + (iSyn + iInj)*unitR</MathInline>
+				</TimeDerivative>
+				<OnCondition>
+					<Trigger>
+						<MathInline>V &gt; theta </MathInline>
+					</Trigger>
+					<StateAssignment variable="V" >
+						<MathInline>c</MathInline>
+					</StateAssignment>
+					<StateAssignment variable="U" >
+						<MathInline>U+d</MathInline>
+					</StateAssignment>
+					<OutputEvent port="spikeOutput" />
+				</OnCondition>
+			</Regime>
+			<Alias name="rv">
+				<MathInline>V*U</MathInline>
+			</Alias>
+			<Constant name="unitV" units="V">1</Constant>
+			<Constant name="unitR" units="Ohm">1</Constant>
+		</Dynamics>
+	</ComponentClass>
+	<Dimension name="per_voltage_time" m="-1" l="-2" t="2" i="1"/>
+	<Dimension name="voltage" m="1" l="2" t="-3" i="-1"/>
+	<Dimension name="current" i="1"/>
+	<Dimension name="dimensionless"/>
+	<Dimension name="resistance" m="1" l="2" t="-3" i="-2"/>
+	<Unit name="V" dimension="voltage" power="0"/>
+	<Unit name="Ohm" dimension="resistance" power="0"/>
 </NineML>
 \end{lstlisting}
 
@@ -2079,41 +2083,32 @@ User Layer description for the above example:
   <Component name="IzhikevichNeuron">
     <Definition url="http://nineml.net/9ML/1.0/catalog/neurons/izhikevichCell.9ml"
       >IzhikevichCell</Definition>
-    <Property name="V" units="mV">
-      <SingleValue>-60</SingleValue>
-    </Property>
-    <Property name="U" units="mV_per_ms">
-      <SingleValue>0</SingleValue>
-    </Property>
     <Property name="theta" units="mV">
       <SingleValue>50</SingleValue>
     </Property>
     <Property name="a" units="none">
       <SingleValue>0.02</SingleValue>
     </Property>
-    <Property name="b" units="per_ms">
+    <Property name="b" units="per_mV_ms">
       <SingleValue>0.2</SingleValue>
     </Property>
     <Property name="c" units="mV">
       <SingleValue>-65</SingleValue>
     </Property>
-    <Property name="d" units="mV_per_ms">
+    <Property name="d" units="none">
       <SingleValue>8</SingleValue>
     </Property>
   </Component>
-  <Dimension name="per_time" t="-1"/>
   <Dimension name="voltage" m="1" l="2" t="-3" i="-1"/>
-  <Dimension name="voltage_per_time" m="1" l="2" t="-4" i="-1"/>
-  <Dimension name="current" i="1"/>
+  <Dimension name="per_voltage_time" m="-1" l="-2" t="2" i="1"/>
   <Dimension name="dimensionless"/>
   <Unit symbol="mV" dimension="voltage" power="-3" />
-  <Unit symbol="per_ms" dimension="per_time" power="-3" />
-  <Unit symbol="mV_per_ms" dimension="voltage_per_time" />
+  <Unit symbol="per_mV_ms" dimension="voltage_per_time" />
   <Unit symbol="none" dimension="dimensionless" />
 </NineML>
 \end{lstlisting}
 
-Here, we show the simulation results of this XML representation.
+Here, we show the simulation results of this XML representation with an initial V=-60mV and U=0.
 \begin{figure}[htb!]
 \center
 \includegraphics[width=8cm]{figures/example_IzVoltageWave.pdf}
