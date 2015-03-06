@@ -2022,14 +2022,13 @@ The corresponding Abstraction Layer XML description for this model is the follow
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://nineml.net/9ML/1.0/NineML_v1.0.xsd">
 	<ComponentClass name="IzhikevichCell">
-		<Parameter name="a" dimension="dimensionless"/>
+		<Parameter name="a" dimension="per_time"/>
 		<Parameter name="c" dimension="voltage"/>
-		<Parameter name="b" dimension="per_voltage_time"/>
+		<Parameter name="b" dimension="per_voltage"/>
 		<Parameter name="d" dimension="dimensionless"/>
 		<Parameter name="theta" dimension="voltage"/>
 		<Parameter name="iInj" dimension="current"/>
 		<AnalogReducePort name="iSyn" operator="+" dimension="current"/>
-		<AnalogSendPort name="U" dimension="dimensionless"/>
 		<AnalogSendPort name="V" dimension="voltage"/>
 		<EventPort name="spikeOutput" mode="send"/>
 		<Dynamics>
@@ -2040,7 +2039,8 @@ The corresponding Abstraction Layer XML description for this model is the follow
 					<MathInline>a*(b*V - U)</MathInline>
 				</TimeDerivative>
 				<TimeDerivative variable="V">
-					<MathInline>0.04*V*V/unitV + 5*V + (140.0 - U)*unitV + (iSyn + iInj)*unitR</MathInline>
+					<MathInline
+						>(0.04*V*V/unitV + 5*V + (140.0 - U)*unitV + (iSyn + iInj)*unitR)/unitT</MathInline>
 				</TimeDerivative>
 				<OnCondition>
 					<Trigger>
@@ -2055,20 +2055,21 @@ The corresponding Abstraction Layer XML description for this model is the follow
 					<OutputEvent port="spikeOutput" />
 				</OnCondition>
 			</Regime>
-			<Alias name="rv">
-				<MathInline>V*U</MathInline>
-			</Alias>
 			<Constant name="unitV" units="V">1</Constant>
 			<Constant name="unitR" units="Ohm">1</Constant>
+			<Constant name="unitT" units="s">1</Constant>
 		</Dynamics>
 	</ComponentClass>
-	<Dimension name="per_voltage_time" m="-1" l="-2" t="2" i="1"/>
 	<Dimension name="voltage" m="1" l="2" t="-3" i="-1"/>
+	<Dimension name="time" t="1"/>
 	<Dimension name="current" i="1"/>
 	<Dimension name="dimensionless"/>
 	<Dimension name="resistance" m="1" l="2" t="-3" i="-2"/>
-	<Unit name="V" dimension="voltage" power="0"/>
-	<Unit name="Ohm" dimension="resistance" power="0"/>
+	<Dimension name="per_voltage" m="-1" l="-2" t="3" i="1"/>	
+	<Dimension name="per_time" t="-1"/>	
+	<Unit symbol="V" dimension="voltage"/>
+	<Unit symbol="Ohm" dimension="resistance"/>
+	<Unit symbol="s" dimension="time" power="1"/>
 </NineML>
 \end{lstlisting}
 
@@ -2086,10 +2087,10 @@ User Layer description for the above example:
     <Property name="theta" units="mV">
       <SingleValue>50</SingleValue>
     </Property>
-    <Property name="a" units="none">
+    <Property name="a" units="per_s">
       <SingleValue>0.02</SingleValue>
     </Property>
-    <Property name="b" units="per_mV_ms">
+    <Property name="b" units="per_V">
       <SingleValue>0.2</SingleValue>
     </Property>
     <Property name="c" units="mV">
@@ -2100,11 +2101,13 @@ User Layer description for the above example:
     </Property>
   </Component>
   <Dimension name="voltage" m="1" l="2" t="-3" i="-1"/>
-  <Dimension name="per_voltage_time" m="-1" l="-2" t="2" i="1"/>
   <Dimension name="dimensionless"/>
-  <Unit symbol="mV" dimension="voltage" power="-3" />
-  <Unit symbol="per_mV_ms" dimension="voltage_per_time" />
-  <Unit symbol="none" dimension="dimensionless" />
+  <Dimension name="per_time" t="-1"/>
+  <Dimension name="per_voltage" m="-1" l="-2" t="3" i="1"/>  
+  <Unit symbol="mV" dimension="voltage" power="-3"/>
+  <Unit symbol="per_V" dimension="per_voltage"/>
+  <Unit symbol="per_s" dimension="per_time"/>
+  <Unit symbol="none" dimension="dimensionless"/>  
 </NineML>
 \end{lstlisting}
 
