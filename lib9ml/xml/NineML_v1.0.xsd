@@ -22,6 +22,8 @@
             <xs:element name="Population" type="Population"/>
             <xs:element name="Projection" type="Projection"/>
             <xs:element name="Selection" type="Selection"/>
+            <xs:element name="Unit" type="Unit"/>
+            <xs:element name="Dimension" type="Dimension"/>
         </xs:sequence>
 
     </xs:complexType>
@@ -120,7 +122,7 @@
                 type="StateAssignment"/>
             <xs:element maxOccurs="unbounded" minOccurs="0" name="OutputEvent" type="OutputEvent"/>
         </xs:sequence>
-        <xs:attribute name="target" type="xs:string"/>
+        <xs:attribute name="targetRegime" type="xs:string"/>
     </xs:complexType>
     <xs:complexType name="OnEvent">
         <xs:sequence>
@@ -128,7 +130,7 @@
                 type="StateAssignment"/>
             <xs:element maxOccurs="unbounded" minOccurs="0" name="OutputEvent" type="OutputEvent"/>
         </xs:sequence>
-        <xs:attribute name="target" type="xs:string"/>
+        <xs:attribute name="targetRegime" type="xs:string"/>
     </xs:complexType>
     <xs:complexType name="Trigger">
         <xs:sequence>
@@ -142,13 +144,13 @@
         <xs:attribute name="variable" type="xs:string" use="required"/>
     </xs:complexType>
     <xs:complexType name="OutputEvent">
-        <xs:attribute name="port" use="required"/>
+        <xs:attribute name="port" use="required" type="xs:string"/>
     </xs:complexType>
     <xs:complexType name="ConnectionRule">
-        <xs:attribute name="standard_library"/>
+        <xs:attribute name="standard_library" type="xs:anyURI"/>
     </xs:complexType>
     <xs:complexType name="RandomDistribution">
-        <xs:attribute name="standard_library"/>
+        <xs:attribute name="standard_library" type="xs:anyURI"/>
     </xs:complexType>
     <xs:complexType name="Component">
         <xs:sequence>
@@ -205,7 +207,7 @@
             <xs:element name="Reference" type="Reference"/>
             <xs:element name="Component" type="Component"/>
         </xs:choice>
-        <xs:attribute name="port"/>
+        <xs:attribute name="port" type="xs:string"/>
     </xs:complexType>
     <xs:complexType name="Population">
         <xs:sequence>
@@ -323,7 +325,23 @@
         <xs:attribute name="index" type="xs:integer"/>
     </xs:complexType>
     <xs:complexType name="PortSource">
-        <xs:attribute name="sender"/>
-        <xs:attribute name="receiver"/>
+        <xs:attribute name="sender" type="xs:string"/>
+        <xs:attribute name="receiver" type="xs:string"/>
+    </xs:complexType>
+    <xs:complexType name="Dimension">
+        <xs:attribute name="name" type="xs:string"/>
+        <xs:attribute name="i" type="xs:integer"/>
+        <xs:attribute name="j" type="xs:integer"/>
+        <xs:attribute name="k" type="xs:integer"/>
+        <xs:attribute name="l" type="xs:integer"/>
+        <xs:attribute name="m" type="xs:integer"/>
+        <xs:attribute name="n" type="xs:integer"/>
+        <xs:attribute name="t" type="xs:integer"/>
+    </xs:complexType>
+    <xs:complexType name="Unit">
+        <xs:attribute name="symbol" type="xs:string"/>
+        <xs:attribute name="dimension" type="xs:string"/>
+        <xs:attribute name="power" type="xs:integer"/>
+        <xs:attribute name="offset" type="xs:float"/>
     </xs:complexType>
 </xs:schema>
