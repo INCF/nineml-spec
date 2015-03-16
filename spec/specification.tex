@@ -1247,11 +1247,11 @@ The properties supplied to the \textit{destinationIndicies} parameter should be 
 
 \subsubsubsection{http://nineml.net/9ML/1.0/connectionrules/randomfanout}
 
-Cells in the source population are connected to cells in the destination population with a probability defined by a parameter, which should be named \textit{probability}. The property supplied to the \textit{probability} parameter should be a \SingleValue.
+Cells in the source population are connected to a fixed number of randomly selected cells the destination population. The number of cells is specified by a parameter named \textit{number}. The property supplied to the \textit{number} parameter should be a \SingleValue.
 
 \subsubsubsection{http://nineml.net/9ML/1.0/connectionrules/randomfanin}
 
-Cells in the destination population are connected to cells in the source population with a probability defined by a parameter, which should be named \textit{probability}. The property supplied to the \textit{probability} parameter should be a \SingleValue.
+Cells in the destination population are connected to a fixed number of randomly selected cells the source population. The number of cells is specified by a parameter named \textit{number}. The property supplied to the \textit{number} parameter should be a \SingleValue.
 
 \clearpage
 \part{User Layer}
