@@ -852,7 +852,15 @@ Each \EventReceivePort requires a \textit{name} attribute, which is a valid \ide
 
 \section{Dynamic Regimes}
 
-Component classes that contain a \Dynamics block define dynamic models such as neurons, post-synaptic responses or the plasticity of synaptic weights. In these components, state variables are evolved by sets of ordinary differential equations (ODE), which describe the behaviour of the model. The state of the model can transition between distinct regimes, which define different sets of differential equations, via `transitions'.  Multiple regimes can be used to model qualitatively distinct behaviour by neuron models, such as sub-threshold, spiking and refractory periods of an abstract neuron model for example.
+Dynamics blocks define the dynamic equations of models such as
+neurons, post-synaptic responses or plasticity of synaptic
+weights. In Dynamics blocks, state variables are evolved by one or
+more sets of ordinary differential equations (ODE). Each set of
+equations is called a regime, and only one regime can be active at
+a particular point in time. The currently active regime can be
+changed by a transition event, which is represented as a logical
+expression on the state variables. When the logical expression
+evaluates to true, the transition must occur.
 
 \ref{fig:simple_regime_graph} illustrates a hypothetical transition graph for a system with three state variables, $X$, $Y$ and $Z$, which transitions between three ODE regimes, \emph{regime1}, \emph{regime2} and \emph{regime3}. At any time, the model will be in one and only one of these regimes, and the state variables will evolve according to the ODE of that regime.
 
@@ -905,11 +913,7 @@ different ODE regimes. The regime graph (e.g. \ref{fig:simple_regime_graph}) mus
   \end{edtable}
 \end{table}
 
-The internal state of a component is defined by a set of state variables
- -- variables that can change either continuously or discontinuously as a
-function of time.
-
-The value of a \StateVariable can change in two ways:
+The state of the model is defined by a set of \StateVariable objects. The value of a \StateVariable can change in two ways:
 \begin{quote}
 \begin{itemize}
 \item continuously through \TimeDerivative elements (in {\Regime} elements),
@@ -991,7 +995,15 @@ Each \TimeDerivative requires a \textit{variable} attribute. This should refer t
 \section{Transitions}
 \label{sec:Transition}
 
-Movements between dynamic regimes occurs via transitions, and have vanishing temporal extents (i.e. they are event-like). There are two types of transitions, condition-triggered transitions (see \OnCondition), which are evoked when an associated trigger expression becomes true, or event-triggered transitions (see \OnEvent), which are evoked when an associated event port receives an event from an external component. Multiple state assignments can be sent and multiple events can be sent within a single transition block.
+The currently active dynamic regime can be changed via transitions.
+Transitions have instantaneous temporal extent (i.e. they are
+event-like). There are two types of transitions,
+condition-triggered transitions (see \OnCondition), which are
+evoked when an associated trigger expression becomes true, or
+event-triggered transitions (see \OnEvent), which are evoked when
+an associated event port receives an event from an external
+component. Multiple state assignments can be defined and multiple
+events can be sent within a single transition block.
 
 During either type of transition three instantaneous actions can occur:
 \begin{itemize}
@@ -1059,18 +1071,18 @@ An \OnEvent can have a \textit{targetRegime} attribute, which should refer to th
 
 \OnEvent blocks are activated when the dynamics component receives an event from an external component on the port the \OnEvent element is ``listening'' to. They are typically used to model the transient response to spike events from incoming synaptic connections.
 
+\emph{Cascading} of events, i.e. events triggering subsequent events, are permitted,
+which in theory could be recursive through components depending on their connectivity. 
+\warning It is the users responsibility to ensure
+that this does not occur with zero delay. Implementations may decide to terminate after 
+a given number of recursive cascades of zero delay (say 1000) to prevent infinite
+loops, but such limits should be modifiable by the user.
+
 \subsubsection{Port attribute}
 Each \OnEvent requires a \textit{port} attribute. This should refer to the name of an \EventReceivePort  in the \ComponentClass interface.
 
 \subsubsection{TargetRegime attribute}
 \OnEvent can have a \textit{targetRegime} attribute, which should refer to the name of a \Regime element in the \ComponentClass that the dynamics block will transition to when the \OnEvent block is triggered by an incoming event. If the \textit{targetRegime} attribute is omitted the regime will transition to itself.
-
-\emph{Cascading} of events is permitted, which in theory 
-could be recursive through components depending on their connectivity. 
-\warning It is the users responsibility to ensure
-that this does not occur with zero delay. Implementations may decide to terminate after 
-a given number of recursive cascades of zero delay (say 1000) to prevent infinite
-loops, but such limits should be modifiable by the user.
 
 \subsection{Trigger}
 \label{sec:Trigger}
@@ -1087,10 +1099,10 @@ loops, but such limits should be modifiable by the user.
   \end{edtable}
 \end{table}
 
-{\Trigger}s define when an {\OnCondition} transition should be occur. The \MathInline block of a
+{\Trigger} objects define when an {\OnCondition} transition should occur. The \MathInline block of a
 {\Trigger} can contain any arbitrary combination of `and', `or' and `negation' \emph{logical
 operations} (`$\&\&$', `$||$' and `$!$' respectively) on the
-result of pure inequality \emph{relational operations} (`$>$' and `$<$').
+result of pure inequality \emph{relational operations} (`$>$' and `$<$'), which follow the syntax and semantics of ANSI C89.
 The inequality expression may contain references to 
 \StateVariable, \AnalogReceivePort, \AnalogReducePort, \Parameter and {\Alias} elements, with the exception of {\Alias} elements
 derived from random distributions. The \OnCondition block is triggered when the boolean result of the \Trigger statement changes from \notice \emph{false} to \emph{true}.  
