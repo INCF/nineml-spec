@@ -281,7 +281,7 @@ NineML identifiers are case-sensitive in the sense that they must be referred to
 \part{General Elements}
 \section{Document layout}
 
-NineML documents must be enclosed within an \NineML element.
+NineML documents must be enclosed within an \NineML element, which should be in the 'http://nineml.net/9ML/1.0' XML namespace.
 
 \subsection{NineML}
 \label{sec:NineML}
@@ -1155,6 +1155,8 @@ Each \OutputEvent requires a \textit{port} attribute. This should refer to the n
 
 \section{Random Distributions}
 
+Values for a property across all elements in a container (e.g. cells in a population, post-synaptic responses, plasticity rules or delays in a projection) can be defined as a random distribution by a \Component within \RandomValue element. A random distribution component must parameterize a {\ComponentClass} with a \RandomDistribution block; the component class defines the random distribution family (e.g. normal, cauchy, gamma, etc...). As of version 1.0, the only random distributions available to the user are those defined in the standard library, however, derived distributions are planned for future versions.
+
 \subsection{RandomDistribution}
 \label{sec:RandomDistribution}
 
@@ -1170,7 +1172,7 @@ Each \OutputEvent requires a \textit{port} attribute. This should refer to the n
   \end{edtable}
 \end{table}
 
-As of version 1.0, the only random distributions available to the user are those defined in the standard library. The names and parameters of the random distribution in the standard library match the UncertML definitions that can be found at \href{http://www.uncertml.org/distributions}{http://www.uncertml.org/distributions}. The subset of the UncertML distributions that should be implemented are by NineML compliant packages are,
+The names and parameters of the random distribution in the standard library match the UncertML definitions that can be found at \href{http://www.uncertml.org/distributions}{http://www.uncertml.org/distributions}. The subset of the UncertML distributions that should be implemented are by NineML compliant packages are,
 
 \begin{multicols}{2}
 \begin{itemize}
@@ -1207,8 +1209,9 @@ As of version 1.0, the only random distributions available to the user are those
 \subsubsection{StandardLibrary attribute}
 The \textit{standardLibrary} attribute is required and should point to a \URL in the \href{http://www.uncertml.org/distributions/}{http://www.uncertml.org/distributions/} directory.
 
-
 \section{Network Connectivity}
+
+The connection rule for cells in the source and destination populations of a \Projection (i.e. the rule that determines which source cells are connected to which destination cells) is defined by a connection-rule component within the \Connectivity element of the \Projection.  This component must parameterize a {\ComponentClass} with a \ConnectionRule block, which describes the connection algorithm. As of version 1.0, the only connection rules available to the user are those defined in the standard library (e.g. all-to-all, one-to-one, probabilistic, etc...), however, custom connectivity rules are planned for future versions.
 
 \subsection{ConnectionRule}
 \label{sec:ConnectionRule}
@@ -1607,7 +1610,7 @@ The text of the \Number element contains an \primtype{integer} representing the 
 
 Projections define the synaptic connectivity between two populations, the post-synaptic response of the connections, the plasticity rules that modulate the post-synaptic response and the transmission delays. Synaptic and plasticity dynamic components are created if the connection rule determines there is a connection between a particular source and destination cell pair. The synaptic and plasticity components are then connected to and from explicitly defined ports of the cell components in the source and projection populations
 
-\SingleValue and \RandomValue elements used in properties of a projection (in the \Connectivity, \Response, \Plasticity and \Delay elements) take the size of the number of connections made. Explicitly array values, \ArrayValue and \ExternalArrayValue, are only permitted with \Connectivity rules where the number of connections is predetermined (i.e. \emph{one-to-one}, \emph{all-to-all} and \emph{explicit}). \notice Explicit arrays are ordered by the indices
+\SingleValue and \RandomValue elements used in properties of a projection (in the \Connectivity, \Response, \Plasticity and \Delay elements) take the size of the number of connections made. Explicitly array values, \ArrayValue and \ExternalArrayValue, are only permitted with connection rules (as defined by the \Connectivity element) where the number of connections is predetermined (i.e. \emph{one-to-one}, \emph{all-to-all} and \emph{explicit}). \notice Explicit arrays are ordered by the indices
 \begin{equation}
 i_{\mathrm{value}} = i_{\mathrm{source}} * N_{\mathrm{dest}} + i_{\mathrm{dest}}
 \end{equation}
@@ -1658,7 +1661,7 @@ Each \Projection requires a \textit{name} attribute, which should be a valid \id
   \end{edtable}
 \end{table}
 
-The \Connectivity element contains a \Component\withelem\ConnectionRule, which defines how the source and destination populations are connected together. 
+Each \Connectivity element contains a \Component\withelem\ConnectionRule, which defines the connection pattern of cells in source population to cells in the destination population (i.e. binary `connected' or `not connected' decisions). For each connection that is specified, a synapse, consisting of a post-synaptic response and plasticity dynamic components, is created to model the synaptic interaction between the cells.
 
 \subsection{Source}
 \label{sec:Source}
