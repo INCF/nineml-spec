@@ -151,8 +151,9 @@
 {\Large\bf Editors: }
 \begin{itemize}
 \item Thomas G. Close
-\item Alex Cope
+\item Alexander J. Cope
 \item Andrew P. Davison
+\item Jochen M. Eppler
 \item Erik De Schutter
 \item Ivan Raikov
 \item Paul Richmond
@@ -1073,8 +1074,8 @@ An \OnEvent can have a \textit{targetRegime} attribute, which should refer to th
 
 \emph{Cascading} of events, i.e. events triggering subsequent events, are permitted,
 which in theory could be recursive through components depending on their connectivity. 
-\warning It is the users responsibility to ensure
-that this does not occur with zero delay. Implementations may decide to terminate after 
+\warning It is the user's responsibility to ensure
+that infinite recursion does not occur with zero delay. Implementations may decide to terminate after 
 a given number of recursive cascades of zero delay (say 1000) to prevent infinite
 loops, but such limits should be modifiable by the user.
 
@@ -1155,7 +1156,7 @@ Each \OutputEvent requires a \textit{port} attribute. This should refer to the n
 
 \section{Random Distributions}
 
-Values for a property across all elements in a container (e.g. cells in a population, post-synaptic responses, plasticity rules or delays in a projection) can be defined as a random distribution by a \Component within \RandomValue element. A random distribution component must parameterize a {\ComponentClass} with a \RandomDistribution block; the component class defines the random distribution family (e.g. normal, cauchy, gamma, etc...). As of version 1.0, the only random distributions available to the user are those defined in the standard library, however, derived distributions are planned for future versions.
+Values for a property across all elements in a container (e.g. cells in a population, post-synaptic responses, plasticity rules or delays in a projection) can be defined as a random distribution by a \Component within a \RandomValue element. A random distribution component must parameterize a {\ComponentClass} with a \RandomDistribution block; the component class defines the random distribution family (e.g. normal, cauchy, gamma, etc...). As of version 1.0, the only random distributions available to the user are those defined in the standard library, however, derived distributions are planned for future versions.
 
 \subsection{RandomDistribution}
 \label{sec:RandomDistribution}
@@ -1262,11 +1263,11 @@ The properties supplied to the \textit{destinationIndicies} parameter should be 
 
 \subsubsubsection{http://nineml.net/9ML/1.0/connectionrules/randomfanout}
 
-Cells in the source population are connected to a fixed number of randomly selected cells the destination population. The number of cells is specified by a parameter named \textit{number}. The property supplied to the \textit{number} parameter should be a \SingleValue.
+Each cell in the source population is connected to a fixed number of randomly selected cells in the destination population. The number of cells is specified by the parameter \textit{number}. The property supplied to the \textit{number} parameter should be a \SingleValue.
 
 \subsubsubsection{http://nineml.net/9ML/1.0/connectionrules/randomfanin}
 
-Cells in the destination population are connected to a fixed number of randomly selected cells the source population. The number of cells is specified by a parameter named \textit{number}. The property supplied to the \textit{number} parameter should be a \SingleValue.
+Each cell in the destination population is connected to a fixed number of randomly selected cells in the source population. The number of cells is specified by the parameter \textit{number}. The property supplied to the \textit{number} parameter should be a \SingleValue.
 
 \clearpage
 \part{User Layer}
@@ -1661,7 +1662,7 @@ Each \Projection requires a \textit{name} attribute, which should be a valid \id
   \end{edtable}
 \end{table}
 
-Each \Connectivity element contains a \Component\withelem\ConnectionRule, which defines the connection pattern of cells in source population to cells in the destination population (i.e. binary `connected' or `not connected' decisions). For each connection that is specified, a synapse, consisting of a post-synaptic response and plasticity dynamic components, is created to model the synaptic interaction between the cells.
+Each \Connectivity element contains a \Component\withelem\ConnectionRule, which defines the connection pattern of the cells in the source population to cells in the destination population (i.e. binary `connected' or `not connected' decisions). For each connection that is specified, a synapse, consisting of a post-synaptic response and plasticity dynamic components, is created to model the synaptic interaction between the cells.
 
 \subsection{Source}
 \label{sec:Source}
