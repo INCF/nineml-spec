@@ -66,7 +66,7 @@
 \newcommand{\Reference}{\defRef{\textbf{\class{Reference}}\xspace}{sec:Reference}}
 \newcommand{\Population}{\defRef{\textbf{\class{Population}}\xspace}{sec:Population}}
 \newcommand{\Cell}{\defRef{\textbf{\class{Cell}}\xspace}{sec:Cell}}
-\newcommand{\Number}{\defRef{\textbf{\class{Number}}\xspace}{sec:Number}}
+\newcommand{\Size}{\defRef{\textbf{\class{Size}}\xspace}{sec:Size}}
 \newcommand{\Projection}{\defRef{\textbf{\class{Projection}}\xspace}{sec:Projection}}
 \newcommand{\Source}{\defRef{\textbf{\class{Source}}\xspace}{sec:Source}}
 \newcommand{\Destination}{\defRef{\textbf{\class{Destination}}\xspace}{sec:Destination}}
@@ -1559,13 +1559,13 @@ Each \ExternalArrayValue must have a \textit{columnName} attribute, which refers
     \midrule
     \em{Child elements} & \em{Multiplicity} & \em{Required} \\
     \midrule
-    \Number & singleton & yes \\
+    \Size & singleton & yes \\
     \Cell & singleton & yes \\
     \bottomrule
   \end{edtable}
 \end{table}
 
-A \Population defines a set of dynamic components of the same class. The size of the set is specified by the \Number element. The properties of the dynamic components are generated from value types, which can be constant across the population, randomly distributed or individually specified (see \ref{sec:Values}).
+A \Population defines a set of dynamic components of the same class. The size of the set is specified by the \Size element. The properties of the dynamic components are generated from value types, which can be constant across the population, randomly distributed or individually specified (see \ref{sec:Values}).
 
 \subsubsection{Name attribute}
 Each \Population requires a \textit{name} attribute, which should be a valid \identifier and uniquely identify the {\Population} from all other elements in the document scope.
@@ -1587,13 +1587,13 @@ Each \Population requires a \textit{name} attribute, which should be a valid \id
 
 The \Cell element specifies the dynamic components that will make up the population. The \Component can be defined inline or via a \Reference element. 
 
-\subsection{Number}
-\label{sec:Number}
+\subsection{Size}
+\label{sec:Size}
 
 \begin{table}[H]
   \begin{edtable}{tabular}{llr}
     \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Number Structure}}}\\
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Size Structure}}}\\
     \toprule
     \em{Body} & \; & \em{Required} \\
     \midrule
@@ -1602,10 +1602,10 @@ The \Cell element specifies the dynamic components that will make up the populat
   \end{edtable}
 \end{table}
 
-The number of cells in the population is specified by the integer provided in the body of the \Number element. In future versions this may be extended to allow the size of a population to be derived from other features of the \Population. 
+The number of cells in the population is specified by the integer provided in the body of the \Size element. In future versions this may be extended to allow the size of a population to be derived from other features of the \Population. 
 
 \subsubsection{Body}
-The text of the \Number element contains an \primtype{integer} representing the size of the population.
+The text of the \Size element contains an \primtype{integer} representing the size of the population.
 
 \section{Projections}
 
