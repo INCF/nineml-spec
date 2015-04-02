@@ -88,6 +88,10 @@
 \RequirePackage{suffix}
 \RequirePackage{varwidth}
 \RequirePackage{titlesec}
+\RequirePackage{multirow}
+\RequirePackage{microtype}
+\RequirePackage{pbox}
+\RequirePackage{float}
 
 % We use the "optional" package to indicate whether to generate a grayscale
 % vs a color version of the document without having to alter the .tex file
@@ -290,7 +294,7 @@
 \definecolor{ninemlgray}{gray}{0.7}
 \definecolor{ninemlrowgray}{gray}{0.96}
 \definecolor{extremelylightgray}{gray}{0.97}
-\definecolor{veryverylightgray}{gray}{0.95}
+\definecolor{veryverylightgray}{gray}{0.985}
 \definecolor{verylightgray}{gray}{0.9}
 \definecolor{lightgray}{gray}{0.8}
 \definecolor{mediumgray}{gray}{0.5}
@@ -305,6 +309,10 @@
 \definecolor{ninemlliteralcolor}{gray}{0}
 \definecolor{ninemllinenumbercolor}{gray}{0.75}
 \definecolor{ninemlchangedcolor}{rgb}{0.69,0.19,0.376}
+
+\definecolor{darkdarkgray}{gray}{0.1}
+\definecolor{navy}{rgb}{0.0,0.05,0.5}
+\definecolor{red}{rgb}{0.5,0.1,0.1}
 
 % Macros and settings for making consistent font, color, and other
 % selections.
@@ -984,18 +992,36 @@
     rulecolor=\color{ninemlgray},%
     frame=single,%
     numberstyle=\tiny\sffamily,%
-    basicstyle=\small\ttfamily\color{black},%
+    basicstyle=\small\ttfamily\color{darkdarkgray},
     keywordstyle=\ttfamily,%
     xleftmargin=3.5pt,%
     xrightmargin=3.5pt,%
     aboveskip=1\baselineskip,%
     belowskip=0.4\baselineskip,%
-    commentstyle=\footnotesize\itshape\color{mediumgray},%
+    commentstyle=\footnotesize\itshape\color{darkgray},%
     tabsize=2,%
-    captionpos=b}
-
-\lstdefinestyle{XML}{%
-    language=XML}
+    captionpos=b
+    extendedchars=true,
+    belowcaptionskip=5pt,
+    breaklines=true,
+    breakatwhitespace=true,
+    breakindent=0pt,
+    emph={},
+    emphstyle=\color{red},
+    showstringspaces=false,
+    numbers=left,
+    morestring=[b]",
+    morecomment=[s]{<?}{?>},
+    morecomment=[s][\color{orange}]{<!--}{-->},
+    keywordstyle=\color{ninemlblue},
+    stringstyle=\color{red},
+    tagstyle=\color{navy}
+    }
+    
+\lstdefinestyle{XML}{
+    language=XML, 
+    morekeywords={xmlns,version,type,xmlns:xsi,xsi:schemaLocation,encoding}    
+}
 
 \lstdefinestyle{bash}{%
     language=bash}%
@@ -1171,8 +1197,16 @@
 
 \newcommand{\dblquote}    {\verb|"|} %"
 
+% subsubsubsection definition
 
+\setcounter{secnumdepth}{4}
 
+\titleformat{\paragraph}
+{\normalfont\normalsize\bfseries}{\theparagraph}{1em}{}
+\titlespacing*{\paragraph}
+{0pt}{3.25ex plus 1ex minus .2ex}{1.5ex plus .2ex}
+
+\newcommand{\subsubsubsection}{\paragraph}
 
 % 
 % Final settings before the body begins.

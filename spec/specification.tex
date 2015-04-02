@@ -1,8 +1,5 @@
 \documentclass[draftspec]{ninemlspec}
-\usepackage{microtype}
-\usepackage{pbox}
-\usepackage{multirow}
-\usepackage{float}
+
 %% ============================================================================
 %% Description:  Documentation for \lq\lq{}The NineML Specification Document\rq\rq{}
 %% Authors: Thomas G. Close <tclose@oist.jp>, Ivan Raikov <raikov@oist.jp>, Andrew P. Davison <davison@unic.cnrs-gif.fr>
@@ -20,6 +17,7 @@
 
 % Define Abstraction Layer element references
 
+\newcommand{\NineML}{\defRef{\textbf{\class{NineML}}\xspace}{sec:NineML}}
 \newcommand{\Unit}{\defRef{\textbf{\class{Unit}}\xspace}{sec:Unit}}
 \newcommand{\Dimension}{\defRef{\textbf{\class{Dimension}}\xspace}{sec:Dimension}}
 \newcommand{\ComponentClass}{\defRef{\textbf{\class{ComponentClass}}\xspace}{sec:ComponentClass}}
@@ -59,7 +57,7 @@
 \newcommand{\Quantity}{\defRef{\textbf{\class{Quantity}}\xspace}{sec:Quantity}}
 \newcommand{\SingleValue}{\defRef{\textbf{\class{SingleValue}}\xspace}{sec:SingleValue}}
 \newcommand{\ExternalArrayValue}{\defRef{\textbf{\class{ExternalArrayValue}}\xspace}{sec:ExternalArrayValue}}
-\newcommand{\ComponentValue}{\defRef{\textbf{\class{ComponentValue}}\xspace}{sec:ComponentValue}}
+\newcommand{\RandomValue}{\defRef{\textbf{\class{RandomValue}}\xspace}{sec:RandomValue}}
 \newcommand{\ArrayValue}{\defRef{\textbf{\class{ArrayValue}}\xspace}{sec:ArrayValue}}
 \newcommand{\ArrayValueRow}{\defRef{\textbf{\class{ArrayValueRow}}\xspace}{sec:ArrayValueRow}}
 \newcommand{\ListColumn}{\defRef{\textbf{\class{ListColumn}}\xspace}{sec:ListColumn}}
@@ -68,7 +66,7 @@
 \newcommand{\Reference}{\defRef{\textbf{\class{Reference}}\xspace}{sec:Reference}}
 \newcommand{\Population}{\defRef{\textbf{\class{Population}}\xspace}{sec:Population}}
 \newcommand{\Cell}{\defRef{\textbf{\class{Cell}}\xspace}{sec:Cell}}
-\newcommand{\Number}{\defRef{\textbf{\class{Number}}\xspace}{sec:Number}}
+\newcommand{\Size}{\defRef{\textbf{\class{Size}}\xspace}{sec:Size}}
 \newcommand{\Projection}{\defRef{\textbf{\class{Projection}}\xspace}{sec:Projection}}
 \newcommand{\Source}{\defRef{\textbf{\class{Source}}\xspace}{sec:Source}}
 \newcommand{\Destination}{\defRef{\textbf{\class{Destination}}\xspace}{sec:Destination}}
@@ -152,12 +150,13 @@
 
 {\Large\bf Editors: }
 \begin{itemize}
-\item Alex Cope
+\item Thomas G. Close
+\item Alexander J. Cope
 \item Andrew P. Davison
+\item Jochen M. Eppler
 \item Erik De Schutter
 \item Ivan Raikov
 \item Paul Richmond
-\item Thomas G. Close
 \end{itemize}
 
 \vspace*{0.25cm}
@@ -195,31 +194,28 @@ This document is under the Common Creative license BY-NC-SA:\\ http://creativeco
 \section{Introduction}
 % -----------------------------------------------------------------------------
 \vspace{-12.5pc} % A bit of a hack to reverse the vspace added by the Appendix name
-The increasing diversity of neuronal network models and the software/hardware platforms used to simulate them,
+The increasing diversity of neuronal network models and the software/hardware platforms used to simulate them
 presents a significant challenge for sharing, replicability and reusability of models in computational neuroscience.
-To address this problem, we propose a common description language to facilitate the exchange neuronal network models between researchers and simulator platforms.
+To address this problem, we propose a common description language, \emph{Network Interchange for Neuroscience Modeling
+Language (NineML)}, to facilitate the exchange neuronal network models between researchers and simulator platforms.
 
-This description language is based on a
-common object model describing the different elements of network
-models. This work, initiated and supported by the International
-Neuroinformatics Coordinating Facility as part of the Multiscale Modeling
-Program, involve computational neuroscientists, simulator developers and
-developers of simulator-independent languages (NeuroML, PyNN).  The name of the
-proposed language is NineML (Network Interchange for Neuroscience Modeling
-Language).
+NineML is based on a
+common object model describing the different elements of neuronal network
+models. It was initiated and supported by the \href{http://www.incf.org}{International
+Neuroinformatics Coordinating Facility (INCF) (http://www.incf.org)} as part of the \href{https://www.incf.org/activities/our-programs/modeling/people}{Multiscale Modeling Program}, and has benefitted from wide-ranging input from computational neuroscientists,
+simulator developers and developers of simulator-independent languages (e.g. NeuroML, PyNN) (see \ref{sec:task_force}) \citep{Goddard2001, Davison2008}.
 
 \subsection{Scope}
+\label{sec:scope}
 
 The purpose of NineML is to provide a computer language for
 succinct and unambiguous description of computational neuroscience models of neuronal networks.
-
 NineML is intended to describe the network architecture, parameters
 and equations that govern the dynamics of a neuronal network, without
 taking into account model implementation details such as numerical integration
 methods.
 
-As of version 1.0, the following neuronal
-network objects can be described in NineML:
+The following neuronal network objects can be described in NineML,
 \begin{enumerate}
 \item spiking and non-spiking neurons
 \item synapses
@@ -229,6 +225,8 @@ network objects can be described in NineML:
 \item Long-term synaptic modifications (STDP, learning, etc.)
 \item Gap-junctions
 \end{enumerate}
+\item populations of neurons
+\item synaptic projections between populations of neurons
 \end{enumerate}
 
 \subsection{Design considerations}
@@ -268,7 +266,7 @@ parametrization of model elements that have been defined in the
 Abstraction Layer, the two layers should share
 a complementary and compatible design philosophy. Which aspects of a model
 are defined in the Abtraction Layer and which are in the User Layer
-Layer are clearly defined (each element type belongs to either one).
+Layer are clearly defined (each element type belongs to only one layer with the exception of units and dimensions).
 In order to simplify their interpretation and maintain compatibility with a wide 
 range of data formats (e.g. JSON, Python objects), NineML documents are 
 not sensitive to the order that objects appear in.
@@ -276,130 +274,49 @@ not sensitive to the order that objects appear in.
 \subsection{Identifiers}
 \label{sec:identifier}
 
-Elements are identified by \emph{names}, which are unique in the scope they are enclosed by (either within a component class or in the global scope of the file). For a name to be a valid NineML identifier, it must meet the requirements for a \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 identifiers}. Additionally, identifiers are not permitted to begin or end with an underscore character (i.e. `\_') to allow special variables to be defined in the same scope as identified variables/objects in generated code.
+Elements are identified by \emph{names}, which are unique in the scope they are enclosed by (either within a component class or in the document scope of the file). For a name to be a valid NineML identifier, it must meet the requirements for a \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 identifiers}. Additionally, identifiers are not permitted to begin or end with an underscore character (i.e. `\_') to allow special variables to be defined in the same scope as identified variables/objects in generated code.
 
-NineML identifiers are case-sensitive in the sense that they must be referred to with the same case as they are defined. However, two identifiers that are identical with the exception of case, e.g. `v\_threshold' and `v\_Threshold', are not permitted within the same scope. Identifiers used within component classes also cannot be the same (case-sensitive) as one of the built-in symbols or functions (see \MathInline).
-
-\subsection{Extensions}
-\label{sec:extensions}
-
-``Extensions'' increase the descriptive power of NineML by providing syntax for compact, high-level descriptions of models that can also be expressed in ``Core'' NineML (i.e. syntactic sugar). Envisaged examples include concise forms for kinetic equations and multi-component/compartment dynamic models. 
-
-Core NineML is everything defined by this document, except those parts specifically described as Extensions. To be classified as a NineML Extension, a modelling language must meet the following requirements.
-\begin{itemize}
-\item Models written in the Extension format (or part thereof) must be collapsible to Core NineML without change in behaviour.
-\item The flattened (to Core NineML) descriptions must be convertible back to their original form (the additional information required to perform the reverse conversion can be stored in \Annotations).
-\item Stand-alone tools that perform the two-way conversion between the extended and core forms (preferably written in commonly used languages such as XSLT, Python, Java, etc...) must be downloadable from a publicly available \URL (a section of the NineML website, \href{http://nineml.net}{http://nineml.net}, is available for this purpose).
-\item Non-standard extensions must be defined within a unique namespace
-\item Detailed specifications, preferably in the same format as this document (see the `ninemlspec.cls' latex class), must be made publicly available along with the conversion tools.
- \label{item:collapsible}
-\end{itemize}
-
-One of the rationales behind the division between core and extended NineML is to minimise the set of features that a tool needs to support to be NineML compliant, i.e. as long as the core is supported all extensions should also be supported via flattening to core NineML. However, tool builders may want to take advantage of the additional structure provided by the extensions to optimise the implementation of the model or provide more intuitive interfaces to the user. 
-
-\note{To facilitate the reverse conversion from core to extended formats, NineML compliant tools must preserve all annotations during reading, writing and transformation, with the exception of when the return conversion is no longer possible due to the applied transformation or the annotations are explicitly added/deleted by the user.}
+NineML identifiers are case-sensitive in the sense that they must be referred to with the same case as they are defined. However, two identifiers that are identical with the exception of case, e.g. `v\_threshold' and `v\_Threshold', are not permitted within the same scope. Identifiers used within component classes also cannot be the same (case-insensitive) as one of the built-in symbols or functions (see \MathInline).
 
 \clearpage
-\part{Abstraction Layer}
-\section{Component Classes and Parameters}
+\part{General Elements}
+\section{Document layout}
 
-The main building block of the Abstraction Layer is the \ComponentClass.
-The \ComponentClass is intended to package together a collection of
-objects that relate to the definition of a model (e.g. cells, synapses, synaptic
-plasticity rules, random spike trains, inputs).
-All equations and event declarations that are part of particular entity
-model, such as neuron model, belong in a single \ComponentClass.
-A \ComponentClass can be used to represent either a specific model of a neuron or a
-composite model, including synaptic mechanisms.
+NineML documents must be enclosed within an \NineML element, which should be in the 'http://nineml.net/9ML/1.0' XML namespace.
 
-The interface is the \emph{external} view of the \ComponentClass that defines
-what inputs and outputs the component exposes to other {\ComponentClass} elements and the
-parameters that can be set for the \ComponentClass. The interface consists of
-instances of ports and \Parameter (see \ref{fig:component_class_overview}).
-
-\begin{figure}[htb]
-\center
-\includegraphics[width=8cm]{figures/component_simple.pdf}
-\protect\caption{ComponentClass Overview}
-\label{fig:component_class_overview}
-\end{figure}
-
-As well as being able to specify the communication of continuous values,
-{\ComponentClass} elements are also able to specify the emission and the reception
-of events. Events are discrete notifications
-that are transmitted over event ports. Since
-Event ports have names, saying that we transmit `event1' for example
-would mean transmitting an event on the EventPort called `event1'. Events
-can be used for example to signal action potential firing.
-
-\subsection{ComponentClass}
-\label{sec:ComponentClass}
+\subsection{NineML}
+\label{sec:NineML}
 
 \begin{table}[H]
   \begin{edtable}{tabular}{llr}
     \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{ComponentClass Structure}}}\\
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{NineML Structure}}}\\
     \toprule
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
-    name & \identifier & yes\\
+    xmlns & `http://nineml.net/9ML/1.0' & yes\\
     \midrule
-    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \em{Child elements} & \em{Multiplicity} & \em{Required} \\
     \midrule
-    \Parameter & set & no \\ 
-    \AnalogSendPort & set & no\\
-    \AnalogReceivePort & set & no\\
-    \AnalogReducePort & set & no \\ 
-    \EventSendPort & set & no\\    
-    \EventReceivePort & set & no\\    
-    \Dynamics | \ConnectionRule | \RandomDistribution & singleton & yes \\
+    \Component & set & no \\ 
+    \ComponentClass & set & no \\
+    \Unit & set & no \\
+    \Dimension & set & no \\
+    \Population & set & no \\
+    \Projection & set & no \\
+    \Selection & set & no \\
     \bottomrule
   \end{edtable}
 \end{table}
 
-A \ComponentClass is composed of:
-\begin{itemize}
-\item {\Parameter} objects for the \ComponentClass, which specify which values are required to be provided in the User Layer.
-\item An unordered collection of port objects, which either publish or read state variables or derived values published from other components in the case of analog send and receive ports, or emit events or listen for events emitted from components. \EventSendPort and \EventReceivePort objects raise and listen for events passed between dynamic components.
-\item {A `main' block, which specifies the nature of the component class:
-\begin{itemize} 
-\item \Dynamics, the component class defines a dynamic element such as neutron or post-synaptic response.
-\item \ConnectionRule, the component class defines a rule by which populations are connected in projections.
-\item \RandomDistribution, the component class defines random distribution.
-\end{itemize}}
-\end{itemize}
+Seven \emph{document-level} elements are allowed to reside directly within \NineML elements: \Component, \ComponentClass, \Unit, \Dimension, \Population, \Projection and \Selection. Each element should be uniquely identified by its \textit{name} attribute within the scope of the document (see \identifier). 
 
-\subsubsection{Name attribute}
-Each \ComponentClass requires a \textit{name} attribute, which should be a valid \identifier and uniquely identify the {\ComponentClass} in the global scope.
+\Unit \notice and \Dimension elements must be defined within the document they are referenced, whereas the remaining element types can also be referenced from other NineML documents (see \Reference and \Definition).
 
-\subsection{Parameter}
-\label{sec:Parameter}
+\subsubsection{Xmlns attribute}
 
-\draftnote{On reading through the old specs it is pretty clear that requiring dimensions for parameters and properties, including dimensionless ones, was deemed pretty important. I have also realised that it makes them easier to handle as you don't have to test for the case when they are not there.}
-\begin{table}[H]
-  \begin{edtable}{tabular}{llr}
-    \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Parameter Structure}}}\\
-    \toprule
-    \em{Attribute name} & \em{Type/Format} & \em{Required} \\
-    \midrule
-    name & \identifier & yes\\
-    dimension & \Dimension{}@name & yes\\
-    \bottomrule
-  \end{edtable}
-\end{table}
+The \textit{xmlns} attribute is required and should refer to the \URL corresponding to the correct NineML version, which for version 1.0 is `http://nineml.net/9ML/1.0' (see \href{http://www.w3.org/TR/REC-xml-names/}{http://www.w3.org/TR/REC-xml-names/}).
 
-\Parameter objects are placeholders for numerical values within a \ComponentClass.
-They define particular qualities of the model,
-such as the firing threshold, reset voltage or the
-decay time constant of a synapse model. By definition, Parameters are set at the
-start of the simulation, and remain constant throughout.
-
-\subsubsection{Name attribute}
-Each \Parameter requires a \textit{name} attribute, which is a valid \identifier and uniquely identifies the \Parameter within the \ComponentClass.
-
-\subsubsection{Dimension attribute}
-\Parameter elements must have a \textit{dimension} attribute. This attribute specifies the dimension of the units of the quantity that is expected to be passed to the \Parameter and should refer to the name of a \Dimension element in the global scope. For a dimensionless parameters a \Dimension with all attributes of power 0 can be used.
 
 \section{Units and Dimensions}
 
@@ -496,7 +413,7 @@ The \textit{j} attribute specifies the power of the luminous-intensity dimension
 Each \Unit requires a \textit{symbol} attribute, which should be a valid \identifier and uniquely identify the {\Unit} in current the scope.
 
 \subsubsection{Dimension attribute}
-Each \Unit requires a \textit{dimension} attribute. This attribute specifies the dimension of the units and should refer to the name of a \Dimension element in the global scope.
+Each \Unit requires a \textit{dimension} attribute. This attribute specifies the dimension of the units and should refer to the name of a \Dimension element in the document scope.
 
 \subsubsection{Power attribute}
 Each \Unit requires a \textit{power} attribute. This attribute specifies the relative scale of the units compared to the equivalent SI units in powers of ten. If omitted the power is zero.
@@ -509,6 +426,107 @@ A \Unit can optionally have an \textit{offset} attribute. This attribute specifi
 \end{lstlisting}
 
 If omitted, the offset is zero.
+
+\clearpage
+\part{Abstraction Layer}
+\section{Component Classes and Parameters}
+
+The main building block of the Abstraction Layer is the \ComponentClass.
+The \ComponentClass is intended to package together a collection of
+objects that relate to the definition of a model (e.g. cells, synapses, synaptic
+plasticity rules, random spike trains, inputs).
+All equations and event declarations that are part of particular entity
+model, such as neuron model, belong in a single \ComponentClass.
+A \ComponentClass can be used to represent either a specific model of a neuron or a
+composite model, including synaptic mechanisms.
+
+The interface is the \emph{external} view of the \ComponentClass that defines
+what inputs and outputs the component exposes to other {\ComponentClass} elements and the
+parameters that can be set for the \ComponentClass. The interface consists of
+instances of ports and \Parameter (see \ref{fig:component_class_overview}).
+
+\begin{figure}[htb]
+\center
+\includegraphics[width=8cm]{figures/component_simple.pdf}
+\protect\caption{ComponentClass Overview}
+\label{fig:component_class_overview}
+\end{figure}
+
+As well as being able to specify the communication of continuous values,
+{\ComponentClass} elements are also able to specify the emission and the reception
+of events. Events are discrete notifications
+that are transmitted over event ports. Since
+Event ports have names, saying that we transmit `event1' for example
+would mean transmitting an event on the EventPort called `event1'. Events
+can be used for example to signal action potential firing.
+
+\subsection{ComponentClass}
+\label{sec:ComponentClass}
+
+\begin{table}[H]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{ComponentClass Structure}}}\\
+    \toprule
+    \em{Attribute name} & \em{Type/Format} & \em{Required} \\
+    \midrule
+    name & \identifier & yes\\
+    \midrule
+    \em{Child elements} & \em{Multiplicity} & \em{Required} \\
+    \midrule
+    \Parameter & set & no \\ 
+    \AnalogSendPort & set & no\\
+    \AnalogReceivePort & set & no\\
+    \AnalogReducePort & set & no \\ 
+    \EventSendPort & set & no\\    
+    \EventReceivePort & set & no\\    
+    \Dynamics | \ConnectionRule | \RandomDistribution & singleton & yes \\
+    \bottomrule
+  \end{edtable}
+\end{table}
+
+A \ComponentClass is composed of:
+\begin{itemize}
+\item {\Parameter} objects for the \ComponentClass, which specify which values are required to be provided in the User Layer.
+\item An unordered collection of port objects, which either publish or read state variables or derived values published from other components in the case of analog send and receive ports, or emit events or listen for events emitted from components. \EventSendPort and \EventReceivePort objects raise and listen for events passed between dynamic components.
+\item {A `main' block, which specifies the nature of the component class:
+\begin{itemize} 
+\item \Dynamics, the component class defines a dynamic element such as neutron or post-synaptic response.
+\item \ConnectionRule, the component class defines a rule by which populations are connected in projections.
+\item \RandomDistribution, the component class defines random distribution.
+\end{itemize}}
+\end{itemize}
+
+\subsubsection{Name attribute}
+Each \ComponentClass requires a \textit{name} attribute, which should be a valid \identifier and uniquely identify the {\ComponentClass} in the document scope.
+
+\subsection{Parameter}
+\label{sec:Parameter}
+
+\begin{table}[H]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Parameter Structure}}}\\
+    \toprule
+    \em{Attribute name} & \em{Type/Format} & \em{Required} \\
+    \midrule
+    name & \identifier & yes\\
+    dimension & \Dimension{}@name & yes\\
+    \bottomrule
+  \end{edtable}
+\end{table}
+
+\Parameter objects are placeholders for numerical values within a \ComponentClass.
+They define particular qualities of the model,
+such as the firing threshold, reset voltage or the
+decay time constant of a synapse model. By definition, Parameters are set at the
+start of the simulation, and remain constant throughout.
+
+\subsubsection{Name attribute}
+Each \Parameter requires a \textit{name} attribute, which is a valid \identifier and uniquely identifies the \Parameter within the \ComponentClass.
+
+\subsubsection{Dimension attribute}
+\Parameter elements must have a \textit{dimension} attribute. This attribute specifies the dimension of the units of the quantity that is expected to be passed to the \Parameter and should refer to the name of a \Dimension element in the document scope. For a dimensionless parameters a \Dimension with all attributes of power 0 can be used.
 
 \section{Mathematical Expressions}
 
@@ -523,9 +541,9 @@ As of NineML version 1.0, only inline mathematical expressions, which have simil
     \toprule
     \multicolumn{2}{c}{\parbox{0.55\linewidth}{\center\textbf{MathInline Structure}}}\\
     \toprule
-    \em{Description of text} & \em{Required} \\
+    \em{Body} & \em{Required} \\
     \midrule
-    Inline mathematical expression & yes\\
+    Inline-maths expression & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
@@ -536,40 +554,28 @@ evaluates to either a \primtype{bool} (when used as the trigger for
 {\OnCondition} objects) or a \primtype{real number} (when used  as a
 right-hand-side for {\Alias}, {\TimeDerivative} and {\StateAssignment} objects). All numbers/variables in inline maths expressions are assumed to be \primtype{real numbers}.
 
-The following operators are supported in inline maths expressions,
-\draftnote{I have added exponent operator since it is commonly used in neutron models and is quite convenient but it is not ANSI C89 so I am not sure whether you guys think this is a good idea}
-\begin{itemize}
-\item Arithmetic operators
+\subsubsection{Body}
+
+The following arithmetic operators are supported in all inline maths expressions and have the same interpretation and precedence levels as in the ANSI C89 standard,
 \begin{itemize}
 \item Addition \verb|+|
 \item Subtraction \verb|-|
 \item Division \verb|/|
 \item Multiplication \verb|*|
-\item Exponent \verb|^|
 \end{itemize}
 
-The `\verb|+|', `\verb|-|', `\verb|/|' and `\verb|*|' operators have the same interpretation and precedence levels as in the ANSI C89 standard. `\verb|^|', which is not part of the ANSI C89 standard, is the exponent operator e.g.
- \begin{lstlisting}
-a^3 = a*a*a
-\end{lstlisting}
-and has the highest level of precedence.
+The following inequality and logical operators are only supported in inline maths expressions within \Trigger elements. They also have the same interpretation and precedence levels as in ANSI C89 standard.
 
-\item Inequality operators
 \begin{itemize}
 \item Greater than \verb|>|
 \item Lesser than \verb|<|
-\end{itemize}
-
-\item Logical operators
-\begin{itemize}
 \item Logical And: \verb|&&|
 \item Logical Or:  \verb+||+
 \item Logical Not: \verb|!|
 \end{itemize}
 
-\end{itemize}
-
 The following functions are built in and are defined as per ANSI C89:
+\begin{multicols}{4}
 \begin{itemize}
 \item \verb|exp(x)|
 \item \verb|sin(x)|
@@ -588,18 +594,28 @@ The following functions are built in and are defined as per ANSI C89:
 \item \verb|acosh(x)|
 \item \verb|atanh(x)|
 \item \verb|atan2(x)|
-\item \verb|ceil(x)|
-\item \verb|floor(x)|
 \end{itemize}
-
-\draftnote{I removed the "random" namespace since it was proving difficult to parse and it is made redundant by adding the \RandomDistribution elements to standard?}
+\end{multicols}
 
 The following symbols are built in, and cannot be redefined,
+\begin{multicols}{2}
 \begin{itemize}
 \item pi
 \item t
 \end{itemize}
+\end{multicols}
 where $pi$ is the mathematical constant $\pi$, and $t$ is the elapsed simulation time within a \Dynamics block.
+
+The following random distributions are available in \StateAssignment elements via the \verb|random| namespace, :
+\begin{itemize}
+\item \verb|random.uniform| (see \href{http://uncertml.org/distributions/uniform}{http://uncertml.org/distributions/uniform})
+\item \verb|random.normal| (see \href{http://uncertml.org/distributions/normal}{http://uncertml.org/distributions/normal})
+\item \verb|random.binomial(N,P)| (see \href{http://uncertml.org/distributions/binomial}{http://uncertml.org/distributions/binomial})
+\item \verb|random.poisson(L)| (see \href{http://uncertml.org/distributions/poisson}{http://uncertml.org/distributions/poisson})
+\item \verb|random.exponential(L)| (see \href{http://uncertml.org/distributions/exponential}{http://uncertml.org/distributions/exponential})
+\end{itemize}
+
+\note{\textit{C} implementations of these distributions are available in the GNU Scientific Library, \href{http://www.gnu.org/software/gsl/}{http://www.gnu.org/software/gsl/}}
 
 \subsection{Alias}
 \label{sec:Alias}
@@ -613,7 +629,7 @@ where $pi$ is the mathematical constant $\pi$, and $t$ is the elapsed simulation
     \midrule
     name & \identifier & yes\\
     \midrule
-    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \em{Child elements} & \em{Multiplicity} & \em{Required} \\
     \midrule
     \MathInline & singleton & yes \\ 
     \bottomrule
@@ -621,6 +637,7 @@ where $pi$ is the mathematical constant $\pi$, and $t$ is the elapsed simulation
 \end{table}
 
 An alias corresponds to an alternative name for a variable or part of an expression. 
+
 
 \textbf{Aliases} are motivated by two use cases:
 
@@ -652,8 +669,6 @@ transmitting a current, for example $i=g*(E-V)$.
 \subsubsection{Name attribute}
 Each \Alias requires a \textit{name} attribute, which is a valid \identifier and uniquely identifies the \Alias from all other elements in the \ComponentClass.
 
-\draftnote{Was tossing up whether `Constant' was a better name for this or not. Was thinking that this could also be used to remove `pi' from the list of built-in symbols and maybe provide some `standardLibrary' attributes.}
-
 \subsection{Constant}
 \label{sec:Constant}
 
@@ -667,22 +682,24 @@ Each \Alias requires a \textit{name} attribute, which is a valid \identifier and
     name & \identifier & yes\\
     units & \Unit@name & yes\\
     \midrule
-    \em{Text format} & \; & \em{Required} \\
+    \em{Body} & \; & \em{Required} \\
     \midrule
     \primtype{real number} & \; & yes \\ 
     \bottomrule
   \end{edtable}
 \end{table}
 
-\Constant objects are used to specify physical constants such as the Ideal Gas Constant (i.e. 8.314462175 JK$^{-1}$mol$^{-1}$) or Avogadro's number (i.e. 6.0221412927$\times$10$^{23}$mol$^{-1}$).
+\Constant objects are used to specify physical constants such as the Ideal Gas Constant (i.e. 8.314462175 JK$^{-1}$mol$^{-1}$) or Avogadro's number (i.e. 6.0221412927$\times$10$^{23}$mol$^{-1}$), and to convert unit dimensions between abstract mathematical quantities.
+
+The \notice use of \Constant elements to hold fixed model parameters is \emph{strongly discouraged} since this breaks the division of semantic layers (abstraction and user), which is a key feature of NineML (see \ref{sec:scope}).
 
 \subsubsection{Name attribute}
 Each \Constant requires a \textit{name} attribute, which should be a valid \identifier and uniquely identify the {\Dimension} in current the scope.
 
 \subsubsection{Units attribute}
-Each \Constant requires a \textit{units} attribute. The \textit{units} attribute specifies the units of the property and should refer to the name of a \Unit element in the global scope. 
+Each \Constant requires a \textit{units} attribute. The \textit{units} attribute specifies the units of the property and should refer to the name of a \Unit element in the document scope. 
 
-\subsubsection{Text format}
+\subsubsection{Body}
 Any valid numeric value, including shorthand scientific notation e.g. 1e-5 ($1\times10^{-5}$).
 
 \section{Ports}
@@ -691,7 +708,7 @@ Any valid numeric value, including shorthand scientific notation e.g. 1e-5 ($1\t
 Ports allow components to communicate with each
 other during a simulation. Ports can either transmit discrete events or continuous streams of analog data. Events are typically used to transmit and receive spikes between neutron model, whereas analog ports can be used to model injected current and gap junctions between neuron models. 
 
-Ports are divided into sending, \EventSendPort and \AnalogSendPort, and receiving objects, \EventReceivePort, \AnalogReceivePort and \AnalogReducePort. With the exception of \AnalogReducePort objects, each receive port must be connected to exactly one send port, where as a send port can be connected any number of receive ports. \AnalogReducePort objects can be connected to any number of \AnalogSendPort objects; the values of the connected ports are then ``reduced'' to a single data stream.
+Ports are divided into sending, \EventSendPort and \AnalogSendPort, and receiving objects, \EventReceivePort, \AnalogReceivePort and \AnalogReducePort. With the exception of \AnalogReducePort objects, each receive port must be connected to exactly one matching (i.e. analog$\to$analog, event$\to$event) send port, where as a send port can be connected any number of receive ports. \AnalogReducePort objects can be connected to any number of \AnalogSendPort objects; the values of the connected ports are then ``reduced'' to a single data stream using the \textit{operator} provided to the \AnalogReducePort.
 
 
 \subsection{AnalogSendPort}
@@ -710,14 +727,14 @@ Ports are divided into sending, \EventSendPort and \AnalogSendPort, and receivin
   \end{edtable}
 \end{table}
 
-{\AnalogSendPort} objects allow variables from the current component to be published externally to be read by other {\ComponentClass} objects. Each {\AnalogSendPort} can be connected to multiple {\AnalogReceivePort} and {\AnalogReducePort} objects.
+{\AnalogSendPort} objects allow variables from the current component to be published externally so they can be read by other {\ComponentClass} objects. Each {\AnalogSendPort} can be connected to multiple {\AnalogReceivePort} and {\AnalogReducePort} objects.
 
 \subsubsection{Name attribute}
 Each \AnalogSendPort requires a \textit{name} attribute, which should refer to a \StateVariable or \Alias within the current \ComponentClass.
 
 \subsubsection{Dimension attribute}
-Each \AnalogSendPort requires a \textit{dimension} attribute. This attribute specifies the dimension of the units of the quantity that is expected to be passed through the \AnalogSendPort and should refer to the name of a \Dimension element in the global scope.
-\note{"Dimensionless" parameters can be defined by referring to an empty \Dimension object, i.e. one without any \textit{power} or offset attributes} 
+Each \AnalogSendPort requires a \textit{dimension} attribute. This attribute specifies the dimension of the units of the quantity that is expected to be passed through the \AnalogSendPort and should refer to the name of a \Dimension element in the document scope.
+\note{"Dimensionless" parameters can be defined by referring to an empty \Dimension object, i.e. one without any \textit{power} or \textit{offset} attributes} 
 
 \subsection{AnalogReceivePort}
 \label{sec:AnalogReceivePort}
@@ -741,7 +758,7 @@ Each \AnalogSendPort requires a \textit{dimension} attribute. This attribute spe
 Each \AnalogReceivePort requires a \textit{name} attribute, which is a valid \identifier and uniquely identifies the \AnalogReceivePort from all other elements in the \ComponentClass.
 
 \subsubsection{Dimension attribute}
-Each \AnalogReceivePort requires a \textit{dimension} attribute. This attribute specifies the dimension of the units of the quantity that is expected to be passed through the \AnalogReceivePort and should refer to the name of a \Dimension element in the global scope.
+Each \AnalogReceivePort requires a \textit{dimension} attribute. This attribute specifies the dimension of the units of the quantity that is expected to be passed through the \AnalogReceivePort and should refer to the name of a \Dimension element in the document scope.
 
 
 \subsection{AnalogReducePort}
@@ -781,7 +798,7 @@ to change our original \ComponentClass definitions.
 Each \AnalogReducePort requires a \textit{name} attribute, which is a valid \identifier and uniquely identifies the \AnalogReducePort from all other elements in the \ComponentClass.
 
 \subsubsection{Dimension attribute}
-Each \AnalogReducePort requires a \textit{dimension} attribute. This attribute specifies the dimension of the units of the quantity that is expected to be communicated through the \AnalogReducePort and should refer to the name of a \Dimension element in the global scope.
+Each \AnalogReducePort requires a \textit{dimension} attribute. This attribute specifies the dimension of the units of the quantity that is expected to be communicated through the \AnalogReducePort and should refer to the name of a \Dimension element in the document scope.
 
 \subsubsection{Operator attribute}
 Each \AnalogReducePort requires an \textit{operator} attribute. The operator \lq\lq{}reduces\rq\rq{} the connected inputs to a single value at each time point. For example the following port,
@@ -836,7 +853,15 @@ Each \EventReceivePort requires a \textit{name} attribute, which is a valid \ide
 
 \section{Dynamic Regimes}
 
-Component classes that contain a \Dynamics block define dynamic models such as neurons, post-synaptic responses or the plasticity of synaptic weights. In these components, state variables are evolved by sets of ordinary differential equations (ODE), which describe the behaviour of the model. The state of the model can transition between distinct regimes, which define different sets of differential equations, via `transitions'.  Multiple regimes can be used to model qualitatively distinct behaviour by neuron models, such as sub-threshold, spiking and refractory periods of an abstract neuron model for example.
+Dynamics blocks define the dynamic equations of models such as
+neurons, post-synaptic responses or plasticity of synaptic
+weights. In Dynamics blocks, state variables are evolved by one or
+more sets of ordinary differential equations (ODE). Each set of
+equations is called a regime, and only one regime can be active at
+a particular point in time. The currently active regime can be
+changed by a transition event, which is represented as a logical
+expression on the state variables. When the logical expression
+evaluates to true, the transition must occur.
 
 \ref{fig:simple_regime_graph} illustrates a hypothetical transition graph for a system with three state variables, $X$, $Y$ and $Z$, which transitions between three ODE regimes, \emph{regime1}, \emph{regime2} and \emph{regime3}. At any time, the model will be in one and only one of these regimes, and the state variables will evolve according to the ODE of that regime.
 
@@ -855,7 +880,7 @@ Component classes that contain a \Dynamics block define dynamic models such as n
     \toprule
     \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Dynamics Structure}}}\\
     \toprule
-    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \em{Child elements} & \em{Multiplicity} & \em{Required} \\
     \midrule
     \StateVariable & set & no \\ 
     \Regime & set & yes\\
@@ -889,11 +914,7 @@ different ODE regimes. The regime graph (e.g. \ref{fig:simple_regime_graph}) mus
   \end{edtable}
 \end{table}
 
-The internal state of a component is defined by a set of state variables
- -- variables that can change either continuously or discontinuously as a
-function of time.
-
-The value of a \StateVariable can change in two ways:
+The state of the model is defined by a set of \StateVariable objects. The value of a \StateVariable can change in two ways:
 \begin{quote}
 \begin{itemize}
 \item continuously through \TimeDerivative elements (in {\Regime} elements),
@@ -908,7 +929,7 @@ which make discrete changes to a \StateVariable value, e.g. $X = X + 1$.
 Each \StateVariable requires a \textit{name} attribute, which is a valid \identifier and uniquely identifies the \StateVariable from all other elements in the \ComponentClass.
 
 \subsubsection{Dimension attribute}
-Each \StateVariable requires a \textit{dimension} attribute. This attribute specifies the dimension of the units of the quantities that \StateVariable is expected to be initialised and updated with and should refer to the name of a \Dimension element in the global scope.
+Each \StateVariable requires a \textit{dimension} attribute. This attribute specifies the dimension of the units of the quantities that \StateVariable is expected to be initialised and updated with and should refer to the name of a \Dimension element in the document scope.
 
 
 \subsection{Regime}
@@ -923,7 +944,7 @@ Each \StateVariable requires a \textit{dimension} attribute. This attribute spec
     \midrule
     name & \identifier & yes\\
     \midrule
-    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \em{Child elements} & \em{Multiplicity} & \em{Required} \\
     \midrule
     \TimeDerivative & set & no \\ 
     \OnCondition & set & no\\
@@ -955,7 +976,7 @@ Each \Regime requires a \textit{name} attribute, which is a valid \identifier an
     \midrule
     variable & \StateVariable{}@name & yes\\
     \midrule
-    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \em{Child elements} & \em{Multiplicity} & \em{Required} \\
     \midrule
     \MathInline & singleton & yes \\ 
     \bottomrule
@@ -975,18 +996,30 @@ Each \TimeDerivative requires a \textit{variable} attribute. This should refer t
 \section{Transitions}
 \label{sec:Transition}
 
-Movements between dynamic regimes occurs via transitions, and have vanishing temporal extents (i.e. they are event-like). There are two types of transitions, condition-triggered transitions (see \OnCondition), which are evoked when an associated trigger expression becomes true, or event-triggered transitions (see \OnEvent), which are evoked when an associated event port receives an event from an external component.
+The currently active dynamic regime can be changed via transitions.
+Transitions have instantaneous temporal extent (i.e. they are
+event-like). There are two types of transitions,
+condition-triggered transitions (see \OnCondition), which are
+evoked when an associated trigger expression becomes true, or
+event-triggered transitions (see \OnEvent), which are evoked when
+an associated event port receives an event from an external
+component. Multiple state assignments can be defined and multiple
+events can be sent within a single transition block.
 
-\draftnote{Should \OnEvent transitions be able to emit new events or would this be unnecessarily complex to handle?}
-During either type of transition three instantaneous actions will/can occur:
+During either type of transition three instantaneous actions can occur:
 \begin{itemize}
 \item The component transitions to a target regime (can be the same as the current regime)
 \item State variables can be assigned new values (see \StateAssignment)
 \item The component can send events (see \OutputEvent).
 \end{itemize}
 
-Multiple state assignments can be sent and multiple events can be sent within a single transition block
-(for more on the resolution of transitions see Appendix~\ref{resolution}).
+There is no order defined in transitions; this means
+that the order of resolution of state assignments can be ambiguous. \warning If, for
+example, we have two transitions, T1 and T2, originating from the same \Regime,
+in which T1 contains the state assignment \textsl{V=V+1} and T2 contains the
+assignment \textsl{V=V*V}, and both transitions are triggered simultaneously, then there is no
+guarantee about the value of V. It is left to the user to ensure such situations do not occur.
+Implementations should emit a warning when they are detected.
 
 \subsection{OnCondition}
 \label{sec:OnCondition}
@@ -1000,7 +1033,7 @@ Multiple state assignments can be sent and multiple events can be sent within a 
     \midrule
     targetRegime & \Regime{}@name & no \\
     \midrule
-    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \em{Child elements} & \em{Multiplicity} & \em{Required} \\
     \midrule
     \Trigger & singleton & yes \\
     \StateAssignment & set & no\\
@@ -1029,7 +1062,7 @@ An \OnEvent can have a \textit{targetRegime} attribute, which should refer to th
     targetRegime & \Regime{}@name & no \\    
     port & \EventReceivePort{}@name & yes\\
     \midrule
-    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \em{Child elements} & \em{Multiplicity} & \em{Required} \\
     \midrule   
     \StateAssignment & set & no\\
     \OutputEvent & set & no\\
@@ -1038,6 +1071,13 @@ An \OnEvent can have a \textit{targetRegime} attribute, which should refer to th
 \end{table}
 
 \OnEvent blocks are activated when the dynamics component receives an event from an external component on the port the \OnEvent element is ``listening'' to. They are typically used to model the transient response to spike events from incoming synaptic connections.
+
+\emph{Cascading} of events, i.e. events triggering subsequent events, are permitted,
+which in theory could be recursive through components depending on their connectivity. 
+\warning It is the user's responsibility to ensure
+that infinite recursion does not occur with zero delay. Implementations may decide to terminate after 
+a given number of recursive cascades of zero delay (say 1000) to prevent infinite
+loops, but such limits should be modifiable by the user.
 
 \subsubsection{Port attribute}
 Each \OnEvent requires a \textit{port} attribute. This should refer to the name of an \EventReceivePort  in the \ComponentClass interface.
@@ -1053,20 +1093,20 @@ Each \OnEvent requires a \textit{port} attribute. This should refer to the name 
     \toprule
     \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Trigger Structure}}}\\
     \toprule
-    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \em{Child elements} & \em{Multiplicity} & \em{Required} \\
     \midrule
     \MathInline & singleton & yes \\ 
     \bottomrule
   \end{edtable}
 \end{table}
 
-{\Trigger}s define when an {\OnCondition} transition should be occur. The \MathInline block of a
+{\Trigger} objects define when an {\OnCondition} transition should occur. The \MathInline block of a
 {\Trigger} can contain any arbitrary combination of `and', `or' and `negation' \emph{logical
 operations} (`$\&\&$', `$||$' and `$!$' respectively) on the
-result of pure inequality \emph{relational operations} (`$>$' and `$<$').
+result of pure inequality \emph{relational operations} (`$>$' and `$<$'), which follow the syntax and semantics of ANSI C89.
 The inequality expression may contain references to 
 \StateVariable, \AnalogReceivePort, \AnalogReducePort, \Parameter and {\Alias} elements, with the exception of {\Alias} elements
-derived from random distributions. The \OnCondition block is triggered when the boolean result of the \Trigger statement changes from false to true. 
+derived from random distributions. The \OnCondition block is triggered when the boolean result of the \Trigger statement changes from \notice \emph{false} to \emph{true}.  
 
 \subsection{StateAssignment}
 \label{sec:StateAssignment}
@@ -1080,7 +1120,7 @@ derived from random distributions. The \OnCondition block is triggered when the 
     \midrule
     variable & \StateVariable{}@name & yes\\
     \midrule
-    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \em{Child elements} & \em{Multiplicity} & \em{Required} \\
     \midrule
     \MathInline & singleton & yes \\     
     \bottomrule
@@ -1116,6 +1156,8 @@ Each \OutputEvent requires a \textit{port} attribute. This should refer to the n
 
 \section{Random Distributions}
 
+Values for a property across all elements in a container (e.g. cells in a population, post-synaptic responses, plasticity rules or delays in a projection) can be defined as a random distribution by a \Component within a \RandomValue element. A random distribution component must parameterize a {\ComponentClass} with a \RandomDistribution block; the component class defines the random distribution family (e.g. normal, cauchy, gamma, etc...). As of version 1.0, the only random distributions available to the user are those defined in the standard library, however, derived distributions are planned for future versions.
+
 \subsection{RandomDistribution}
 \label{sec:RandomDistribution}
 
@@ -1131,8 +1173,9 @@ Each \OutputEvent requires a \textit{port} attribute. This should refer to the n
   \end{edtable}
 \end{table}
 
-As of version 1.0, the only random distributions available to the user are those defined in the standard library. The names and parameters of the random distribution in the standard library match the UncertML definitions that can be found at \href{http://www.uncertml.org/distributions}{http://www.uncertml.org/distributions}. The subset of the UncertML distributions that should be implemented are by NineML compliant packages are,
+The names and parameters of the random distribution in the standard library match the UncertML definitions that can be found at \href{http://www.uncertml.org/distributions}{http://www.uncertml.org/distributions}. The subset of the UncertML distributions that should be implemented are by NineML compliant packages are,
 
+\begin{multicols}{2}
 \begin{itemize}
 \item BernoulliDistribution
 \item BetaDistribution
@@ -1160,16 +1203,16 @@ As of version 1.0, the only random distributions available to the user are those
 \item UniformDistribution
 \item WeibullDistribution
 \end{itemize}
-
-~
+\end{multicols}
 
 \note{\textit{C} implementations of these distributions are available in the GNU Scientific Library, \href{http://www.gnu.org/software/gsl/}{http://www.gnu.org/software/gsl/}}
 
 \subsubsection{StandardLibrary attribute}
 The \textit{standardLibrary} attribute is required and should point to a \URL in the \href{http://www.uncertml.org/distributions/}{http://www.uncertml.org/distributions/} directory.
 
-
 \section{Network Connectivity}
+
+The connection rule for cells in the source and destination populations of a \Projection (i.e. the rule that determines which source cells are connected to which destination cells) is defined by a connection-rule component within the \Connectivity element of the \Projection.  This component must parameterize a {\ComponentClass} with a \ConnectionRule block, which describes the connection algorithm. As of version 1.0, the only connection rules available to the user are those defined in the standard library (e.g. all-to-all, one-to-one, probabilistic, etc...), however, custom connectivity rules are planned for future versions.
 
 \subsection{ConnectionRule}
 \label{sec:ConnectionRule}
@@ -1186,32 +1229,31 @@ The \textit{standardLibrary} attribute is required and should point to a \URL in
   \end{edtable}
 \end{table}
 
-In Version 1.0 of the NineML standard, connection rules must be one of 6 standard library types (in future versions, built-in connectivity rules are to be replaced with arbitrary connection rule generators):
-\begin{itemize}
-\item AllToAll
-\item OneToOne
-\item ProbabilisticConnectivity
-\item ExplicitConnectionList
-\item RandomFanOut
-\item RandomFanIn
-\end{itemize}
+Connection rules must be one of 6 standard library types, \textit{all-to-all}, \textit{one-to-one}, \textit{probabilistic}, \textit{explicit}, \\\textit{random-fan-out} and \textit{random-fan-in}, provided to the \textit{standardLibarary} attribute.
+
+\note{In future versions, built-in connectivity rules are to be replaced with mathematically expressed connection rules.}
 
 \subsubsection{StandardLibrary attribute}
-The \textit{standardLibrary} attribute is required and should point to a \URL in the \href{http://nineml.net/standardlibraries/connectionrules/}{http://nineml.net/standardlibraries/connectionrules/} directory.
+The \textit{standardLibrary} attribute is required and should point to the \URL in the \\\href{http://nineml.net/9ML/1.0/\-connectionrules/}{http://nineml.net/9ML/1.0/connectionrules/} directory that corresponds to the desired connection rule.
 
-\emph{\textbf{http://nineml.net/standardlibraries/connectionrules/AllToAll}}
+\subsubsubsection{http://nineml.net/9ML/1.0/connectionrules/alltoall}
 
 All cells in the source population are connected to all cells in the destination population.
 
-\emph{\textbf{http://nineml.net/standardlibraries/connectionrules/OneToOne}}
+\subsubsubsection{http://nineml.net/9ML/1.0/connectionrules/onetoone}
 
 Each cell in the source population is connected to the cell in the destination population with the corresponding index. Note that this requires that the source and destination populations be the same size.
 
-\emph{\textbf{http://nineml.net/standardlibraries/connectionrules/ProbabilisticConnectivity}}
+\subsubsubsection{http://nineml.net/9ML/1.0/connectionrules/probabilistic}
 
-All cells in the source population are connected to cells in the destination population with a probability defined by a parameter, which should be named \textit{probability}. The properties supplied to the \textit{probability} parameter should either be a \SingleValue representing the probability of a connection between all source and destination cell pairs, or a \ArrayValue or \ExternalArrayValue of size $M{\times}N$, where $M$ and $N$ are the size of the source and destination populations respectively. In the case of the \ArrayValue or \ExternalArrayValue properties, the list represents probabilities of connections existing between the first cell in the source population with every cell in the destination population in order of their index, followed by the second cell in the source with with every cell in the destination population in order of their index and so forth for each cell in the source population.
+All cells in the source population are connected to cells in the destination population with a probability defined by a parameter, which should be named \textit{probability}. The properties supplied to the \textit{probability} parameter should either be a \SingleValue representing the probability of a connection between all source and destination cell pairs, or a \ArrayValue or \ExternalArrayValue of size $M{\times}N$, where $M$ and $N$ are the size of the source and destination populations respectively. \notice For array probabilities, the data in the \ArrayValue or \ExternalArrayValue are ordered by the indices
 
-\emph{\textbf{http://nineml.net/standardlibraries/connectionrules/ExplicitConnectionList}}
+\begin{equation}
+i_{\mathrm{prob}} = i_{\mathrm{source}} * N_{\mathrm{dest}} + i_{\mathrm{dest}}
+\end{equation}
+where $i_{\mathrm{prob}}$, $i_{\mathrm{source}}$ and $i_{\mathrm{dest}}$ are the indices of the probability entry, and the source and destination cells respectively, and $N_{\mathrm{dest}}$ is the size of the destination population.
+
+\subsubsubsection{http://nineml.net/9ML/1.0/connectionrules/explicit}
 
 Cells in the source population are connected to cells in the destination population as specified by an explicit arrays. The source and destination are defined via parameters, which should be named \textit{sourceIndicies} and \textit{destinationIndicies} parameters respectively.
 
@@ -1219,13 +1261,13 @@ The properties supplied to the \textit{sourceIndicies} parameter should be a \Ar
 
 The properties supplied to the \textit{destinationIndicies} parameter should be a \ArrayValue or \ExternalArrayValue drawn from the set $\{1,\ldots,N\}$ where $N$ is the size of the source population and be the same length as the property supplied to the \textit{source-indices} parameter.
 
-\emph{\textbf{http://nineml.net/standardlibraries/connectionrules/RandomFanOut}}
+\subsubsubsection{http://nineml.net/9ML/1.0/connectionrules/randomfanout}
 
-Cells in the source population are connected to cells in the destination population with a probability defined by a parameter, which should be named \textit{probability}. The property supplied to the \textit{probability} parameter should be a \SingleValue.
+Each cell in the source population is connected to a fixed number of randomly selected cells in the destination population. The number of cells is specified by the parameter \textit{number}. The property supplied to the \textit{number} parameter should be a \SingleValue.
 
-\emph{\textbf{http://nineml.net/standardlibraries/connectionrules/RandomFanIn}}
+\subsubsubsection{http://nineml.net/9ML/1.0/connectionrules/randomfanin}
 
-Cells in the destination population are connected to cells in the source population with a probability defined by a parameter, which should be named \textit{probability}. The property supplied to the \textit{probability} parameter should be a \SingleValue.
+Each cell in the destination population is connected to a fixed number of randomly selected cells in the source population. The number of cells is specified by the parameter \textit{number}. The property supplied to the \textit{number} parameter should be a \SingleValue.
 
 \clearpage
 \part{User Layer}
@@ -1243,7 +1285,7 @@ Cells in the destination population are connected to cells in the source populat
     \midrule
     name & \identifier & yes\\
     \midrule
-    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \em{Child elements} & \em{Multiplicity} & \em{Required} \\
     \midrule
     \Definition | \Prototype & singleton & yes \\ 
     \Property & set & no\\
@@ -1257,7 +1299,7 @@ class by a \Definition element, which locates the component class. A \Component
 that instantiates a \ComponentClass directly must supply matching \Property elements for each \Parameter in the \ComponentClass. Alternatively, a \Component can inherit a \ComponentClass and set of \Property elements from an existing component by substituting the \Definition for a \Prototype element, which locates the reference \Component. In this case, only the properties that differ from the reference component need to be specified.
 
 \subsubsection{Name attribute}
-Each \Component requires a \textit{name} attribute, which should be a valid \identifier and uniquely identify the {\Component} from all other elements in the global scope.
+Each \Component requires a \textit{name} attribute, which should be a valid \identifier and uniquely identify the {\Component} from all other elements in the document scope.
 
 \subsection{Definition}
 \label{sec:Definition}
@@ -1271,7 +1313,7 @@ Each \Component requires a \textit{name} attribute, which should be a valid \ide
     \midrule
     url & \URL & no\\
     \midrule
-    \em{Text format} & \; & \em{Required} \\
+    \em{Body} & \; & \em{Required} \\
     \midrule
     \ComponentClass{}@name & \; & yes \\ 
     \bottomrule
@@ -1283,10 +1325,10 @@ The \Definition element establishes a link between a User Layer component and Ab
 document or in another file if a \textit{url} attribute is provided.
 
 \subsubsection{Url attribute}
-If the \ComponentClass referenced by the definition element is defined outside the current document, the \textit{url} attribute specifies a \URL for the file which contains the \ComponentClass definition. If it is omitted the \ComponentClass is assumed to be in the current document.
+If the \ComponentClass referenced by the definition element is defined outside the current document, the \textit{url} attribute specifies a \URL for the file which contains the \ComponentClass definition. \notice If the \textit{url} attribute is omitted the \ComponentClass is referenced from the current document.
 
-\subsubsection{Text format}
-The name of the \ComponentClass to be referenced \ComponentClass needs to be provided in the text of \Definition element.
+\subsubsection{Body}
+The name of the \ComponentClass to be referenced \ComponentClass needs to be provided in the body of the \Definition element.
 
 \subsection{Prototype}
 \label{sec:Prototype}
@@ -1300,7 +1342,7 @@ The name of the \ComponentClass to be referenced \ComponentClass needs to be pro
     \midrule
     url & \href{http://en.wikipedia.org/wiki/Uniform_resource_locator}{URL} & no\\
     \midrule
-    \em{Text format} & \; & \em{Required} \\
+    \em{Body} & \; & \em{Required} \\
     \midrule
     \Component{}@name & \; & yes \\ 
     \bottomrule
@@ -1311,12 +1353,11 @@ The \Prototype element establishes a link to an existing User Layer \Component, 
 document or in another file if a \textit{url} attribute is provided.
 
 \subsubsection{Url attribute}
-If the prototype \Component is defined outside the current file, the \textit{URL} attribute specifies a \URL for the file which contains the prototype \Component.
+If the prototype \Component is defined outside the current file, the \textit{URL} attribute specifies a \URL for the file which contains the prototype \Component. \notice If the \textit{url} attribute is omitted the \Component is referenced from the current document.
 
-\subsubsection{Text format}
-The name of the \Component to be referenced \Component needs to be provided in the text of \Prototype element.
+\subsubsection{Body}
+The name of the \Component to be referenced \Component needs to be provided in the body of the \Prototype element.
 
-\draftnote{I have removed the \Quantity{s} in favour of adding units to the \Property elements as it seemed superfluous and incongruous with the AL (i.e. \Parameter s define the dimension). I will create a GitHub issue about this where we can discuss this and potentially decide to change it back if you like}
 \subsection{Property}
 \label{sec:Property}
 
@@ -1330,9 +1371,9 @@ The name of the \Component to be referenced \Component needs to be provided in t
     name & \Parameter{}@name & yes\\
     units & \Unit{}@symbol & yes\\
     \midrule
-    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \em{Child elements} & \em{Multiplicity} & \em{Required} \\
     \midrule
-    \SingleValue | \ArrayValue | \ExternalArrayValue | \ComponentValue & singleton & yes \\ 
+    \SingleValue | \ArrayValue | \ExternalArrayValue | \RandomValue & singleton & yes \\ 
     \bottomrule
   \end{edtable}
 \end{table}
@@ -1344,7 +1385,7 @@ of the \Component. Their \textit{name} attribute should match the name of the co
 Each \Property requires a \textit{name} attribute. This should refer to the name of a \Parameter in the corresponding \ComponentClass of the \Component.
 
 \subsubsection{Units attribute}
-Each \Property element requires a \emph{units} attribute. The \textit{units} attribute specifies the units of the quantity and should refer to the name of a \Unit element in the global scope. For a dimensionless units a \Unit\withelem\Dimension with no SI dimensions can be used. The SI dimensions of the \Unit\withelem\Dimension should match the SI dimensions of the corresponding \Parameter\withelem\Dimension.
+Each \Property element requires a \emph{units} attribute. The \textit{units} attribute specifies the units of the quantity and should refer to the name of a \Unit element in the document scope. For a dimensionless units a \Unit\withelem\Dimension with no SI dimensions can be used. The SI dimensions of the \Unit\withelem\Dimension should match the SI dimensions of the corresponding \Parameter\withelem\Dimension.
 
 \subsection{Reference}
 \label{sec:Reference}
@@ -1358,20 +1399,20 @@ Each \Property element requires a \emph{units} attribute. The \textit{units} att
     \midrule
     url &  \href{http://en.wikipedia.org/wiki/Uniform_resource_locator}{URL}  & no\\
     \midrule
-    \em{Text format} & \; & \em{Required} \\
+    \em{Body} & \; & \em{Required} \\
     \midrule
     *@name & \; & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
 
-\Reference elements are used to locate User Layer elements in the global scope of the current separate documents. In most cases, User Layer elements (with the exception of \Population elements supplied to \Projection) can be specified inline, i.e. within the element they are required. However, it is often convenient to define a component in the global scope as this allows it to be reused at different places within the model. The \textit{url} attribute can be used to reference a component in a separate document, potentially one published online in a public repository (e.g. \href{http://senselab.med.yale.edu/modeldb/ListByModelName.asp?c=19&lin=-1}{ModelDB} or \href{http://www.opensourcebrain.org/}{Open Source Brain}).
+\Reference elements are used to locate User Layer elements in the document scope of the current separate documents. In most cases, User Layer elements (with the exception of \Population elements supplied to \Projection) can be specified inline, i.e. within the element they are required. However, it is often convenient to define a component in the document scope as this allows it to be reused at different places within the model. The \textit{url} attribute can be used to reference a component in a separate document, potentially one published online in a public repository (e.g. \href{http://senselab.med.yale.edu/modeldb/ListByModelName.asp?c=19&lin=-1}{ModelDB} or \href{http://www.opensourcebrain.org/}{Open Source Brain}).
 
 \subsubsection{Url attribute}
-The \textit{url} attribute specifies a \URL for the file which contains the User Layer element to be referenced.
+The \textit{url} attribute specifies a \URL for the file which contains the User Layer element to be referenced. \notice If the \textit{url} attribute is omitted the element is referenced from the current document.
 
-\subsubsection{Text format}
-The name of the User Layer element to be referenced should be included in the text of the \Reference element.
+\subsubsection{Body}
+The name of the User Layer element to be referenced should be included in the body of the \Reference element.
 
 \section{Values}
 \label{sec:Values}
@@ -1381,7 +1422,7 @@ In NineML, ``values'' are arrays that implicitly grow to fill the size of the co
 \item \SingleValue, a consistent value across the container
 \item \ArrayValue, an explicit array defined in NineML
 \item \ExternalArrayValue, an explicit array defined in text (space delimited) or HDF5 format.
-\item \ComponentValue, a return value from a \RandomDistribution component.
+\item \RandomValue, an array of values derived from a random distribution.
 \end{itemize}
 
 \subsection{SingleValue}
@@ -1392,7 +1433,7 @@ In NineML, ``values'' are arrays that implicitly grow to fill the size of the co
     \toprule
     \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{SingleValue Structure}}}\\
     \toprule
-    \em{Text format} & \; & \em{Required} \\
+    \em{Body} & \; & \em{Required} \\
     \midrule
     \primtype{real number} & \; & yes \\ 
     \bottomrule
@@ -1401,7 +1442,7 @@ In NineML, ``values'' are arrays that implicitly grow to fill the size of the co
 
 A \SingleValue element represents an array filled with a single value.
 
-\subsubsection{Text format}
+\subsubsection{Body}
 Any valid numeric value in \href{http://en.wikipedia.org/wiki/ANSI_C}{ANSI C89}, including shorthand scientific notation  e.g. 1e-5 ($1\times10^{-5}$).
 
 \subsection{ArrayValue}
@@ -1412,7 +1453,7 @@ Any valid numeric value in \href{http://en.wikipedia.org/wiki/ANSI_C}{ANSI C89},
     \toprule
     \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{ArrayValue Structure}}}\\
     \toprule
-    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \em{Child elements} & \em{Multiplicity} & \em{Required} \\
     \midrule
     \ArrayValueRow & set & no \\
     \bottomrule
@@ -1433,7 +1474,7 @@ Any valid numeric value in \href{http://en.wikipedia.org/wiki/ANSI_C}{ANSI C89},
     \midrule
     index & integer & yes \\
     \midrule
-    \em{Text format} & \; & \em{Required} \\
+    \em{Body} & \; & \em{Required} \\
     \midrule
     \primtype{real number} & \; & yes\\
     \bottomrule
@@ -1446,7 +1487,7 @@ The \textit{index} attribute specifies the index of the \ArrayValueRow in the \A
 
 \note{The order of {\ArrayValueRow} elements within an \ArrayValue element does not effect the interpreted order of the values in the array in keeping with the order non-specific design philosophy of NineML (see \ref{sec:design_considerations}).}
 
-\subsubsection{Text format}
+\subsubsection{Body}
 Any valid numeric value in \href{http://en.wikipedia.org/wiki/ANSI_C}{ANSI C89}, including shorthand scientific notation  e.g. 1e-5 ($1\times10^{-5}$).
 
 \subsection{ExternalArrayValue}
@@ -1485,30 +1526,22 @@ The \textit{mimetype} attribute specifies the data format for the external value
 
 Each \ExternalArrayValue must have a \textit{columnName} attribute, which refers to a column header in the external data file. 
 
-\draftnote{What do you think of this? This allows a single component to return two (related) values at different places at the model (e.g. weight and delay in distance dependent rules). It also seemed a bit neater}
-\subsection{ComponentValue}
-\label{sec:ComponentValue}
+\subsection{RandomValue}
+\label{sec:RandomValue}
 
 \begin{table}[H]
   \begin{edtable}{tabular}{llr}
     \toprule
     \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{ExternalArrayValue Structure}}}\\
     \toprule
-    \em{Attribute name} & \em{Type/Format} & \em{Required} \\
-    \midrule
-    port & {\AnalogSendPort}@name & yes\\
-    \midrule    
-    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \em{Child elements} & \em{Multiplicity} & \em{Required} \\
     \midrule
     \Component{}\withelem\RandomDistribution | \Reference{}\pointto\Component{}\withelem\RandomDistribution & singleton & yes \\
     \bottomrule
   \end{edtable}
 \end{table}
 
-The array of values represented by a \ComponentValue element is populated from the output port of a component. As of version 1.0, only \RandomDistribution components are supported within \ComponentValue but function and generator components are planned for later versions. The size of the generated array is determined by the size of the container (i.e. \Population or \Projection) the \ComponentValue is nested within.
-
-\subsubsection{Port attribute}
-Each \ComponentValue requires a \textit{port} attribute, which selects which port of the \Component to read.
+\RandomValue elements represent arrays of values drawn from random distributions, which are defined by a \Component{}\withelem\RandomDistribution elements. The size of the generated array is determined by the size of the container (i.e. \Population or \Projection) the \RandomValue is nested within.
 
 \section{Populations}
 
@@ -1524,18 +1557,18 @@ Each \ComponentValue requires a \textit{port} attribute, which selects which por
     \midrule
     name & \identifier & yes\\
     \midrule
-    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \em{Child elements} & \em{Multiplicity} & \em{Required} \\
     \midrule
-    \Number & singleton & yes \\
+    \Size & singleton & yes \\
     \Cell & singleton & yes \\
     \bottomrule
   \end{edtable}
 \end{table}
 
-A \Population defines a set of dynamic components of the same class. The size of the set is specified by the \Number element. The properties of the dynamic components are generated from value types, which can be constant across the population, randomly distributed or individually specified (see \ref{sec:Values}).
+A \Population defines a set of dynamic components of the same class. The size of the set is specified by the \Size element. The properties of the dynamic components are generated from value types, which can be constant across the population, randomly distributed or individually specified (see \ref{sec:Values}).
 
 \subsubsection{Name attribute}
-Each \Population requires a \textit{name} attribute, which should be a valid \identifier and uniquely identify the {\Population} from all other elements in the global scope.
+Each \Population requires a \textit{name} attribute, which should be a valid \identifier and uniquely identify the {\Population} from all other elements in the document scope.
 
 \subsection{Cell}
 \label{sec:Cell}
@@ -1545,7 +1578,7 @@ Each \Population requires a \textit{name} attribute, which should be a valid \id
     \toprule
     \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Cell Structure}}}\\
     \toprule
-    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \em{Child elements} & \em{Multiplicity} & \em{Required} \\
     \midrule
     \Component{}\withelem\Dynamics | \Reference{}\pointto\Component{}\withelem\Dynamics & singleton & yes \\
     \bottomrule
@@ -1554,35 +1587,35 @@ Each \Population requires a \textit{name} attribute, which should be a valid \id
 
 The \Cell element specifies the dynamic components that will make up the population. The \Component can be defined inline or via a \Reference element. 
 
-\subsection{Number}
-\label{sec:Number}
+\subsection{Size}
+\label{sec:Size}
 
 \begin{table}[H]
   \begin{edtable}{tabular}{llr}
     \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Number Structure}}}\\
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Size Structure}}}\\
     \toprule
-    \em{Text format} & \; & \em{Required} \\
+    \em{Body} & \; & \em{Required} \\
     \midrule
     \primtype{integer} & \; & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
 
-The number of cells in the population is specified by the integer provided in the text of the \Number element. In future versions this may be extended to allow the size of a population to be derived from other features of the \Population. 
+The number of cells in the population is specified by the integer provided in the body of the \Size element. In future versions this may be extended to allow the size of a population to be derived from other features of the \Population. 
 
-\subsubsection{Text format}
-The text of the \Number element contains an \primtype{integer} representing the size of the population.
+\subsubsection{Body}
+The text of the \Size element contains an \primtype{integer} representing the size of the population.
 
 \section{Projections}
 
-Projections define the synaptic connectivity between two populations, the post-synaptic response of the connections, the plasticity rules that modulate the post-synaptic response and the transmission delays. Synaptic and plasticity dynamic components are created and connected to and from explicitly defined ports of the cell components in the source and projection populations if the connection rule determines there is a connection between a particular source and destination cell pair. 
+Projections define the synaptic connectivity between two populations, the post-synaptic response of the connections, the plasticity rules that modulate the post-synaptic response and the transmission delays. Synaptic and plasticity dynamic components are created if the connection rule determines there is a connection between a particular source and destination cell pair. The synaptic and plasticity components are then connected to and from explicitly defined ports of the cell components in the source and projection populations
 
-\draftnote{I just drafted this so it will need checking}\SingleValue and \ComponentValue elements used in properties of a projection (in the \Connectivity, \Response, \Plasticity and \Delay elements) take the size of the number of connections made. While \ArrayValue and \ExternalArrayValue elements can either be the size of the number of connections made or the number of possible unique connections (i.e. $N_{\mathrm{source}} * N_{\mathrm{dest}}$). In either case, the expected array data is ordered by the indices
+\SingleValue and \RandomValue elements used in properties of a projection (in the \Connectivity, \Response, \Plasticity and \Delay elements) take the size of the number of connections made. Explicitly array values, \ArrayValue and \ExternalArrayValue, are only permitted with connection rules (as defined by the \Connectivity element) where the number of connections is predetermined (i.e. \emph{one-to-one}, \emph{all-to-all} and \emph{explicit}). \notice Explicit arrays are ordered by the indices
 \begin{equation}
 i_{\mathrm{value}} = i_{\mathrm{source}} * N_{\mathrm{dest}} + i_{\mathrm{dest}}
 \end{equation}
-where $i_{\mathrm{value}}$, $i_{\mathrm{source}}$ and $i_{\mathrm{dest}}$ are the indices of the array entry, and the source and destination cells respectively and $N_{\mathrm{dest}}$ is the size of the destination population. For the case of the explicit arrays being the size of the number connections made, data for $i_{\mathrm{value}}$ indices that do not correspond to connected pairs are omitted.
+where $i_{\mathrm{value}}$, $i_{\mathrm{source}}$ and $i_{\mathrm{dest}}$ are the indices of the array entry, and the source and destination cells respectively, and $N_{\mathrm{dest}}$ is the size of the destination population. Value indices that do not correspond to connected pairs are omitted, and therefore the arrays are the same size as the number of connections.
 
 \subsection{Projection}
 \label{sec:Projection}
@@ -1596,7 +1629,7 @@ where $i_{\mathrm{value}}$, $i_{\mathrm{source}}$ and $i_{\mathrm{dest}}$ are th
     \midrule
     name & \identifier & yes\\
     \midrule
-    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \em{Child elements} & \em{Multiplicity} & \em{Required} \\
     \midrule
     \Source & singleton & yes \\ 
     \Destination & singleton & yes \\
@@ -1611,7 +1644,7 @@ where $i_{\mathrm{value}}$, $i_{\mathrm{source}}$ and $i_{\mathrm{dest}}$ are th
 The \Projection element contains all the elements that define a projection between two populations and should be uniquely identified in the scope of the document.
 
 \subsubsection{Name attribute}
-Each \Projection requires a \textit{name} attribute, which should be a valid \identifier and uniquely identify the {\Projection} from all other elements in the global scope.
+Each \Projection requires a \textit{name} attribute, which should be a valid \identifier and uniquely identify the {\Projection} from all other elements in the document scope.
 
 
 \subsection{Connectivity}
@@ -1622,14 +1655,14 @@ Each \Projection requires a \textit{name} attribute, which should be a valid \id
     \toprule
     \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Connectivity Structure}}}\\
     \toprule
-    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \em{Child elements} & \em{Multiplicity} & \em{Required} \\
     \midrule
     \Component{}\withelem\ConnectionRule & singleton & yes \\ 
     \bottomrule
   \end{edtable}
 \end{table}
 
-The \Connectivity element contains a \Component\withelem\ConnectionRule, which defines how the source and destination populations are connected together. 
+Each \Connectivity element contains a \Component\withelem\ConnectionRule, which defines the connection pattern of the cells in the source population to cells in the destination population (i.e. binary `connected' or `not connected' decisions). For each connection that is specified, a synapse, consisting of a post-synaptic response and plasticity dynamic components, is created to model the synaptic interaction between the cells.
 
 \subsection{Source}
 \label{sec:Source}
@@ -1639,7 +1672,7 @@ The \Connectivity element contains a \Component\withelem\ConnectionRule, which d
     \toprule
     \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Source Structure}}}\\
     \toprule
-    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \em{Child elements} & \em{Multiplicity} & \em{Required} \\
     \midrule
     \Reference{}\pointto\Population | \Reference{}\pointto\Selection & singleton & yes \\
     \FromDestination & set & no \\
@@ -1659,7 +1692,7 @@ The \Source element specifies the pre-synaptic population or selection (see \Sel
     \toprule
     \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Destination Structure}}}\\
     \toprule
-    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \em{Child elements} & \em{Multiplicity} & \em{Required} \\
     \midrule
     \Reference{}\pointto\Population | \Reference{}\pointto\Selection & singleton & yes \\
     \FromSource & set & no \\
@@ -1679,7 +1712,7 @@ The \Destination element specifies the post-synaptic or selection (see \Selectio
     \toprule
     \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Response Structure}}}\\
     \toprule
-    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \em{Child elements} & \em{Multiplicity} & \em{Required} \\
     \midrule
     \Component{}\withelem\Dynamics | \Reference{}\pointto\Component{}\withelem\Dynamics & singleton & yes \\ 
     \FromSource & set & no \\
@@ -1702,7 +1735,7 @@ The post-synaptic response dynamics can receive incoming port connections from t
     \toprule
     \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Plasticity Structure}}}\\
     \toprule
-    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \em{Child elements} & \em{Multiplicity} & \em{Required} \\
     \midrule
     \Component{}\withelem\Dynamics | \Reference{}\pointto\Component{}\withelem\Dynamics & singleton & yes \\ 
     \FromSource & set & no \\
@@ -1832,9 +1865,9 @@ Each \FromResponse element requires a \textit{receiver} attribute. This should r
     \midrule
     units & \Unit{}@symbol & yes\\
     \midrule
-    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \em{Child elements} & \em{Multiplicity} & \em{Required} \\
     \midrule
-    \SingleValue | \ArrayValue | \ExternalArrayValue | \ComponentValue & singleton & yes \\ 
+    \SingleValue | \ArrayValue | \ExternalArrayValue | \RandomValue & singleton & yes \\ 
     \bottomrule
   \end{edtable}
 \end{table}
@@ -1842,7 +1875,7 @@ Each \FromResponse element requires a \textit{receiver} attribute. This should r
 In version 1.0, the \Delay element specifies the delay between the pre-synaptic cell port and both the \Plasticity\withelem\Component and \Response\withelem\Component. In future versions, it is planned to include the delay directly into the port-connection objects (i.e. \FromSource, \FromDestination, etc...) to allow finer control of the delay between the different components.
 
 \subsubsection{Units attribute}
-The \textit{units} attribute specifies the units of the delay and should refer to the name of a \Unit element in the global scope. The \Unit{}\withelem\Dimension should be temporal, i.e. have $t=1$ and all other SI dimensions set to 0. 
+The \textit{units} attribute specifies the units of the delay and should refer to the name of a \Unit element in the document scope. The \Unit{}\withelem\Dimension should be temporal, i.e. have $t=1$ and all other SI dimensions set to 0. 
 
 \section{Selections: combining populations and subsets}
 
@@ -1856,7 +1889,11 @@ Selections are designed to allow sub and super-sets of cell populations to be pr
     \toprule
     \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Selection Structure}}}\\
     \toprule
-    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
+    \midrule
+    name & \identifier & yes\\
+    \midrule
+    \em{Child elements} & \em{Multiplicity} & \em{Required} \\
     \midrule
     \Concatenate & singleton & yes \\ 
     \bottomrule
@@ -1864,6 +1901,11 @@ Selections are designed to allow sub and super-sets of cell populations to be pr
 \end{table}
 
 The \Selection element contains the operations that are used to select the cells to add to the selection.
+
+
+\subsubsection{Name attribute}
+Each \Selection requires a \textit{name} attribute, which should be a valid \identifier and uniquely identify the {\Selection} from all other elements in the document scope.
+
 \subsection{Concatenate}
 \label{sec:Concatenate}
 
@@ -1872,7 +1914,7 @@ The \Selection element contains the operations that are used to select the cells
     \toprule
     \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Concatenate Structure}}}\\
     \toprule
-    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \em{Child elements} & \em{Multiplicity} & \em{Required} \\
     \midrule
     \Item & set & yes \\ 
     \bottomrule
@@ -1893,7 +1935,7 @@ The \Concatenate element is used to add populations to a selection. It contains 
     \midrule
     index & \primtype{integer} & yes\\
     \midrule
-    \em{Element type} & Multiplicity & \em{Required} \\
+    \em{Child elements} & Multiplicity & \em{Required} \\
     \midrule \relax
     \Reference{}\pointto{}[\Population | \Selection{}] & singleton & yes\\
     \bottomrule
@@ -1925,7 +1967,7 @@ In order to be compliant with the NineML specification any tool handling NineML 
     \toprule
     \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Annotations Structure}}}\\
     \toprule
-    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \em{Child elements} & \em{Multiplicity} & \em{Required} \\
     \midrule
     * & set & no\\
     \bottomrule
@@ -1944,7 +1986,7 @@ The \Annotations element is the top-level of the annotations attached to a NineM
 \subsection{Izhikevich Model}
 
 \noindent
-In this first example, we are describing how to represent the Izhikevich model in NineML.
+In this first example, we are describing how to represent the Izhikevich model in NineML \cite{Izhikevich2003}.
 The model is composed of single \ComponentClass, containing a single \Regime, \emph{subthresholdRegime}, and two
 state variables, $U$ \& $V$.
 
@@ -1990,104 +2032,102 @@ condition, we emit a spike, and the \StateAssignment of $V \leftarrow c$ resets
 the value of $V$.
 \clearpage
 The corresponding Abstraction Layer XML description for this model is the following:
-\begin{lstlisting}
+\begin{lstlisting}[style=XML]
 <?xml version="1.0" encoding='UTF-8'?>
 <NineML xmlns="http://nineml.net/9ML/1.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://nineml.net/9ML/1.0/NineML_v1.0.xsd">
-  <ComponentClass name="IzhikevichCell">
-    <Parameter name="a" dimension="dimensionless"/>
-    <Parameter name="c" dimension="voltage"/>
-    <Parameter name="b" dimension="per_time"/>
-    <Parameter name="d" dimension="voltage_per_time"/>
-    <Parameter name="theta" dimension="voltage"/>
-    <Parameter name="i_injected" dimension="current"/>
-    <AnalogReducePort name="i_synapse" operator="+" dimension="current"/>
-    <AnalogSendPort name="U" dimension="dimensionless"/>
-    <AnalogSendPort name="V" dimension="voltage"/>
-    <EventPort name="spikeOutput" mode="send"/>
-    <Dynamics>
-        <StateVariable name="V" dimension="voltage"/>
-        <StateVariable name="U" dimension="voltage_per_time"/>
-        <Alias name="rv">
-            <MathInline>V*U</MathInline>
-        </Alias>
-        <Regime name="subthresholdRegime">
-          <TimeDerivative variable="U">
-            <MathInline>a*(b*V - U)</MathInline>
-          </TimeDerivative>
-          <TimeDerivative variable="V">
-            <MathInline>0.04*V*V + 5*V + 140.0 - U + i_synapse + i_injected</MathInline>
-          </TimeDerivative>
-          <OnCondition>
-            <Trigger>
-              <MathInline>V &gt; theta </MathInline>
-            </Trigger>
-            <StateAssignment variable="V" >
-              <MathInline>c</MathInline>
-            </StateAssignment>
-            <StateAssignment variable="U" >
-              <MathInline>U+d</MathInline>
-            </StateAssignment>
-            <OutputEvent port="spikeOutput" />
-          </OnCondition>
-        </Regime>
-    </Dynamics>
-  </ComponentClass>
-  <Dimension name="per_time" t="-1"/>
-  <Dimension name="voltage" m="1" l="2" t="-3" i="-1"/>
-  <Dimension name="voltage_per_time" m="1" l="2" t="-4" i="-1"/>
-  <Dimension name="current" i="1"/>
-  <Dimension name="dimensionless"/>  
+	<ComponentClass name="IzhikevichCell">
+		<Parameter name="a" dimension="per_time"/>
+		<Parameter name="c" dimension="voltage"/>
+		<Parameter name="b" dimension="per_voltage"/>
+		<Parameter name="d" dimension="dimensionless"/>
+		<Parameter name="theta" dimension="voltage"/>
+		<Parameter name="iInj" dimension="current"/>
+		<AnalogReducePort name="iSyn" operator="+" dimension="current"/>
+		<AnalogSendPort name="V" dimension="voltage"/>
+		<EventPort name="spikeOutput" mode="send"/>
+		<Dynamics>
+			<StateVariable name="V" dimension="voltage"/>
+			<StateVariable name="U" dimension="dimensionless"/>
+			<Regime name="subthresholdRegime">
+				<TimeDerivative variable="U">
+					<MathInline>a*(b*V - U)</MathInline>
+				</TimeDerivative>
+				<TimeDerivative variable="V">
+					<MathInline
+						>(0.04*V*V/unitV + 5*V + (140.0 - U)*unitV + (iSyn + iInj)*unitR)/unitT</MathInline>
+				</TimeDerivative>
+				<OnCondition>
+					<Trigger>
+						<MathInline>V &gt; theta </MathInline>
+					</Trigger>
+					<StateAssignment variable="V" >
+						<MathInline>c</MathInline>
+					</StateAssignment>
+					<StateAssignment variable="U" >
+						<MathInline>U+d</MathInline>
+					</StateAssignment>
+					<OutputEvent port="spikeOutput" />
+				</OnCondition>
+			</Regime>
+			<Constant name="unitV" units="V">1</Constant>
+			<Constant name="unitR" units="Ohm">1</Constant>
+			<Constant name="unitT" units="s">1</Constant>
+		</Dynamics>
+	</ComponentClass>
+	<Dimension name="voltage" m="1" l="2" t="-3" i="-1"/>
+	<Dimension name="time" t="1"/>
+	<Dimension name="current" i="1"/>
+	<Dimension name="dimensionless"/>
+	<Dimension name="resistance" m="1" l="2" t="-3" i="-2"/>
+	<Dimension name="per_voltage" m="-1" l="-2" t="3" i="1"/>	
+	<Dimension name="per_time" t="-1"/>	
+	<Unit symbol="V" dimension="voltage"/>
+	<Unit symbol="Ohm" dimension="resistance"/>
+	<Unit symbol="s" dimension="time" power="1"/>
 </NineML>
 \end{lstlisting}
 
-\clearpage
+~
 User Layer description for the above example:
 
-\begin{lstlisting}
+\begin{lstlisting}[style=XML]
 <?xml version='1.0' encoding='UTF-8'?>
 <NineML xmlns="http://nineml.net/9ML/1.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://nineml.net/9ML/1.0/NineML_v1.0.xsd">
   <Component name="IzhikevichNeuron">
-    <Definition url="http://nineml.net/catalog/izhikevichCell.9ml"
+    <Definition url="http://nineml.net/9ML/1.0/catalog/neurons/izhikevichCell.9ml"
       >IzhikevichCell</Definition>
-    <Property name="V" units="mV">
-      <SingleValue>-60</SingleValue>
-    </Property>
-    <Property name="U" units="mV_per_ms">
-      <SingleValue>0</SingleValue>
-    </Property>
     <Property name="theta" units="mV">
       <SingleValue>50</SingleValue>
     </Property>
-    <Property name="a" units="none">
+    <Property name="a" units="per_s">
       <SingleValue>0.02</SingleValue>
     </Property>
-    <Property name="b" units="per_ms">
+    <Property name="b" units="per_V">
       <SingleValue>0.2</SingleValue>
     </Property>
     <Property name="c" units="mV">
       <SingleValue>-65</SingleValue>
     </Property>
-    <Property name="d" units="mV_per_ms">
+    <Property name="d" units="none">
       <SingleValue>8</SingleValue>
     </Property>
   </Component>
-  <Dimension name="per_time" t="-1"/>
   <Dimension name="voltage" m="1" l="2" t="-3" i="-1"/>
-  <Dimension name="voltage_per_time" m="1" l="2" t="-4" i="-1"/>
-  <Dimension name="current" i="1"/>
   <Dimension name="dimensionless"/>
-  <Unit symbol="mV" dimension="voltage" power="-3" />
-  <Unit symbol="per_ms" dimension="per_time" power="-3" />
-  <Unit symbol="mV_per_ms" dimension="voltage_per_time" />
-  <Unit symbol="none" dimension="dimensionless" />
+  <Dimension name="per_time" t="-1"/>
+  <Dimension name="per_voltage" m="-1" l="-2" t="3" i="1"/>  
+  <Unit symbol="mV" dimension="voltage" power="-3"/>
+  <Unit symbol="per_V" dimension="per_voltage"/>
+  <Unit symbol="per_s" dimension="per_time"/>
+  <Unit symbol="none" dimension="dimensionless"/>  
 </NineML>
 \end{lstlisting}
 
-Here, we show the simulation results of this XML representation.
+Here, we show the simulation results of this XML representation with an initial V=-60mV and U=0.
 \begin{figure}[htb!]
 \center
 \includegraphics[width=8cm]{figures/example_IzVoltageWave.pdf}
@@ -2096,11 +2136,10 @@ this section}
 \label{fig:Ex1_Output}
 \end{figure}
 
-\newpage
 \subsection{Leaky Integrate and Fire model}
 
 In this example, we build a representation of a integrate-and-fire neuron, with
-an attached input synapse.
+an attached input synapse \citep{Abbott1999}.
 \noindent
 We have a single \StateVariable, \emph{iaf\_V}.
 This time, the neuron has an absolute refractory period; which is implemented
@@ -2148,12 +2187,12 @@ The corresponding Regime Graph is shown in Figure 5.
 \end{figure}
 \clearpage
 The resulting XML description for the Abstraction Layer is :
-\begin{lstlisting}[label=code:xmliaf2]
+\begin{lstlisting}[style=XML]
 <?xml version='1.0' encoding='UTF-8'?>
 <NineML xmlns="http://nineml.net/9ML/1.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://nineml.net/9ML/1.0/NineML_v1.0.xsd">
-  <ComponentClass name="Iaf1Coba">
+  <ComponentClass name="IafCoba">
     <AnalogSendPort dimension="voltage" name="iaf_V" />
     <AnalogReducePort dimension="current" operator="+" name="iaf_ISyn" />
     <AnalogSendPort dimension="current" name="cobaExcit_I" />
@@ -2161,17 +2200,17 @@ The resulting XML description for the Abstraction Layer is :
     <EventReceivePort name="cobaExcit_spikeinput"/>
     <Parameter dimension="area" name="iaf_cm"/>
     <Parameter dimension="time" name="iaf_taurefrac"/>
-    <Parameter dimension="conductance" name="iaf_gl"/>
+    <Parameter dimension="conductanceDensity" name="iaf_gl"/>
     <Parameter dimension="voltage" name="iaf_vreset"/>
     <Parameter dimension="voltage" name="iaf_vrest"/>
     <Parameter dimension="voltage" name="iaf_vthresh"/>
     <Parameter dimension="time" name="cobaExcit_tau"/>
-    <Parameter dimension="conductance" name="cobaExcit_q"/>
+    <Parameter dimension="conductanceDensity" name="cobaExcit_q"/>
     <Parameter dimension="voltage" name="cobaExcit_vrev"/>
     <Dynamics>
       <StateVariable dimension="voltage" name="iaf_V"/>
       <StateVariable dimension="time" name="iaf_tspike"/>
-      <StateVariable dimension="conductance" name="cobaExcit_g"/>
+      <StateVariable dimension="conductanceDensity" name="cobaExcit_g"/>
       <Regime name="RefractoryRegime">
         <TimeDerivative variable="iaf_V">
           <MathInline>0</MathInline>
@@ -2186,7 +2225,7 @@ The resulting XML description for the Abstraction Layer is :
         </OnEvent>
         <OnCondition target_regime="RegularRegime">
           <Trigger>
-            <MathInline>t &gt;= iaf_tspike + iaf_taurefrac</MathInline>
+            <MathInline>t &gt; iaf_tspike + iaf_taurefrac</MathInline>
           </Trigger>
         </OnCondition>
       </Regime>
@@ -2222,20 +2261,22 @@ The resulting XML description for the Abstraction Layer is :
   </ComponentClass>
   <Dimension name="time" t="1"/>
   <Dimension name="voltage" m="1" l="2" t="-3" i="-1"/>
-  <Dimension name="conductance" m="-1" t="3" l="-2" i="2"/>
+  <Dimension name="conductanceDensity" m="-1" t="3" l="-2" i="2"/>
   <Dimension name="area" l="2"/>
 </NineML>
 \end{lstlisting}
 
-User Layer description for the above example:
-\begin{lstlisting}
+~
+
+The User Layer description for the above example:
+\begin{lstlisting}[style=XML]
 <?xml version='1.0' encoding='UTF-8'?>
 <NineML xmlns="http://nineml.net/9ML/1.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://nineml.net/9ML/1.0/NineML_v1.0.xsd">
   <Component name="IaFNeuron">
-    <Definition url="http://nineml.net/catalog/neurons/iafICoba.9ml"
-      >Iaf1Coba</Definition>
+    <Definition url="http://nineml.net/catalog/neurons/IafCoba.9ml"
+      >IafCoba</Definition>
     <Property name="iaf_V" units="mV">
       <SingleValue>-60</SingleValue>
     </Property>
@@ -2275,14 +2316,15 @@ User Layer description for the above example:
   </Component>
   <Dimension name="time" t="1"/>
   <Dimension name="voltage" m="1" l="2" t="-3" i="-1"/>
-  <Dimension name="conductance" m="-1" t="3" l="-2" i="2"/>
+  <Dimension name="conductanceDensity" m="-1" t="3" l="-2" i="2"/>
   <Dimension name="area" l="2"/>
   <Unit symbol="mV" dimension="voltage" power="-3"/>
   <Unit symbol="ms" dimension="time" power="-3"/>
   <Unit symbol="cm_square" dimension="area" power="-4"/>
-  <Unit symbol="mS" dimension="conductance" power="-3"/>
+  <Unit symbol="mS" dimension="conductanceDensity" power="-3"/>
 </NineML>
 \end{lstlisting}
+~
 
 The simulation results is presented in Figure 6.
 \begin{figure}[htb!]
@@ -2294,177 +2336,277 @@ in this simulation}
 \label{fig:EX2_Output}
 \end{figure}
 
-\pagebreak
-
 \newpage
+\subsection{COBA IAF Network example}
 
-\section{Transition resolution}
-\label{resolution}
+This example is an implementation of \emph{Benchmark 1} from \cite{Brette2009}, which consists of a network of an excitatory and inhibitory IAF populations randomly connected with COBA synapses \citep{Vogels2005}. The excitatory and inhibitory \Population elements are created with 3,200 and 800 cells respectively. Both populations are then concatenated into a single \Selection element, ``AllNeurons'', which is used to randomly connect both populations to every other neuron in the network with a 2\% probability.
 
-\draftnote{Do we really want to include this here? Transitions (with the exception of those which just emit spikes) should really be wound back to the exact time point in my opinion because handling multiple simultaneous (in terms of time steps) transitions doesn't seem well defined to me.}
-This section outlines pseudo code which defines the order of
-transition-triggering, state assignment execution, event emission,
-transmission and resolution in a system of connected components.
-Implementations do not need to implement this algorithm but should produce
-the same behaviours.
+The abstraction layer description of the IAF input neuron \ComponentClass{}\withelem\Dynamics is:
+\begin{lstlisting}[style=XML]
+<?xml version='1.0' encoding='UTF-8'?>
+<NineML xmlns="http://nineml.net/9ML/1.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://nineml.net/9ML/1.0/NineML_v1.0.xsd">
+  <ComponentClass name="IaF">
+    <AnalogSendPort dimension="voltage" name="iaf_V" />
+    <AnalogReducePort dimension="current" operator="+" name="iaf_ISyn" />
+    <EventSendPort name="iaf_spikeoutput"/>
+    <Parameter dimension="area" name="iaf_cm"/>
+    <Parameter dimension="time" name="iaf_taurefrac"/>
+    <Parameter dimension="voltage" name="iaf_vreset"/>
+    <Parameter dimension="voltage" name="iaf_vrest"/>
+    <Parameter dimension="voltage" name="iaf_vthresh"/>
+    <Parameter dimension="conductanceDensity" name="iaf_gl"/>
+    <Dynamics>
+      <StateVariable dimension="voltage" name="iaf_V"/>
+      <StateVariable dimension="time" name="iaf_tspike"/>
+      <Regime name="RefractoryRegime">
+        <TimeDerivative variable="iaf_V">
+          <MathInline>0</MathInline>
+        </TimeDerivative>
+        <OnCondition target_regime="RegularRegime">
+          <Trigger>
+            <MathInline>t &gt; iaf_tspike + iaf_taurefrac</MathInline>
+          </Trigger>
+        </OnCondition>
+      </Regime>
+      <Regime name="RegularRegime">
+        <TimeDerivative variable="iaf_V">
+          <MathInline>( iaf_gl*( iaf_vrest - iaf_V ) + iaf_ISyn)/(iaf_cm)</MathInline>
+        </TimeDerivative>
+        <OnCondition target_regime="RefractoryRegime">
+          <StateAssignment variable="iaf_tspike">
+            <MathInline>t</MathInline>
+          </StateAssignment>
+          <StateAssignment variable="iaf_V">
+            <MathInline>iaf_vreset</MathInline>
+          </StateAssignment>
+          <OutputEvent port="iaf_spikeoutput"/>
+          <Trigger>
+            <MathInline>iaf_V &gt; iaf_vthresh</MathInline>
+          </Trigger>
+        </OnCondition>
+      </Regime>
+    </Dynamics>
+  </ComponentClass>
+  <Dimension name="time" t="1"/>
+  <Dimension name="voltage" m="1" l="2" t="-3" i="-1"/>
+  <Dimension name="conductanceDensity" m="-1" t="3" l="-2" i="2"/>
+  <Dimension name="area" l="2"/>
+</NineML>
+\end{lstlisting}
 
-A {\tt TransitionResolutionBlock} represents an instant in time. It begins
-before any transitions occur and ends after each component has moved
-into its new \Regime, all \textbf{StateAssignments} have been executed
-and all Events generated and resolved in the system.
+~
 
-\subsection{Serial implementation of transition resolution}
+and the description of the COBA \ComponentClass{}\withelem\Dynamics is:
+\begin{lstlisting}[style=XML]
+<?xml version='1.0' encoding='UTF-8'?>
+<NineML xmlns="http://nineml.net/9ML/1.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ 	xsi:schemaLocation="http://nineml.net/9ML/1.0/NineML_v1.0.xsd">
+	<ComponentClass name="CoBa">
+		<EventReceivePort name="coba_spikeinput"/>
+		<AnalogReceivePort name="coba_vrev"/>
+		<AnalogSendPort dimension="current" name="coba_I" />
+		<Parameter dimension="time" name="coba_tau"/>
+		<Parameter dimension="conductanceDensity" name="coba_q"/>
+		<Dynamics>
+			<StateVariable dimension="conductanceDensity" name="coba_g"/>
+			<Regime name="RegularRegime">
+				<OnEvent target_regime="RegularRegime" src_port="coba_spikeinput">
+					<StateAssignment variable="coba_g">
+						<MathInline>coba_g+coba_q</MathInline>
+					</StateAssignment>
+				</OnEvent>
+				<TimeDerivative variable="coba_g">
+					<MathInline>-coba_g/coba_tau</MathInline>
+				</TimeDerivative>
+			</Regime>
+			<Alias name="coba_I">
+				<MathInline>coba_g*(coba_vrev-iaf_V)</MathInline>
+			</Alias>
+		</Dynamics>
+	</ComponentClass>
+	<Dimension name="time" t="1"/>
+	<Dimension name="voltage" m="1" l="2" t="-3" i="-1"/>
+	<Dimension name="conductanceDensity" m="-1" t="3" l="-2" i="2"/>
+	<Dimension name="area" l="2"/>
+</NineML>
+\end{lstlisting}
 
-\newcommand{\CN}[0]{\textsl{C\_n}}
+~
 
-We have a system of \textsl{N} components \textsl{\{C\_1,C\_2,...,C\_N\}},
-at time, \textsl{t}, where each component, \CN, is in \Regime
-$R^{t}_{n}$.
+The cell \Component{}\withelem\Dynamics are parameterized and connected together in the User Layer via \Population, \Selection and 
+\Projection elements:
 
-\noindent From \Regime $R^{t}_{n}$, there are:
-\begin{itemize}
-\item OnEvent transitions $OnEv^{t}_{n} = \{ ... \}$
-\item OnCondition transitions $OnCond^{t}_{n} = \{ ... \}$
-\end{itemize}
-
-\newcommand{\send}[0]{\texttt{send} }
-\newcommand{\recv}[0]{\texttt{recv} }
-
-\noindent Component \CN
-has:
-\begin{itemize}
-\item \send EventPorts \textsl{EvSend = \{$EvSend_{n,1,}$, $EvSend_{n,2,}$, ... \}}
-\item \recv EventPorts \textsl{EvRecv = \{$EvRecv_{n,1,}$, $EvRecv_{n,2,}$, ... \}}
-\end{itemize}
-
-\noindent EventPort connections are stored in a a map,
-\textsl{EvPortConnections}, which maps EvSend to a list of EvRecv ports. i.e.,
-
-\textsl{\{EvSend $\rightarrow$ [EvRecv,EvRecv,..,EvRecv], EvSend $\rightarrow$
-[EvRecv,EvRecv,EvRecv,...,EvRecv]\}}.
-
-\newcommand{\RCLn}{$RCL_n$}
-\newcommand{\AUTQn}{$AUTQ_n$}
-\newcommand{\EQn}{$EQ_n$}
-
-\noindent Each component has 3 associated data structures
-\begin{itemize}
-\item RegimeChangeList (\RCLn) (This list will contain target-regimes of
-triggered transitions)
-\item ActiveUnresolvedTransitionsQueue (\AUTQn) (This queue will
-contain transitions which will occur, but their effects have not be
-evaluated yet)
-\item EventQueue (\EQn) (This list contains events delivered to this
-component from other components via EventPort-connections)
-\end{itemize}
-
-\subsubsection{Algorithm}
-
-\begin{enumerate}
-\item Enter {\tt TransitionResolutionBlock}
-\item For each component, \CN: clear \RCLn, \AUTQn and \EQn.
-\item For each component, \CN: for each \textsl{oncond} in $OnCond^{t}_{n}$ : if
-\textsl{oncond.trigger} evaluates to true, add \textsl{oncond} to \AUTQn.
-\item For each component, \CN:  for each \textsl{tr} in \AUTQn :
-\begin{itemize}
-\item
-remove \textsl{tr} from \AUTQn
-\item add the target\_regime to \RCLn
-\item for each
-\textsl{action} in \textsl{tr.do}:
-\begin{itemize}
-\item if \textsl{action} is an OutputEvent: test
-if the OutputEvent port is a key in \textsl{EvPortConnections}. If so, add the
-    OutputEvent to the EventQueue (\textsl{EQ\_{target}}) corresponding to each
-    \textsl{EvRecv} in the \textsl{EvPortConnections} map.
-
-\item  if \textsl{action}  is a StateAssignment, execute that state-assignment
-immediately.
-\end{itemize}
-\end{itemize}
-
-\item For each component \CN: for each event, \textsl{EvRecv} in \EQn: test
-whether there is a transition, \textsl{tr} triggered by this event, i.e an
-OnEvent in $OnEv^t_n$ from $R^t_n$ ; if so; then add it to \AUTQn.
-
-\item While any component has a non-empty \textsl{AUTQ}: Goto (4).
-
-\item For each component, \CN, check that all the target-regimes in the \RCLn
-are the same regime. (If not raise a RuntimeError). Each component moves into
-this target-regime, or remains in the same regime if \RCLn is empty.
-
-\item Leave {\tt TransitionResolutionBlock}
-
-\end{enumerate}
-
-\subsubsection{Notes}
-
-\begin{enumerate}
-\item \draftnote{Not sure about this either. Since a transition can also mean transitioning to a new regime it would
-be very bad if two conditions were met at the same time and it was ambiguous which was applied first. Should
-we not require an order of execution if there are multiple {\OnCondition}s in the same regime. Could be quite difficult
-for the user to handle this otherwise}
-There is no order defined in transitions; this means
-that the order of resolution of state assignments can be ambiguous. If, for
-example, we have two transitions, T1 and T2, originating from the same \Regime,
-in which T1 contains the state assignment \textsl{V=V+1} and T2 contains the
-assignment \textsl{V=V*V}, and both transitions are triggered simultaneously, then there is no
-guarantee about the value of V. It is up the user to ensure this does not
-happen.
-
-\draftnote{I am not sure this is a good idea, we could just not allow \OutputEvent in \OnEvent transitions}
-\item This Resolution System allows \emph{cascading} of Events, which in theory
-could be recursive through components, depending on connectivity. The
-implementation allows for this; and it is the users responsibility to ensure
-that there are not such issues. The implementation may decided to terminate
-Step (6) after a given number (say 1000) of iterations to prevent infinite
-loops.
-
-\end{enumerate}
-
-\subsection{Parallelising of event resolution}
-
-This algorithm can be parallelised as following. We create a thread for each
-Component, which can independently execute Steps (3 to 6). The threads need
-to be synchronized after steps (4) and (5) as shown in
-Figure~\ref{ParallelisingTransitions}.
-
-\begin{figure}[htb!]
-\center
-\includegraphics[width=14cm]{images/ParallelisingTransitions.pdf}
-\protect\caption{Parallelising of Event Resolution.}
-\label{ParallelisingTransitions}
-\end{figure}
+\begin{lstlisting}[style=XML]
+<?xml version='1.0' encoding='UTF-8'?>
+<NineML xmlns="http://nineml.net/9ML/1.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://nineml.net/9ML/1.0/NineML_v1.0.xsd">
+  <Component name="IaFNeuron">
+    <Definition url="./iaf.9ml"
+      >IaF</Definition>
+    <Property name="iaf_V" units="mV">
+      <SingleValue>-60</SingleValue>
+    </Property>
+    <Property name="iaf_tspike" units="ms">
+      <SingleValue>-1</SingleValue>
+    </Property>
+    <Property name="iaf_cm" units="cm_square">
+      <SingleValue>0.2</SingleValue>
+    </Property>
+    <Property name="iaf_taurefrac" units="ms">
+      <SingleValue>5</SingleValue>
+    </Property>
+    <Property name="iaf_gl" units="mS">
+      <SingleValue>0.05</SingleValue>
+    </Property>
+    <Property name="iaf_vreset" units="mV">
+      <SingleValue>-60</SingleValue>
+    </Property>
+    <Property name="iaf_vrest" units="mV">
+      <SingleValue>-60</SingleValue>
+    </Property>
+    <Property name="iaf_vthresh" units="mV">
+      <SingleValue>-50</SingleValue>
+    </Property>
+  </Component>
+  <Component name="IaFSynapseExcitatory">
+    <Definition url="./coba.9ml">CoBa</Definition>
+    <Property name="coba_g" units="mS">
+      <SingleValue>0</SingleValue>
+    </Property>
+    <Property name="coba_tau" units="ms">
+      <SingleValue>5</SingleValue>
+    </Property>
+    <Property name="coba_q" units="ms">
+      <SingleValue>0.004</SingleValue>
+    </Property>
+    <Property name="coba_vrev" units="mV">
+      <SingleValue>0</SingleValue>
+    </Property>
+  </Component>
+  <Component name="IaFSynapseInhibitory">
+    <Definition url="./coba.xml">CoBa</Definition>
+    <Property name="coba_g" units="mS">
+      <SingleValue>0</SingleValue>
+    </Property>
+    <Property name="coba_tau" units="ms">
+      <SingleValue>5</SingleValue>
+    </Property>
+    <Property name="coba_q" units="ms">
+      <SingleValue>0.051</SingleValue>
+    </Property>
+    <Property name="coba_vrev" units="mV">
+      <SingleValue>-80</SingleValue>
+    </Property>
+  </Component>
+  <Population name="Excitatory">
+  	<Size>3200</Size>
+  	<Cell>
+  		<Reference>IaFNeuron</Reference>
+  	</Cell>
+  </Population>
+  <Population name="Inhibitory">
+  	<Size>800</Size>
+  	<Cell>
+  		<Reference>IaFNeuron</Reference>
+  	</Cell>
+  </Population>
+  <Selection name="AllNeurons">
+  	<Concatonate>
+  		<Item index="0">Excitatory</Item>
+  		<Item index="1">Inhibitory</Item>
+  	</Concatonate>
+  </Selection>
+  <Projection>
+  	<Source>
+  		<Reference>Excitatory</Reference>
+  	</Source>
+  	<Destination>
+  		<Reference>AllNeurons</Reference>
+  	</Destination>
+  	<Response>
+  		<Reference>IaFSynapseExcitatory</Reference>
+  		<FromDestination sender="iaf_V" receiver="coba_vrev"/>
+  	</Response>
+  	<Connectivity>
+  		<Component>
+			<Definition url="http://nineml.net/9ML/1.0/catalog/connectionrules/Probabilistic.9ml"
+				>Probabilistic</Definition>
+			<Property name="probability" units="unitless">
+				<SingleValue>0.02</SingleValue>
+			</Property>
+		</Component>
+  	</Connectivity>
+  </Projection>
+  <Projection>
+  	<Source>
+  		<Reference>Inhibitory</Reference>
+  	</Source>
+  	<Destination>
+  		<Reference>AllNeurons</Reference>
+  	</Destination>
+  	<Response>
+  		<Reference>IaFSynapseInhibitory</Reference>
+  		<FromDestination sender="iaf_V" receiver="coba_vrev"/>
+  	</Response>
+  	<Connectivity>
+  		<Component>
+			<Definition url="http://nineml.net/9ML/1.0/catalog/connectionrules/Probabilistic.9ml"
+				>Probabilistic</Definition>
+			<Property name="probability" units="unitless">
+				<SingleValue>0.02</SingleValue>
+			</Property>				
+		</Component>
+  	</Connectivity>
+  </Projection>
+  <Unit symbol="mV" dimension="voltage" power="-3"/>
+  <Unit symbol="ms" dimension="time" power="-3"/>
+  <Unit symbol="cm_square" dimension="area" power="-4"/>
+  <Unit symbol="mS" dimension="conductanceDensity" power="-3"/>
+  <Unit name="unitless" dimension="dimensionless" power="0"/>
+  <Dimension name="time" t="1"/>
+  <Dimension name="voltage" m="1" l="2" t="-3" i="-1"/>
+  <Dimension name="conductanceDensity" m="-1" t="3" l="-2" i="2"/>
+  <Dimension name="area" l="2"/>
+  <Dimension name="dimensionless"/>
+</NineML>
+\end{lstlisting}
 
 \section{Acknowledgments}
 \subsection{Former NineML INCF Task Force members}
+\label{sec:task_force}
+\begin{multicols}{2}
 \begin{itemize}
-\item Abigail Morrison
-\item Alex Cope
-\item Anatoli Gorchetchnikov
-\item Andrew P. Davison
-\item Birgit Kriener
-\item Chung-Chuan Lo
-\item Damien Drix
-\item Dragan Nikolic
-\item Eilif Muller
-\item Erik De Schutter
-\item Hans Ekkehard Plesser
-\item Hugo Cornelis
-\item Ivan Raikov
-\item Lars Schwabe
-\item Malin Sandström
-\item Michael Hull
-\item Mikael Djurfeldt
-\item Padraig Gleeson
-\item Raphael Ritz
-\item Robert Cannon
-\item Robert Clewley
-\item Sean Hill
-\item Subhasis Ray
-\item Valentin Haenel
-\item Yann Le Franc
+\item     Robert Cannon
+\item     Robert Clewley
+\item     Alex Cope
+\item     Hugo Cornelis
+\item     Andrew P. Davison
+\item     Erik De Schutter
+\item     Mikael Djurfeldt
+\item     Damien Drix
+\item     Hans Ekkehard Plesser
+\item     Padraig Gleeson
+\item     Anatoli Gorchetchnikov
+\item     Valentin Haenel
+\item     Sean Hill
+\item     Michael Hull
+\item     Birgit Kriener
+\item     Yann Le Franc
+\item     Chung-Chua Lo
+\item     Abigail Morrison
+\item     Eilif Muller
+\item     Dragan Nikolic
+\item     Ivan Raikov
+\item     Subhasis Ray
+\item     Raphael Ritz
+\item     Malin Sandstr\"{o}m
+\item     Lars Schwabe
 \end{itemize}
+\end{multicols}
 
 \clearpage
 \bibliography{specification}
