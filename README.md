@@ -1,31 +1,14 @@
 
-Before editing the specification documents here, please read 
-the following notes on using subversion and latex:
+NineML
+======
 
-[http://en.wikibooks.org/wiki/LaTeX/Collaborative_Writing_of_LaTeX_Documents](http://en.wikibooks.org/wiki/LaTeX/Collaborative_Writing_of_LaTeX_Documents)
+Network Interchange for NEuroscience (NineML) is a simulator-independent language with the aim of providing an unambiguous description of neuronal network models for efficient model sharing and reusability ([http://nineml.net](http://nineml.net)).
 
-In short:
-
-Directives for using LaTeX with version control systems
-
-   1. Avoid 'ineffective' modifications.
-   2. Do not change line breaks without good reason.
-   3. Turn off automatic line wrapping of your LaTeX editor.
-   4. Start each new sentence in a new line.
-   5. Split long sentences into several lines so that each line 
-      has at most 80 characters.
-   6. Put only those files under version control that are directly 
-      modified by the user.
-   7. Verify that your code can be compiled flawlessly before committing 
-      your modifications to the repository.
-   8. Use Subversion's diff feature to critically review your modifications
-      before committing them to the repository.
-   9. Add a meaningful and descriptive comment when committing your 
-      modifications to the repository.
+NineML emerged from a joint effort of experts in the fields of computational neuroscience, simulator development and simulator-independent language initiatives ([NeuroML](http://www.neuroml.org/), [PyNN](http://neuralensemble.org/PyNN/)), grouped in the [INCF Multiscale Modeling Task Force](https://www.incf.org/activities/our-programs/modeling/people). This effort was initiated and is still supported by the [International Neuroinformatics Coordinating Facility (INCF)](http://www.incf.org), as part of the standardization effort of the [Multiscale Modeling Program](https://www.incf.org/activities/our-programs/modeling), but the project is now run as a [community project](../committee).
 
 
 How to build the pdf
-====================
+---
 
 If running from Ubuntu linux or some other linux flavour it may not be enough to simply install the base distribution that comes with a latex editing environment you to compile this document you be required to install the texlive-full package.
 
