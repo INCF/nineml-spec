@@ -30,14 +30,14 @@ How to build the pdf
 If running from Ubuntu linux or some other linux flavour it may not be enough to simply install the base distribution that comes with a latex editing environment you to compile this document you be required to install the texlive-full package.
 
 ```
-sudo apt-get install texlive-full 
+$ sudo apt-get install texlive-full 
 ```
 
 Build the pdf
 
 ```
-pdflatex NineMLSpec.tex
-bibtex NineMLSpec
-pdflatex NineMLSpec.tex
-pdflatex NineMLSpec.tex
+$ pdflatex NineMLSpec.tex
+$ bibtex NineMLSpec
+$ pdflatex NineMLSpec.tex
+$ pdflatex NineMLSpec.tex
 ```
