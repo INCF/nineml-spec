@@ -36,6 +36,7 @@ $ sudo apt-get install texlive-full
 Build the pdf
 
 ```
+$ cd latex
 $ pdflatex NineMLSpec.tex
 $ bibtex NineMLSpec
 $ pdflatex NineMLSpec.tex
