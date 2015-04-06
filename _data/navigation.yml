@@ -3,19 +3,19 @@
 - title: Specification
   url: /specification/
   excerpt: "Details of the 9ML specification"
-  image: specification.png
+  image: specification.jpg
 
 - title: Software
   url: /software/
   excerpt: "Software that supports 9ML"
-  image: software.png
+  image: software.jpg
   
 - title: News
   url: /news/
   excerpt: "The latest developments in 9ML"
-  image: news.png
+  image: news.jpg
 
 - title: About
   url: /about/
   excerpt: "What is 9ML?"
-  image: about.png
+  image: about.jpg
