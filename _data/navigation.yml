@@ -1,0 +1,21 @@
+# Site navigation links
+
+- title: Specification
+  url: /specification/
+  excerpt: "Details of the 9ML specification"
+  image: specification.png
+
+- title: Software
+  url: /software/
+  excerpt: "Software that supports 9ML"
+  image: software.png
+  
+- title: News
+  url: /news/
+  excerpt: "The latest developments in 9ML"
+  image: news.png
+
+- title: About
+  url: /about/
+  excerpt: "What is 9ML?"
+  image: about.png

@@ -1,0 +1,5 @@
+sed -i .orig -e 's/^url: \(.*\)/url: \/\/127.0.0.1:4000  # \1/g' _config.yml
+bundle exec jekyll build
+bundle exec jekyll serve
+rm _config.yml
+mv _config.yml.orig _config.yml

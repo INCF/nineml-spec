@@ -1,0 +1,13 @@
+# Footer navigation links
+
+- title: Home
+  url: /
+
+- title: By-laws
+  url: /by-laws/
+  
+- title: Committtee
+  url: /committee/
+
+- title: Getting involved
+  url: /getting-involved/
