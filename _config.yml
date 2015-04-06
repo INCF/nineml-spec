@@ -5,7 +5,7 @@ description: "A model description language for neuroscience"
 logo: site_logo.png
 teaser: default-teaser.png
 locale: en_US
-url: http://tclose.github.io/nineml/
+url: http://tclose.github.io/NineMLSpec/
 
 # Jekyll configuration
 
