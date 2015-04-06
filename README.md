@@ -2,7 +2,7 @@
 Before editing the specification documents here, please read 
 the following notes on using subversion and latex:
 
-http://en.wikibooks.org/wiki/LaTeX/Collaborative_Writing_of_LaTeX_Documents
+[http://en.wikibooks.org/wiki/LaTeX/Collaborative_Writing_of_LaTeX_Documents](http://en.wikibooks.org/wiki/LaTeX/Collaborative_Writing_of_LaTeX_Documents)
 
 In short:
 
@@ -22,30 +22,22 @@ Directives for using LaTeX with version control systems
       before committing them to the repository.
    9. Add a meaningful and descriptive comment when committing your 
       modifications to the repository.
-  10. Use the Subversion client for copying, moving, or renaming files and 
-      folders that are under revision contro.
 
 
 How to build the pdf
 ====================
 
-If running from Ubuntu linux or some other linux flavour it is not enough to simply install the base distribution that comes with a latex editing environment you to compile this document you be required to install the texlive-full package.
+If running from Ubuntu linux or some other linux flavour it may not be enough to simply install the base distribution that comes with a latex editing environment you to compile this document you be required to install the texlive-full package.
 
-ie $sudo apt-get install texlive-full 
+```
+sudo apt-get install texlive-full 
+```
 
+Build the pdf
 
-
-
-Use the Makefile provided as follows
-
-$ make long
-
-The 'long' implies multi-pass, so it updates the internal references
-in the latex document.
-
-$ make clean 
-
-Will remove the pdf and all itermediate files, so that a
-subsequent call to make will re-build fresh.
-
-
+```
+pdflatex NineMLSpec.tex
+bibtex NineMLSpec
+pdflatex NineMLSpec.tex
+pdflatex NineMLSpec.tex
+```
