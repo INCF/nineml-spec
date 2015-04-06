@@ -6,3 +6,6 @@
 *.pdf
 *.synctex.gz
 *.toc
+/_site
+/.project
+/.sass-cache
