@@ -25,7 +25,7 @@ Find a problem with the specification or want to suggest an enhancement? Please 
 
 ## Write a component class
 
-If you write a new abstraction layer component class that you think will be of wider interest please create a [pull request](https://help.github.com/articles/using-pull-requests/) to add your component classes to the [catalog](https://github.com/INCF/nineml/tree/master/catalog).
+If you write a new abstraction layer component class that you think will be of wider interest please create a [pull request](https://help.github.com/articles/using-pull-requests/) to add your component classes to the [catalog](https://github.com/INCF/NineMLCatalog/).
 
 ## Add 9ML support
 
