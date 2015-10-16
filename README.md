@@ -25,3 +25,11 @@ $ bibtex NineMLSpec
 $ pdflatex NineMLSpec.tex
 $ pdflatex NineMLSpec.tex
 ```
+
+Related repositories
+---
+
+In addition to this main NineML repository (http://github.com/INCF/nineml), which only contains the specification document and XML schema, there are related repositories that are maintained by the NineML team (see http://nineml.net/committee).
+
+* lib9ML (http://github.com/INCF/lib9ML): A Python library for reading, writing and manipulating NineML descriptions
+* NineMLCatalog (http://github.com/INCF/NineMLCatalog): A collection of example NineML models written in XML.
