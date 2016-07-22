@@ -36,7 +36,7 @@
 \newcommand{\TimeDerivative}{\defRef{\textbf{\class{TimeDerivative}}\xspace}{sec:TimeDerivative}}
 \newcommand{\Alias}{\defRef{\textbf{\class{Alias}}\xspace}{sec:Alias}}
 \newcommand{\Constant}{\defRef{\textbf{\class{Constant}}\xspace}{sec:Constant}}
-\newcommand{\StandardLibrary}{\defRef{\textbf{\class{StandardLibrary}}\xspace}{sec:StandardLibrary}}
+\newcommand{\Standard_library}{\defRef{\textbf{\class{Standard_library}}\xspace}{sec:Standard_library}}
 \newcommand{\Regime}{\defRef{\textbf{\class{Regime}}\xspace}{sec:Regime}}
 \newcommand{\Trigger}{\defRef{\textbf{\class{Trigger}}\xspace}{sec:Trigger}}
 \newcommand{\OutputEvent}{\defRef{\textbf{\class{OutputEvent}}\xspace}{sec:OutputEvent}}
@@ -1165,7 +1165,7 @@ Values for a property across all elements in a container (e.g. cells in a popula
     \toprule
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
-    standardLibrary & \URL & yes\\
+    standard_library & \URL & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
@@ -1200,8 +1200,8 @@ The names and parameters of the random distribution in the standard library matc
 
 \note{\textit{C} implementations of these distributions are available in the GNU Scientific Library, \href{http://www.gnu.org/software/gsl/}{http://www.gnu.org/software/gsl/}}
 
-\subsubsection{StandardLibrary attribute}
-The \textit{standardLibrary} attribute is required and should point to a \URL in the \href{http://www.uncertml.org/distributions/}{http://www.uncertml.org/distributions/} directory.
+\subsubsection{Standard_library attribute}
+The \textit{standard_library} attribute is required and should point to a \URL in the \href{http://www.uncertml.org/distributions/}{http://www.uncertml.org/distributions/} directory.
 
 \section{Network Connectivity}
 
@@ -1217,17 +1217,17 @@ The connection rule for cells in the source and destination populations of a \Pr
     \toprule
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
-    standardLibrary & \URL & yes\\
+    standard_library & \URL & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
 
-Connection rules must be one of 6 standard library types, \textit{all-to-all}, \textit{one-to-one}, \textit{probabilistic}, \textit{explicit}, \\\textit{random-fan-out} and \textit{random-fan-in}, provided to the \textit{standardLibarary} attribute.
+Connection rules must be one of 6 standard library types, \textit{all-to-all}, \textit{one-to-one}, \textit{probabilistic}, \textit{explicit}, \\\textit{random-fan-out} and \textit{random-fan-in}, provided to the \textit{standard_libarary} attribute.
 
 \note{In future versions, built-in connectivity rules are to be replaced with mathematically expressed connection rules.}
 
-\subsubsection{StandardLibrary attribute}
-The \textit{standardLibrary} attribute is required and should point to the \URL in the \\\href{http://nineml.net/9ML/1.0/\-connectionrules/}{http://nineml.net/9ML/1.0/connectionrules/} directory that corresponds to the desired connection rule.
+\subsubsection{Standard_library attribute}
+The \textit{standard_library} attribute is required and should point to the \URL in the \\\href{http://nineml.net/9ML/1.0/\-connectionrules/}{http://nineml.net/9ML/1.0/connectionrules/} directory that corresponds to the desired connection rule.
 
 \subsubsubsection{http://nineml.net/9ML/1.0/connectionrules/alltoall}
 
