@@ -10,3 +10,4 @@
 /.project
 /.sass-cache
 /.pydevproject
+.DS_Store
