@@ -12,3 +12,4 @@
 /.sass-cache
 /.pydevproject
 .DS_Store
+/docs/_build
