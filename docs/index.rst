@@ -60,7 +60,7 @@ and has benefitted from wide-ranging input from computational
 neuroscientists, simulator developers and developers of
 simulator-independent languages (e.g. NeuroML, PyNN) (see
 [sec:task\_force])
-:raw-latex:`\citep{Goddard2001, Gleeson2010, Davison2008}`.
+[Goddard2001]_, [Gleeson2010]_, [Davison2008]_.
 
 Scope
 -----
@@ -1457,7 +1457,7 @@ Reference
 +----------------+-----------------------------------------------------------------+----------+
 | Body           |                                                                 | Required |
 +----------------+-----------------------------------------------------------------+----------+
-| *@name         |                                                                 | yes      |
+| \*@name        |                                                                 | yes      |
 +----------------+-----------------------------------------------------------------+----------+
 
 Reference elements are used to locate User Layer elements in the
@@ -2143,7 +2143,7 @@ Izhikevich Model
 ----------------
 
 In this first example, we are describing how to represent the Izhikevich
-model in NineML :raw-latex:`\cite{Izhikevich2003}`. The model is
+model in NineML [Izhikevich2003]_. The model is
 composed of single ComponentClass, containing a single Regime,
 *subthresholdRegime*, and two state variables, :math:`U` & :math:`V`.
 
@@ -2296,7 +2296,7 @@ Leaky Integrate and Fire model
 ------------------------------
 
 In this example, we build a representation of a integrate-and-fire
-neuron, with an attached input synapse :raw-latex:`\citep{Abbott1999}`.
+neuron, with an attached input synapse [Abbott1999]_.
 We have a single StateVariable, *iaf\_V*. This time, the neuron has an
 absolute refractory period; which is implemented by using 2 regimes.
 *RegularRegime* & *RefractoryRegime* In *RegularRegime*, the neuron
@@ -2506,9 +2506,9 @@ COBA IAF Network example
 ------------------------
 
 This example is an implementation of *Benchmark 1* from
-:raw-latex:`\cite{Brette2009}`, which consists of a network of an
+[Brette2009]_, which consists of a network of an
 excitatory and inhibitory IAF populations randomly connected with COBA
-synapses :raw-latex:`\citep{Vogels2005}`. The excitatory and inhibitory
+synapses [Vogels2005]_. The excitatory and inhibitory
 Population elements are created with 3,200 and 800 cells respectively.
 Both populations are then concatenated into a single Selection element,
 “AllNeurons”, which is used to randomly connect both populations to
