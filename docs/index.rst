@@ -676,12 +676,12 @@ AnalogReducePort.
 AnalogSendPort
 --------------
 
-+----------------+------------------+-------------+-----+
-| Attribute name | Type/Format      | Required    |     |
-+================+==================+=============+=====+
-| name           | [StateVariable \ | Alias]@name | yes |
-| dimension      | Dimension@name   | yes         |     |
-+----------------+------------------+-------------+-----+
++----------------+----------------------------+----------+
+| Attribute name | Type/Format                | Required |
++================+============================+==========+
+| name           | [StateVariable,Alias]@name | yes      |
+| dimension      | Dimension@name             | yes      |
++----------------+----------------------------+----------+
 
 AnalogSendPort objects allow variables from the current component to be
 published externally so they can be read by other ComponentClass
@@ -739,7 +739,7 @@ AnalogReducePort
 +================+================+==========+
 | name           | identifier     | yes      |
 | dimension      | Dimension@name | yes      |
-| operator       | *+*            | yes      |
+| operator       | +              | yes      |
 +----------------+----------------+----------+
 
 Reduce ports can receive data from any number of AnalogSendPort objects
@@ -1314,16 +1314,16 @@ Components and Properties
 Component
 ---------
 
-+----------------------+--------------+----------+-+
-| Attribute name       | Type/Format  | Required | |
-+======================+==============+==========+=+
-| name                 | identifier   | yes      | |
-+----------------------+--------------+----------+-+
-| Child elements       | Multiplicity | Required | |
-+======================+==============+==========+=+
-| Definition,Prototype | singleton    | yes      | |
-| Property             | set          | no       | |
-+----------------------+--------------+----------+-+
++----------------------+--------------+----------+
+| Attribute name       | Type/Format  | Required |
++======================+==============+==========+
+| name                 | identifier   | yes      |
++----------------------+--------------+----------+
+| Child elements       | Multiplicity | Required |
++======================+==============+==========+
+| Definition,Prototype | singleton    | yes      |
+| Property             | set          | no       |
++----------------------+--------------+----------+
 
 Component elements instantiate Abstraction Layer component classes by
 providing properties for each of the parameters defined the class. Each
@@ -1498,10 +1498,10 @@ Values can be one of four types
 
 SingleValue
 -----------
-+-+-------+-----+----------+
-| | *Body |     | Required |
-| |       | yes |          |
-+-+-------+-----+----------+
++-------+-----+----------+
+| *Body |     | Required |
+|       | yes |          |
++-------+-----+----------+
 
 A SingleValue element represents an array filled with a single value.
 
@@ -1617,11 +1617,11 @@ to a column header in the external data file.
 RandomValue
 -----------
 
-+---------------------+--------------+----------+
-| Child elements      | Multiplicity | Required |
-+=====================+==============+==========+
-| Component,Reference | singleton    | yes      |
-+---------------------+--------------+----------+
++-----------------------+--------------+----------+
+| Child elements        | Multiplicity | Required |
++=======================+==============+==========+
+| [Component,Reference] | singleton    | yes      |
++-----------------------+--------------+----------+
 
 RandomValue elements represent arrays of values drawn from random
 distributions, which are defined by a Componentelements. The size of the
@@ -1661,11 +1661,11 @@ scope.
 Cell
 ----
 
-+---------------------+--------------+----------+
-| Child elements      | Multiplicity | Required |
-+=====================+==============+==========+
-| Component,Reference | singleton    | yes      |
-+---------------------+--------------+----------+
++-----------------------+--------------+----------+
+| Child elements        | Multiplicity | Required |
++=======================+==============+==========+
+| [Component,Reference] | singleton    | yes      |
++-----------------------+--------------+----------+
 
 The Cell element specifies the dynamic components that will make up the
 population. The Component can be defined inline or via a Reference
@@ -1674,7 +1674,7 @@ element.
 Size
 ----
 
-| | *Body |   | Required |
+| *Body |   | Required |
 |   |   | yes |
   **
 
@@ -1766,14 +1766,14 @@ created to model the synaptic interaction between the cells.
 Source
 ------
 
-+---------------------+--------------+----------+-+
-| Child elements      | Multiplicity | Required | |
-+=====================+==============+==========+=+
-| Reference,Reference | singleton    | yes      | |
-| FromDestination     | set          | no       | |
-| FromPlasticity      | set          | no       | |
-| FromResponse        | set          | no       | |
-+---------------------+--------------+----------+-+
++-----------------------+--------------+----------+
+| Child elements        | Multiplicity | Required |
++=======================+==============+==========+
+| [Component,Reference] | singleton    | yes      |
+| FromDestination       | set          | no       |
+| FromPlasticity        | set          | no       |
+| FromResponse          | set          | no       |
++-----------------------+--------------+----------+
 
 The Source element specifies the pre-synaptic population or selection
 (see Selection) of the projection and all the port connections it
@@ -1788,14 +1788,14 @@ source and destination cells should be connected.
 Destination
 -----------
 
-+---------------------+--------------+----------+-+
-| Child elements      | Multiplicity | Required | |
-+=====================+==============+==========+=+
-| Reference,Reference | singleton    | yes      | |
-| FromSource          | set          | no       | |
-| FromPlasticity      | set          | no       | |
-| FromResponse        | set          | no       | |
-+---------------------+--------------+----------+-+
++-----------------------+--------------+----------+
+| Child elements        | Multiplicity | Required |
++=======================+==============+==========+
+| [Component,Reference] | singleton    | yes      |
+| FromSource            | set          | no       |
+| FromPlasticity        | set          | no       |
+| FromResponse          | set          | no       |
++-----------------------+--------------+----------+
 
 The Destination element specifies the post-synaptic or selection (see
 Selection) population of the projection and all the port connections it
@@ -1810,14 +1810,14 @@ and destination cells should be connected.
 Response
 --------
 
-+----------------------+--------------+----------+-+
-| Child elements       | Multiplicity | Required | |
-+======================+==============+==========+=+
-| Component, Reference | singleton    | yes      | |
-| FromSource           | set          | no       | |
-| FromDestination      | set          | no       | |
-| FromPlasticity       | set          | no       | |
-+----------------------+--------------+----------+-+
++-----------------------+--------------+----------+
+| Child elements        | Multiplicity | Required |
++=======================+==============+==========+
+| [Component,Reference] | singleton    | yes      |
+| FromSource            | set          | no       |
+| FromDestination       | set          | no       |
+| FromPlasticity        | set          | no       |
++-----------------------+--------------+----------+
 
 The Response defines the effect on the post-synaptic cell dynamics of an
 incoming synaptic input. The additional dynamics are defined by a
@@ -1836,14 +1836,14 @@ destination cells should be connected.
 Plasticity
 ----------
 
-+---------------------+--------------+----------+-+
-| Child elements      | Multiplicity | Required | |
-+=====================+==============+==========+=+
-| Component,Reference | singleton    | yes      | |
-| FromSource          | set          | no       | |
-| FromDestination     | set          | no       | |
-| FromResponse        | set          | no       | |
-+---------------------+--------------+----------+-+
++-----------------------+--------------+----------+
+| Child elements        | Multiplicity | Required |
++=======================+==============+==========+
+| [Component,Reference] | singleton    | yes      |
+| FromSource            | set          | no       |
+| FromDestination       | set          | no       |
+| FromResponse          | set          | no       |
++-----------------------+--------------+----------+
 
 The Plasticity element describes the dynamic processes that modulate the
 dynamics of the post-synaptic response, typically the magnitude of the
