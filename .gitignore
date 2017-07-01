@@ -13,3 +13,5 @@
 /.pydevproject
 .DS_Store
 /docs/_build
+/.settings/
+/.cproject

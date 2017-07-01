@@ -1,15 +1,14 @@
-|image|
+|incf_logo|
 
---------------
-
-| **Network Interchange for Neuroscience Modeling Language (NineML)**
-| **Specification**
+=============================================================================
+Network Interchange for Neuroscience Modeling Language (NineML) Specification
+=============================================================================
 | NineML Committee
 | Version: 1.0.1
 
---------------
 
-**Editors:**
+Editors:
+--------
 
 -  Thomas G. Close
 
@@ -25,19 +24,19 @@
 
 -  Paul Richmond
 
-| **Acknowledgments:**
-| We would like to thank the former INCF NineML Task Force members for
-  their contributions to the text and the concepts presented in this
-  document. In particular: A. Gorchetchnikov, M. Hull, Y. Le Franc, P.
-  Gleeson, E. Muller, R. Cannon, Birgit Kriener, Subhasis Ray and S.
-  Hill.
+Acknowledgments:
+----------------
+We would like to thank the former INCF NineML Task Force members for
+their contributions to the text and the concepts presented in this
+document. In particular: A. Gorchetchnikov, M. Hull, Y. Le Franc, P.
+Gleeson, E. Muller, R. Cannon, Birgit Kriener, Subhasis Ray and S.
+Hill.
 
-| This document is under the Common Creative license BY-NC-SA:
-| http://creativecommons.org/licenses/by-nc-sa/3.0/
+This document is under the Common Creative license BY-NC-SA:
+http://creativecommons.org/licenses/by-nc-sa/3.0/
+|creative_commons_logo|
 
-|image|
-
-**Date:**
+**Date:** |date|
 
 Introduction
 ============
@@ -74,18 +73,18 @@ numerical integration methods.
 
 The following neuronal network objects can be described in NineML,
 
-#. spiking and non-spiking neurons
+1. spiking and non-spiking neurons
 
 #. synapses
 
-   #. Post-synaptic membrane current mechanisms
-
+   a. Post-synaptic membrane current mechanisms
+   
    #. Short-term synaptic dynamics (depression, facilitation)
-
+   
    #. Long-term synaptic modifications (STDP, learning, etc.)
-
+   
    #. Gap-junctions
-
+   
 #. populations of neurons
 
 #. synaptic projections between populations of neurons
@@ -379,9 +378,7 @@ ComponentClass
 | Child elements                               | Multiplicity | Required |
 +----------------------------------------------+--------------+----------+
 | Parameter                                    | set          | no       |
-|                                              |              |          |
 | AnalogSendPort                               | set          | no       |
-|                                              |              |          |
 | AnalogReceivePort                            | set          | no       |
 | AnalogReducePort                             | set          | no       |
 | EventSendPort                                | set          | no       |
@@ -2805,6 +2802,7 @@ Former NineML INCF Task Force members
 
 -  Lars Schwabe
 
-.. |image| image:: figures/incf_new.png
-.. |image| image:: figures/by-nc-sa.png
-   :width: 3.00000cm
+.. |incf_logo| image:: figures/incf_new.png
+   :width: 15.00000cm
+.. |creative_commons_logo| image:: figures/by-nc-sa.png
+   :width: 4.00000cm
