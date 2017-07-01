@@ -379,7 +379,9 @@ ComponentClass
 | Child elements                               | Multiplicity | Required |
 +----------------------------------------------+--------------+----------+
 | Parameter                                    | set          | no       |
+|                                              |              |          |
 | AnalogSendPort                               | set          | no       |
+|                                              |              |          |
 | AnalogReceivePort                            | set          | no       |
 | AnalogReducePort                             | set          | no       |
 | EventSendPort                                | set          | no       |
@@ -460,6 +462,7 @@ MathInline
 
 +-------------------------+----------+
 | Body                    | Required |
++-------------------------+----------+
 | Inline-maths expression | yes      |
 +-------------------------+----------+
 
@@ -502,8 +505,6 @@ same interpretation and precedence levels as in ANSI C89 standard.
 
 The following functions are built in and are defined as per ANSI C89:
 
-4
-
 -  ``exp(x)``
 
 -  ``sin(x)``
@@ -539,8 +540,6 @@ The following functions are built in and are defined as per ANSI C89:
 -  ``atan2(x)``
 
 The following symbols are built in, and cannot be redefined,
-
-2
 
 -  pi
 
