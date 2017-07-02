@@ -37,7 +37,14 @@ http://creativecommons.org/licenses/by-nc-sa/3.0/
 :Date: $Date
 
 .. toctree::
-    :maxdepth: 2 
+    :maxdepth: 2
+    
+    introduction
+    abstraction_layer
+    user_layer
+    acknowledgements
+    references
+    examples    
 
 
 Introduction
@@ -164,21 +171,25 @@ be in the ’http://nineml.net/9ML/1.0’ XML namespace.
 NineML
 ------
 
-+----------------+-----------------------------+----------+
-| Attribute      | Type/Format                 | Required |
-+----------------+-----------------------------+----------+
-| xmlns          | ‘http://nineml.net/9ML/1.0’ | yes      |
-+----------------+-----------------------------+----------+
-| Child elements | Multiplicity                | Required |
-+----------------+-----------------------------+----------+
-| Component      | set                         | no       |
-| ComponentClass | set                         | no       |
-| Unit           | set                         | no       |
-| Dimension      | set                         | no       |
-| Population     | set                         | no       |
-| Projection     | set                         | no       |
-| Selection      | set                         | no       |
-+----------------+-----------------------------+----------+
++------------+-----------------------------+----------+
+| Attributes |                             |          |
++------------+-----------------------------+----------+
+| Name       | Type/Format                 | Required |
++============+=============================+==========+
+| xmlns      | ‘http://nineml.net/9ML/1.0’ | yes      |
++------------+-----------------------------+----------+
+
++----------------+--------------+----------+
+| Child elements | Multiplicity | Required |
++----------------+--------------+----------+
+| Component      | set          | no       |
+| ComponentClass | set          | no       |
+| Unit           | set          | no       |
+| Dimension      | set          | no       |
+| Population     | set          | no       |
+| Projection     | set          | no       |
+| Selection      | set          | no       |
++----------------+--------------+----------+
 
 Seven *document-level* elements are allowed to reside directly within
 NineML elements: Component, ComponentClass, Unit, Dimension, Population,
@@ -2650,7 +2661,7 @@ The User Layer description for the above example:
 The simulation results is presented in Figure 6.
 
 .. figure:: figures/demo2_Coba1_out.pdf
-   :width: 14.00000cm   
+   :width: 16.00000cm   
 
    Result of simulating of the XML model in this section.
    *cobaExcit\_spikeinput* is fed events from an external Poisson
