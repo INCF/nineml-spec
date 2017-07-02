@@ -1,14 +1,11 @@
 |incf_logo|
 
-=============================================================================
+#############################################################################
 Network Interchange for Neuroscience Modeling Language (NineML) Specification
-=============================================================================
-| NineML Committee
-| Version: 1.0.1
+#############################################################################
+**Version: 1.0.1**
 
-
-Editors:
---------
+**NineML Committee:**
 
 -  Thomas G. Close
 
@@ -24,8 +21,8 @@ Editors:
 
 -  Paul Richmond
 
-Acknowledgments:
-----------------
+**Acknowledgments:**
+
 We would like to thank the former INCF NineML Task Force members for
 their contributions to the text and the concepts presented in this
 document. In particular: A. Gorchetchnikov, M. Hull, Y. Le Franc, P.
@@ -34,9 +31,14 @@ Hill.
 
 This document is under the Common Creative license BY-NC-SA:
 http://creativecommons.org/licenses/by-nc-sa/3.0/
+
 |creative_commons_logo|
 
-**Date:** |date|
+:Date: $Date
+
+.. toctree::
+    :maxdepth: 2 
+
 
 Introduction
 ============
@@ -188,7 +190,7 @@ referenced, whereas the remaining element types can also be referenced
 from other NineML documents (see Reference and Definition).
 
 Xmlns attribute
-~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^
 
 The *xmlns* attribute is required and should refer to the
 `URL <http://en.wikipedia.org/wiki/Uniform_resource_locator>`__\ corresponding
@@ -215,6 +217,10 @@ understood as rich types with a numerical factor and exponents for each
 of the base dimensions. They are independent of the particular choice of
 units by which they are assigned.
 
+.. note::
+    The format for units and dimensions is the same as is used for LEMS/NeuroML
+    v2.0 (http://www.neuroml.org) (Cannon et al., 2014).
+
 Dimension
 ---------
 
@@ -239,49 +245,49 @@ and voltage is :math:`ml^2t^3i^{-1}`. Dimension objects must be declared
 in the top-level scope of the NineML document where they are referenced.
 
 Name attribute
-~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^
 
 Each Dimension requires a *name* attribute, which should be a valid and
 uniquely identify the Dimension in current the scope.
 
 M attribute
-~~~~~~~~~~~
+^^^^^^^^^^^
 
 The *m* attribute specifies the power of the mass dimension in the
 Dimension. If omitted the power is zero.
 
 L attribute
-~~~~~~~~~~~
+^^^^^^^^^^^
 
 The *l* attribute specifies the power of the length dimension in the
 Dimension. If omitted the power is zero.
 
 T attribute
-~~~~~~~~~~~
+^^^^^^^^^^^
 
 The *t* attribute specifies the power of the time dimension in the
 Dimension. If omitted the power is zero.
 
 I attribute
-~~~~~~~~~~~
+^^^^^^^^^^^
 
 The *i* attribute specifies the power of the current dimension in the
 Dimension. If omitted the power is zero.
 
 N attribute
-~~~~~~~~~~~
+^^^^^^^^^^^
 
 The *n* attribute specifies the power of the amount-of-substance
 dimension in the Dimension. If omitted the power is zero.
 
 K attribute
-~~~~~~~~~~~
+^^^^^^^^^^^
 
 The *k* attribute specifies the power of the temperature dimension in
 the Dimension. If omitted the power is zero.
 
 J attribute
-~~~~~~~~~~~
+^^^^^^^^^^^
 
 The *j* attribute specifies the power of the luminous-intensity
 dimension in the Dimension. If omitted the power is zero.
@@ -304,27 +310,27 @@ declared in the top-level scope of the NineML documents where they are
 referenced.
 
 Symbol attribute
-~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^
 
 Each Unit requires a *symbol* attribute, which should be a valid and
 uniquely identify the Unit in current the scope.
 
 Dimension attribute
-~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^
 
 Each Unit requires a *dimension* attribute. This attribute specifies the
 dimension of the units and should refer to the name of a Dimension
 element in the document scope.
 
 Power attribute
-~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^
 
 Each Unit requires a *power* attribute. This attribute specifies the
 relative scale of the units compared to the equivalent SI units in
 powers of ten. If omitted the power is zero.
 
 Offset attribute
-~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^
 
 A Unit can optionally have an *offset* attribute. This attribute
 specifies the zero offset of the unit scale. For example,
@@ -334,6 +340,11 @@ specifies the zero offset of the unit scale. For example,
     <Unit name="degC" dimension="temperature" power="0" offset="273.15"/>
 
 If omitted, the offset is zero.
+
+
+*****************
+Abstraction Layer
+*****************
 
 Component Classes and Parameters
 ================================
@@ -355,9 +366,11 @@ interface consists of instances of ports and Parameter (see
 
 .. figure:: figures/component_simple.pdf
    :alt: ComponentClass Overview
-   :width: 12.00000cm
+   :width: 16.00000cm
 
    ComponentClass Overview
+
+ 
 
 As well as being able to specify the communication of continuous values,
 ComponentClass elements are also able to specify the emission and the
@@ -410,7 +423,7 @@ A ComponentClass is composed of:
       distribution.
 
 Name attribute
-~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^
 
 Each ComponentClass requires a *name* attribute, which should be a valid
 and uniquely identify the ComponentClass in the document scope.
@@ -432,13 +445,13 @@ synapse model. By definition, Parameters are set at the start of the
 simulation, and remain constant throughout.
 
 Name attribute
-~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^
 
 Each Parameter requires a *name* attribute, which is a valid and
 uniquely identifies the Parameter within the ComponentClass.
 
 Dimension attribute
-~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^
 
 Parameter elements must have a *dimension* attribute. This attribute
 specifies the dimension of the units of the quantity that is expected to
@@ -472,7 +485,7 @@ and StateAssignment objects). All numbers/variables in inline maths
 expressions are assumed to be .
 
 Body
-~~~~
+^^^^
 
 The following arithmetic operators are supported in all inline maths
 expressions and have the same interpretation and precedence levels as in
@@ -603,7 +616,7 @@ expression.
    a current, for example :math:`i=g*(E-V)`.
 
 Name attribute
-~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^
 
 Each Alias requires a *name* attribute, which is a valid and uniquely
 identifies the Alias from all other elements in the ComponentClass.
@@ -634,20 +647,20 @@ discouraged* since this breaks the division of semantic layers
 [sec:scope]).
 
 Name attribute
-~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^
 
 Each Constant requires a *name* attribute, which should be a valid and
 uniquely identify the Dimension in current the scope.
 
 Units attribute
-~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^
 
 Each Constant requires a *units* attribute. The *units* attribute
 specifies the units of the property and should refer to the name of a
 Unit element in the document scope.
 
 Body
-~~~~
+^^^^
 
 Any valid numeric value, including shorthand scientific notation e.g.
 1e-5 (:math:`1\times10^{-5}`).
@@ -688,13 +701,13 @@ objects. Each AnalogSendPort can be connected to multiple
 AnalogReceivePort and AnalogReducePort objects.
 
 Name attribute
-~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^
 
 Each AnalogSendPort requires a *name* attribute, which should refer to a
 StateVariable or Alias within the current ComponentClass.
 
 Dimension attribute
-~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^
 
 Each AnalogSendPort requires a *dimension* attribute. This attribute
 specifies the dimension of the units of the quantity that is expected to
@@ -716,14 +729,14 @@ to be used within the current component. Each AnalogReceivePort must be
 connected to exactly *one* AnalogSendPort.
 
 Name attribute
-~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^
 
 Each AnalogReceivePort requires a *name* attribute, which is a valid and
 uniquely identifies the AnalogReceivePort from all other elements in the
 ComponentClass.
 
 Dimension attribute
-~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^
 
 Each AnalogReceivePort requires a *dimension* attribute. This attribute
 specifies the dimension of the units of the quantity that is expected to
@@ -760,14 +773,14 @@ ComponentClasses to the *InjectedCurrent* reduce port, without having to
 change our original ComponentClass definitions.
 
 Name attribute
-~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^
 
 Each AnalogReducePort requires a *name* attribute, which is a valid and
 uniquely identifies the AnalogReducePort from all other elements in the
 ComponentClass.
 
 Dimension attribute
-~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^
 
 Each AnalogReducePort requires a *dimension* attribute. This attribute
 specifies the dimension of the units of the quantity that is expected to
@@ -775,7 +788,7 @@ be communicated through the AnalogReducePort and should refer to the
 name of a Dimension element in the document scope.
 
 Operator attribute
-~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^
 
 Each AnalogReducePort requires an *operator* attribute. The operator
 reduces the connected inputs to a single value at each time point. For
@@ -803,7 +816,7 @@ transmitted from a component. Each EventSendPort can be connected any
 number of EventReceivePort objects.
 
 Name attribute
-~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^
 
 Each EventSendPort requires a *name* attribute, which is a valid and
 uniquely identifies the EventSendPort from all other elements in the
@@ -823,7 +836,7 @@ received by a component. Each EventReceivePort must be connected to
 exactly *one* EventSendPort.
 
 Name attribute
-~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^
 
 Each EventReceivePort requires a *name* attribute, which is a valid and
 uniquely identifies the EventReceivePort from all other elements in the
@@ -854,6 +867,8 @@ the ODE of that regime.
 
    The dynamics block for an example component.
 
+ 
+
 Dynamics
 --------
 
@@ -874,6 +889,10 @@ between different ODE regimes. The regime graph (e.g.
 and contain no regime islands. At any given time, a component will be in
 a single regime, and can change which regime it is in through
 transitions.
+
+.. note::
+    Alias objects are defined in Dynamics blocks, not Regime blocks. This means
+    that aliases are the same across all regimes.
 
 StateVariable
 -------------
@@ -897,14 +916,14 @@ value of a StateVariable can change in two ways:
        StateVariable value, e.g. :math:`X = X + 1`.
 
 Name attribute
-~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^
 
 Each StateVariable requires a *name* attribute, which is a valid and
 uniquely identifies the StateVariable from all other elements in the
 ComponentClass.
 
 Dimension attribute
-~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^
 
 Each StateVariable requires a *dimension* attribute. This attribute
 specifies the dimension of the units of the quantities that
@@ -931,7 +950,7 @@ As such, Regime defines how the state variables change (propagate in
 time) between subsequent transitions.
 
 Name attribute
-~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^
 
 Each Regime requires a *name* attribute, which is a valid and uniquely
 identifies the Regime from all other elements in the ComponentClass.
@@ -954,7 +973,7 @@ right-hand side of the ODE
 
 .. math:: \frac{\mathrm{d} variable}{\mathrm{d} t} = expression
 
- which can contain of references to any combination of StateVariable,
+which can contain of references to any combination of StateVariable,
 Parameter, AnalogReceivePort, AnalogReducePort and Alias elements with
 the exception of aliases that are derived from RandomDistribution
 components. Therefore, only one TimeDerivative element is allowed per
@@ -962,7 +981,7 @@ StateVariable per Regime. If a TimeDerivative for a StateVariable is not
 defined in a Regime, it is assumed to be zero.
 
 Variable attribute
-~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^
 
 Each TimeDerivative requires a *variable* attribute. This should refer
 to the name of a StateVariable in the ComponentClass. Only one
@@ -1020,7 +1039,7 @@ spiking neuron models, potentially emitting spike events and/or
 transitioning to an explicit refractory regime.
 
 TargetRegime attribute
-~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^
 
 An OnEvent can have a *targetRegime* attribute, which should refer to
 the name of a Regime element in the ComponentClass that the dynamics
@@ -1057,13 +1076,13 @@ recursive cascades of zero delay (say 1000) to prevent infinite loops,
 but such limits should be modifiable by the user.
 
 Port attribute
-~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^
 
 Each OnEvent requires a *port* attribute. This should refer to the name
 of an EventReceivePort in the ComponentClass interface.
 
 TargetRegime attribute
-~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^
 
 OnEvent can have a *targetRegime* attribute, which should refer to the
 name of a Regime element in the ComponentClass that the dynamics block
@@ -1115,7 +1134,7 @@ an outgoing spike event or update post-synaptic response states after an
 incoming spike event.
 
 Variable attribute
-~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^
 
 Each StateAssignment requires a *variable* attribute. This should refer
 to the name of a StateVariable in the ComponentClass. Only one
@@ -1136,7 +1155,7 @@ They are typically used to raise spike events from within OnCondition
 elements.
 
 Port attribute
-~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^
 
 Each OutputEvent requires a *port* attribute. This should refer to the
 name of an EventSendPort in the ComponentClass interface.
@@ -1211,8 +1230,12 @@ packages are,
 
 -  WeibullDistribution
 
+.. note::
+    Note: C implementations of these distributions are available in the
+    GNU Scientific Library, http://www.gnu.org/software/gsl/
+
 Standard\_library attribute
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The *standard\_library* attribute is required and should point to a
 `URL <http://en.wikipedia.org/wiki/Uniform_resource_locator>`__\ in the
@@ -1240,19 +1263,23 @@ ConnectionRule
 | standard_library | `URL <http://en.wikipedia.org/wiki/Uniform_resource_locator>`__ | yes      |
 +------------------+-----------------------------------------------------------------+----------+
 
-| Connection rules must be one of 6 standard library types,
-  *all-to-all*, *one-to-one*, *probabilistic*, *explicit*,
-| *random-fan-out* and *random-fan-in*, provided to the
-  *standard\_libarary* attribute.
+Connection rules must be one of 6 standard library types,
+*all-to-all*, *one-to-one*, *probabilistic*, *explicit*,
+*random-fan-out* and *random-fan-in*, provided to the
+*standard\_libarary* attribute.
+  
+.. note::
+    In future versions, built-in connectivity rules are to be replaced with
+    mathematically expressed connection rules.
 
 Standard\_library attribute
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-| The *standard\_library* attribute is required and should point to the
-  `URL <http://en.wikipedia.org/wiki/Uniform_resource_locator>`__\ in
-  the
-| `http://nineml.net/9ML/1.0/connectionrules/ <http://nineml.net/9ML/1.0/\-connectionrules/>`__
-  directory that corresponds to the desired connection rule.
+The *standard\_library* attribute is required and should point to the
+`URL <http://en.wikipedia.org/wiki/Uniform_resource_locator>`__\ in
+the
+`http://nineml.net/9ML/1.0/connectionrules/ <http://nineml.net/9ML/1.0/\-connectionrules/>`__
+directory that corresponds to the desired connection rule.
 
 All cells in the source population are connected to all cells in the
 destination population.
@@ -1305,6 +1332,10 @@ of randomly selected cells in the source population. The number of cells
 is specified by the parameter *number*. The property supplied to the
 *number* parameter should be a SingleValue.
 
+**********
+User Layer
+**********
+
 Components and Properties
 =========================
 
@@ -1334,7 +1365,7 @@ the reference Component. In this case, only the properties that differ
 from the reference component need to be specified.
 
 Name attribute
-~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^
 
 Each Component requires a *name* attribute, which should be a valid and
 uniquely identify the Component from all other elements in the document
@@ -1359,7 +1390,7 @@ either in the current document or in another file if a *url* attribute
 is provided.
 
 Url attribute
-~~~~~~~~~~~~~
+^^^^^^^^^^^^^
 
 If the ComponentClass referenced by the definition element is defined
 outside the current document, the *url* attribute specifies a
@@ -1369,7 +1400,7 @@ attribute is omitted the ComponentClass is referenced from the current
 document.
 
 Body
-~~~~
+^^^^
 
 The name of the ComponentClass to be referenced ComponentClass needs to
 be provided in the body of the Definition element.
@@ -1393,7 +1424,7 @@ the Component. The reference Component can be located either in the
 current document or in another file if a *url* attribute is provided.
 
 Url attribute
-~~~~~~~~~~~~~
+^^^^^^^^^^^^^
 
 If the prototype Component is defined outside the current file, the
 *URL* attribute specifies a
@@ -1402,7 +1433,7 @@ file which contains the prototype Component. If the *url* attribute is
 omitted the Component is referenced from the current document.
 
 Body
-~~~~
+^^^^
 
 The name of the Component to be referenced Component needs to be
 provided in the body of the Prototype element.
@@ -1428,19 +1459,23 @@ Property should be provided units that match the dimensionality of the
 corresponding Parameter definition.
 
 Name attribute
-~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^
 
 Each Property requires a *name* attribute. This should refer to the name
 of a Parameter in the corresponding ComponentClass of the Component.
 
 Units attribute
-~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^
 
 Each Property element requires a *units* attribute. The *units*
 attribute specifies the units of the quantity and should refer to the
 name of a Unit element in the document scope. For a dimensionless units
 a Unitwith no SI dimensions can be used. The SI dimensions of the
 Unitshould match the SI dimensions of the corresponding Parameter.
+
+.. note::
+    "Dimensionless" parameters can be defined by referring to an empty
+    Dimension object, i.e. one without any power or offset attributes
 
 Reference
 ---------
@@ -1468,7 +1503,7 @@ repository (e.g.
 or `Open Source Brain <http://www.opensourcebrain.org/>`__).
 
 Url attribute
-~~~~~~~~~~~~~
+^^^^^^^^^^^^^
 
 The *url* attribute specifies a
 `URL <http://en.wikipedia.org/wiki/Uniform_resource_locator>`__\ for the
@@ -1477,7 +1512,7 @@ file which contains the User Layer element to be referenced. If the
 document.
 
 Body
-~~~~
+^^^^
 
 The name of the User Layer element to be referenced should be included
 in the body of the Reference element.
@@ -1510,7 +1545,7 @@ SingleValue
 A SingleValue element represents an array filled with a single value.
 
 Body
-~~~~
+^^^^
 
 Any valid numeric value in `ANSI
 C89 <http://en.wikipedia.org/wiki/ANSI_C>`__, including shorthand
@@ -1549,7 +1584,7 @@ ArrayValueRow elements represent the numerical values of the explicit
 ArrayValue element.
 
 Index attribute
-~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^
 
 The *index* attribute specifies the index of the ArrayValueRow in the
 ArrayValue. It must be non-negative, unique amongst the set of
@@ -1557,11 +1592,16 @@ ArrayValueRow@index in the list, and the set of indices must be
 contiguous for a single ArrayValue.
 
 Body
-~~~~
+^^^^
 
 Any valid numeric value in `ANSI
 C89 <http://en.wikipedia.org/wiki/ANSI_C>`__, including shorthand
 scientific notation e.g. 1e-5 (:math:`1\times10^{-5}`).
+
+.. note::
+    The order of ArrayValueRow elements within an ArrayValue element does not
+    effect the interpreted order of the values in the array in keeping with the
+    order non-specific design philosophy of NineML (see Section 1.2).
 
 ExternalArrayValue
 ------------------
@@ -1587,14 +1627,14 @@ multiple arrays of equal length (and therefore typically relating to the
 same container) to be stored in the same external file.
 
 Url attribute
-~~~~~~~~~~~~~
+^^^^^^^^^^^^^
 
 The *url* attribute specifies the
 `URL <http://en.wikipedia.org/wiki/Uniform_resource_locator>`__\ of the
 external data file.
 
 MimeType attribute
-~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^
 
 The *mimetype* attribute specifies the data format for the external
 value list in the `MIME
@@ -1615,7 +1655,7 @@ Currently, only two formats are supported
    single level of named members of or type.
 
 ColumnName attribute
-~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^
 
 Each ExternalArrayValue must have a *columnName* attribute, which refers
 to a column header in the external data file.
@@ -1658,7 +1698,7 @@ across the population, randomly distributed or individually specified
 (see [sec:Values]).
 
 Name attribute
-~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^
 
 Each Population requires a *name* attribute, which should be a valid and
 uniquely identify the Population from all other elements in the document
@@ -1692,7 +1732,7 @@ extended to allow the size of a population to be derived from other
 features of the Population.
 
 Body
-~~~~
+^^^^
 
 The text of the Size element contains an representing the size of the
 population.
@@ -1719,7 +1759,7 @@ connections is predetermined (i.e. *one-to-one*, *all-to-all* and
 
 .. math:: i_{\mathrm{value}} = i_{\mathrm{source}} * N_{\mathrm{dest}} + i_{\mathrm{dest}}
 
- where :math:`i_{\mathrm{value}}`, :math:`i_{\mathrm{source}}` and
+where :math:`i_{\mathrm{value}}`, :math:`i_{\mathrm{source}}` and
 :math:`i_{\mathrm{dest}}` are the indices of the array entry, and the
 source and destination cells respectively, and :math:`N_{\mathrm{dest}}`
 is the size of the destination population. Value indices that do not
@@ -1749,7 +1789,7 @@ projection between two populations and should be uniquely identified in
 the scope of the document.
 
 Name attribute
-~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^
 
 Each Projection requires a *name* attribute, which should be a valid and
 uniquely identify the Projection from all other elements in the document
@@ -1881,7 +1921,7 @@ plasticity dynamics) inside which it is inserted from the source cell
 dynamics.
 
 Sender attribute
-~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^
 
 Each FromSource element requires a *sender* attribute. This should refer
 to the name of a AnalogSendPort or EventSendPort in the Cellof the
@@ -1890,14 +1930,14 @@ event) should match that of the port referenced by the *receiver*
 attribute.
 
 Receiver attribute
-~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^
 
-| Each FromSource element requires a *receiver* attribute. This should
-  refer to the name of a AnalogReceivePort, EventReceivePort or
-  AnalogReducePort in the Componentin the enclosing
-| Source/Destination/Plasticity/Response element. The transmission mode
-  of the port (i.e. analog or event) should match that of the port
-  referenced by the *sender* attribute.
+Each FromSource element requires a *receiver* attribute. This should
+refer to the name of a AnalogReceivePort, EventReceivePort or
+AnalogReducePort in the Componentin the enclosing
+Source/Destination/Plasticity/Response element. The transmission mode
+of the port (i.e. analog or event) should match that of the port
+referenced by the *sender* attribute.
 
 FromDestination
 ---------------
@@ -1915,7 +1955,7 @@ plasticity dynamics) inside which it is inserted from the destination
 cell dynamics.
 
 Sender attribute
-~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^
 
 Each FromDestination element requires a *sender* attribute. This should
 refer to the name of a AnalogSendPort or EventSendPort in the Cellof the
@@ -1924,14 +1964,14 @@ event) should match that of the port referenced by the *receiver*
 attribute.
 
 Receiver attribute
-~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^
 
-| Each FromDestination element requires a *receiver* attribute. This
-  should refer to the name of a AnalogReceivePort, EventReceivePort or
-  AnalogReducePort in the Componentin the enclosing
-| Source/Destination/Plasticity/Response element. The transmission mode
-  of the port (i.e. analog or event) should match that of the port
-  referenced by the *sender* attribute.
+Each FromDestination element requires a *receiver* attribute. This
+should refer to the name of a AnalogReceivePort, EventReceivePort or
+AnalogReducePort in the Componentin the enclosing
+Source/Destination/Plasticity/Response element. The transmission mode
+of the port (i.e. analog or event) should match that of the port
+referenced by the *sender* attribute.
 
 FromPlasticity
 --------------
@@ -1949,7 +1989,7 @@ response dynamics) inside which it is inserted from the plasticity
 dynamics.
 
 Sender attribute
-~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^
 
 Each FromPlasticity element requires a *sender* attribute. This should
 refer to the name of a AnalogSendPort or EventSendPort in the
@@ -1958,7 +1998,7 @@ port (i.e. analog or event) should match that of the port referenced by
 the *receiver* attribute.
 
 Receiver attribute
-~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^
 
 Each FromPlasticity element requires a *receiver* attribute. This should
 refer to the name of a AnalogReceivePort, EventReceivePort or
@@ -1983,7 +2023,7 @@ dynamics) inside which it is inserted from the post-synaptic response
 dynamics.
 
 Sender attribute
-~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^
 
 Each FromResponse element requires a *sender* attribute. This should
 refer to the name of a AnalogSendPort or EventSendPort in the
@@ -1992,14 +2032,14 @@ port (i.e. analog or event) should match that of the port referenced by
 the *receiver* attribute.
 
 Receiver attribute
-~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^
 
-| Each FromResponse element requires a *receiver* attribute. This should
-  refer to the name of a AnalogReceivePort, EventReceivePort or
-  AnalogReducePort in the Componentin the enclosing Source/Destination/
-| Plasticity/Response element. The transmission mode of the port (i.e.
-  analog or event) should match that of the port referenced by the
-  *sender* attribute.
+Each FromResponse element requires a *receiver* attribute. This should
+refer to the name of a AnalogReceivePort, EventReceivePort or
+AnalogReducePort in the Componentin the enclosing Source/Destination/
+Plasticity/Response element. The transmission mode of the port (i.e.
+analog or event) should match that of the port referenced by the
+*sender* attribute.
 
 Delay
 -----
@@ -2021,7 +2061,7 @@ port-connection objects (i.e. FromSource, FromDestination, etc...) to
 allow finer control of the delay between the different components.
 
 Units attribute
-~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^
 
 The *units* attribute specifies the units of the delay and should refer
 to the name of a Unit element in the document scope. The Unitshould be
@@ -2054,7 +2094,7 @@ The Selection element contains the operations that are used to select
 the cells to add to the selection.
 
 Name attribute
-~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^
 
 Each Selection requires a *name* attribute, which should be a valid and
 uniquely identify the Selection from all other elements in the document
@@ -2094,11 +2134,14 @@ Each Item element references as a Population or Selection element and
 specifies their order in the concatenation.
 
 Index attribute
-~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^
 
 Each Item requires a *index* attribute. This attribute specifies the
 order in which the Populations in the Selection are concatenated and
 thereby the indices of the cells within the combined Selection.
+
+.. note::
+    This preserves the order non-specific nature of elements in NineML
 
 Annotations
 ===========
@@ -2130,6 +2173,119 @@ Annotations
 The Annotations element is the top-level of the annotations attached to
 a NineML element. They can be included within any NineML element (User
 Layer and Abstraction Layer) and any valid XML is allowed within them.
+
+
+Acknowledgments
+===============
+
+Former NineML INCF Task Force members
+-------------------------------------
+
+-  Robert Cannon
+
+-  Robert Clewley
+
+-  Alex Cope
+
+-  Hugo Cornelis
+
+-  Andrew P. Davison
+
+-  Erik De Schutter
+
+-  Mikael Djurfeldt
+
+-  Damien Drix
+
+-  Hans Ekkehard Plesser
+
+-  Padraig Gleeson
+
+-  Anatoli Gorchetchnikov
+
+-  Valentin Haenel
+
+-  Sean Hill
+
+-  Michael Hull
+
+-  Birgit Kriener
+
+-  Yann Le Franc
+
+-  Chung-Chua Lo
+
+-  Abigail Morrison
+
+-  Eilif Muller
+
+-  Dragan Nikolic
+
+-  Ivan Raikov
+
+-  Subhasis Ray
+
+-  Raphael Ritz
+
+-  Malin Sandström
+
+-  Lars Schwabe
+
+
+References
+==========
+
+.. [Abbott1999] Abbott, L.~F. (1999).
+   Lapicque's introduction of the integrate-and-fire model neuron (1907)}.
+   *Brain Research Bulletin*, 50(99):303--304.
+
+.. [Brette2009] Brette, R., Rudolph, M., Carnevale, T., Hines, M., Beeman,
+   D., James, M., Diesmann, M., Morrison, A., Goodman, P.~H., Jr, F. C.~H.,
+   Zirpe, M., Natschl\"{a}ger, T., Pecevski, D., Ermentrout, B., Djurfeldt,
+   M., Lansner, A., Rochel, O., Vieville, T., Muller, E., Davison, A.~P.,
+   El, S., and Destexhe, A. (2009).
+   Simulation of networks of spiking neurons: A review of tools and strategies.
+   *Journal of computational neuroscience*, 23(3):349--398.
+
+.. [Cannon2014] Cannon, R.~C., Gleeson, P., Crook, S., Ganapathy, G.,
+   Marin, B., Piasini, E., and Silver, R.~A. (2014).
+   LEMS: a language for expressing complex biological models in concise
+   and hierarchical form and its use in underpinning NeuroML 2.
+   *Frontiers in neuroinformatics*, 8(September):79.
+
+.. [Davison2008] Davison, A.~P., Br\"{u}derle, D., Eppler, J., Kremkow, J.,
+   Muller, E., Pecevski, D., Perrinet, L., and Yger, P. (2008).
+   PyNN: A Common Interface for Neuronal Network Simulators.
+   *Frontiers in neuroinformatics*, 2(January):11.
+
+.. [Gleeson2010] Gleeson, P., Crook, S., Cannon, R.~C., Hines, M.~L.,
+   Billings, G.~O., Farinella, M., Morse, T.~M., Davison, A.~P., Ray, S.,
+   Bhalla, U.~S., Barnes, S.~R., Dimitrova, Y.~D., and Silver, R.~A. (2010).
+   Neuroml: A language for describing data driven models of neurons and
+   networks with a high degree of biological detail.
+   *PLoS Comput Biol*, 6(6).
+
+.. [Goddard2001] Goddard, N. and Hucka, M. (2001).
+   Towards NeuroML: model description methods for collaborative modelling in
+   neuroscience. *Philosophical Transactions of the Royal Society B: Biological
+   Sciences*, 356(1412):1209--28.
+
+.. [Izhikevich2003] Izhikevich, E.~M. and Izhikevich, E.~M. (2003).
+   Simple model of spiking neurons.
+   *IEEE Transactions on Neural Networks*, 14(6):1569--72.
+
+.. [Vogels2005] Vogels, T.~P. and Abbott, L.~F. (2005).
+   Signal Propagation and Logic Gating in Networks of Integrate-and-Fire
+   Neurons. *The Journal of Neuroscience*, 25(46):10786 --10795.
+
+.. |incf_logo| image:: figures/incf_new.png
+   :width: 15.00000cm
+.. |creative_commons_logo| image:: figures/by-nc-sa.png
+   :width: 4.00000cm
+
+********
+Appendix
+********
 
 Examples
 ========
@@ -2168,9 +2324,11 @@ The RegimeGraph is shown in Figure [fig:EX1\_RegimeGraph]
 
 .. figure:: figures/example_IzRegimeTransGraph.pdf
    :alt: RegimeGraph for the XML model in this section.
-   :width: 8.00000cm
+   :width: 16.00000cm
 
    RegimeGraph for the XML model in this section.
+
+ 
 
 Using this Abstraction Layer definition, as well as suitable parameters
 from the user layer;
@@ -2287,6 +2445,8 @@ initial V=-60mV and U=0.
 
    Result of simulating of the XML model in this section
 
+ 
+
 Leaky Integrate and Fire model
 ------------------------------
 
@@ -2302,7 +2462,7 @@ voltage evolves as:
    \begin{aligned}
    \frac{d(iaf\_V)}{dt} = \frac{ iaf\_gl*( iaf\_vrest - iaf\_V ) + iaf\_ISyn+cobaExcit\_I} {iaf\_cm}\end{aligned}
 
- In *RefractoryRegime*, the neuron voltage does not change in response
+In *RefractoryRegime*, the neuron voltage does not change in response
 to any input:
 
 .. math::
@@ -2317,7 +2477,7 @@ In both Regimes, the synapses dynamics evolve as:
    \begin{aligned}
    \frac{d(cobaExcit\_g)}{dt} = - \frac{cobaExcit\_g}{cobaExcit\_tau}\end{aligned}
 
- The neuron has 2 EventPorts, *iaf\_spikeoutput* is a send port, which
+The neuron has two EventPorts, *iaf\_spikeoutput* is a send port, which
 sends events when the neuron fires, and *cobaExcit\_spikeinput* is a
 recv port, which tells the attached synapse that it should ‘fire’. The
 neuron has 4 transitions, 2 OnEvent transitions and 2 OnCondition
@@ -2341,6 +2501,8 @@ The corresponding Regime Graph is shown in Figure 5.
    :width: 14.00000cm
 
    RegimeGraph for the XML model in this section
+
+ 
 
 The resulting XML description for the Abstraction Layer is :
 
@@ -2488,14 +2650,13 @@ The User Layer description for the above example:
 The simulation results is presented in Figure 6.
 
 .. figure:: figures/demo2_Coba1_out.pdf
-   :alt: Result of simulating of the XML model in this section.
-   *cobaExcit\_spikeinput* is fed events from an external Poisson
-   generator in this simulation
-   :width: 14.00000cm
+   :width: 14.00000cm   
 
    Result of simulating of the XML model in this section.
    *cobaExcit\_spikeinput* is fed events from an external Poisson
    generator in this simulation
+
+ 
 
 COBA IAF Network example
 ------------------------
@@ -2746,63 +2907,3 @@ Layer via Population, Selection and Projection elements:
       <Dimension name="dimensionless"/>
     </NineML>
 
-Acknowledgments
-===============
-
-Former NineML INCF Task Force members
--------------------------------------
-
--  Robert Cannon
-
--  Robert Clewley
-
--  Alex Cope
-
--  Hugo Cornelis
-
--  Andrew P. Davison
-
--  Erik De Schutter
-
--  Mikael Djurfeldt
-
--  Damien Drix
-
--  Hans Ekkehard Plesser
-
--  Padraig Gleeson
-
--  Anatoli Gorchetchnikov
-
--  Valentin Haenel
-
--  Sean Hill
-
--  Michael Hull
-
--  Birgit Kriener
-
--  Yann Le Franc
-
--  Chung-Chua Lo
-
--  Abigail Morrison
-
--  Eilif Muller
-
--  Dragan Nikolic
-
--  Ivan Raikov
-
--  Subhasis Ray
-
--  Raphael Ritz
-
--  Malin Sandström
-
--  Lars Schwabe
-
-.. |incf_logo| image:: figures/incf_new.png
-   :width: 15.00000cm
-.. |creative_commons_logo| image:: figures/by-nc-sa.png
-   :width: 4.00000cm
