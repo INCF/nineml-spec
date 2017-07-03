@@ -1,5 +1,3 @@
-|incf_logo|
-
 #############################################################################
 Network Interchange for Neuroscience Modeling Language (NineML) Specification
 #############################################################################
@@ -14,6 +12,3 @@ Network Interchange for Neuroscience Modeling Language (NineML) Specification
     user_layer
     examples
     acknowledgements
-
-.. |incf_logo| image:: figures/incf_new.png
-   :width: 15.00000cm

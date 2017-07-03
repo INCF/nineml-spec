@@ -49,8 +49,8 @@ master_doc = u'index'
 # General information about the project.
 project = u'NineML Specification'
 
-copyright = u'2017, NineML Committee'
-author = u'NineML Committee'
+copyright = u'2017, The NineML Committee'
+author = u'The NineML Committee'
 
 
 # The version info for the project you're documenting, acts as replacement for
@@ -124,7 +124,7 @@ html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 
 # The name of an image file (relative to this directory) to place at the top
 # of the sidebar.
-#html_logo = None
+html_logo = 'figures/incf-white.png'
 
 # The name of an image file (within the static path) to use as favicon of the
 # docs.  This file should be a Windows icon file (.ico) being 16x16 or 32x32
@@ -195,7 +195,7 @@ latex_font_size = u'10pt'
 
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
-latex_documents = [('index', 'NineMLSpecification.tex', u'NineMLSpecification Documentation', u'Thomas G. Close, Alex J. Cope, Andrew P. Davison, Erik De Schutter, Jochen Eppler, Ivan Raikov, Paul Richmond', 'manual')]
+latex_documents = [('index', 'NineMLSpecification.tex', u'NineML Specification v{}'.format(version), u'The NineML Committee', 'manual')]
 
 
 # A dictionary that contains LaTeX snippets that override those Sphinx usually 
@@ -226,7 +226,7 @@ epub_exclude_files = ['search.html']
 
 # The name of an image file (relative to this directory) to place at the top of
 # the title page.
-#latex_logo = None
+latex_logo = 'figures/incf_new.png'
 
 # For "manual" documents, if this is true, then toplevel headings are parts,
 # not chapters.
@@ -253,7 +253,7 @@ latex_use_parts = False
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [('index', 'NineMLSpecification', u'NineMLSpecification Documentation', [u'Thomas G. Close, Alex J. Cope, Andrew P. Davison, Erik De Schutter, Jochen Eppler, Ivan Raikov, Paul Richmond'], 1)]
+man_pages = [('index', 'NineMLSpecification', u'NineML Specification v{}'.format(version), [u'The NineML Committee'], 1)]
 
 
 # -- Additional options --------------------------------------------------------
