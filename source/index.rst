@@ -242,19 +242,19 @@ Dimension
 +===========+=============+==========+
 | name      | identifier  | yes      |
 +-----------+-------------+----------+
-| m         | int         | no       |
+| m         | ``integer`` | no       |
 +-----------+-------------+----------+
-| l         | int         | no       |
+| l         | ``integer`` | no       |
 +-----------+-------------+----------+
-| t         | int         | no       |
+| t         | ``integer`` | no       |
 +-----------+-------------+----------+
-| i         | int         | no       |
+| i         | ``integer`` | no       |
 +-----------+-------------+----------+
-| n         | int         | no       |
+| n         | ``integer`` | no       |
 +-----------+-------------+----------+
-| k         | int         | no       |
+| k         | ``integer`` | no       |
 +-----------+-------------+----------+
-| j         | int         | no       |
+| j         | ``integer`` | no       |
 +-----------+-------------+----------+
 
 Dimension objects are constructed values from the powers for each of the
@@ -503,7 +503,7 @@ MathInline
 ----------
 
 +-------------------------+----------+
-| Body                    | Required |
+| Body format             | Required |
 +=========================+==========+
 | Inline-maths expression | yes      |
 +-------------------------+----------+
@@ -1411,13 +1411,13 @@ Component
 | name      | identifier  | yes      |
 +-----------+-------------+----------+
 
-+----------------------+--------------+----------+
-| Children             | Multiplicity | Required |
-+======================+==============+==========+
-| Definition,Prototype | singleton    | yes      |
-+----------------------+--------------+----------+
-| Property             | set          | no       |
-+----------------------+--------------+----------+
++------------------------+--------------+----------+
+| Children               | Multiplicity | Required |
++========================+==============+==========+
+| [Definition,Prototype] | singleton    | yes      |
++------------------------+--------------+----------+
+| Property               | set          | no       |
++------------------------+--------------+----------+
 
 Component elements instantiate Abstraction Layer component classes by
 providing properties for each of the parameters defined the class. Each
@@ -1516,7 +1516,7 @@ Property
 +===========+================+==========+
 | name      | Parameter.name | yes      |
 +-----------+----------------+----------+
-| units     | Unit@symbol    | yes      |
+| units     | Unit.symbol    | yes      |
 +-----------+----------------+----------+
 
 +---------------------------------------------------------+--------------+----------+
@@ -1612,7 +1612,7 @@ SingleValue
 -----------
 
 +-------------+----------+
-| Body        | Required |
+| Body format | Required |
 +=============+==========+
 | ``integer`` | yes      |
 +-------------+----------+
@@ -1666,7 +1666,7 @@ Index attribute
 
 The *index* attribute specifies the index of the ArrayValueRow in the
 ArrayValue. It must be non-negative, unique amongst the set of
-ArrayValueRow@index in the list, and the set of indices must be
+ArrayValueRow.index in the list, and the set of indices must be
 contiguous for a single ArrayValue.
 
 Body
@@ -1803,11 +1803,11 @@ element.
 Size
 ----
 
-+------+----------+
-| Body | Required |
-+======+==========+
-| int  | yes      |
-+------+----------+
++-------------+----------+
+| Body format | Required |
++=============+==========+
+| int         | yes      |
++-------------+----------+
 
 The number of cells in the population is specified by the integer
 provided in the body of the Size element. In future versions this may be
@@ -2242,11 +2242,11 @@ Item
 | index     | ``integer`` | yes      |
 +-----------+-------------+----------+
 
-+---------------------------------+--------------+----------+
-| Children                        | Multiplicity | Required |
-+=================================+==============+==========+
-| Reference(Population,Selection) | singleton    | yes      |
-+---------------------------------+--------------+----------+
++-----------------------------------+--------------+----------+
+| Children                          | Multiplicity | Required |
++===================================+==============+==========+
+| Reference([Population,Selection]) | singleton    | yes      |
++-----------------------------------+--------------+----------+
 
 Each Item element references as a Population or Selection element and
 specifies their order in the concatenation.
