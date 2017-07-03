@@ -1,6 +1,6 @@
-
+***************
 Acknowledgments
-===============
+***************
 
 We would like to thank the former INCF NineML Task Force members for
 their contributions to the text and the concepts presented in this
@@ -9,7 +9,7 @@ Gleeson, E. Muller, R. Cannon, Birgit Kriener, Subhasis Ray and S.
 Hill.
 
 Former NineML INCF Task Force members
--------------------------------------
+=====================================
 
 -  Robert Cannon
 

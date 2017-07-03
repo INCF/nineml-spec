@@ -112,24 +112,3 @@ identifiers that are identical with the exception of case, e.g.
 scope. Identifiers used within component classes also cannot be the same
 (case-insensitive) as one of the built-in symbols or functions (see
 MathInline).
-
-
-References
-----------
-
-.. [Davison2008] Davison, A.~P., Br\"{u}derle, D., Eppler, J., Kremkow, J.,
-   Muller, E., Pecevski, D., Perrinet, L., and Yger, P. (2008).
-   PyNN: A Common Interface for Neuronal Network Simulators.
-   *Frontiers in neuroinformatics*, 2(January):11.
-
-.. [Gleeson2010] Gleeson, P., Crook, S., Cannon, R.~C., Hines, M.~L.,
-   Billings, G.~O., Farinella, M., Morse, T.~M., Davison, A.~P., Ray, S.,
-   Bhalla, U.~S., Barnes, S.~R., Dimitrova, Y.~D., and Silver, R.~A. (2010).
-   Neuroml: A language for describing data driven models of neurons and
-   networks with a high degree of biological detail.
-   *PLoS Comput Biol*, 6(6).
-
-.. [Goddard2001] Goddard, N. and Hucka, M. (2001).
-   Towards NeuroML: model description methods for collaborative modelling in
-   neuroscience. *Philosophical Transactions of the Royal Society B: Biological
-   Sciences*, 356(1412):1209--28.

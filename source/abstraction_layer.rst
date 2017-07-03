@@ -1028,13 +1028,3 @@ Each cell in the destination population is connected to a fixed number
 of randomly selected cells in the source population. The number of cells
 is specified by the parameter *number*. The property supplied to the
 *number* parameter should be a SingleValue.
-
-
-References
-----------
-
-.. [Cannon2014] Cannon, R.~C., Gleeson, P., Crook, S., Ganapathy, G.,
-   Marin, B., Piasini, E., and Silver, R.~A. (2014).
-   LEMS: a language for expressing complex biological models in concise
-   and hierarchical form and its use in underpinning NeuroML 2.
-   *Frontiers in neuroinformatics*, 8(September):79.

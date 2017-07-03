@@ -34,6 +34,7 @@ Contents
     abstraction_layer
     user_layer
     acknowledgements
+    references
     examples
     
 Licence

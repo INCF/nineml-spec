@@ -1,7 +1,6 @@
-
-
+**********
 References
-----------
+**********
 
 .. [Abbott1999] Abbott, L.~F. (1999).
    Lapicque's introduction of the integrate-and-fire model neuron (1907)}.
