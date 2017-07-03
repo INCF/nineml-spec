@@ -608,7 +608,7 @@ Layer via :ref:`Population`, :ref:`Selection` and :ref:`Projection` elements:
                     >Probabilistic</Definition>
                 <Property name="probability" units="unitless">
                     <SingleValue>0.02</SingleValue>
-                </Property>             
+                </Property>
             </Component>
         </Connectivity>
       </Projection>
@@ -623,3 +623,24 @@ Layer via :ref:`Population`, :ref:`Selection` and :ref:`Projection` elements:
       <Dimension name="area" l="2"/>
       <Dimension name="dimensionless"/>
     </NineML>
+
+
+.. [Abbott1999] Abbott, L.~F. (1999).
+   Lapicque's introduction of the integrate-and-fire model neuron (1907)}.
+   *Brain Research Bulletin*, 50(99):303--304.
+
+.. [Brette2009] Brette, R., Rudolph, M., Carnevale, T., Hines, M., Beeman,
+   D., James, M., Diesmann, M., Morrison, A., Goodman, P.~H., Jr, F. C.~H.,
+   Zirpe, M., Natschl\"{a}ger, T., Pecevski, D., Ermentrout, B., Djurfeldt,
+   M., Lansner, A., Rochel, O., Vieville, T., Muller, E., Davison, A.~P.,
+   El, S., and Destexhe, A. (2009).
+   Simulation of networks of spiking neurons: A review of tools and strategies.
+   *Journal of computational neuroscience*, 23(3):349--398.    
+
+.. [Izhikevich2003] Izhikevich, E.~M. and Izhikevich, E.~M. (2003).
+   Simple model of spiking neurons.
+   *IEEE Transactions on Neural Networks*, 14(6):1569--72.
+
+.. [Vogels2005] Vogels, T.~P. and Abbott, L.~F. (2005).
+   Signal Propagation and Logic Gating in Networks of Integrate-and-Fire
+   Neurons. *The Journal of Neuroscience*, 25(46):10786 --10795.

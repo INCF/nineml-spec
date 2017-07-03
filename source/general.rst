@@ -240,3 +240,10 @@ Annotations
 The Annotations_ element is the top-level of the annotations attached to
 a NineML element. They can be included within any NineML element (User
 Layer and Abstraction Layer) and any valid XML is allowed within them.
+
+
+.. [Cannon2014] Cannon, R.~C., Gleeson, P., Crook, S., Ganapathy, G.,
+   Marin, B., Piasini, E., and Silver, R.~A. (2014).
+   LEMS: a language for expressing complex biological models in concise
+   and hierarchical form and its use in underpinning NeuroML 2.
+   *Frontiers in neuroinformatics*, 8(September):79.
