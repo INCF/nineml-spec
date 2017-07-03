@@ -18,7 +18,7 @@ How to build the source
 -----------------------
 
 The source is written in reStructured text and can be build using
-[Sphinx](http://www.sphinx-doc.org/) using the provided Makefile
+Sphinx (http://www.sphinx-doc.org/) using the provided Makefile
 (or the make.bat if on Windows) 
 
 HTML
