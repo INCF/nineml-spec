@@ -1,5 +1,10 @@
-General
-=======
+****************
+General Elements
+****************
+
+
+Document Layout
+===============
 
 NineML documents must be enclosed within an NineML element, which should
 be in the ’http://nineml.net/9ML/1.0’ XML namespace.
@@ -49,6 +54,7 @@ The *xmlns* attribute is required and should refer to the
 `URL <http://en.wikipedia.org/wiki/Uniform_resource_locator>`__\ corresponding
 to the correct NineML version, which for version 1.0 is
 ‘http://nineml.net/9ML/1.0’ (see http://www.w3.org/TR/REC-xml-names/).
+
 
 Units and Dimensions
 ====================
@@ -203,3 +209,36 @@ specifies the zero offset of the unit scale. For example,
     <Unit name="degC" dimension="temperature" power="0" offset="273.15"/>
 
 If omitted, the offset is zero.
+
+
+Annotations
+===========
+
+Annotations are provided to add semantic information about the model,
+preserving structure that is lost during conversion from an extended
+format to core NineML, and provide suggestions for the simulation of the
+model. It is highly recommended to add references to all publications on
+which the model or property values are based in the annotations. For
+adding semantic structure to the model it is recommended to use the
+`Resource Description Framework (RDF) <http://www.w3.org/RDF/>`__
+although it not a strict requirement.
+
+In order to be compliant with the NineML specification any tool handling
+NineML descriptions must preserve all existing annotations, except where
+a user explicitly edits/deletes them. In future versions of this section
+will be expanded to include suggested formats for commonly used
+annotations.
+
+Annotations
+-----------
+
+
++----------+--------------+----------+
+| Children | Multiplicity | Required |
++==========+==============+==========+
+| \*       | set          | no       |
++----------+--------------+----------+
+
+The Annotations element is the top-level of the annotations attached to
+a NineML element. They can be included within any NineML element (User
+Layer and Abstraction Layer) and any valid XML is allowed within them.

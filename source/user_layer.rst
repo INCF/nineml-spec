@@ -865,35 +865,3 @@ thereby the indices of the cells within the combined Selection.
 
 .. note::
     This preserves the order non-specific nature of elements in NineML
-
-Annotations
-===========
-
-Annotations are provided to add semantic information about the model,
-preserving structure that is lost during conversion from an extended
-format to core NineML, and provide suggestions for the simulation of the
-model. It is highly recommended to add references to all publications on
-which the model or property values are based in the annotations. For
-adding semantic structure to the model it is recommended to use the
-`Resource Description Framework (RDF) <http://www.w3.org/RDF/>`__
-although it not a strict requirement.
-
-In order to be compliant with the NineML specification any tool handling
-NineML descriptions must preserve all existing annotations, except where
-a user explicitly edits/deletes them. In future versions of this section
-will be expanded to include suggested formats for commonly used
-annotations.
-
-Annotations
------------
-
-
-+----------+--------------+----------+
-| Children | Multiplicity | Required |
-+==========+==============+==========+
-| \*       | set          | no       |
-+----------+--------------+----------+
-
-The Annotations element is the top-level of the annotations attached to
-a NineML element. They can be included within any NineML element (User
-Layer and Abstraction Layer) and any valid XML is allowed within them.

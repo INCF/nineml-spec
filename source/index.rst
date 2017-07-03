@@ -5,7 +5,8 @@ Network Interchange for Neuroscience Modeling Language (NineML) Specification
 #############################################################################
 **Version: 1.0.1**
 
-**NineML Committee:**
+NineML Committee
+----------------
 
 -  Thomas G. Close
 
@@ -22,6 +23,22 @@ Network Interchange for Neuroscience Modeling Language (NineML) Specification
 -  Paul Richmond
 
 
+Contents
+--------
+
+.. toctree::
+    :maxdepth: 2
+    
+    introduction
+    general
+    abstraction_layer
+    user_layer
+    acknowledgements
+    examples
+    
+Licence
+-------
+
 This document is under the Common Creative license BY-NC-SA:
 http://creativecommons.org/licenses/by-nc-sa/3.0/
 
@@ -29,18 +46,11 @@ http://creativecommons.org/licenses/by-nc-sa/3.0/
 
 :Date: |today|
 
+Website
+-------
+
 See http://nineml.net for more information on the committee and NineML
 developments.
-
-.. toctree::
-    :maxdepth: 2
-    
-    introduction
-    generic
-    abstraction_layer
-    user_layer
-    acknowledgements
-    examples    
 
 
 .. |incf_logo| image:: figures/incf_new.png
