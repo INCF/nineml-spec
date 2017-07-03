@@ -12,6 +12,7 @@
 # serve to show the default.
 
 import sys, os
+import sphinx_rtd_theme
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -25,7 +26,9 @@ import sys, os
 
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
-extensions = ['sphinx.ext.todo']
+extensions = ['sphinx.ext.todo',
+   			  'sphinx.ext.mathjax',
+    		  'sphinx.ext.autosectionlabel']
 
 
 # Add any paths that contain templates here, relative to this directory.
@@ -44,9 +47,10 @@ master_doc = u'index'
 
 
 # General information about the project.
-project = u'NineMLSpecification'
+project = u'NineML Specification'
 
 copyright = u'2017, Thomas G. Close, Alex J. Cope, Andrew P. Davison, Erik De Schutter, Jochen Eppler, Ivan Raikov, Paul Richmond'
+author = u'Thomas G. Close, Alex J. Cope, Andrew P. Davison, Erik De Schutter, Jochen Eppler, Ivan Raikov, Paul Richmond'
 
 
 # The version info for the project you're documenting, acts as replacement for
@@ -67,7 +71,7 @@ language = u'en'
 
 # There are two options for replacing |today|: either, you set today to some
 # non-false value, then it is used:
-#today = ''
+today = ''
 # Else, today_fmt is used as the format for a strftime call.
 #today_fmt = '%B %d, %Y'
 
@@ -100,7 +104,7 @@ pygments_style = 'sphinx'
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = u'default'
+html_theme = 'sphinx_rtd_theme'
 
 
 # Theme options are theme-specific and customize the look and feel of a theme
@@ -109,7 +113,7 @@ html_theme = u'default'
 #html_theme_options = {}
 
 # Add any paths that contain custom themes here, relative to this directory.
-#html_theme_path = []
+html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
@@ -196,6 +200,27 @@ latex_documents = [('index', 'NineMLSpecification.tex', u'NineMLSpecification Do
 # A dictionary that contains LaTeX snippets that override those Sphinx usually 
 # puts into the generated .tex files.
 latex_elements = { 'babel': '\\usepackage[english]{babel}' }
+
+
+# -- Options for Epub output ----------------------------------------------
+
+# Bibliographic Dublin Core info.
+epub_title = project
+epub_author = author
+epub_publisher = author
+epub_copyright = copyright
+
+# The unique identifier of the text. This can be a ISBN number
+# or the project homepage.
+#
+# epub_identifier = ''
+
+# A unique identification for the text.
+#
+# epub_uid = ''
+
+# A list of files that should not be packed into the epub file.
+epub_exclude_files = ['search.html']
 
 
 # The name of an image file (relative to this directory) to place at the top of

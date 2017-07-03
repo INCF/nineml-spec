@@ -21,20 +21,16 @@ Network Interchange for Neuroscience Modeling Language (NineML) Specification
 
 -  Paul Richmond
 
-**Acknowledgments:**
-
-We would like to thank the former INCF NineML Task Force members for
-their contributions to the text and the concepts presented in this
-document. In particular: A. Gorchetchnikov, M. Hull, Y. Le Franc, P.
-Gleeson, E. Muller, R. Cannon, Birgit Kriener, Subhasis Ray and S.
-Hill.
 
 This document is under the Common Creative license BY-NC-SA:
 http://creativecommons.org/licenses/by-nc-sa/3.0/
 
 |creative_commons_logo|
 
-:Date: $Date
+:Date: |today|
+
+See http://nineml.net for more information on the committee and NineML
+developments.
 
 .. toctree::
     :maxdepth: 2
@@ -179,9 +175,11 @@ NineML
 | xmlns      | ‘http://nineml.net/9ML/1.0’ | yes      |
 +------------+-----------------------------+----------+
 
+++++
+
 +----------------+--------------+----------+
-| Child elements | Multiplicity | Required |
-+----------------+--------------+----------+
+| Children       | Multiplicity | Required |
++================+==============+==========+
 | Component      | set          | no       |
 | ComponentClass | set          | no       |
 | Unit           | set          | no       |
@@ -230,7 +228,7 @@ units by which they are assigned.
 
 .. note::
     The format for units and dimensions is the same as is used for LEMS/NeuroML
-    v2.0 (http://www.neuroml.org) (Cannon et al., 2014).
+    v2.0 (http://www.neuroml.org) [Cannon2014]_.
 
 Dimension
 ---------
@@ -394,13 +392,15 @@ action potential firing.
 ComponentClass
 --------------
 
++-----------+-------------+----------+
+| Attribute | Type/Format | Required |
++-----------+-------------+----------+
+| name      | identifier  | yes      |
++-----------+-------------+----------+
+
 +----------------------------------------------+--------------+----------+
-| Attribute                                    | Type/Format  | Required |
-+----------------------------------------------+--------------+----------+
-| name                                         | identifier   | yes      |
-+----------------------------------------------+--------------+----------+
-| Child elements                               | Multiplicity | Required |
-+----------------------------------------------+--------------+----------+
+| Children                                     | Multiplicity | Required |
++==============================================+==============+==========+
 | Parameter                                    | set          | no       |
 | AnalogSendPort                               | set          | no       |
 | AnalogReceivePort                            | set          | no       |
@@ -2189,6 +2189,12 @@ Layer and Abstraction Layer) and any valid XML is allowed within them.
 Acknowledgments
 ===============
 
+We would like to thank the former INCF NineML Task Force members for
+their contributions to the text and the concepts presented in this
+document. In particular: A. Gorchetchnikov, M. Hull, Y. Le Franc, P.
+Gleeson, E. Muller, R. Cannon, Birgit Kriener, Subhasis Ray and S.
+Hill.
+
 Former NineML INCF Task Force members
 -------------------------------------
 
@@ -2294,9 +2300,6 @@ References
 .. |creative_commons_logo| image:: figures/by-nc-sa.png
    :width: 4.00000cm
 
-********
-Appendix
-********
 
 Examples
 ========
@@ -2452,12 +2455,11 @@ initial V=-60mV and U=0.
 
 .. figure:: figures/example_IzVoltageWave.pdf
    :alt: Result of simulating of the XML model in this section
-   :width: 8.00000cm
+   :width: 15.00000cm
 
    Result of simulating of the XML model in this section
 
  
-
 Leaky Integrate and Fire model
 ------------------------------
 
@@ -2509,7 +2511,7 @@ The corresponding Regime Graph is shown in Figure 5.
 
 .. figure:: figures/demo2_Coba1_trnasition.pdf
    :alt: RegimeGraph for the XML model in this section
-   :width: 14.00000cm
+   :width: 15.00000cm
 
    RegimeGraph for the XML model in this section
 
@@ -2661,7 +2663,7 @@ The User Layer description for the above example:
 The simulation results is presented in Figure 6.
 
 .. figure:: figures/demo2_Coba1_out.pdf
-   :width: 16.00000cm   
+   :width: 15.00000cm   
 
    Result of simulating of the XML model in this section.
    *cobaExcit\_spikeinput* is fed events from an external Poisson
