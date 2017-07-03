@@ -485,7 +485,7 @@ and the description of the COBA ComponentClassis:
 
  
 
-The cell Componentare parameterized and connected together in the User
+The cell Component are parameterized and connected together in the User
 Layer via Population, Selection and Projection elements:
 
 .. code-block:: xml

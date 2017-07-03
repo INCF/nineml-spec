@@ -122,11 +122,11 @@ Property
 | units     | Unit.symbol    | yes      |
 +-----------+----------------+----------+
 
-+---------------------------------------------------------+--------------+----------+
-| Children                                                | Multiplicity | Required |
-+=========================================================+==============+==========+
++---------------------------------------------------------------------+--------------+----------+
+| Children                                                            | Multiplicity | Required |
++=====================================================================+==============+==========+
 | [SingleValue,ArrayValue,ExternalArrayValue,RandomDistributionValue] | singleton    | yes      |
-+---------------------------------------------------------+--------------+----------+
++---------------------------------------------------------------------+--------------+----------+
 
 Property elements provide values for the parameters defined in the
 ComponentClass of the Component. Their *name* attribute should match the
@@ -342,7 +342,7 @@ Each ExternalArrayValue must have a *columnName* attribute, which refers
 to a column header in the external data file.
 
 RandomDistributionValue
------------
+-----------------------
 
 
 +-----------------------+--------------+----------+
@@ -575,7 +575,7 @@ Response
 
 The Response defines the effect on the post-synaptic cell dynamics of an
 incoming synaptic input. The additional dynamics are defined by a
-Componentelement, which can be defined inline or referenced. For static
+Component element, which can be defined inline or referenced. For static
 connections (i.e. those without a Plasticity element), the magnitude of
 the response (i.e. synaptic weight) is typically passed as a property of
 the Response element.
@@ -645,7 +645,7 @@ Receiver attribute
 
 Each FromSource element requires a *receiver* attribute. This should
 refer to the name of a AnalogReceivePort, EventReceivePort or
-AnalogReducePort in the Componentin the enclosing
+AnalogReducePort in the Component in the enclosing
 Source/Destination/Plasticity/Response element. The transmission mode
 of the port (i.e. analog or event) should match that of the port
 referenced by the *sender* attribute.
@@ -680,7 +680,7 @@ Receiver attribute
 
 Each FromDestination element requires a *receiver* attribute. This
 should refer to the name of a AnalogReceivePort, EventReceivePort or
-AnalogReducePort in the Componentin the enclosing
+AnalogReducePort in the Component in the enclosing
 Source/Destination/Plasticity/Response element. The transmission mode
 of the port (i.e. analog or event) should match that of the port
 referenced by the *sender* attribute.
@@ -706,7 +706,7 @@ Sender attribute
 
 Each FromPlasticity element requires a *sender* attribute. This should
 refer to the name of a AnalogSendPort or EventSendPort in the
-Cell->Componentof the source population. The transmission mode of the
+Cell->Component of the source population. The transmission mode of the
 port (i.e. analog or event) should match that of the port referenced by
 the *receiver* attribute.
 
@@ -715,7 +715,7 @@ Receiver attribute
 
 Each FromPlasticity element requires a *receiver* attribute. This should
 refer to the name of a AnalogReceivePort, EventReceivePort or
-AnalogReducePort in the Componentin the enclosing Source/Destination/
+AnalogReducePort in the Component in the enclosing Source/Destination/
 Plasticity/Response element. The transmission mode of the port (i.e.
 analog or event) should match that of the port referenced by the
 *sender* attribute.
@@ -741,7 +741,7 @@ Sender attribute
 
 Each FromResponse element requires a *sender* attribute. This should
 refer to the name of a AnalogSendPort or EventSendPort in the
-Cell->Componentof the source population. The transmission mode of the
+Cell->Component of the source population. The transmission mode of the
 port (i.e. analog or event) should match that of the port referenced by
 the *receiver* attribute.
 
@@ -750,7 +750,7 @@ Receiver attribute
 
 Each FromResponse element requires a *receiver* attribute. This should
 refer to the name of a AnalogReceivePort, EventReceivePort or
-AnalogReducePort in the Componentin the enclosing Source/Destination/
+AnalogReducePort in the Component in the enclosing Source/Destination/
 Plasticity/Response element. The transmission mode of the port (i.e.
 analog or event) should match that of the port referenced by the
 *sender* attribute.
@@ -764,11 +764,11 @@ Delay
 | units     | Unit@symbol | yes      |
 +-----------+-------------+----------+
 
-+---------------------------------------------------------+--------------+----------+
-| Children                                                | Multiplicity | Required |
-+=========================================================+==============+==========+
++---------------------------------------------------------------------+--------------+----------+
+| Children                                                            | Multiplicity | Required |
++=====================================================================+==============+==========+
 | [SingleValue,ArrayValue,ExternalArrayValue,RandomDistributionValue] | singleton    | yes      |
-+---------------------------------------------------------+--------------+----------+
++---------------------------------------------------------------------+--------------+----------+
 
 In version 1.0, the Delay element specifies the delay between the
 pre-synaptic cell port and both the Plasticityand Response. In future
