@@ -10,10 +10,10 @@ Izhikevich Model
 
 In this first example, we are describing how to represent the Izhikevich
 model in NineML [Izhikevich2003]_. The model is
-composed of single ComponentClass, containing a single Regime,
+composed of single :ref:`ComponentClass`, containing a single :ref:`Regime`,
 *subthresholdRegime*, and two state variables, :math:`U` & :math:`V`.
 
-The ODEs defined for the Regime are:
+The ODEs defined for the :ref:`Regime` are:
 
 .. math::
 
@@ -21,9 +21,9 @@ The ODEs defined for the Regime are:
    \frac{dV}{dt} &= 0.04*V*V + 5*V + 140.0 - U + i_{\mathrm{synapse}} + i_{\mathrm{injected}}  \\
    \frac{dU}{dt} &= a * ( b* V -U )\end{aligned}
 
-The ComponentClass has a single OnCondition transition, is triggered
+The :ref:`ComponentClass` has a single :ref:`OnCondition` transition, is triggered
 when :math:`V>theta`. When triggered, It causes an Event called
-*spikeOutput* to be emitted, and two StateAssignments to be made:
+*spikeOutput* to be emitted, and two :ref:`StateAssignment`\ s to be made:
 
 .. math::
 
@@ -31,7 +31,7 @@ when :math:`V>theta`. When triggered, It causes an Event called
    U &\leftarrow U + d \\
    V &\leftarrow c\end{aligned}
 
-The target-regime of the OnCondition transition is not declared
+The target-regime of the :ref:`OnCondition` transition is not declared
 explicitly in the XML, implying that the target-regime is the same as
 the source-regime, i.e. *subthresholdRegime*.
 
@@ -50,10 +50,10 @@ from the user layer;
 :math:`a=0.02, b=0.2, c=-65, d= 8, i_{\mathrm{injected}}= 5.0`, we can
 simulate this, giving output as shown in Figure [fig:Ex1\_Output].
 
-In Figure [fig:Ex1\_Output], we can see the value of the StateVariable
+In Figure [fig:Ex1\_Output], we can see the value of the :ref:`StateVariable`
 :math:`V` over time. We can also see that when the value of
 :math:`V>theta` triggers the condition, we emit a spike, and the
-StateAssignment of :math:`V \leftarrow c` resets the value of :math:`V`.
+:ref:`StateAssignment` of :math:`V \leftarrow c` resets the value of :math:`V`.
 The corresponding Abstraction Layer XML description for this model is
 the following:
 
@@ -123,7 +123,7 @@ the following:
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://nineml.net/9ML/1.0/NineML_v1.0.xsd">
       <Component name="IzhikevichNeuron">
-        <Definition url="http://nineml.net/9ML/1.0/catalog/neurons/izhikevichCell.9ml"
+        <Definition url="http://nineml.net/9ML/1.0/catalog/neurons/izhikevichCell.xml"
           >IzhikevichCell</Definition>
         <Property name="theta" units="mV">
           <SingleValue>50</SingleValue>
@@ -166,7 +166,7 @@ Leaky Integrate and Fire model
 
 In this example, we build a representation of a integrate-and-fire
 neuron, with an attached input synapse [Abbott1999]_.
-We have a single StateVariable, *iaf\_V*. This time, the neuron has an
+We have a single :ref:`StateVariable`, *iaf\_V*. This time, the neuron has an
 absolute refractory period; which is implemented by using 2 regimes.
 *RegularRegime* & *RefractoryRegime* In *RegularRegime*, the neuron
 voltage evolves as:
@@ -184,7 +184,7 @@ to any input:
    \begin{aligned}
    \frac{d(iaf\_V)}{dt} = 0\end{aligned}
 
-In both Regimes, the synapses dynamics evolve as:
+In both :ref:`Regime`\ s, the synapses dynamics evolve as:
 
 .. math::
 
@@ -194,11 +194,11 @@ In both Regimes, the synapses dynamics evolve as:
 The neuron has two EventPorts, *iaf\_spikeoutput* is a send port, which
 sends events when the neuron fires, and *cobaExcit\_spikeinput* is a
 recv port, which tells the attached synapse that it should ‘fire’. The
-neuron has 4 transitions, 2 OnEvent transitions and 2 OnCondition
+neuron has 4 transitions, 2 :ref:`OnEvent` transitions and 2 :ref:`OnCondition`
 transitions. Two of the Transitions are triggered by
 *cobaExcit\_spikeinput* events, which cause the conductance of the
 synapse to increase by an amount :math:`q`, These happen in both
-Regimes. The other OnConditions:
+:ref:`Regime`\ s. The other :ref:`OnCondition`\ s:
 
 -  One is triggered the voltage being above threshold, which moves the
    component from *RegularRegime* to *RefractoryRegime*, sets V to the
@@ -208,7 +208,7 @@ Regimes. The other OnConditions:
    to come out of the *RefractoryRegime* and move back to the
    *RegularRegime*
 
-The corresponding Regime Graph is shown in Figure 5.
+The corresponding :ref:`Regime` Graph is shown in Figure 5.
 
 .. figure:: figures/demo2_Coba1_trnasition.pdf
    :alt: RegimeGraph for the XML model in this section
@@ -382,13 +382,13 @@ This example is an implementation of *Benchmark 1* from
 [Brette2009]_, which consists of a network of an
 excitatory and inhibitory IAF populations randomly connected with COBA
 synapses [Vogels2005]_. The excitatory and inhibitory
-Population elements are created with 3,200 and 800 cells respectively.
-Both populations are then concatenated into a single Selection element,
+:ref:`Population` elements are created with 3,200 and 800 cells respectively.
+Both populations are then concatenated into a single :ref:`Selection` element,
 “AllNeurons”, which is used to randomly connect both populations to
 every other neuron in the network with a 2% probability.
 
 The abstraction layer description of the IAF input neuron
-ComponentClassis:
+ComponentClass_is:
 
 .. code-block:: xml
 
@@ -446,7 +446,7 @@ ComponentClassis:
 
  
 
-and the description of the COBA ComponentClassis:
+and the description of the COBA ComponentClass_is:
 
 .. code-block:: xml
 
@@ -485,8 +485,8 @@ and the description of the COBA ComponentClassis:
 
  
 
-The cell Component are parameterized and connected together in the User
-Layer via Population, Selection and Projection elements:
+The cell :ref:`Component` are parameterized and connected together in the User
+Layer via :ref:`Population`, :ref:`Selection` and :ref:`Projection` elements:
 
 .. code-block:: xml
 
@@ -583,7 +583,7 @@ Layer via Population, Selection and Projection elements:
         </Response>
         <Connectivity>
             <Component>
-                <Definition url="http://nineml.net/9ML/1.0/catalog/connectionrules/Probabilistic.9ml"
+                <Definition url="http://nineml.net/9ML/1.0/catalog/connectionrules/Probabilistic.xml"
                     >Probabilistic</Definition>
                 <Property name="probability" units="unitless">
                     <SingleValue>0.02</SingleValue>
@@ -604,7 +604,7 @@ Layer via Population, Selection and Projection elements:
         </Response>
         <Connectivity>
             <Component>
-                <Definition url="http://nineml.net/9ML/1.0/catalog/connectionrules/Probabilistic.9ml"
+                <Definition url="http://nineml.net/9ML/1.0/catalog/connectionrules/Probabilistic.xml"
                     >Probabilistic</Definition>
                 <Property name="probability" units="unitless">
                     <SingleValue>0.02</SingleValue>

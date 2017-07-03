@@ -57,7 +57,7 @@ between simulator platforms, it is important to maintain a clear
 distinction between the role of NineML and the role of a simulator.
 Therefore, NineML only contains the necessary information to describe
 the model not how to simulate it, although suggestions can be supplied
-in annotations to the model (see [sec:AnnotationsSection]). For example,
+in annotations to the model (see [sec:Annotations_Section]). For example,
 NineML should specify the neuron membrane equation to solve, but not how
 to solve it. In addition, for implementation and performance reasons, it
 is important to keep the language layer “close” to the simulator – such
@@ -111,4 +111,4 @@ identifiers that are identical with the exception of case, e.g.
 ‘v\_threshold’ and ‘v\_Threshold’, are not permitted within the same
 scope. Identifiers used within component classes also cannot be the same
 (case-insensitive) as one of the built-in symbols or functions (see
-MathInline).
+:ref:`MathInline`).

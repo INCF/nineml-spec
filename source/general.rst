@@ -2,8 +2,8 @@
 General Elements
 ****************
 
-Document
-========
+Document Layout
+===============
 
 NineML documents must be enclosed within an NineML element, which should
 be in the ’http://nineml.net/9ML/1.0’ XML namespace.
@@ -19,32 +19,32 @@ NineML
 +-----------+-----------------------------+----------+
 
 
-+----------------+--------------+----------+
-| Children       | Multiplicity | Required |
-+================+==============+==========+
-| Component      | set          | no       |
-+----------------+--------------+----------+
-| ComponentClass | set          | no       |
-+----------------+--------------+----------+
-| Unit           | set          | no       |
-+----------------+--------------+----------+
-| Dimension      | set          | no       |
-+----------------+--------------+----------+
-| Population     | set          | no       |
-+----------------+--------------+----------+
-| Projection     | set          | no       |
-+----------------+--------------+----------+
-| Selection      | set          | no       |
-+----------------+--------------+----------+
++-----------------------+--------------+----------+
+| Children              | Multiplicity | Required |
++=======================+==============+==========+
+| :ref:`Component`      | set          | no       |
++-----------------------+--------------+----------+
+| :ref:`ComponentClass` | set          | no       |
++-----------------------+--------------+----------+
+| Unit_                 | set          | no       |
++-----------------------+--------------+----------+
+| Dimension_            | set          | no       |
++-----------------------+--------------+----------+
+| :ref:`Population`     | set          | no       |
++-----------------------+--------------+----------+
+| :ref:`Projection`     | set          | no       |
++-----------------------+--------------+----------+
+| :ref:`Selection`      | set          | no       |
++-----------------------+--------------+----------+
 
 Seven *document-level* elements are allowed to reside directly within
-NineML elements: Component, ComponentClass, Unit, Dimension, Population,
-Projection and Selection. Each element should be uniquely identified by
+NineML elements: :ref:`Component`, :ref:`ComponentClass`, Unit_, Dimension_, :ref:`Population`,
+:ref:`Projection` and :ref:`Selection`. Each element should be uniquely identified by
 its *name* attribute within the scope of the document (see ).
 
-Unit and Dimension elements must be defined within the document they are
+Unit_ and Dimension_ elements must be defined within the document they are
 referenced, whereas the remaining element types can also be referenced
-from other NineML documents (see Reference and Definition).
+from other NineML documents (see :ref:`Reference` and :ref:`Definition`).
 
 Xmlns attribute
 ^^^^^^^^^^^^^^^
@@ -102,125 +102,125 @@ Dimension
 | j         | ``integer`` | no       |
 +-----------+-------------+----------+
 
-Dimension objects are constructed values from the powers for each of the
+Dimension_ objects are constructed values from the powers for each of the
 seven SI base units: length (*l*), mass (*m*), time (*t*), electric
 current (*i*), temperature (*k*), luminous intensity (*l*) and amount of
 substance (*n*). For example, acceleration has dimension :math:`lt^{-2}`
-and voltage is :math:`ml^2t^3i^{-1}`. Dimension objects must be declared
+and voltage is :math:`ml^2t^3i^{-1}`. Dimension_ objects must be declared
 in the top-level scope of the NineML document where they are referenced.
 
 Name attribute
 ^^^^^^^^^^^^^^
 
-Each Dimension requires a *name* attribute, which should be a valid and
-uniquely identify the Dimension in current the scope.
+Each Dimension_ requires a *name* attribute, which should be a valid and
+uniquely identify the Dimension_ in current the scope.
 
 M attribute
 ^^^^^^^^^^^
 
 The *m* attribute specifies the power of the mass dimension in the
-Dimension. If omitted the power is zero.
+Dimension_. If omitted the power is zero.
 
 L attribute
 ^^^^^^^^^^^
 
 The *l* attribute specifies the power of the length dimension in the
-Dimension. If omitted the power is zero.
+Dimension_. If omitted the power is zero.
 
 T attribute
 ^^^^^^^^^^^
 
 The *t* attribute specifies the power of the time dimension in the
-Dimension. If omitted the power is zero.
+Dimension_. If omitted the power is zero.
 
 I attribute
 ^^^^^^^^^^^
 
 The *i* attribute specifies the power of the current dimension in the
-Dimension. If omitted the power is zero.
+Dimension_. If omitted the power is zero.
 
 N attribute
 ^^^^^^^^^^^
 
 The *n* attribute specifies the power of the amount-of-substance
-dimension in the Dimension. If omitted the power is zero.
+dimension in the Dimension_. If omitted the power is zero.
 
 K attribute
 ^^^^^^^^^^^
 
 The *k* attribute specifies the power of the temperature dimension in
-the Dimension. If omitted the power is zero.
+the Dimension_. If omitted the power is zero.
 
 J attribute
 ^^^^^^^^^^^
 
 The *j* attribute specifies the power of the luminous-intensity
-dimension in the Dimension. If omitted the power is zero.
+dimension in the Dimension_. If omitted the power is zero.
 
 Unit
 ----
 
-+-----------+----------------+----------+
-| Attribute | Type/Format    | Required |
-+===========+================+==========+
-| symbol    | ``string``     | yes      |
-+-----------+----------------+----------+
-| dimension | Dimension.name | yes      |
-+-----------+----------------+----------+
-| power     | ``integer``    | no       |
-+-----------+----------------+----------+
-| offset    | ``integer``    | no       |
-+-----------+----------------+----------+
++-----------+-----------------+----------+
+| Attribute | Type/Format     | Required |
++===========+=================+==========+
+| symbol    | ``string``      | yes      |
++-----------+-----------------+----------+
+| dimension | Dimension_.name | yes      |
++-----------+-----------------+----------+
+| power     | ``integer``     | no       |
++-----------+-----------------+----------+
+| offset    | ``integer``     | no       |
++-----------+-----------------+----------+
 
-Unit objects specify the dimension multiplier and the offset of a unit
-with respect to a defined Dimension object. Unit objects must be
+Unit_ objects specify the dimension multiplier and the offset of a unit
+with respect to a defined Dimension_ object. Unit_ objects must be
 declared in the top-level scope of the NineML documents where they are
 referenced.
 
 Symbol attribute
 ^^^^^^^^^^^^^^^^
 
-Each Unit requires a *symbol* attribute, which should be a valid and
-uniquely identify the Unit in current the scope.
+Each Unit_ requires a *symbol* attribute, which should be a valid and
+uniquely identify the Unit_ in current the scope.
 
 Dimension attribute
 ^^^^^^^^^^^^^^^^^^^
 
-Each Unit requires a *dimension* attribute. This attribute specifies the
-dimension of the units and should refer to the name of a Dimension
+Each Unit_ requires a *dimension* attribute. This attribute specifies the
+dimension of the units and should refer to the name of a Dimension_
 element in the document scope.
 
 Power attribute
 ^^^^^^^^^^^^^^^
 
-Each Unit requires a *power* attribute. This attribute specifies the
+Each Unit_ requires a *power* attribute. This attribute specifies the
 relative scale of the units compared to the equivalent SI units in
 powers of ten. If omitted the power is zero.
 
 Offset attribute
 ^^^^^^^^^^^^^^^^
 
-A Unit can optionally have an *offset* attribute. This attribute
+A Unit_ can optionally have an *offset* attribute. This attribute
 specifies the zero offset of the unit scale. For example,
 
 .. code-block:: xml
 
-    <Unit name="degC" dimension="temperature" power="0" offset="273.15"/>
+    <Unit_ name="degC" dimension="temperature" power="0" offset="273.15"/>
 
 If omitted, the offset is zero.
 
 
-Annotations
-===========
+Annotating Elements
+===================
 
-Annotations are provided to add semantic information about the model,
+Annotations_ are provided to add semantic information about the model,
 preserving structure that is lost during conversion from an extended
 format to core NineML, and provide suggestions for the simulation of the
 model. It is highly recommended to add references to all publications on
 which the model or property values are based in the annotations. For
 adding semantic structure to the model it is recommended to use the
 `Resource Description Framework (RDF) <http://www.w3.org/RDF/>`__
-although it not a strict requirement.
+although it is not a strict requirement.
 
 In order to be compliant with the NineML specification any tool handling
 NineML descriptions must preserve all existing annotations, except where
@@ -231,13 +231,12 @@ annotations.
 Annotations
 -----------
 
-
 +----------+--------------+----------+
 | Children | Multiplicity | Required |
 +==========+==============+==========+
 | \*       | set          | no       |
 +----------+--------------+----------+
 
-The Annotations element is the top-level of the annotations attached to
+The Annotations_ element is the top-level of the annotations attached to
 a NineML element. They can be included within any NineML element (User
 Layer and Abstraction Layer) and any valid XML is allowed within them.
