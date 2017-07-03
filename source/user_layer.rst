@@ -847,11 +847,11 @@ Item
 | index     | ``integer`` | yes      |
 +-----------+-------------+----------+
 
-+------------------------------------------+--------------+----------+
-| Children                                 | Multiplicity | Required |
-+==========================================+==============+==========+
-| Reference_([Population_,\ Selection_\ ]) | singleton    | yes      |
-+------------------------------------------+--------------+----------+
++--------------------------------------------+--------------+----------+
+| Children                                   | Multiplicity | Required |
++============================================+==============+==========+
+| Reference_\ ([Population_,\ Selection_\ ]) | singleton    | yes      |
++--------------------------------------------+--------------+----------+
 
 Each Item_ element references as a Population_ or Selection_ element and
 specifies their order in the concatenation.
