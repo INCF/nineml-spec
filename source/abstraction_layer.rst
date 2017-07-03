@@ -862,7 +862,7 @@ Random Distributions
 Values for a property across all elements in a container (e.g. cells in
 a population, post-synaptic responses, plasticity rules or delays in a
 projection) can be defined as a random distribution by a Component
-within a RandomValue element. A random distribution component must
+within a RandomDistributionValue element. A random distribution component must
 parameterize a ComponentClass with a RandomDistribution block; the
 component class defines the random distribution family (e.g. normal,
 cauchy, gamma, etc...). As of version 1.0, the only random distributions

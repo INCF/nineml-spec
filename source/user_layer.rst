@@ -125,7 +125,7 @@ Property
 +---------------------------------------------------------+--------------+----------+
 | Children                                                | Multiplicity | Required |
 +=========================================================+==============+==========+
-| [SingleValue,ArrayValue,ExternalArrayValue,RandomValue] | singleton    | yes      |
+| [SingleValue,ArrayValue,ExternalArrayValue,RandomDistributionValue] | singleton    | yes      |
 +---------------------------------------------------------+--------------+----------+
 
 Property elements provide values for the parameters defined in the
@@ -209,7 +209,7 @@ Values can be one of four types
 -  ExternalArrayValue, an explicit array defined in text (space
    delimited) or HDF5 format.
 
--  RandomValue, an array of values derived from a random distribution.
+-  RandomDistributionValue, an array of values derived from a random distribution.
 
 SingleValue
 -----------
@@ -341,7 +341,7 @@ ColumnName attribute
 Each ExternalArrayValue must have a *columnName* attribute, which refers
 to a column header in the external data file.
 
-RandomValue
+RandomDistributionValue
 -----------
 
 
@@ -351,10 +351,10 @@ RandomValue
 | [Component,Reference] | singleton    | yes      |
 +-----------------------+--------------+----------+
 
-RandomValue elements represent arrays of values drawn from random
-distributions, which are defined by a Componentelements. The size of the
+RandomDistributionValue elements represent arrays of values drawn from random
+distributions, which are defined by a Component elements. The size of the
 generated array is determined by the size of the container (i.e.
-Population or Projection) the RandomValue is nested within.
+Population or Projection) the RandomDistributionValue is nested within.
 
 Populations
 ===========
@@ -435,7 +435,7 @@ destination cell pair. The synaptic and plasticity components are then
 connected to and from explicitly defined ports of the cell components in
 the source and projection populations
 
-SingleValue and RandomValue elements used in properties of a projection
+SingleValue and RandomDistributionValue elements used in properties of a projection
 (in the Connectivity, Response, Plasticity and Delay elements) take the
 size of the number of connections made. Explicitly array values,
 ArrayValue and ExternalArrayValue, are only permitted with connection
@@ -767,7 +767,7 @@ Delay
 +---------------------------------------------------------+--------------+----------+
 | Children                                                | Multiplicity | Required |
 +=========================================================+==============+==========+
-| [SingleValue,ArrayValue,ExternalArrayValue,RandomValue] | singleton    | yes      |
+| [SingleValue,ArrayValue,ExternalArrayValue,RandomDistributionValue] | singleton    | yes      |
 +---------------------------------------------------------+--------------+----------+
 
 In version 1.0, the Delay element specifies the delay between the
