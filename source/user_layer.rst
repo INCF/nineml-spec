@@ -291,7 +291,9 @@ ExternalArrayValue
 | Attribute  | Type/Format                                                       | Required |
 +============+===================================================================+==========+
 | url        | `URL <http://en.wikipedia.org/wiki/Uniform_resource_locator>`__   | yes      |
++------------+-------------------------------------------------------------------+----------+
 | mimeType   | `MIME  type <http://en.wikipedia.org/wiki/Internet_media_type>`__ | yes      |
++------------+-------------------------------------------------------------------+----------+
 | columnName | Data column name in external file                                 | yes      |
 +------------+-------------------------------------------------------------------+----------+
 
