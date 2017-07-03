@@ -185,7 +185,8 @@ htmlhelp_basename = 'NineMLSpecificationdoc'
 # -- Options for LaTeX output --------------------------------------------------
 
 # The paper size ('letter' or 'a4').
-latex_paper_size = u'a4'
+latex_elements = {
+    'papersize': u'a4'}
 
 
 # The font size ('10pt', '11pt' or '12pt').

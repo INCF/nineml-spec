@@ -146,8 +146,8 @@ Units attribute
 Each Property_ element requires a *units* attribute. The *units*
 attribute specifies the units of the quantity and should refer to the
 name of a :ref:`Unit` element in the document scope. For a dimensionless units
-a :ref:`Unit`with no SI dimensions can be used. The SI dimensions of the
-:ref:`Unit`\ should match the SI dimensions of the corresponding :ref:`Parameter`.
+a :ref:`Unit` with no SI dimensions can be used. The SI dimensions of the
+:ref:`Unit` should match the SI dimensions of the corresponding :ref:`Parameter`.
 
 .. note::
     "Dimensionless" parameters can be defined by referring to an empty

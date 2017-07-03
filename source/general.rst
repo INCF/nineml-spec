@@ -205,7 +205,7 @@ specifies the zero offset of the unit scale. For example,
 
 .. code-block:: xml
 
-    <Unit_ name="degC" dimension="temperature" power="0" offset="273.15"/>
+    <Unit name="degC" dimension="temperature" power="0" offset="273.15"/>
 
 If omitted, the offset is zero.
 
@@ -213,7 +213,7 @@ If omitted, the offset is zero.
 Annotating Elements
 ===================
 
-Annotations_ are provided to add semantic information about the model,
+Annotations are provided to add semantic information about the model,
 preserving structure that is lost during conversion from an extended
 format to core NineML, and provide suggestions for the simulation of the
 model. It is highly recommended to add references to all publications on

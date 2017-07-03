@@ -471,7 +471,7 @@ example the following port,
 
 .. code-block:: xml
 
-    <AnalogReducePort_ name="total_membrane_current" dimension="current" operator="+"/>
+    <AnalogReducePort name="total_membrane_current" dimension="current" operator="+"/>
 
 will take all of the electrical currents that have been connected to it
 via AnalogSendPort_\ s and sum them to get the total current passing
