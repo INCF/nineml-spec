@@ -3,9 +3,11 @@
 #############################################################################
 Network Interchange for Neuroscience Modeling Language (NineML) Specification
 #############################################################################
-Version: |version|.\ |release|
+| **Version:** |version|.\ |release|
+| **Date:** |today|
+|
+|
 
-Date: |today|
 
 NineML Committee
 ----------------
@@ -35,9 +37,9 @@ Contents
     general
     abstraction_layer
     user_layer
+    examples
     acknowledgements
     references
-    examples
     
 Licence
 -------
