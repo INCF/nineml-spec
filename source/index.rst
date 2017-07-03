@@ -167,25 +167,29 @@ be in the ’http://nineml.net/9ML/1.0’ XML namespace.
 NineML
 ------
 
-+------------+-----------------------------+----------+
-| Attributes |                             |          |
-+------------+-----------------------------+----------+
-| Name       | Type/Format                 | Required |
-+============+=============================+==========+
-| xmlns      | ‘http://nineml.net/9ML/1.0’ | yes      |
-+------------+-----------------------------+----------+
 
-++++
++-----------+-----------------------------+----------+
+| Attribute | Type/Format                 | Required |
++===========+=============================+==========+
+| xmlns     | ‘http://nineml.net/9ML/1.0’ | yes      |
++-----------+-----------------------------+----------+
+
 
 +----------------+--------------+----------+
 | Children       | Multiplicity | Required |
 +================+==============+==========+
 | Component      | set          | no       |
++----------------+--------------+----------+
 | ComponentClass | set          | no       |
++----------------+--------------+----------+
 | Unit           | set          | no       |
++----------------+--------------+----------+
 | Dimension      | set          | no       |
++----------------+--------------+----------+
 | Population     | set          | no       |
++----------------+--------------+----------+
 | Projection     | set          | no       |
++----------------+--------------+----------+
 | Selection      | set          | no       |
 +----------------+--------------+----------+
 
@@ -235,14 +239,21 @@ Dimension
 
 +-----------+-------------+----------+
 | Attribute | Type/Format | Required |
-+-----------+-------------+----------+
++===========+=============+==========+
 | name      | identifier  | yes      |
++-----------+-------------+----------+
 | m         | int         | no       |
++-----------+-------------+----------+
 | l         | int         | no       |
++-----------+-------------+----------+
 | t         | int         | no       |
++-----------+-------------+----------+
 | i         | int         | no       |
++-----------+-------------+----------+
 | n         | int         | no       |
++-----------+-------------+----------+
 | k         | int         | no       |
++-----------+-------------+----------+
 | j         | int         | no       |
 +-----------+-------------+----------+
 
@@ -306,11 +317,14 @@ Unit
 
 +-----------+----------------+----------+
 | Attribute | Type/Format    | Required |
++===========+================+==========+
+| symbol    | ``string``     | yes      |
 +-----------+----------------+----------+
-| symbol    |                | yes      |
-| dimension | Dimension@name | yes      |
-| power     |                | no       |
-| offset    |                | no       |
+| dimension | Dimension.name | yes      |
++-----------+----------------+----------+
+| power     | ``integer``    | no       |
++-----------+----------------+----------+
+| offset    | ``integer``    | no       |
 +-----------+----------------+----------+
 
 Unit objects specify the dimension multiplier and the offset of a unit
@@ -394,7 +408,7 @@ ComponentClass
 
 +-----------+-------------+----------+
 | Attribute | Type/Format | Required |
-+-----------+-------------+----------+
++===========+=============+==========+
 | name      | identifier  | yes      |
 +-----------+-------------+----------+
 
@@ -402,11 +416,17 @@ ComponentClass
 | Children                                     | Multiplicity | Required |
 +==============================================+==============+==========+
 | Parameter                                    | set          | no       |
++----------------------------------------------+--------------+----------+
 | AnalogSendPort                               | set          | no       |
++----------------------------------------------+--------------+----------+
 | AnalogReceivePort                            | set          | no       |
++----------------------------------------------+--------------+----------+
 | AnalogReducePort                             | set          | no       |
++----------------------------------------------+--------------+----------+
 | EventSendPort                                | set          | no       |
++----------------------------------------------+--------------+----------+
 | EventReceivePort                             | set          | no       |
++----------------------------------------------+--------------+----------+
 | [Dynamics,ConnectionRule,RandomDistribution] | singleton    | yes      |
 +----------------------------------------------+--------------+----------+
 
@@ -444,9 +464,10 @@ Parameter
 
 +-----------+----------------+----------+
 | Attribute | Type/Format    | Required |
-+-----------+----------------+----------+
++===========+================+==========+
 | name      | identifier     | yes      |
-| dimension | Dimension@name | yes      |
++-----------+----------------+----------+
+| dimension | Dimension.name | yes      |
 +-----------+----------------+----------+
 
 Parameter objects are placeholders for numerical values within a
@@ -483,7 +504,7 @@ MathInline
 
 +-------------------------+----------+
 | Body                    | Required |
-+-------------------------+----------+
++=========================+==========+
 | Inline-maths expression | yes      |
 +-------------------------+----------+
 
@@ -587,15 +608,17 @@ elements via the ``random`` namespace, :
 Alias
 -----
 
-+----------------+--------------+----------+
-| Attribute      | Type/Format  | Required |
-+----------------+--------------+----------+
-| name           | identifier   | yes      |
-+----------------+--------------+----------+
-| Child elements | Multiplicity | Required |
-+----------------+--------------+----------+
-| MathInline     | singleton    | yes      |
-+----------------+--------------+----------+
++-----------+-------------+----------+
+| Attribute | Type/Format | Required |
++===========+=============+==========+
+| name      | identifier  | yes      |
++-----------+-------------+----------+
+
++------------+--------------+----------+
+| Children   | Multiplicity | Required |
++============+==============+==========+
+| MathInline | singleton    | yes      |
++------------+--------------+----------+
 
 An alias corresponds to an alternative name for a variable or part of an
 expression.
@@ -637,14 +660,17 @@ Constant
 
 +-----------+-------------+----------+
 | Attribute | Type/Format | Required |
-+-----------+-------------+----------+
++===========+=============+==========+
 | name      | identifier  | yes      |
-| units     | Unit@name   | yes      |
 +-----------+-------------+----------+
-| Body      |             | Required |
+| units     | Unit.symbol | yes      |
 +-----------+-------------+----------+
-| ``float`` |             | yes      |
-+-----------+-------------+----------+
+
++-------------+----------+
+| Body format | Required |
++=============+==========+
+| ``float``   | yes      |
++-------------+----------+
 
 Constant objects are used to specify physical constants such as the
 Ideal Gas Constant (i.e. 8.314462175
@@ -701,9 +727,10 @@ AnalogSendPort
 
 +-----------+----------------------------+----------+
 | Attribute | Type/Format                | Required |
++===========+============================+==========+
+| name      | [StateVariable,Alias].name | yes      |
 +-----------+----------------------------+----------+
-| name      | [StateVariable,Alias]@name | yes      |
-| dimension | Dimension@name             | yes      |
+| dimension | Dimension.name             | yes      |
 +-----------+----------------------------+----------+
 
 AnalogSendPort objects allow variables from the current component to be
@@ -730,9 +757,10 @@ AnalogReceivePort
 
 +-----------+----------------+----------+
 | Attribute | Type/Format    | Required |
-+-----------+----------------+----------+
++===========+================+==========+
 | name      | identifier     | yes      |
-| dimension | Dimension@name | yes      |
++-----------+----------------+----------+
+| dimension | Dimension.name | yes      |
 +-----------+----------------+----------+
 
 AnalogReceivePorts allow variables that have been published externally
@@ -759,10 +787,12 @@ AnalogReducePort
 
 +-----------+----------------+----------+
 | Attribute | Type/Format    | Required |
-+-----------+----------------+----------+
++===========+================+==========+
 | name      | identifier     | yes      |
-| dimension | Dimension@name | yes      |
-| operator  | +              | yes      |
++-----------+----------------+----------+
+| dimension | Dimension.name | yes      |
++-----------+----------------+----------+
+| operator  | \+             | yes      |
 +-----------+----------------+----------+
 
 Reduce ports can receive data from any number of AnalogSendPort objects
@@ -818,7 +848,7 @@ EventSendPort
 
 +-----------+-------------+----------+
 | Attribute | Type/Format | Required |
-+-----------+-------------+----------+
++===========+=============+==========+
 | name      | identifier  | yes      |
 +-----------+-------------+----------+
 
@@ -838,7 +868,7 @@ EventReceivePort
 
 +-----------+-------------+----------+
 | Attribute | Type/Format | Required |
-+-----------+-------------+----------+
++===========+=============+==========+
 | name      | identifier  | yes      |
 +-----------+-------------+----------+
 
@@ -883,14 +913,18 @@ the ODE of that regime.
 Dynamics
 --------
 
-+----------------+--------------+----------+
-| Child elements | Multiplicity | Required |
-+----------------+--------------+----------+
-| StateVariable  | set          | no       |
-| Regime         | set          | yes      |
-| Alias          | set          | no       |
-| Constant       | set          | no       |
-+----------------+--------------+----------+
+
++---------------+--------------+----------+
+| Children      | Multiplicity | Required |
++===============+==============+==========+
+| StateVariable | set          | no       |
++---------------+--------------+----------+
+| Regime        | set          | yes      |
++---------------+--------------+----------+
+| Alias         | set          | no       |
++---------------+--------------+----------+
+| Constant      | set          | no       |
++---------------+--------------+----------+
 
 The Dynamics block represents the *internal* mechanisms governing the
 behaviour of the component. These dynamics are based on ordinary
@@ -910,9 +944,10 @@ StateVariable
 
 +-----------+----------------+----------+
 | Attribute | Type/Format    | Required |
-+-----------+----------------+----------+
++===========+================+==========+
 | name      | identifier     | yes      |
-| dimension | Dimension@name | yes      |
++-----------+----------------+----------+
+| dimension | Dimension.name | yes      |
 +-----------+----------------+----------+
 
 The state of the model is defined by a set of StateVariable objects. The
@@ -944,15 +979,19 @@ refer to the name of a Dimension element in the document scope.
 Regime
 ------
 
++-----------+-------------+----------+
+| Attribute | Type/Format | Required |
++===========+=============+==========+
+| name      | identifier  | yes      |
++-----------+-------------+----------+
+
 +----------------+--------------+----------+
-| Attribute      | Type/Format  | Required |
-+----------------+--------------+----------+
-| name           | identifier   | yes      |
-+----------------+--------------+----------+
-| Child elements | Multiplicity | Required |
-+----------------+--------------+----------+
+| Children       | Multiplicity | Required |
++================+==============+==========+
 | TimeDerivative | set          | no       |
++----------------+--------------+----------+
 | OnCondition    | set          | no       |
++----------------+--------------+----------+
 | OnEvent        | set          | no       |
 +----------------+--------------+----------+
 
@@ -969,15 +1008,17 @@ identifies the Regime from all other elements in the ComponentClass.
 TimeDerivative
 --------------
 
-+----------------+--------------------+----------+
-| Attribute      | Type/Format        | Required |
-+----------------+--------------------+----------+
-| variable       | StateVariable@name | yes      |
-+----------------+--------------------+----------+
-| Child elements | Multiplicity       | Required |
-+----------------+--------------------+----------+
-| MathInline     | singleton          | yes      |
-+----------------+--------------------+----------+
++-----------+--------------------+----------+
+| Attribute | Type/Format        | Required |
++-----------+--------------------+----------+
+| variable  | StateVariable.name | yes      |
++-----------+--------------------+----------+
+
++------------+--------------+----------+
+| Children   | Multiplicity | Required |
++============+==============+==========+
+| MathInline | singleton    | yes      |
++------------+--------------+----------+
 
 TimeDerivative elements contain a mathematical expression for the
 right-hand side of the ODE
@@ -1032,15 +1073,19 @@ warning when they are detected.
 OnCondition
 -----------
 
++--------------+-------------+----------+
+| Attribute    | Type/Format | Required |
++--------------+-------------+----------+
+| targetRegime | Regime.name | no       |
++--------------+-------------+----------+
+
 +-----------------+--------------+----------+
-| Attribute       | Type/Format  | Required |
-+-----------------+--------------+----------+
-| targetRegime    | Regime@name  | no       |
-+-----------------+--------------+----------+
-| Child elements  | Multiplicity | Required |
-+-----------------+--------------+----------+
+| Children        | Multiplicity | Required |
++=================+==============+==========+
 | Trigger         | singleton    | yes      |
++-----------------+--------------+----------+
 | StateAssignment | set          | no       |
++-----------------+--------------+----------+
 | OutputEvent     | set          | no       |
 +-----------------+--------------+----------+
 
@@ -1061,17 +1106,21 @@ itself.
 OnEvent
 -------
 
-+-----------------+-----------------------+----------+
-| Attribute       | Type/Format           | Required |
-+-----------------+-----------------------+----------+
-| targetRegime    | Regime@name           | no       |
-| port            | EventReceivePort@name | yes      |
-+-----------------+-----------------------+----------+
-| Child elements  | Multiplicity          | Required |
-+-----------------+-----------------------+----------+
-| StateAssignment | set                   | no       |
-| OutputEvent     | set                   | no       |
-+-----------------+-----------------------+----------+
++--------------+-----------------------+----------+
+| Attribute    | Type/Format           | Required |
++--------------+-----------------------+----------+
+| targetRegime | Regime.name           | no       |
++--------------+-----------------------+----------+
+| port         | EventReceivePort.name | yes      |
++--------------+-----------------------+----------+
+
++-----------------+--------------+----------+
+| Children        | Multiplicity | Required |
++=================+==============+==========+
+| StateAssignment | set          | no       |
++-----------------+--------------+----------+
+| OutputEvent     | set          | no       |
++-----------------+--------------+----------+
 
 OnEvent blocks are activated when the dynamics component receives an
 event from an external component on the port the OnEvent element is
@@ -1104,11 +1153,12 @@ transition to itself.
 Trigger
 -------
 
-+----------------+--------------+----------+
-| Child elements | Multiplicity | Required |
-+----------------+--------------+----------+
-| MathInline     | singleton    | yes      |
-+----------------+--------------+----------+
+
++------------+--------------+----------+
+| Children   | Multiplicity | Required |
++============+==============+==========+
+| MathInline | singleton    | yes      |
++------------+--------------+----------+
 
 Trigger objects define when an OnCondition transition should occur. The
 MathInline block of a Trigger can contain any arbitrary combination of
@@ -1125,15 +1175,17 @@ from *false* to *true*.
 StateAssignment
 ---------------
 
-+----------------+--------------------+----------+
-| Attribute      | Type/Format        | Required |
-+----------------+--------------------+----------+
-| variable       | StateVariable@name | yes      |
-+----------------+--------------------+----------+
-| Child elements | Multiplicity       | Required |
-+----------------+--------------------+----------+
-| MathInline     | singleton          | yes      |
-+----------------+--------------------+----------+
++-----------+--------------------+----------+
+| Attribute | Type/Format        | Required |
++-----------+--------------------+----------+
+| variable  | StateVariable.name | yes      |
++-----------+--------------------+----------+
+
++------------+--------------+----------+
+| Children   | Multiplicity | Required |
++============+==============+==========+
+| MathInline | singleton    | yes      |
++------------+--------------+----------+
 
 StateAssignment elements allow discontinuous changes in the value of
 state variables. Only one state assignment is allowed per variable per
@@ -1157,8 +1209,8 @@ OutputEvent
 
 +-----------+--------------------+----------+
 | Attribute | Type/Format        | Required |
-+-----------+--------------------+----------+
-| port      | EventSendPort@name | yes      |
++===========+====================+==========+
+| port      | EventSendPort.name | yes      |
 +-----------+--------------------+----------+
 
 OutputEvent elements specify events to be raised during a transition.
@@ -1189,7 +1241,7 @@ RandomDistribution
 
 +------------------+-----------------------------------------------------------------+----------+
 | Attribute        | Type/Format                                                     | Required |
-+------------------+-----------------------------------------------------------------+----------+
++==================+=================================================================+==========+
 | standard_library | `URL <http://en.wikipedia.org/wiki/Uniform_resource_locator>`__ | yes      |
 +------------------+-----------------------------------------------------------------+----------+
 
@@ -1270,7 +1322,7 @@ ConnectionRule
 
 +------------------+-----------------------------------------------------------------+----------+
 | Attribute        | Type/Format                                                     | Required |
-+------------------+-----------------------------------------------------------------+----------+
++==================+=================================================================+==========+
 | standard_library | `URL <http://en.wikipedia.org/wiki/Uniform_resource_locator>`__ | yes      |
 +------------------+-----------------------------------------------------------------+----------+
 
@@ -1353,14 +1405,17 @@ Components and Properties
 Component
 ---------
 
++-----------+-------------+----------+
+| Attribute | Type/Format | Required |
++===========+=============+==========+
+| name      | identifier  | yes      |
++-----------+-------------+----------+
+
 +----------------------+--------------+----------+
-| Attribute            | Type/Format  | Required |
-+----------------------+--------------+----------+
-| name                 | identifier   | yes      |
-+----------------------+--------------+----------+
-| Child elements       | Multiplicity | Required |
-+----------------------+--------------+----------+
+| Children             | Multiplicity | Required |
++======================+==============+==========+
 | Definition,Prototype | singleton    | yes      |
++----------------------+--------------+----------+
 | Property             | set          | no       |
 +----------------------+--------------+----------+
 
@@ -1385,15 +1440,17 @@ scope.
 Definition
 ----------
 
-+---------------------+-----------------------------------------------------------------+----------+
-| Attribute           | Type/Format                                                     | Required |
-+---------------------+-----------------------------------------------------------------+----------+
-| url                 | `URL <http://en.wikipedia.org/wiki/Uniform_resource_locator>`__ | no       |
-+---------------------+-----------------------------------------------------------------+----------+
-| Body                |                                                                 | Required |
-+---------------------+-----------------------------------------------------------------+----------+
-| ComponentClass@name |                                                                 | yes      |
-+---------------------+-----------------------------------------------------------------+----------+
++-----------+-----------------------------------------------------------------+----------+
+| Attribute | Type/Format                                                     | Required |
++===========+=================================================================+==========+
+| url       | `URL <http://en.wikipedia.org/wiki/Uniform_resource_locator>`__ | no       |
++-----------+-----------------------------------------------------------------+----------+
+
++---------------------+----------+
+| Body format         | Required |
++=====================+==========+
+| ComponentClass.name | yes      |
++---------------------+----------+
 
 The Definition element establishes a link between a User Layer component
 and Abstraction Layer ComponentClass. This ComponentClass can be located
@@ -1419,15 +1476,17 @@ be provided in the body of the Definition element.
 Prototype
 ---------
 
-+----------------+-----------------------------------------------------------------+----------+
-| Attribute      | Type/Format                                                     | Required |
-+----------------+-----------------------------------------------------------------+----------+
-| url            | `URL <http://en.wikipedia.org/wiki/Uniform_resource_locator>`__ | no       |
-+----------------+-----------------------------------------------------------------+----------+
-| Body           |                                                                 | Required |
-+----------------+-----------------------------------------------------------------+----------+
-| Component@name |                                                                 | yes      |
-+----------------+-----------------------------------------------------------------+----------+
++-----------+-----------------------------------------------------------------+----------+
+| Attribute | Type/Format                                                     | Required |
++===========+=================================================================+==========+
+| url       | `URL <http://en.wikipedia.org/wiki/Uniform_resource_locator>`__ | no       |
++-----------+-----------------------------------------------------------------+----------+
+
++----------------+----------+
+| Body format    | Required |
++================+==========+
+| Component.name | yes      |
++----------------+----------+
 
 The Prototype element establishes a link to an existing User Layer
 Component, which defines the ComponentClass and default properties of
@@ -1452,16 +1511,19 @@ provided in the body of the Prototype element.
 Property
 --------
 
-+---------------------------------------------------------+----------------+----------+
-| Attribute                                               | Type/Format    | Required |
-+---------------------------------------------------------+----------------+----------+
-| name                                                    | Parameter@name | yes      |
-| units                                                   | Unit@symbol    | yes      |
-+---------------------------------------------------------+----------------+----------+
-| Child elements                                          | Multiplicity   | Required |
-+---------------------------------------------------------+----------------+----------+
-| [SingleValue,ArrayValue,ExternalArrayValue,RandomValue] | singleton      | yes      |
-+---------------------------------------------------------+----------------+----------+
++-----------+----------------+----------+
+| Attribute | Type/Format    | Required |
++===========+================+==========+
+| name      | Parameter.name | yes      |
++-----------+----------------+----------+
+| units     | Unit@symbol    | yes      |
++-----------+----------------+----------+
+
++---------------------------------------------------------+--------------+----------+
+| Children                                                | Multiplicity | Required |
++=========================================================+==============+==========+
+| [SingleValue,ArrayValue,ExternalArrayValue,RandomValue] | singleton    | yes      |
++---------------------------------------------------------+--------------+----------+
 
 Property elements provide values for the parameters defined in the
 ComponentClass of the Component. Their *name* attribute should match the
@@ -1493,13 +1555,15 @@ Reference
 
 +-----------+-----------------------------------------------------------------+----------+
 | Attribute | Type/Format                                                     | Required |
-+-----------+-----------------------------------------------------------------+----------+
++===========+=================================================================+==========+
 | url       | `URL <http://en.wikipedia.org/wiki/Uniform_resource_locator>`__ | no       |
 +-----------+-----------------------------------------------------------------+----------+
-| Body      |                                                                 | Required |
-+-----------+-----------------------------------------------------------------+----------+
-| \*@name   |                                                                 | yes      |
-+-----------+-----------------------------------------------------------------+----------+
+
++-------------+----------+
+| Body format | Required |
++=============+==========+
+| \*.name     | yes      |
++-------------+----------+
 
 Reference elements are used to locate User Layer elements in the
 document scope of the current separate documents. In most cases, User
@@ -1549,7 +1613,7 @@ SingleValue
 
 +-------------+----------+
 | Body        | Required |
-+-------------+----------+
++=============+==========+
 | ``integer`` | yes      |
 +-------------+----------+
 
@@ -1565,11 +1629,12 @@ scientific notation e.g. 1e-5 (:math:`1\times10^{-5}`).
 ArrayValue
 ----------
 
-+----------------+--------------+----------+
-| Child elements | Multiplicity | Required |
-+----------------+--------------+----------+
-| ArrayValueRow  | set          | no       |
-+----------------+--------------+----------+
+
++---------------+--------------+----------+
+| Children      | Multiplicity | Required |
++===============+==============+==========+
+| ArrayValueRow | set          | no       |
++---------------+--------------+----------+
 
 ArrayValue elements are used to represent an explicit array of values in
 XML. ArrayValue elements contain a set of ArrayValueRow elements (i.e.
@@ -1581,15 +1646,17 @@ arrays, preferring ExternalArrayValue instead.
 ArrayValueRow
 -------------
 
-+-------------+-------------+----------+
-| Attribute   | Type/Format | Required |
-+-------------+-------------+----------+
-| index       | ``integer`` | yes      |
-+-------------+-------------+----------+
-| Body        |             | Required |
-+-------------+-------------+----------+
-| ``integer`` |             | yes      |
-+-------------+-------------+----------+
++-----------+-------------+----------+
+| Attribute | Type/Format | Required |
++-----------+-------------+----------+
+| index     | ``integer`` | yes      |
++-----------+-------------+----------+
+
++-------------+----------+
+| Body format | Required |
++=============+==========+
+| ``integer`` | yes      |
++-------------+----------+
 
 ArrayValueRow elements represent the numerical values of the explicit
 ArrayValue element.
@@ -1619,7 +1686,7 @@ ExternalArrayValue
 
 +------------+-------------------------------------------------------------------+----------+
 | Attribute  | Type/Format                                                       | Required |
-+------------+-------------------------------------------------------------------+----------+
++============+===================================================================+==========+
 | url        | `URL <http://en.wikipedia.org/wiki/Uniform_resource_locator>`__   | yes      |
 | mimeType   | `MIME  type <http://en.wikipedia.org/wiki/Internet_media_type>`__ | yes      |
 | columnName | Data column name in external file                                 | yes      |
@@ -1674,9 +1741,10 @@ to a column header in the external data file.
 RandomValue
 -----------
 
+
 +-----------------------+--------------+----------+
-| Child elements        | Multiplicity | Required |
-+-----------------------+--------------+----------+
+| Children              | Multiplicity | Required |
++=======================+==============+==========+
 | [Component,Reference] | singleton    | yes      |
 +-----------------------+--------------+----------+
 
@@ -1691,16 +1759,19 @@ Populations
 Population
 ----------
 
-+----------------+--------------+----------+
-| Attribute      | Type/Format  | Required |
-+----------------+--------------+----------+
-| name           | identifier   | yes      |
-+----------------+--------------+----------+
-| Child elements | Multiplicity | Required |
-+----------------+--------------+----------+
-| Size           | singleton    | yes      |
-| Cell           | singleton    | yes      |
-+----------------+--------------+----------+
++-----------+-------------+----------+
+| Attribute | Type/Format | Required |
++===========+=============+==========+
+| name      | identifier  | yes      |
++-----------+-------------+----------+
+
++----------+--------------+----------+
+| Children | Multiplicity | Required |
++==========+==============+==========+
+| Size     | singleton    | yes      |
++----------+--------------+----------+
+| Cell     | singleton    | yes      |
++----------+--------------+----------+
 
 A Population defines a set of dynamic components of the same class. The
 size of the set is specified by the Size element. The properties of the
@@ -1718,9 +1789,10 @@ scope.
 Cell
 ----
 
+
 +-----------------------+--------------+----------+
-| Child elements        | Multiplicity | Required |
-+-----------------------+--------------+----------+
+| Children              | Multiplicity | Required |
++=======================+==============+==========+
 | [Component,Reference] | singleton    | yes      |
 +-----------------------+--------------+----------+
 
@@ -1733,7 +1805,7 @@ Size
 
 +------+----------+
 | Body | Required |
-+------+----------+
++======+==========+
 | int  | yes      |
 +------+----------+
 
@@ -1780,20 +1852,27 @@ the same size as the number of connections.
 Projection
 ----------
 
-+----------------+--------------+----------+
-| Attribute      | Type/Format  | Required |
-+----------------+--------------+----------+
-| name           | identifier   | yes      |
-+----------------+--------------+----------+
-| Child elements | Multiplicity | Required |
-+----------------+--------------+----------+
-| Source         | singleton    | yes      |
-| Destination    | singleton    | yes      |
-| Connectivity   | singleton    | yes      |
-| Response       | singleton    | yes      |
-| Plasticity     | singleton    | no       |
-| Delay          | singleton    | yes      |
-+----------------+--------------+----------+
++-----------+-------------+----------+
+| Attribute | Type/Format | Required |
++===========+=============+==========+
+| name      | identifier  | yes      |
++-----------+-------------+----------+
+
++--------------+--------------+----------+
+| Children     | Multiplicity | Required |
++==============+==============+==========+
+| Source       | singleton    | yes      |
++--------------+--------------+----------+
+| Destination  | singleton    | yes      |
++--------------+--------------+----------+
+| Connectivity | singleton    | yes      |
++--------------+--------------+----------+
+| Response     | singleton    | yes      |
++--------------+--------------+----------+
+| Plasticity   | singleton    | no       |
++--------------+--------------+----------+
+| Delay        | singleton    | yes      |
++--------------+--------------+----------+
 
 The Projection element contains all the elements that define a
 projection between two populations and should be uniquely identified in
@@ -1809,11 +1888,12 @@ scope.
 Connectivity
 ------------
 
-+----------------+--------------+----------+
-| Child elements | Multiplicity | Required |
-+----------------+--------------+----------+
-| Component      | singleton    | yes      |
-+----------------+--------------+----------+
+
++-----------+--------------+----------+
+| Children  | Multiplicity | Required |
++===========+==============+==========+
+| Component | singleton    | yes      |
++-----------+--------------+----------+
 
 Each Connectivity element contains a Component, which defines the
 connection pattern of the cells in the source population to cells in the
@@ -1825,12 +1905,16 @@ created to model the synaptic interaction between the cells.
 Source
 ------
 
+
 +-----------------------+--------------+----------+
-| Child elements        | Multiplicity | Required |
-+-----------------------+--------------+----------+
+| Children              | Multiplicity | Required |
++=======================+==============+==========+
 | [Component,Reference] | singleton    | yes      |
++-----------------------+--------------+----------+
 | FromDestination       | set          | no       |
++-----------------------+--------------+----------+
 | FromPlasticity        | set          | no       |
++-----------------------+--------------+----------+
 | FromResponse          | set          | no       |
 +-----------------------+--------------+----------+
 
@@ -1847,12 +1931,16 @@ source and destination cells should be connected.
 Destination
 -----------
 
+
 +-----------------------+--------------+----------+
-| Child elements        | Multiplicity | Required |
-+-----------------------+--------------+----------+
+| Children              | Multiplicity | Required |
++=======================+==============+==========+
 | [Component,Reference] | singleton    | yes      |
++-----------------------+--------------+----------+
 | FromSource            | set          | no       |
++-----------------------+--------------+----------+
 | FromPlasticity        | set          | no       |
++-----------------------+--------------+----------+
 | FromResponse          | set          | no       |
 +-----------------------+--------------+----------+
 
@@ -1869,12 +1957,16 @@ and destination cells should be connected.
 Response
 --------
 
+
 +-----------------------+--------------+----------+
-| Child elements        | Multiplicity | Required |
-+-----------------------+--------------+----------+
+| Children              | Multiplicity | Required |
++=======================+==============+==========+
 | [Component,Reference] | singleton    | yes      |
++-----------------------+--------------+----------+
 | FromSource            | set          | no       |
++-----------------------+--------------+----------+
 | FromDestination       | set          | no       |
++-----------------------+--------------+----------+
 | FromPlasticity        | set          | no       |
 +-----------------------+--------------+----------+
 
@@ -1895,12 +1987,16 @@ destination cells should be connected.
 Plasticity
 ----------
 
+
 +-----------------------+--------------+----------+
-| Child elements        | Multiplicity | Required |
-+-----------------------+--------------+----------+
+| Children              | Multiplicity | Required |
++=======================+==============+==========+
 | [Component,Reference] | singleton    | yes      |
++-----------------------+--------------+----------+
 | FromSource            | set          | no       |
++-----------------------+--------------+----------+
 | FromDestination       | set          | no       |
++-----------------------+--------------+----------+
 | FromResponse          | set          | no       |
 +-----------------------+--------------+----------+
 
@@ -1921,9 +2017,10 @@ FromSource
 
 +-----------+------------------------------------------------------------+----------+
 | Attribute | Type/Format                                                | Required |
++===========+============================================================+==========+
+| sender    | [AnalogSendPort,EventSendPort].name                        | yes      |
 +-----------+------------------------------------------------------------+----------+
-| sender    | [AnalogSendPort,EventSendPort]@name                        | yes      |
-| receiver  | [AnalogReceivePort,EventReceivePort,AnalogReducePort]@name | yes      |
+| receiver  | [AnalogReceivePort,EventReceivePort,AnalogReducePort].name | yes      |
 +-----------+------------------------------------------------------------+----------+
 
 The FromSource element specifies a port connection to the projection
@@ -1955,9 +2052,10 @@ FromDestination
 
 +-----------+------------------------------------------------------------+----------+
 | Attribute | Type/Format                                                | Required |
++===========+============================================================+==========+
+| sender    | [AnalogSendPort,EventSendPort].name                        | yes      |
 +-----------+------------------------------------------------------------+----------+
-| sender    | [AnalogSendPort,EventSendPort]@name                        | yes      |
-| receiver  | [AnalogReceivePort,EventReceivePort,AnalogReducePort]@name | yes      |
+| receiver  | [AnalogReceivePort,EventReceivePort,AnalogReducePort].name | yes      |
 +-----------+------------------------------------------------------------+----------+
 
 The FromDestination element specifies a port connection to the
@@ -1989,9 +2087,10 @@ FromPlasticity
 
 +-----------+------------------------------------------------------------+----------+
 | Attribute | Type/Format                                                | Required |
++===========+============================================================+==========+
+| sender    | [AnalogSendPort,EventSendPort].name                        | yes      |
 +-----------+------------------------------------------------------------+----------+
-| sender    | [AnalogSendPort,EventSendPort]@name                        | yes      |
-| receiver  | [AnalogReceivePort,EventReceivePort,AnalogReducePort]@name | yes      |
+| receiver  | [AnalogReceivePort,EventReceivePort,AnalogReducePort].name | yes      |
 +-----------+------------------------------------------------------------+----------+
 
 The FromPlasticity element specifies a port connection to the projection
@@ -2023,9 +2122,10 @@ FromResponse
 
 +-----------+------------------------------------------------------------+----------+
 | Attribute | Type/Format                                                | Required |
++===========+============================================================+==========+
+| sender    | [AnalogSendPort,EventSendPort].name                        | yes      |
 +-----------+------------------------------------------------------------+----------+
-| sender    | [AnalogSendPort,EventSendPort]@name                        | yes      |
-| receiver  | [AnalogReceivePort,EventReceivePort,AnalogReducePort]@name | yes      |
+| receiver  | [AnalogReceivePort,EventReceivePort,AnalogReducePort].name | yes      |
 +-----------+------------------------------------------------------------+----------+
 
 The FromResponse element specifies a port connection to the projection
@@ -2055,13 +2155,15 @@ analog or event) should match that of the port referenced by the
 Delay
 -----
 
++-----------+-------------+----------+
+| Attribute | Type/Format | Required |
++===========+=============+==========+
+| units     | Unit@symbol | yes      |
++-----------+-------------+----------+
+
 +---------------------------------------------------------+--------------+----------+
-| Attribute                                               | Type/Format  | Required |
-+---------------------------------------------------------+--------------+----------+
-| units                                                   | Unit@symbol  | yes      |
-+---------------------------------------------------------+--------------+----------+
-| Child elements                                          | Multiplicity | Required |
-+---------------------------------------------------------+--------------+----------+
+| Children                                                | Multiplicity | Required |
++=========================================================+==============+==========+
 | [SingleValue,ArrayValue,ExternalArrayValue,RandomValue] | singleton    | yes      |
 +---------------------------------------------------------+--------------+----------+
 
@@ -2091,15 +2193,17 @@ populations.
 Selection
 ---------
 
-+----------------+--------------+----------+
-| Attribute      | Type/Format  | Required |
-+----------------+--------------+----------+
-| name           | identifier   | yes      |
-+----------------+--------------+----------+
-| Child elements | Multiplicity | Required |
-+----------------+--------------+----------+
-| Concatenate    | singleton    | yes      |
-+----------------+--------------+----------+
++-----------+-------------+----------+
+| Attribute | Type/Format | Required |
++===========+=============+==========+
+| name      | identifier  | yes      |
++-----------+-------------+----------+
+
++-------------+--------------+----------+
+| Children    | Multiplicity | Required |
++=============+==============+==========+
+| Concatenate | singleton    | yes      |
++-------------+--------------+----------+
 
 The Selection element contains the operations that are used to select
 the cells to add to the selection.
@@ -2114,11 +2218,12 @@ scope.
 Concatenate
 -----------
 
-+----------------+--------------+----------+
-| Child elements | Multiplicity | Required |
-+----------------+--------------+----------+
-| Item           | set          | yes      |
-+----------------+--------------+----------+
+
++----------+--------------+----------+
+| Children | Multiplicity | Required |
++==========+==============+==========+
+| Item     | set          | yes      |
++----------+--------------+----------+
 
 The Concatenate element is used to add populations to a selection. It
 contains a set of Item elements which reference the Population elements
@@ -2131,13 +2236,15 @@ index 0 (i.e. :math:`i=0,\ldots,N-1`).
 Item
 ----
 
++-----------+-------------+----------+
+| Attribute | Type/Format | Required |
++===========+=============+==========+
+| index     | ``integer`` | yes      |
++-----------+-------------+----------+
+
 +---------------------------------+--------------+----------+
-| Attribute                       | Type/Format  | Required |
-+---------------------------------+--------------+----------+
-| index                           | ``integer``  | yes      |
-+---------------------------------+--------------+----------+
-| Child elements                  | Multiplicity | Required |
-+---------------------------------+--------------+----------+
+| Children                        | Multiplicity | Required |
++=================================+==============+==========+
 | Reference(Population,Selection) | singleton    | yes      |
 +---------------------------------+--------------+----------+
 
@@ -2175,11 +2282,12 @@ annotations.
 Annotations
 -----------
 
-+----------------+--------------+----------+
-| Child elements | Multiplicity | Required |
-+----------------+--------------+----------+
-| \*             | set          | no       |
-+----------------+--------------+----------+
+
++----------+--------------+----------+
+| Children | Multiplicity | Required |
++==========+==============+==========+
+| \*       | set          | no       |
++----------+--------------+----------+
 
 The Annotations element is the top-level of the annotations attached to
 a NineML element. They can be included within any NineML element (User
