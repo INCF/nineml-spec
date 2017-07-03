@@ -934,7 +934,7 @@ packages are,
 Standard_library attribute
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The *standard\_library* attribute is required and should point to a
+The *standard\_library* attribute is required and should point to a 
 `URL <http://en.wikipedia.org/wiki/Uniform_resource_locator>`__\ in the
 http://www.uncertml.org/distributions/ directory.
 
@@ -972,10 +972,10 @@ Connection rules must be one of 6 standard library types,
 Standard_library attribute
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The *standard\_library* attribute is required and should point to the
+The *standard\_library* attribute is required and should point to the 
 `URL <http://en.wikipedia.org/wiki/Uniform_resource_locator>`__\ in
 the
-`http://nineml.net/9ML/1.0/connectionrules/ <http://nineml.net/9ML/1.0/\-connectionrules/>`__
+`http://nineml.net/9ML/1.0/connectionrules/ <http://nineml.net/9ML/1.0/\-connectionrules/>`__\ 
 directory that corresponds to the desired connection rule.
 
 All cells in the source population are connected to all cells in the
