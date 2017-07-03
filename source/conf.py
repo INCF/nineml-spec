@@ -49,8 +49,8 @@ master_doc = u'index'
 # General information about the project.
 project = u'NineML Specification'
 
-copyright = u'2017, Thomas G. Close, Alex J. Cope, Andrew P. Davison, Erik De Schutter, Jochen Eppler, Ivan Raikov, Paul Richmond'
-author = u'Thomas G. Close, Alex J. Cope, Andrew P. Davison, Erik De Schutter, Jochen Eppler, Ivan Raikov, Paul Richmond'
+copyright = u'2017, NineML Committee'
+author = u'NineML Committee'
 
 
 # The version info for the project you're documenting, acts as replacement for
