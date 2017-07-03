@@ -3,7 +3,9 @@
 #############################################################################
 Network Interchange for Neuroscience Modeling Language (NineML) Specification
 #############################################################################
-**Version: 1.0.1**
+Version: |version|.\ |release|
+
+Date: |today|
 
 NineML Committee
 ----------------
@@ -43,9 +45,8 @@ Licence
 This document is under the Common Creative license BY-NC-SA:
 http://creativecommons.org/licenses/by-nc-sa/3.0/
 
-|creative_commons_logo|
+|cc_logo|
 
-:Date: |today|
 
 Website
 -------
@@ -56,5 +57,5 @@ developments.
 
 .. |incf_logo| image:: figures/incf_new.png
    :width: 15.00000cm
-.. |creative_commons_logo| image:: figures/by-nc-sa.png
+.. |cc_logo| image:: figures/by-nc-sa.png
    :width: 4.00000cm

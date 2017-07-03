@@ -3,14 +3,14 @@ General Elements
 ****************
 
 
-Document Layout
-===============
+Document
+========
 
 NineML documents must be enclosed within an NineML element, which should
 be in the ’http://nineml.net/9ML/1.0’ XML namespace.
 
-NineML (Document)
------------------
+NineML
+------
 
 
 +-----------+-----------------------------+----------+

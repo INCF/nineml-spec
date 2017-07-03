@@ -8,8 +8,7 @@ document. In particular: A. Gorchetchnikov, M. Hull, Y. Le Franc, P.
 Gleeson, E. Muller, R. Cannon, Birgit Kriener, Subhasis Ray and S.
 Hill.
 
-Former NineML INCF Task Force members
-=====================================
+**Former NineML INCF Task Force members**
 
 -  Robert Cannon
 

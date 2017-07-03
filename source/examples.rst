@@ -1,7 +1,9 @@
-
-
+********
 Examples
-========
+********
+
+Single Cell Models
+==================
 
 Izhikevich Model
 ----------------
@@ -368,6 +370,9 @@ The simulation results is presented in Figure 6.
    *cobaExcit\_spikeinput* is fed events from an external Poisson
    generator in this simulation
 
+ 
+Network Models
+==============
  
 
 COBA IAF Network example
