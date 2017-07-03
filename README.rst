@@ -24,13 +24,11 @@ The source is written in reStructured text and can be build using
 HTML
 ^^^^
 
-    ::
     $ make html
     
 PDF
 ~~~
 
-    ::
     $ make latexpdf
 
 Related repositories
@@ -41,7 +39,7 @@ which only contains the specification document and XML schema, there are
 related repositories that are maintained by the NineML team
 (see http://nineml.net/committee).
 
-- lib9ML (http://github.com/INCF/lib9ML): A Python library for reading,
+- lib9ML (http://github.com/INCF/nineml-python): A Python library for reading,
   writing and manipulating NineML descriptions
 - NineMLCatalog (http://github.com/INCF/nineml-catalog): A collection of
   example NineML models written in XML.
