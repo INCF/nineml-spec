@@ -18,7 +18,7 @@ Program <https://www.incf.org/activities/our-programs/modeling/people>`__,
 and has benefitted from wide-ranging input from computational
 neuroscientists, simulator developers and developers of
 simulator-independent languages (e.g. NeuroML, PyNN) (see
-[sec:task\_force])
+:ref:`Acknowledgements`)
 [Goddard2001]_, [Gleeson2010]_, [Davison2008]_.
 
 Scope

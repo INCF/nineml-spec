@@ -1,6 +1,6 @@
-#############################################################################
-Network Interchange for Neuroscience Modeling Language (NineML) Specification
-#############################################################################
+###############################################################################################
+Network Interchange for Neuroscience Modeling Language (NineML) Specification version |version|
+###############################################################################################
 
 .. toctree::
     :maxdepth: 2
