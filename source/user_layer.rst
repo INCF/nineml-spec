@@ -43,11 +43,11 @@ scope.
 Definition
 ----------
 
-+-----------+-----------------------------------------------------------------+----------+
-| Attribute | Type/Format                                                     | Required |
-+===========+=================================================================+==========+
-| url       | `URL <http://en.wikipedia.org/wiki/Uniform_resource_locator>`__ | no       |
-+-----------+-----------------------------------------------------------------+----------+
++-----------+-------------+----------+
+| Attribute | Type/Format | Required |
++===========+=============+==========+
+| url       | URL_        | no       |
++-----------+-------------+----------+
 
 +------------------------------+----------+
 | Body format                  | Required |
@@ -65,7 +65,7 @@ Url attribute
 
 If the :ref:`ComponentClass` referenced by the definition element is defined
 outside the current document, the *url* attribute specifies a
-`URL <http://en.wikipedia.org/wiki/Uniform_resource_locator>`__\ for the
+URL_\ for the
 file which contains the :ref:`ComponentClass` definition. If the *url*
 attribute is omitted the :ref:`ComponentClass` is referenced from the current
 document.
@@ -79,11 +79,11 @@ be provided in the body of the Definition_ element.
 Prototype
 ---------
 
-+-----------+-----------------------------------------------------------------+----------+
-| Attribute | Type/Format                                                     | Required |
-+===========+=================================================================+==========+
-| url       | `URL <http://en.wikipedia.org/wiki/Uniform_resource_locator>`__ | no       |
-+-----------+-----------------------------------------------------------------+----------+
++-----------+-------------+----------+
+| Attribute | Type/Format | Required |
++===========+=============+==========+
+| url       | URL_        | no       |
++-----------+-------------+----------+
 
 +-------------------+----------+
 | Body format       | Required |
@@ -101,7 +101,7 @@ Url attribute
 
 If the prototype Component_ is defined outside the current file, the
 *URL* attribute specifies a
-`URL <http://en.wikipedia.org/wiki/Uniform_resource_locator>`__\ for the
+URL_\ for the
 file which contains the prototype Component_. If the *url* attribute is
 omitted the Component_ is referenced from the current document.
 
@@ -156,11 +156,11 @@ a :ref:`Unit` with no SI dimensions can be used. The SI dimensions of the
 Reference
 ---------
 
-+-----------+-----------------------------------------------------------------+----------+
-| Attribute | Type/Format                                                     | Required |
-+===========+=================================================================+==========+
-| url       | `URL <http://en.wikipedia.org/wiki/Uniform_resource_locator>`__ | no       |
-+-----------+-----------------------------------------------------------------+----------+
++-----------+-------------+----------+
+| Attribute | Type/Format | Required |
++===========+=============+==========+
+| url       | URL_        | no       |
++-----------+-------------+----------+
 
 +-------------+----------+
 | Body format | Required |
@@ -184,7 +184,7 @@ Url attribute
 ^^^^^^^^^^^^^
 
 The *url* attribute specifies a
-`URL <http://en.wikipedia.org/wiki/Uniform_resource_locator>`__\ for the
+URL_\ for the
 file which contains the User Layer element to be referenced. If the
 *url* attribute is omitted the element is referenced from the current
 document.
@@ -287,15 +287,15 @@ scientific notation e.g. 1e-5 (:math:`1\times10^{-5}`).
 ExternalArrayValue
 ------------------
 
-+------------+-------------------------------------------------------------------+----------+
-| Attribute  | Type/Format                                                       | Required |
-+============+===================================================================+==========+
-| url        | `URL <http://en.wikipedia.org/wiki/Uniform_resource_locator>`__   | yes      |
-+------------+-------------------------------------------------------------------+----------+
-| mimeType   | `MIME  type <http://en.wikipedia.org/wiki/Internet_media_type>`__ | yes      |
-+------------+-------------------------------------------------------------------+----------+
-| columnName | Data column name in external file                                 | yes      |
-+------------+-------------------------------------------------------------------+----------+
++------------+-----------------------------------+----------+
+| Attribute  | Type/Format                       | Required |
++============+===================================+==========+
+| url        | URL_                              | yes      |
++------------+-----------------------------------+----------+
+| mimeType   | `MIME  type`_                     | yes      |
++------------+-----------------------------------+----------+
+| columnName | Data column name in external file | yes      |
++------------+-----------------------------------+----------+
 
 ExternalArrayValue_ elements are used to explicitly define large arrays
 of values. The array data are not stored in XML (which is slow to parse)
@@ -313,7 +313,7 @@ Url attribute
 ^^^^^^^^^^^^^
 
 The *url* attribute specifies the
-`URL <http://en.wikipedia.org/wiki/Uniform_resource_locator>`__\ of the
+URL_\ of the
 external data file.
 
 MimeType attribute
@@ -865,3 +865,6 @@ thereby the indices of the cells within the combined Selection_.
 
 .. note::
     This preserves the order non-specific nature of elements in NineML
+    
+.. _URL: http://en.wikipedia.org/wiki/Uniform_resource_locator
+.. _MIME type: http://en.wikipedia.org/wiki/Internet_media_type

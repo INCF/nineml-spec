@@ -873,11 +873,11 @@ however, derived distributions are planned for future versions.
 RandomDistribution
 ------------------
 
-+------------------+-----------------------------------------------------------------+----------+
-| Attribute        | Type/Format                                                     | Required |
-+==================+=================================================================+==========+
-| standard_library | `URL <http://en.wikipedia.org/wiki/Uniform_resource_locator>`__ | yes      |
-+------------------+-----------------------------------------------------------------+----------+
++------------------+-------------+----------+
+| Attribute        | Type/Format | Required |
++==================+=============+==========+
+| standard_library | URL_        | yes      |
++------------------+-------------+----------+
 
 The names and parameters of the random distribution in the standard
 library match the UncertML definitions that can be found at
@@ -935,7 +935,7 @@ Standard_library attribute
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The *standard\_library* attribute is required and should point to a 
-`URL <http://en.wikipedia.org/wiki/Uniform_resource_locator>`__\ in the
+URL_\ in the
 http://www.uncertml.org/distributions/ directory.
 
 Network Connectivity
@@ -954,11 +954,11 @@ however, custom connectivity rules are planned for future versions.
 ConnectionRule
 --------------
 
-+------------------+-----------------------------------------------------------------+----------+
-| Attribute        | Type/Format                                                     | Required |
-+==================+=================================================================+==========+
-| standard_library | `URL <http://en.wikipedia.org/wiki/Uniform_resource_locator>`__ | yes      |
-+------------------+-----------------------------------------------------------------+----------+
++------------------+-------------+----------+
+| Attribute        | Type/Format | Required |
++==================+=============+==========+
+| standard_library | URL_        | yes      |
++------------------+-------------+----------+
 
 Connection rules must be one of 6 standard library types,
 *all-to-all*, *one-to-one*, *probabilistic*, *explicit*,
@@ -973,7 +973,7 @@ Standard_library attribute
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The *standard\_library* attribute is required and should point to the 
-`URL <http://en.wikipedia.org/wiki/Uniform_resource_locator>`__\ in
+URL_\ in
 the
 `http://nineml.net/9ML/1.0/connectionrules/ <http://nineml.net/9ML/1.0/\-connectionrules/>`__\ 
 directory that corresponds to the desired connection rule.
@@ -1028,3 +1028,5 @@ Each cell in the destination population is connected to a fixed number
 of randomly selected cells in the source population. The number of cells
 is specified by the parameter *number*. The property supplied to the
 *number* parameter should be a :ref:`SingleValue`.
+
+.. _URL: http://en.wikipedia.org/wiki/Uniform_resource_locator
