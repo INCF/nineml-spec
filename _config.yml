@@ -5,7 +5,7 @@ description: "A model description language for neuroscience"
 logo: default-teaser.jpg
 teaser: default-teaser.jpg
 locale: en_US
-url: //127.0.0.1:4000  # http://incf.github.io/nineml
+url: http://incf.github.io/nineml
 
 # Jekyll configuration
 
