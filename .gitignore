@@ -16,3 +16,5 @@
 /.settings/
 /.cproject
 /build/
+/images/
+/_config.yml.orig
