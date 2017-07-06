@@ -4,3 +4,7 @@
 /_site
 /latex
 
+/.settings/
+/build/
+/.cproject
+/_config.yml.orig
