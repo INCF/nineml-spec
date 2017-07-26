@@ -238,8 +238,9 @@ Annotations
 +----------+--------------+----------+
 
 The Annotations_ element is the top-level of the annotations attached to
-a NineML element. They can be included within any NineML element (User
-Layer and Abstraction Layer) and any valid XML is allowed within them.
+a NineML element. They can be included at the top level of a document and
+within any NineML element (User Layer or Abstraction Layer), and may contain
+any object hierarchy that can be serialised to XML.
 
 
 .. [Cannon2014] Cannon, R.~C., Gleeson, P., Crook, S., Ganapathy, G.,
