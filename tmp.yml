@@ -1,0 +1,295 @@
+NineML:
+  '@namespace': http://nineml.net/9ML/1.0
+  Selection:
+  - Concatenate:
+      Item:
+      - index: 0
+        Reference: {'@body': Excitatory}
+      - index: 1
+        Reference: {'@body': Inhibitory}
+    name: AllNeurons
+  ComponentClass:
+  - name: CoBa
+    Parameter:
+    - {name: coba_q, dimension: conductanceDensity}
+    - {name: coba_tau, dimension: time}
+    - {name: coba_vrev, dimension: voltage}
+    EventReceivePort:
+    - {name: coba_spikeinput}
+    AnalogReceivePort:
+    - {name: iaf_V, dimension: voltage}
+    AnalogSendPort:
+    - {name: coba_I, dimension: current}
+    Dynamics:
+      StateVariable:
+      - {name: coba_g, dimension: conductanceDensity}
+      Regime:
+      - name: RegularRegime
+        TimeDerivative:
+        - {variable: coba_g, MathInline: -coba_g/coba_tau}
+        OnEvent:
+        - port: coba_spikeinput
+          target_regime: RegularRegime
+          StateAssignment:
+          - {variable: coba_g, MathInline: coba_g + coba_q}
+      Alias:
+      - {MathInline: coba_g*(coba_vrev - iaf_V), name: coba_I}
+    Annotations:
+      Validation:
+      - {'@namespace': 'http://github.com/INCF/nineml-python', dimensionality: 'True'}
+  - name: IaF
+    Parameter:
+    - {name: iaf_cm, dimension: capacitance}
+    - {name: iaf_gl, dimension: conductanceDensity}
+    - {name: iaf_taurefrac, dimension: time}
+    - {name: iaf_vreset, dimension: voltage}
+    - {name: iaf_vrest, dimension: voltage}
+    - {name: iaf_vthresh, dimension: voltage}
+    AnalogReducePort:
+    - {name: iaf_ISyn, dimension: current, operator: +}
+    EventSendPort:
+    - {name: iaf_spikeoutput}
+    AnalogSendPort:
+    - {name: iaf_V, dimension: voltage}
+    Dynamics:
+      StateVariable:
+      - {name: iaf_V, dimension: voltage}
+      - {name: iaf_tspike, dimension: time}
+      Regime:
+      - name: RefractoryRegime
+        OnCondition:
+        - Trigger: {MathInline: t > iaf_taurefrac + iaf_tspike}
+          target_regime: RegularRegime
+      - name: RegularRegime
+        TimeDerivative:
+        - {variable: iaf_V, MathInline: (iaf_ISyn + iaf_gl*(-iaf_V + iaf_vrest))/iaf_cm}
+        OnCondition:
+        - Trigger: {MathInline: iaf_V > iaf_vthresh}
+          target_regime: RefractoryRegime
+          StateAssignment:
+          - {variable: iaf_V, MathInline: iaf_vreset}
+          - {variable: iaf_tspike, MathInline: t}
+          OutputEvent:
+          - {port: iaf_spikeoutput}
+    Annotations:
+      Validation:
+      - {'@namespace': 'http://github.com/INCF/nineml-python', dimensionality: 'True'}
+  - name: IafCoba
+    Parameter:
+    - {name: cobaExcit_q, dimension: conductanceDensity}
+    - {name: cobaExcit_tau, dimension: time}
+    - {name: cobaExcit_vrev, dimension: voltage}
+    - {name: iaf_cm, dimension: capacitance}
+    - {name: iaf_gl, dimension: conductanceDensity}
+    - {name: iaf_taurefrac, dimension: time}
+    - {name: iaf_vreset, dimension: voltage}
+    - {name: iaf_vrest, dimension: voltage}
+    - {name: iaf_vthresh, dimension: voltage}
+    EventReceivePort:
+    - {name: cobaExcit_spikeinput}
+    AnalogReducePort:
+    - {name: iaf_ISyn, dimension: current, operator: +}
+    EventSendPort:
+    - {name: iaf_spikeoutput}
+    AnalogSendPort:
+    - {name: cobaExcit_I, dimension: current}
+    - {name: iaf_V, dimension: voltage}
+    Dynamics:
+      StateVariable:
+      - {name: cobaExcit_g, dimension: conductanceDensity}
+      - {name: iaf_V, dimension: voltage}
+      - {name: iaf_tspike, dimension: time}
+      Regime:
+      - name: RefractoryRegime
+        TimeDerivative:
+        - {variable: cobaExcit_g, MathInline: -cobaExcit_g/cobaExcit_tau}
+        OnEvent:
+        - port: cobaExcit_spikeinput
+          target_regime: RefractoryRegime
+          StateAssignment:
+          - {variable: cobaExcit_g, MathInline: cobaExcit_g + cobaExcit_q}
+        OnCondition:
+        - Trigger: {MathInline: t > iaf_taurefrac + iaf_tspike}
+          target_regime: RegularRegime
+      - name: RegularRegime
+        TimeDerivative:
+        - {variable: cobaExcit_g, MathInline: -cobaExcit_g/cobaExcit_tau}
+        - {variable: iaf_V, MathInline: (cobaExcit_I + iaf_ISyn + iaf_gl*(-iaf_V +
+            iaf_vrest))/iaf_cm}
+        OnEvent:
+        - port: cobaExcit_spikeinput
+          target_regime: RegularRegime
+          StateAssignment:
+          - {variable: cobaExcit_g, MathInline: cobaExcit_g + cobaExcit_q}
+        OnCondition:
+        - Trigger: {MathInline: iaf_V > iaf_vthresh}
+          target_regime: RefractoryRegime
+          StateAssignment:
+          - {variable: iaf_V, MathInline: iaf_vreset}
+          - {variable: iaf_tspike, MathInline: t}
+          OutputEvent:
+          - {port: iaf_spikeoutput}
+      Alias:
+      - {MathInline: cobaExcit_g*(cobaExcit_vrev - iaf_V), name: cobaExcit_I}
+    Annotations:
+      Validation:
+      - {'@namespace': 'http://github.com/INCF/nineml-python', dimensionality: 'True'}
+  - name: Izhikevich
+    Parameter:
+    - {name: a, dimension: per_time}
+    - {name: b, dimension: per_voltage}
+    - {name: c, dimension: voltage}
+    - {name: d, dimension: dimensionless}
+    - {name: iInj, dimension: current}
+    - {name: theta, dimension: voltage}
+    AnalogReducePort:
+    - {name: iSyn, dimension: current, operator: +}
+    EventSendPort:
+    - {name: spikeOutput}
+    AnalogSendPort:
+    - {name: V, dimension: voltage}
+    Dynamics:
+      StateVariable:
+      - {name: U, dimension: dimensionless}
+      - {name: V, dimension: voltage}
+      Regime:
+      - name: subthresholdRegime
+        TimeDerivative:
+        - {variable: U, MathInline: a*(-U + V*b)}
+        - {variable: V, MathInline: (5*V + 0.04*(V*V)/unitV + unitR*(iInj + iSyn)
+            + unitV*(-U + 140.0))/unitT}
+        OnCondition:
+        - Trigger: {MathInline: V > theta}
+          target_regime: subthresholdRegime
+          StateAssignment:
+          - {variable: U, MathInline: U + d}
+          - {variable: V, MathInline: c}
+          OutputEvent:
+          - {port: spikeOutput}
+      Constant:
+      - {name: unitR, units: Ohm, '@body': 1.0}
+      - {name: unitT, units: s, '@body': 1.0}
+      - {name: unitV, units: V, '@body': 1.0}
+    Annotations:
+      Validation:
+      - {'@namespace': 'http://github.com/INCF/nineml-python', dimensionality: 'True'}
+  - name: Probabilistic
+    Parameter:
+    - {name: probability, dimension: dimensionless}
+    ConnectionRule: {standard_library: 'http://nineml.net/9ML/1.0/connectionrules/Probabilistic'}
+  Component:
+  - Definition: {'@body': Probabilistic}
+    Property:
+    - {name: probability, SingleValue: 0.02, units: unitless}
+    name: ExcConnectProb
+  - Definition: {'@body': IafCoba}
+    Property:
+    - {name: cobaExcit_q, SingleValue: 1.0, units: uF_per_cm2}
+    - {name: cobaExcit_tau, SingleValue: 2.0, units: ms}
+    - {name: cobaExcit_vrev, SingleValue: 0.0, units: mV}
+    - {name: iaf_cm, SingleValue: 0.02, units: nF}
+    - {name: iaf_gl, SingleValue: 0.1, units: mS}
+    - {name: iaf_taurefrac, SingleValue: 3.0, units: ms}
+    - {name: iaf_vreset, SingleValue: -70.0, units: mV}
+    - {name: iaf_vrest, SingleValue: -60.0, units: mV}
+    - {name: iaf_vthresh, SingleValue: 20.0, units: mV}
+    name: IaFCobaProperties
+    Initial:
+    - {name: iaf_V, SingleValue: -60.0, units: mV}
+  - Definition: {'@body': IaF}
+    Property:
+    - {name: iaf_cm, SingleValue: 0.2, units: nF}
+    - {name: iaf_gl, SingleValue: 0.05, units: mS}
+    - {name: iaf_taurefrac, SingleValue: 5.0, units: ms}
+    - {name: iaf_vreset, SingleValue: -60.0, units: mV}
+    - {name: iaf_vrest, SingleValue: -60.0, units: mV}
+    - {name: iaf_vthresh, SingleValue: -50.0, units: mV}
+    name: IaFProperties
+  - Definition: {'@body': CoBa}
+    Property:
+    - {name: coba_q, SingleValue: 0.004, units: uF_per_cm2}
+    - {name: coba_tau, SingleValue: 5.0, units: ms}
+    - {name: coba_vrev, SingleValue: 0.0, units: mV}
+    name: IaFSynapseExcitatory
+  - Definition: {'@body': CoBa}
+    Property:
+    - {name: coba_q, SingleValue: 0.051, units: uF_per_cm2}
+    - {name: coba_tau, SingleValue: 5.0, units: ms}
+    - {name: coba_vrev, SingleValue: -80.0, units: mV}
+    name: IaFSynapseInhibitory
+  - Definition: {'@body': Probabilistic}
+    Property:
+    - {name: probability, SingleValue: 0.02, units: unitless}
+    name: InhConnectProb
+  - Definition: {'@body': Izhikevich}
+    Property:
+    - {name: a, SingleValue: 0.02, units: per_s}
+    - {name: b, SingleValue: 0.2, units: per_V}
+    - {name: c, SingleValue: -65.0, units: mV}
+    - {name: d, SingleValue: 8.0, units: unitless}
+    - {name: iInj, SingleValue: 10.0, units: nA}
+    - {name: theta, SingleValue: 50.0, units: mV}
+    name: IzhikevichProperties
+  Projection:
+  - name: Excitation
+    Source:
+      Reference: {'@body': Excitatory}
+    Destination:
+      Reference: {'@body': AllNeurons}
+      FromResponse:
+      - {send_port: coba_I, receive_port: iaf_ISyn}
+    Connectivity:
+      Reference: {'@body': ExcConnectProb}
+    Response:
+      Reference: {'@body': IaFSynapseExcitatory}
+      FromSource:
+      - {send_port: iaf_spikeoutput, receive_port: coba_spikeinput}
+    Delay: {SingleValue: 1.5, units: ms}
+  - name: Inhibition
+    Source:
+      Reference: {'@body': Inhibitory}
+    Destination:
+      Reference: {'@body': AllNeurons}
+      FromResponse:
+      - {send_port: coba_I, receive_port: iaf_ISyn}
+    Connectivity:
+      Reference: {'@body': InhConnectProb}
+    Response:
+      Reference: {'@body': IaFSynapseInhibitory}
+      FromSource:
+      - {send_port: iaf_spikeoutput, receive_port: coba_spikeinput}
+    Delay: {SingleValue: 1.5, units: ms}
+  Population:
+  - Size: 3200
+    Cell:
+      Reference: {'@body': IaFProperties}
+    name: Excitatory
+  - Size: 800
+    Cell:
+      Reference: {'@body': IaFProperties}
+    name: Inhibitory
+  Unit:
+  - {symbol: Ohm, dimension: resistance, power: 0}
+  - {symbol: V, dimension: voltage, power: 0}
+  - {symbol: cm_square, dimension: area, power: -4}
+  - {symbol: mS, dimension: conductanceDensity, power: -3}
+  - {symbol: mV, dimension: voltage, power: -3}
+  - {symbol: ms, dimension: time, power: -3}
+  - {symbol: nA, dimension: current, power: -9}
+  - {symbol: nF, dimension: capacitance, power: -9}
+  - {symbol: per_V, dimension: per_voltage, power: 0}
+  - {symbol: per_s, dimension: per_time, power: 0}
+  - {symbol: s, dimension: time, power: 1}
+  - {symbol: uF_per_cm2, dimension: conductanceDensity, power: 0}
+  - {symbol: unitless, dimension: dimensionless, power: 0}
+  Dimension:
+  - {name: area, l: 2}
+  - {name: capacitance, m: -1, l: -2, t: 4, i: 2}
+  - {name: conductanceDensity, m: -1, l: -2, t: 3, i: 2}
+  - {name: current, i: 1}
+  - {name: dimensionless}
+  - {name: per_time, t: -1}
+  - {name: per_voltage, m: -1, l: -2, t: 3, i: 1}
+  - {name: resistance, m: 1, l: 2, t: -3, i: -2}
+  - {name: time, t: 1}
+  - {name: voltage, m: 1, l: 2, t: -3, i: -1}

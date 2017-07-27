@@ -63,35 +63,36 @@ the following:
     <NineML xmlns="http://nineml.net/9ML/1.0"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://nineml.net/9ML/1.0/NineML_v1.0.xsd">
-        <ComponentClass name="IzhikevichCell">
-            <Parameter name="a" dimension="per_time"/>
-            <Parameter name="c" dimension="voltage"/>
-            <Parameter name="b" dimension="per_voltage"/>
-            <Parameter name="d" dimension="dimensionless"/>
-            <Parameter name="theta" dimension="voltage"/>
-            <Parameter name="iInj" dimension="current"/>
-            <AnalogReducePort name="iSyn" operator="+" dimension="current"/>
-            <AnalogSendPort name="V" dimension="voltage"/>
-            <EventPort name="spikeOutput" mode="send"/>
+        <ComponentClass name="Izhikevich">
+            <Parameter name="a" dimension="per_time" />
+            <Parameter name="c" dimension="voltage" />
+            <Parameter name="b" dimension="per_voltage" />
+            <Parameter name="d" dimension="dimensionless" />
+            <Parameter name="theta" dimension="voltage" />
+            <Parameter name="iInj" dimension="current" />
+            <AnalogReducePort name="iSyn" operator="+" dimension="current" />
+            <AnalogSendPort name="V" dimension="voltage" />
+            <EventSendPort name="spikeOutput" />
             <Dynamics>
-                <StateVariable name="V" dimension="voltage"/>
-                <StateVariable name="U" dimension="dimensionless"/>
+                <StateVariable name="V" dimension="voltage" />
+                <StateVariable name="U" dimension="dimensionless" />
                 <Regime name="subthresholdRegime">
                     <TimeDerivative variable="U">
                         <MathInline>a*(b*V - U)</MathInline>
                     </TimeDerivative>
                     <TimeDerivative variable="V">
-                        <MathInline
-                            >(0.04*V*V/unitV + 5*V + (140.0 - U)*unitV + (iSyn + iInj)*unitR)/unitT</MathInline>
+                        <MathInline>(0.04*V*V/unitV + 5*V + (140.0 - U)*unitV + (iSyn +
+                            iInj)*unitR)/unitT
+                        </MathInline>
                     </TimeDerivative>
-                    <OnCondition>
+                    <OnCondition target_regime="subthresholdRegime">
                         <Trigger>
                             <MathInline>V &gt; theta </MathInline>
                         </Trigger>
-                        <StateAssignment variable="V" >
+                        <StateAssignment variable="V">
                             <MathInline>c</MathInline>
                         </StateAssignment>
-                        <StateAssignment variable="U" >
+                        <StateAssignment variable="U">
                             <MathInline>U+d</MathInline>
                         </StateAssignment>
                         <OutputEvent port="spikeOutput" />
@@ -114,7 +115,59 @@ the following:
         <Unit symbol="s" dimension="time" power="1"/>
     </NineML>
 
-  User Layer description for the above example:
+In YAML it is:
+
+.. code-block:: yaml
+
+    NineML:
+      '@namespace': http://nineml.net/9ML/1.0
+      ComponentClass:
+      - name: Izhikevich
+        Parameter:
+        - {name: a, dimension: per_time}
+        - {name: b, dimension: per_voltage}
+        - {name: c, dimension: voltage}
+        - {name: d, dimension: dimensionless}
+        - {name: iInj, dimension: current}
+        - {name: theta, dimension: voltage}
+        AnalogReducePort:
+        - {name: iSyn, dimension: current, operator: +}
+        EventSendPort:
+        - {name: spikeOutput}
+        AnalogSendPort:
+        - {name: V, dimension: voltage}
+        Dynamics:
+          StateVariable:
+          - {name: U, dimension: dimensionless}
+          - {name: V, dimension: voltage}
+          Regime:
+          - name: subthresholdRegime
+            TimeDerivative:
+            - {variable: U, MathInline: a*(-U + V*b)}
+            - {variable: V, MathInline: (5*V + 0.04*(V*V)/unitV + unitR*(iInj + iSyn)
+                + unitV*(-U + 140.0))/unitT}
+            OnCondition:
+            - Trigger: {MathInline: V > theta}
+              target_regime: subthresholdRegime
+              StateAssignment:
+              - {variable: U, MathInline: U + d}
+              - {variable: V, MathInline: c}
+              OutputEvent:
+              - {port: spikeOutput}
+          Constant:
+          - {name: unitR, units: Ohm, '@body': 1.0}
+          - {name: unitT, units: s, '@body': 1.0}
+          - {name: unitV, units: V, '@body': 1.0}
+      Dimension:
+      - {name: dimensionless}
+      - {name: per_time, t: -1}
+      - {name: per_voltage, m: -1, l: -2, t: 3, i: 1}
+      - {name: voltage, m: 1, l: 2, t: -3, i: -1}
+      - {symbol: Ohm, dimension: resistance, power: 0}
+      - {symbol: V, dimension: voltage, power: 0}
+      - {symbol: s, dimension: time, power: 1}   
+
+User Layer description for the above example in XML:
 
 .. code-block:: xml
 
@@ -122,25 +175,27 @@ the following:
     <NineML xmlns="http://nineml.net/9ML/1.0"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://nineml.net/9ML/1.0/NineML_v1.0.xsd">
-      <Component name="IzhikevichNeuron">
-        <Definition url="http://nineml.net/9ML/1.0/catalog/neurons/izhikevichCell.xml"
-          >IzhikevichCell</Definition>
-        <Property name="theta" units="mV">
-          <SingleValue>50</SingleValue>
-        </Property>
-        <Property name="a" units="per_s">
-          <SingleValue>0.02</SingleValue>
-        </Property>
-        <Property name="b" units="per_V">
-          <SingleValue>0.2</SingleValue>
-        </Property>
-        <Property name="c" units="mV">
-          <SingleValue>-65</SingleValue>
-        </Property>
-        <Property name="d" units="none">
-          <SingleValue>8</SingleValue>
-        </Property>
-      </Component>
+        <Component name="IzhikevichProperties">
+            <Definition>Izhikevich</Definition>
+            <Property name="theta" units="mV">
+                <SingleValue>50</SingleValue>
+            </Property>
+            <Property name="a" units="per_s">
+                <SingleValue>0.02</SingleValue>
+            </Property>
+            <Property name="b" units="per_V">
+                <SingleValue>0.2</SingleValue>
+            </Property>
+            <Property name="c" units="mV">
+                <SingleValue>-65</SingleValue>
+            </Property>
+            <Property name="d" units="unitless">
+                <SingleValue>8</SingleValue>
+            </Property>
+            <Property name="iInj" units="nA">
+                <SingleValue>10.0</SingleValue>
+            </Property>
+        </Component>
       <Dimension name="voltage" m="1" l="2" t="-3" i="-1"/>
       <Dimension name="dimensionless"/>
       <Dimension name="per_time" t="-1"/>
@@ -150,6 +205,33 @@ the following:
       <Unit symbol="per_s" dimension="per_time"/>
       <Unit symbol="none" dimension="dimensionless"/>  
     </NineML>
+
+and in YAML:
+
+.. code-block: yaml
+
+    NineML:
+      '@namespace': http://nineml.net/9ML/1.0
+      ComponentClass:
+      - name: IzhikevichProperties
+        Definition: {'@body': Izhikevich}
+        Property:
+        - {name: a, SingleValue: 0.02, units: per_s}
+        - {name: b, SingleValue: 0.2, units: per_V}
+        - {name: c, SingleValue: -65.0, units: mV}
+        - {name: d, SingleValue: 8.0, units: unitless}
+        - {name: iInj, SingleValue: 10.0, units: nA}
+        - {name: theta, SingleValue: 50.0, units: mV}
+      Unit:
+      - {symbol: mV, dimension: voltage, power: -3}
+      - {symbol: per_V, dimension: per_voltage, power: 0}
+      - {symbol: per_s, dimension: per_time, power: 0}
+      - {symbol: unitless, dimension: dimensionless, power: 0}
+      Dimension:
+      - {name: dimensionless}
+      - {name: per_time, t: -1}
+      - {name: per_voltage, m: -1, l: -2, t: 3, i: 1}
+      - {name: voltage, m: 1, l: 2, t: -3, i: -1}      
 
 Here, we show the simulation results of this XML representation with an
 initial V=-60mV and U=0.
@@ -226,82 +308,148 @@ The resulting XML description for the Abstraction Layer is :
     <NineML xmlns="http://nineml.net/9ML/1.0"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://nineml.net/9ML/1.0/NineML_v1.0.xsd">
-      <ComponentClass name="IafCoba">
-        <AnalogSendPort dimension="voltage" name="iaf_V" />
-        <AnalogReducePort dimension="current" operator="+" name="iaf_ISyn" />
-        <AnalogSendPort dimension="current" name="cobaExcit_I" />
-        <EventSendPort name="iaf_spikeoutput"/>
-        <EventReceivePort name="cobaExcit_spikeinput"/>
-        <Parameter dimension="area" name="iaf_cm"/>
-        <Parameter dimension="time" name="iaf_taurefrac"/>
-        <Parameter dimension="conductanceDensity" name="iaf_gl"/>
-        <Parameter dimension="voltage" name="iaf_vreset"/>
-        <Parameter dimension="voltage" name="iaf_vrest"/>
-        <Parameter dimension="voltage" name="iaf_vthresh"/>
-        <Parameter dimension="time" name="cobaExcit_tau"/>
-        <Parameter dimension="conductanceDensity" name="cobaExcit_q"/>
-        <Parameter dimension="voltage" name="cobaExcit_vrev"/>
-        <Dynamics>
-          <StateVariable dimension="voltage" name="iaf_V"/>
-          <StateVariable dimension="time" name="iaf_tspike"/>
-          <StateVariable dimension="conductanceDensity" name="cobaExcit_g"/>
-          <Regime name="RefractoryRegime">
-            <TimeDerivative variable="iaf_V">
-              <MathInline>0</MathInline>
-            </TimeDerivative>
-            <TimeDerivative variable="cobaExcit_g">
-              <MathInline>-cobaExcit_g/cobaExcit_tau</MathInline>
-            </TimeDerivative>
-            <OnEvent target_regime="RefractoryRegime" src_port="cobaExcit_spikeinput">
-              <StateAssignment variable="cobaExcit_g">
-                <MathInline>cobaExcit_g+cobaExcit_q</MathInline>
-              </StateAssignment>
-            </OnEvent>
-            <OnCondition target_regime="RegularRegime">
-              <Trigger>
-                <MathInline>t &gt; iaf_tspike + iaf_taurefrac</MathInline>
-              </Trigger>
-            </OnCondition>
-          </Regime>
-          <Regime name="RegularRegime">
-            <TimeDerivative variable="iaf_V">
-              <MathInline>( iaf_gl*( iaf_vrest - iaf_V ) + iaf_ISyn+cobaExcit_I)/(iaf_cm)</MathInline>
-            </TimeDerivative>
-            <TimeDerivative variable="cobaExcit_g">
-              <MathInline>-cobaExcit_g/cobaExcit_tau</MathInline>
-            </TimeDerivative>
-            <OnEvent target_regime="RegularRegime" src_port="cobaExcit_spikeinput">
-              <StateAssignment variable="cobaExcit_g">
-                <MathInline>cobaExcit_g+cobaExcit_q</MathInline>
-              </StateAssignment>
-            </OnEvent>
-            <OnCondition target_regime="RefractoryRegime">
-              <StateAssignment variable="iaf_tspike">
-                <MathInline>t</MathInline>
-              </StateAssignment>
-              <StateAssignment variable="iaf_V">
-                <MathInline>iaf_vreset</MathInline>
-              </StateAssignment>
-              <OutputEvent port="iaf_spikeoutput"/>
-              <Trigger>
-                <MathInline>iaf_V &gt; iaf_vthresh</MathInline>
-              </Trigger>
-            </OnCondition>
-          </Regime>
-          <Alias name="cobaExcit_I">
-            <MathInline>cobaExcit_g*(cobaExcit_vrev-iaf_V)</MathInline>
-          </Alias>
-        </Dynamics>
-      </ComponentClass>
+        <ComponentClass name="IafCoba">
+            <AnalogSendPort dimension="voltage" name="iaf_V" />
+            <AnalogReducePort dimension="current" operator="+" name="iaf_ISyn" />
+            <AnalogSendPort dimension="current" name="cobaExcit_I" />
+            <EventSendPort name="iaf_spikeoutput" />
+            <EventReceivePort name="cobaExcit_spikeinput" />
+            <Parameter dimension="capacitance" name="iaf_cm" />
+            <Parameter dimension="time" name="iaf_taurefrac" />
+            <Parameter dimension="conductanceDensity" name="iaf_gl" />
+            <Parameter dimension="voltage" name="iaf_vreset" />
+            <Parameter dimension="voltage" name="iaf_vrest" />
+            <Parameter dimension="voltage" name="iaf_vthresh" />
+            <Parameter dimension="time" name="cobaExcit_tau" />
+            <Parameter dimension="conductanceDensity" name="cobaExcit_q" />
+            <Parameter dimension="voltage" name="cobaExcit_vrev" />
+            <Dynamics>
+                <StateVariable dimension="voltage" name="iaf_V" />
+                <StateVariable dimension="time" name="iaf_tspike" />
+                <StateVariable dimension="conductanceDensity" name="cobaExcit_g" />
+                <Regime name="RefractoryRegime">
+                    <TimeDerivative variable="cobaExcit_g">
+                        <MathInline>-cobaExcit_g/cobaExcit_tau</MathInline>
+                    </TimeDerivative>
+                    <OnEvent target_regime="RefractoryRegime" port="cobaExcit_spikeinput">
+                        <StateAssignment variable="cobaExcit_g">
+                            <MathInline>cobaExcit_g+cobaExcit_q</MathInline>
+                        </StateAssignment>
+                    </OnEvent>
+                    <OnCondition target_regime="RegularRegime">
+                        <Trigger>
+                            <MathInline>t &gt; iaf_tspike + iaf_taurefrac</MathInline>
+                        </Trigger>
+                    </OnCondition>
+                </Regime>
+                <Regime name="RegularRegime">
+                    <TimeDerivative variable="iaf_V">
+                        <MathInline>( iaf_gl*( iaf_vrest - iaf_V ) + iaf_ISyn+cobaExcit_I)/(iaf_cm)
+                        </MathInline>
+                    </TimeDerivative>
+                    <TimeDerivative variable="cobaExcit_g">
+                        <MathInline>-cobaExcit_g/cobaExcit_tau</MathInline>
+                    </TimeDerivative>
+                    <OnEvent target_regime="RegularRegime" port="cobaExcit_spikeinput">
+                        <StateAssignment variable="cobaExcit_g">
+                            <MathInline>cobaExcit_g+cobaExcit_q</MathInline>
+                        </StateAssignment>
+                    </OnEvent>
+                    <OnCondition target_regime="RefractoryRegime">
+                        <StateAssignment variable="iaf_tspike">
+                            <MathInline>t</MathInline>
+                        </StateAssignment>
+                        <StateAssignment variable="iaf_V">
+                            <MathInline>iaf_vreset</MathInline>
+                        </StateAssignment>
+                        <OutputEvent port="iaf_spikeoutput" />
+                        <Trigger>
+                            <MathInline>iaf_V &gt; iaf_vthresh</MathInline>
+                        </Trigger>
+                    </OnCondition>
+                </Regime>
+                <Alias name="cobaExcit_I">
+                    <MathInline>cobaExcit_g*(cobaExcit_vrev-iaf_V)</MathInline>
+                </Alias>
+            </Dynamics>
+        </ComponentClass>
       <Dimension name="time" t="1"/>
       <Dimension name="voltage" m="1" l="2" t="-3" i="-1"/>
       <Dimension name="conductanceDensity" m="-1" t="3" l="-2" i="2"/>
-      <Dimension name="area" l="2"/>
+      <Dimension i="2" l="-2" m="-1" t="4" name="capacitance"/>
     </NineML>
 
- 
+and in YAML:
 
-The User Layer description for the above example:
+.. code-block:: yaml
+
+    NineML:
+      '@namespace': http://nineml.net/9ML/1.0
+      ComponentClass:
+      - name: IafCoba
+          Parameter:
+          - {name: cobaExcit_q, dimension: conductanceDensity}
+          - {name: cobaExcit_tau, dimension: time}
+          - {name: cobaExcit_vrev, dimension: voltage}
+          - {name: iaf_cm, dimension: capacitance}
+          - {name: iaf_gl, dimension: conductanceDensity}
+          - {name: iaf_taurefrac, dimension: time}
+          - {name: iaf_vreset, dimension: voltage}
+          - {name: iaf_vrest, dimension: voltage}
+          - {name: iaf_vthresh, dimension: voltage}
+          EventReceivePort:
+          - {name: cobaExcit_spikeinput}
+          AnalogReducePort:
+          - {name: iaf_ISyn, dimension: current, operator: +}
+          EventSendPort:
+          - {name: iaf_spikeoutput}
+          AnalogSendPort:
+          - {name: cobaExcit_I, dimension: current}
+          - {name: iaf_V, dimension: voltage}
+          Dynamics:
+            StateVariable:
+            - {name: cobaExcit_g, dimension: conductanceDensity}
+            - {name: iaf_V, dimension: voltage}
+            - {name: iaf_tspike, dimension: time}
+            Regime:
+            - name: RefractoryRegime
+              TimeDerivative:
+              - {variable: cobaExcit_g, MathInline: -cobaExcit_g/cobaExcit_tau}
+              OnEvent:
+              - port: cobaExcit_spikeinput
+                target_regime: RefractoryRegime
+                StateAssignment:
+                - {variable: cobaExcit_g, MathInline: cobaExcit_g + cobaExcit_q}
+              OnCondition:
+              - Trigger: {MathInline: t > iaf_taurefrac + iaf_tspike}
+                target_regime: RegularRegime
+            - name: RegularRegime
+              TimeDerivative:
+              - {variable: cobaExcit_g, MathInline: -cobaExcit_g/cobaExcit_tau}
+              - {variable: iaf_V, MathInline: (cobaExcit_I + iaf_ISyn + iaf_gl*(-iaf_V +
+                  iaf_vrest))/iaf_cm}
+              OnEvent:
+              - port: cobaExcit_spikeinput
+                target_regime: RegularRegime
+                StateAssignment:
+                - {variable: cobaExcit_g, MathInline: cobaExcit_g + cobaExcit_q}
+              OnCondition:
+              - Trigger: {MathInline: iaf_V > iaf_vthresh}
+                target_regime: RefractoryRegime
+                StateAssignment:
+                - {variable: iaf_V, MathInline: iaf_vreset}
+                - {variable: iaf_tspike, MathInline: t}
+                OutputEvent:
+                - {port: iaf_spikeoutput}
+            Alias:
+            - {MathInline: cobaExcit_g*(cobaExcit_vrev - iaf_V), name: cobaExcit_I}
+      Dimension:
+      - {name: capacitance, m: -1, l: -2, t: 4, i: 2}
+      - {name: conductanceDensity, m: -1, l: -2, t: 3, i: 2}
+      - {name: time, t: 1}
+      - {name: voltage, m: 1, l: 2, t: -3, i: -1}
+  
+The User Layer description for the above example in XML is:
 
 .. code-block:: xml
 
@@ -309,57 +457,78 @@ The User Layer description for the above example:
     <NineML xmlns="http://nineml.net/9ML/1.0"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://nineml.net/9ML/1.0/NineML_v1.0.xsd">
-      <Component name="IaFNeuron">
-        <Definition url="http://nineml.net/catalog/neurons/IafCoba.9ml"
-          >IafCoba</Definition>
-        <Property name="iaf_V" units="mV">
-          <SingleValue>-60</SingleValue>
-        </Property>
-        <Property name="iaf_tspike" units="ms">
-          <SingleValue>-1</SingleValue>
-        </Property>
-        <Property name="cobaExcit_g" units="mS">
-          <SingleValue>0</SingleValue>
-        </Property>
-        <Property name="iaf_cm" units="cm_square">
-          <SingleValue>0.02</SingleValue>
-        </Property>
-        <Property name="iaf_taurefrac" units="ms">
-          <SingleValue>3</SingleValue>
-        </Property>
-        <Property name="iaf_gl" units="mS">
-          <SingleValue>0.1</SingleValue>
-        </Property>
-        <Property name="iaf_vreset" units="mV">
-          <SingleValue>-70</SingleValue>
-        </Property>
-        <Property name="iaf_vrest" units="mV">
-          <SingleValue>-60</SingleValue>
-        </Property>
-        <Property name="iaf_vthresh" units="mV">
-          <SingleValue>20</SingleValue>
-        </Property>
-        <Property name="cobaExcit_tau" units="ms">
-          <SingleValue>2</SingleValue>
-        </Property>
-        <Property name="cobaExcit_q" units="ms">
-          <SingleValue>1</SingleValue>
-        </Property>
-        <Property name="cobaExcit_vrev" units="mV">
-          <SingleValue>0</SingleValue>
-        </Property>
+        <Component name="IaFCobaProperties">
+          <Definition>IafCoba</Definition>
+          <Initial name="iaf_V" units="mV">
+              <SingleValue>-60</SingleValue>
+          </Initial>
+          <Property name="iaf_cm" units="nF">
+              <SingleValue>0.02</SingleValue>
+          </Property>
+          <Property name="iaf_taurefrac" units="ms">
+              <SingleValue>3</SingleValue>
+          </Property>
+          <Property name="iaf_gl" units="mS">
+              <SingleValue>0.1</SingleValue>
+          </Property>
+          <Property name="iaf_vreset" units="mV">
+              <SingleValue>-70</SingleValue>
+          </Property>
+          <Property name="iaf_vrest" units="mV">
+              <SingleValue>-60</SingleValue>
+          </Property>
+          <Property name="iaf_vthresh" units="mV">
+              <SingleValue>20</SingleValue>
+          </Property>
+          <Property name="cobaExcit_tau" units="ms">
+              <SingleValue>2</SingleValue>
+          </Property>
+          <Property name="cobaExcit_q" units="uF_per_cm2">
+              <SingleValue>1</SingleValue>
+          </Property>
+          <Property name="cobaExcit_vrev" units="mV">
+              <SingleValue>0</SingleValue>
+          </Property>
       </Component>
       <Dimension name="time" t="1"/>
       <Dimension name="voltage" m="1" l="2" t="-3" i="-1"/>
       <Dimension name="conductanceDensity" m="-1" t="3" l="-2" i="2"/>
-      <Dimension name="area" l="2"/>
+      <Dimension i="2" l="-2" m="-1" t="4" name="capacitance"/>
+      <Unit symbol="nF" dimension="capacitance" power="-9" />
       <Unit symbol="mV" dimension="voltage" power="-3"/>
       <Unit symbol="ms" dimension="time" power="-3"/>
-      <Unit symbol="cm_square" dimension="area" power="-4"/>
       <Unit symbol="mS" dimension="conductanceDensity" power="-3"/>
     </NineML>
 
- 
+and in YAML:
+
+.. code-block:: yaml
+
+    NineML:
+      '@namespace': http://nineml.net/9ML/1.0
+      Component:
+        name: IaFCobaProperties
+        Definition: {'@body': IafCoba}
+        Property:
+        - {name: cobaExcit_q, SingleValue: 1.0, units: uF_per_cm2}
+        - {name: cobaExcit_tau, SingleValue: 2.0, units: ms}
+        - {name: cobaExcit_vrev, SingleValue: 0.0, units: mV}
+        - {name: iaf_cm, SingleValue: 0.02, units: nF}
+        - {name: iaf_gl, SingleValue: 0.1, units: mS}
+        - {name: iaf_taurefrac, SingleValue: 3.0, units: ms}
+        - {name: iaf_vreset, SingleValue: -70.0, units: mV}
+        - {name: iaf_vrest, SingleValue: -60.0, units: mV}
+        - {name: iaf_vthresh, SingleValue: 20.0, units: mV}
+      Unit:
+      - {symbol: mS, dimension: conductanceDensity, power: -3}
+      - {symbol: mV, dimension: voltage, power: -3}
+      - {symbol: ms, dimension: time, power: -3}
+      - {symbol: nF, dimension: capacitance, power: -9}
+      Dimension:
+      - {name: capacitance, m: -1, l: -2, t: 4, i: 2}
+      - {name: conductanceDensity, m: -1, l: -2, t: 3, i: 2}
+      - {name: time, t: 1}
+      - {name: voltage, m: 1, l: 2, t: -3, i: -1}
 
 The simulation results is presented in Figure 6.
 
@@ -387,8 +556,8 @@ Both populations are then concatenated into a single :ref:`Selection` element,
 “AllNeurons”, which is used to randomly connect both populations to
 every other neuron in the network with a 2% probability.
 
-The abstraction layer description of the IAF input neuron
-ComponentClass_is:
+The abstraction layer description of the IAF input neuron ComponentClass in 
+XML is:
 
 .. code-block:: xml
 
@@ -396,57 +565,96 @@ ComponentClass_is:
     <NineML xmlns="http://nineml.net/9ML/1.0"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://nineml.net/9ML/1.0/NineML_v1.0.xsd">
-      <ComponentClass name="IaF">
-        <AnalogSendPort dimension="voltage" name="iaf_V" />
-        <AnalogReducePort dimension="current" operator="+" name="iaf_ISyn" />
-        <EventSendPort name="iaf_spikeoutput"/>
-        <Parameter dimension="area" name="iaf_cm"/>
-        <Parameter dimension="time" name="iaf_taurefrac"/>
-        <Parameter dimension="voltage" name="iaf_vreset"/>
-        <Parameter dimension="voltage" name="iaf_vrest"/>
-        <Parameter dimension="voltage" name="iaf_vthresh"/>
-        <Parameter dimension="conductanceDensity" name="iaf_gl"/>
-        <Dynamics>
-          <StateVariable dimension="voltage" name="iaf_V"/>
-          <StateVariable dimension="time" name="iaf_tspike"/>
-          <Regime name="RefractoryRegime">
-            <TimeDerivative variable="iaf_V">
-              <MathInline>0</MathInline>
-            </TimeDerivative>
-            <OnCondition target_regime="RegularRegime">
-              <Trigger>
-                <MathInline>t &gt; iaf_tspike + iaf_taurefrac</MathInline>
-              </Trigger>
-            </OnCondition>
-          </Regime>
-          <Regime name="RegularRegime">
-            <TimeDerivative variable="iaf_V">
-              <MathInline>( iaf_gl*( iaf_vrest - iaf_V ) + iaf_ISyn)/(iaf_cm)</MathInline>
-            </TimeDerivative>
-            <OnCondition target_regime="RefractoryRegime">
-              <StateAssignment variable="iaf_tspike">
-                <MathInline>t</MathInline>
-              </StateAssignment>
-              <StateAssignment variable="iaf_V">
-                <MathInline>iaf_vreset</MathInline>
-              </StateAssignment>
-              <OutputEvent port="iaf_spikeoutput"/>
-              <Trigger>
-                <MathInline>iaf_V &gt; iaf_vthresh</MathInline>
-              </Trigger>
-            </OnCondition>
-          </Regime>
-        </Dynamics>
-      </ComponentClass>
+        <ComponentClass name="IaF">
+            <AnalogSendPort dimension="voltage" name="iaf_V" />
+            <AnalogReducePort dimension="current" operator="+" name="iaf_ISyn" />
+            <EventSendPort name="iaf_spikeoutput" />
+            <Parameter dimension="capacitance" name="iaf_cm" />
+            <Parameter dimension="time" name="iaf_taurefrac" />
+            <Parameter dimension="voltage" name="iaf_vreset" />
+            <Parameter dimension="voltage" name="iaf_vrest" />
+            <Parameter dimension="voltage" name="iaf_vthresh" />
+            <Parameter dimension="conductanceDensity" name="iaf_gl" />
+            <Dynamics>
+                <StateVariable dimension="voltage" name="iaf_V" />
+                <StateVariable dimension="time" name="iaf_tspike" />
+                <Regime name="RefractoryRegime">
+                    <OnCondition target_regime="RegularRegime">
+                        <Trigger>
+                            <MathInline>t &gt; iaf_tspike + iaf_taurefrac</MathInline>
+                        </Trigger>
+                    </OnCondition>
+                </Regime>
+                <Regime name="RegularRegime">
+                    <TimeDerivative variable="iaf_V">
+                        <MathInline>(iaf_gl*( iaf_vrest - iaf_V ) + iaf_ISyn)/(iaf_cm)</MathInline>
+                    </TimeDerivative>
+                    <OnCondition target_regime="RefractoryRegime">
+                        <StateAssignment variable="iaf_tspike">
+                            <MathInline>t</MathInline>
+                        </StateAssignment>
+                        <StateAssignment variable="iaf_V">
+                            <MathInline>iaf_vreset</MathInline>
+                        </StateAssignment>
+                        <OutputEvent port="iaf_spikeoutput" />
+                        <Trigger>
+                            <MathInline>iaf_V &gt; iaf_vthresh</MathInline>
+                        </Trigger>
+                    </OnCondition>
+                </Regime>
+            </Dynamics>
+        </ComponentClass>
       <Dimension name="time" t="1"/>
       <Dimension name="voltage" m="1" l="2" t="-3" i="-1"/>
       <Dimension name="conductanceDensity" m="-1" t="3" l="-2" i="2"/>
-      <Dimension name="area" l="2"/>
+      <Dimension i="2" l="-2" m="-1" t="4" name="capacitance"/>
     </NineML>
 
- 
 
-and the description of the COBA ComponentClass_is:
+and in YAML:
+
+.. code-block:: yaml
+
+    NineML:
+      '@namespace': http://nineml.net/9ML/1.0
+      ComponentClass:
+      - name: IaF
+      Parameter:
+      - {name: iaf_cm, dimension: capacitance}
+      - {name: iaf_gl, dimension: conductanceDensity}
+      - {name: iaf_taurefrac, dimension: time}
+      - {name: iaf_vreset, dimension: voltage}
+      - {name: iaf_vrest, dimension: voltage}
+      - {name: iaf_vthresh, dimension: voltage}
+      AnalogReducePort:
+      - {name: iaf_ISyn, dimension: current, operator: +}
+      EventSendPort:
+      - {name: iaf_spikeoutput}
+      AnalogSendPort:
+      - {name: iaf_V, dimension: voltage}
+      Dynamics:
+        StateVariable:
+        - {name: iaf_V, dimension: voltage}
+        - {name: iaf_tspike, dimension: time}
+        Regime:
+        - name: RefractoryRegime
+          OnCondition:
+          - Trigger: {MathInline: t > iaf_taurefrac + iaf_tspike}
+            target_regime: RegularRegime
+        - name: RegularRegime
+          TimeDerivative:
+          - {variable: iaf_V, MathInline: (iaf_ISyn + iaf_gl*(-iaf_V + iaf_vrest))/iaf_cm}
+          OnCondition:
+          - Trigger: {MathInline: iaf_V > iaf_vthresh}
+            target_regime: RefractoryRegime
+            StateAssignment:
+            - {variable: iaf_V, MathInline: iaf_vreset}
+            - {variable: iaf_tspike, MathInline: t}
+            OutputEvent:
+            - {port: iaf_spikeoutput}
+
+
+The description of the COBA ComponentClass is:
 
 .. code-block:: xml
 
@@ -455,15 +663,16 @@ and the description of the COBA ComponentClass_is:
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://nineml.net/9ML/1.0/NineML_v1.0.xsd">
         <ComponentClass name="CoBa">
-            <EventReceivePort name="coba_spikeinput"/>
-            <AnalogReceivePort name="coba_vrev"/>
+            <Parameter name="coba_vrev" dimension="voltage" />
+            <EventReceivePort name="coba_spikeinput" />
+            <AnalogReceivePort name="iaf_V" dimension="voltage" />
             <AnalogSendPort dimension="current" name="coba_I" />
-            <Parameter dimension="time" name="coba_tau"/>
-            <Parameter dimension="conductanceDensity" name="coba_q"/>
+            <Parameter dimension="time" name="coba_tau" />
+            <Parameter dimension="conductanceDensity" name="coba_q" />
             <Dynamics>
-                <StateVariable dimension="conductanceDensity" name="coba_g"/>
+                <StateVariable dimension="conductanceDensity" name="coba_g" />
                 <Regime name="RegularRegime">
-                    <OnEvent target_regime="RegularRegime" src_port="coba_spikeinput">
+                    <OnEvent target_regime="RegularRegime" port="coba_spikeinput">
                         <StateAssignment variable="coba_g">
                             <MathInline>coba_g+coba_q</MathInline>
                         </StateAssignment>
@@ -480,10 +689,42 @@ and the description of the COBA ComponentClass_is:
         <Dimension name="time" t="1"/>
         <Dimension name="voltage" m="1" l="2" t="-3" i="-1"/>
         <Dimension name="conductanceDensity" m="-1" t="3" l="-2" i="2"/>
-        <Dimension name="area" l="2"/>
+        <Dimension i="2" l="-2" m="-1" t="4" name="capacitance"/>
     </NineML>
 
- 
+
+and in YAML:
+
+.. code-block:: yaml
+
+    NineML:
+      '@namespace': http://nineml.net/9ML/1.0
+      ComponentClass:
+      - name: CoBa
+        Parameter:
+        - {name: coba_q, dimension: conductanceDensity}
+        - {name: coba_tau, dimension: time}
+        - {name: coba_vrev, dimension: voltage}
+        EventReceivePort:
+        - {name: coba_spikeinput}
+        AnalogReceivePort:
+        - {name: iaf_V, dimension: voltage}
+        AnalogSendPort:
+        - {name: coba_I, dimension: current}
+        Dynamics:
+          StateVariable:
+          - {name: coba_g, dimension: conductanceDensity}
+          Regime:
+          - name: RegularRegime
+            TimeDerivative:
+            - {variable: coba_g, MathInline: -coba_g/coba_tau}
+            OnEvent:
+            - port: coba_spikeinput
+              target_regime: RegularRegime
+              StateAssignment:
+              - {variable: coba_g, MathInline: coba_g + coba_q}
+          Alias:
+          - {MathInline: coba_g*(coba_vrev - iaf_V), name: coba_I}
 
 The cell :ref:`Component` are parameterized and connected together in the User
 Layer via :ref:`Population`, :ref:`Selection` and :ref:`Projection` elements:
@@ -494,136 +735,255 @@ Layer via :ref:`Population`, :ref:`Selection` and :ref:`Projection` elements:
     <NineML xmlns="http://nineml.net/9ML/1.0"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://nineml.net/9ML/1.0/NineML_v1.0.xsd">
-      <Component name="IaFNeuron">
-        <Definition url="./iaf.9ml"
-          >IaF</Definition>
-        <Property name="iaf_V" units="mV">
-          <SingleValue>-60</SingleValue>
-        </Property>
-        <Property name="iaf_tspike" units="ms">
-          <SingleValue>-1</SingleValue>
-        </Property>
-        <Property name="iaf_cm" units="cm_square">
-          <SingleValue>0.2</SingleValue>
-        </Property>
-        <Property name="iaf_taurefrac" units="ms">
-          <SingleValue>5</SingleValue>
-        </Property>
-        <Property name="iaf_gl" units="mS">
-          <SingleValue>0.05</SingleValue>
-        </Property>
-        <Property name="iaf_vreset" units="mV">
-          <SingleValue>-60</SingleValue>
-        </Property>
-        <Property name="iaf_vrest" units="mV">
-          <SingleValue>-60</SingleValue>
-        </Property>
-        <Property name="iaf_vthresh" units="mV">
-          <SingleValue>-50</SingleValue>
-        </Property>
-      </Component>
-      <Component name="IaFSynapseExcitatory">
-        <Definition url="./coba.9ml">CoBa</Definition>
-        <Property name="coba_g" units="mS">
-          <SingleValue>0</SingleValue>
-        </Property>
-        <Property name="coba_tau" units="ms">
-          <SingleValue>5</SingleValue>
-        </Property>
-        <Property name="coba_q" units="ms">
-          <SingleValue>0.004</SingleValue>
-        </Property>
-        <Property name="coba_vrev" units="mV">
-          <SingleValue>0</SingleValue>
-        </Property>
-      </Component>
-      <Component name="IaFSynapseInhibitory">
-        <Definition url="./coba.xml">CoBa</Definition>
-        <Property name="coba_g" units="mS">
-          <SingleValue>0</SingleValue>
-        </Property>
-        <Property name="coba_tau" units="ms">
-          <SingleValue>5</SingleValue>
-        </Property>
-        <Property name="coba_q" units="ms">
-          <SingleValue>0.051</SingleValue>
-        </Property>
-        <Property name="coba_vrev" units="mV">
-          <SingleValue>-80</SingleValue>
-        </Property>
-      </Component>
-      <Population name="Excitatory">
-        <Size>3200</Size>
-        <Cell>
-            <Reference>IaFNeuron</Reference>
-        </Cell>
-      </Population>
-      <Population name="Inhibitory">
-        <Size>800</Size>
-        <Cell>
-            <Reference>IaFNeuron</Reference>
-        </Cell>
-      </Population>
-      <Selection name="AllNeurons">
-        <Concatonate>
-            <Item index="0">Excitatory</Item>
-            <Item index="1">Inhibitory</Item>
-        </Concatonate>
-      </Selection>
-      <Projection>
-        <Source>
-            <Reference>Excitatory</Reference>
-        </Source>
-        <Destination>
-            <Reference>AllNeurons</Reference>
-        </Destination>
-        <Response>
-            <Reference>IaFSynapseExcitatory</Reference>
-            <FromDestination sender="iaf_V" receiver="coba_vrev"/>
-        </Response>
-        <Connectivity>
-            <Component>
-                <Definition url="http://nineml.net/9ML/1.0/catalog/connectionrules/Probabilistic.xml"
-                    >Probabilistic</Definition>
-                <Property name="probability" units="unitless">
-                    <SingleValue>0.02</SingleValue>
-                </Property>
-            </Component>
-        </Connectivity>
-      </Projection>
-      <Projection>
-        <Source>
-            <Reference>Inhibitory</Reference>
-        </Source>
-        <Destination>
-            <Reference>AllNeurons</Reference>
-        </Destination>
-        <Response>
-            <Reference>IaFSynapseInhibitory</Reference>
-            <FromDestination sender="iaf_V" receiver="coba_vrev"/>
-        </Response>
-        <Connectivity>
-            <Component>
-                <Definition url="http://nineml.net/9ML/1.0/catalog/connectionrules/Probabilistic.xml"
-                    >Probabilistic</Definition>
-                <Property name="probability" units="unitless">
-                    <SingleValue>0.02</SingleValue>
-                </Property>
-            </Component>
-        </Connectivity>
-      </Projection>
-      <Unit symbol="mV" dimension="voltage" power="-3"/>
-      <Unit symbol="ms" dimension="time" power="-3"/>
-      <Unit symbol="cm_square" dimension="area" power="-4"/>
-      <Unit symbol="mS" dimension="conductanceDensity" power="-3"/>
-      <Unit name="unitless" dimension="dimensionless" power="0"/>
-      <Dimension name="time" t="1"/>
-      <Dimension name="voltage" m="1" l="2" t="-3" i="-1"/>
-      <Dimension name="conductanceDensity" m="-1" t="3" l="-2" i="2"/>
-      <Dimension name="area" l="2"/>
-      <Dimension name="dimensionless"/>
+        <Component name="IaFProperties">
+            <Definition>IaF</Definition>
+            <Property name="iaf_cm" units="nF">
+                <SingleValue>0.2</SingleValue>
+            </Property>
+            <Property name="iaf_taurefrac" units="ms">
+                <SingleValue>5</SingleValue>
+            </Property>
+            <Property name="iaf_gl" units="mS">
+                <SingleValue>0.05</SingleValue>
+            </Property>
+            <Property name="iaf_vreset" units="mV">
+                <SingleValue>-60</SingleValue>
+            </Property>
+            <Property name="iaf_vrest" units="mV">
+                <SingleValue>-60</SingleValue>
+            </Property>
+            <Property name="iaf_vthresh" units="mV">
+                <SingleValue>-50</SingleValue>
+            </Property>
+        </Component>
+        <Component name="IaFSynapseExcitatory">
+            <Definition>CoBa</Definition>
+            <Property name="coba_tau" units="ms">
+                <SingleValue>5</SingleValue>
+            </Property>
+            <Property name="coba_q" units="uF_per_cm2">
+                <SingleValue>0.004</SingleValue>
+            </Property>
+            <Property name="coba_vrev" units="mV">
+                <SingleValue>0</SingleValue>
+            </Property>
+        </Component>
+        <Component name="IaFSynapseInhibitory">
+            <Definition>CoBa</Definition>
+            <Property name="coba_tau" units="ms">
+                <SingleValue>5</SingleValue>
+            </Property>
+            <Property name="coba_q" units="uF_per_cm2">
+                <SingleValue>0.051</SingleValue>
+            </Property>
+            <Property name="coba_vrev" units="mV">
+                <SingleValue>-80</SingleValue>
+            </Property>
+        </Component>
+        <Population name="Excitatory">
+            <Size>3200</Size>
+            <Cell>
+                <Reference>IaFProperties</Reference>
+            </Cell>
+        </Population>
+        <Population name="Inhibitory">
+            <Size>800</Size>
+            <Cell>
+                <Reference>IaFProperties</Reference>
+            </Cell>
+        </Population>
+        <Selection name="AllNeurons">
+            <Concatenate>
+                <Item index="0">
+                  <Reference>Excitatory</Reference>
+                </Item>
+                <Item index="1">
+                  <Reference>Inhibitory</Reference>
+                </Item>
+            </Concatenate>
+        </Selection>
+        <Projection name="Excitation">
+            <Source>
+                <Reference>Excitatory</Reference>
+            </Source>
+            <Destination>
+                <Reference>AllNeurons</Reference>
+                <FromResponse send_port="coba_I" receive_port="iaf_ISyn" />
+            </Destination>
+            <Response>
+                <Reference>IaFSynapseExcitatory</Reference>
+                <FromSource send_port="iaf_spikeoutput" receive_port="coba_spikeinput" />
+            </Response>
+            <Connectivity>
+                <Component name="ExcConnectProb">
+                    <Definition>Probabilistic</Definition>
+                    <Property name="probability" units="unitless">
+                        <SingleValue>0.02</SingleValue>
+                    </Property>
+                </Component>
+            </Connectivity>
+            <Delay units="ms">
+              <SingleValue>1.5</SingleValue>
+            </Delay>
+        </Projection>
+        <Projection name="Inhibition">
+            <Source>
+                <Reference>Inhibitory</Reference>
+            </Source>
+            <Destination>
+                <Reference>AllNeurons</Reference>
+                <FromResponse send_port="coba_I" receive_port="iaf_ISyn" />
+            </Destination>
+            <Response>
+                <Reference>IaFSynapseInhibitory</Reference>
+                <FromSource send_port="iaf_spikeoutput" receive_port="coba_spikeinput" />
+            </Response>
+            <Connectivity>
+                <Component name="InhConnectProb">
+                    <Definition>Probabilistic</Definition>
+                    <Property name="probability" units="unitless">
+                        <SingleValue>0.02</SingleValue>
+                    </Property>
+                </Component>
+            </Connectivity>
+            <Delay units="ms">
+              <SingleValue>1.5</SingleValue>
+            </Delay>
+        </Projection>
+        <ComponentClass name="Probabilistic">
+            <Parameter dimension="dimensionless" name="probability"/>
+            <ConnectionRule standard_library="http://nineml.net/9ML/1.0/connectionrules/Probabilistic"/>
+        </ComponentClass>
+        <Unit symbol="mV" dimension="voltage" power="-3"/>
+        <Unit symbol="ms" dimension="time" power="-3"/>
+        <Unit symbol="nF" dimension="capacitance" power="-9" />
+        <Unit symbol="mS" dimension="conductanceDensity" power="-3"/>
+        <Unit name="unitless" dimension="dimensionless" power="0"/>
+        <Dimension name="time" t="1"/>
+        <Dimension name="voltage" m="1" l="2" t="-3" i="-1"/>
+        <Dimension name="conductanceDensity" m="-1" t="3" l="-2" i="2"/>
+        <Dimension i="2" l="-2" m="-1" t="4" name="capacitance"/>
+        <Dimension name="dimensionless"/>
     </NineML>
 
+
+and in YAML:
+
+.. code-block:: yaml
+
+    NineML:
+      '@namespace': http://nineml.net/9ML/1.0
+      Component:
+      - Definition: {'@body': Probabilistic}
+        Property:
+        - {name: probability, SingleValue: 0.02, units: unitless}
+        name: ExcConnectProb
+      - Definition: {'@body': IafCoba}
+        Property:
+        - {name: cobaExcit_q, SingleValue: 1.0, units: uF_per_cm2}
+        - {name: cobaExcit_tau, SingleValue: 2.0, units: ms}
+        - {name: cobaExcit_vrev, SingleValue: 0.0, units: mV}
+        - {name: iaf_cm, SingleValue: 0.02, units: nF}
+        - {name: iaf_gl, SingleValue: 0.1, units: mS}
+        - {name: iaf_taurefrac, SingleValue: 3.0, units: ms}
+        - {name: iaf_vreset, SingleValue: -70.0, units: mV}
+        - {name: iaf_vrest, SingleValue: -60.0, units: mV}
+        - {name: iaf_vthresh, SingleValue: 20.0, units: mV}
+        name: IaFCobaProperties
+        Initial:
+        - {name: iaf_V, SingleValue: -60.0, units: mV}
+      - Definition: {'@body': IaF}
+        Property:
+        - {name: iaf_cm, SingleValue: 0.2, units: nF}
+        - {name: iaf_gl, SingleValue: 0.05, units: mS}
+        - {name: iaf_taurefrac, SingleValue: 5.0, units: ms}
+        - {name: iaf_vreset, SingleValue: -60.0, units: mV}
+        - {name: iaf_vrest, SingleValue: -60.0, units: mV}
+        - {name: iaf_vthresh, SingleValue: -50.0, units: mV}
+        name: IaFProperties
+      - Definition: {'@body': CoBa}
+        Property:
+        - {name: coba_q, SingleValue: 0.004, units: uF_per_cm2}
+        - {name: coba_tau, SingleValue: 5.0, units: ms}
+        - {name: coba_vrev, SingleValue: 0.0, units: mV}
+        name: IaFSynapseExcitatory
+      - Definition: {'@body': CoBa}
+        Property:
+        - {name: coba_q, SingleValue: 0.051, units: uF_per_cm2}
+        - {name: coba_tau, SingleValue: 5.0, units: ms}
+        - {name: coba_vrev, SingleValue: -80.0, units: mV}
+        name: IaFSynapseInhibitory
+      - Definition: {'@body': Probabilistic}
+        Property:
+        - {name: probability, SingleValue: 0.02, units: unitless}
+        name: InhConnectProb
+      - Definition: {'@body': Izhikevich}
+        Property:
+        - {name: a, SingleValue: 0.02, units: per_s}
+        - {name: b, SingleValue: 0.2, units: per_V}
+        - {name: c, SingleValue: -65.0, units: mV}
+        - {name: d, SingleValue: 8.0, units: unitless}
+        - {name: iInj, SingleValue: 10.0, units: nA}
+        - {name: theta, SingleValue: 50.0, units: mV}
+        name: IzhikevichProperties
+      Population:
+      - name: Excitatory
+        Cell:
+          Reference: {'@body': IaFProperties}
+        Size: 3200
+      - name: Inhibitory
+        Cell:
+          Reference: {'@body': IaFProperties}
+        Size: 800
+      Selection:
+      - name: AllNeurons
+        Concatenate:
+          Item:
+          - index: 0
+            Reference: {'@body': Excitatory}
+          - index: 1
+            Reference: {'@body': Inhibitory}
+      Projection:
+      - name: Excitation
+        Source:
+          Reference: {'@body': Excitatory}
+        Destination:
+          Reference: {'@body': AllNeurons}
+          FromResponse:
+          - {send_port: coba_I, receive_port: iaf_ISyn}
+        Connectivity:
+          Reference: {'@body': ExcConnectProb}
+        Response:
+          Reference: {'@body': IaFSynapseExcitatory}
+          FromSource:
+          - {send_port: iaf_spikeoutput, receive_port: coba_spikeinput}
+        Delay: {SingleValue: 1.5, units: ms}
+      - name: Inhibition
+        Source:
+          Reference: {'@body': Inhibitory}
+        Destination:
+          Reference: {'@body': AllNeurons}
+          FromResponse:
+          - {send_port: coba_I, receive_port: iaf_ISyn}
+        Connectivity:
+          Reference: {'@body': InhConnectProb}
+        Response:
+          Reference: {'@body': IaFSynapseInhibitory}
+          FromSource:
+          - {send_port: iaf_spikeoutput, receive_port: coba_spikeinput}
+        Delay: {SingleValue: 1.5, units: ms}
+      Unit:
+      - {symbol: mS, dimension: conductanceDensity, power: -3}
+      - {symbol: mV, dimension: voltage, power: -3}
+      - {symbol: nF, dimension: capacitance, power: -9}
+      - {symbol: unitless, dimension: dimensionless, power: 0}
+      Dimension:
+      - {name: capacitance, m: -1, l: -2, t: 4, i: 2}
+      - {name: conductanceDensity, m: -1, l: -2, t: 3, i: 2}
+      - {name: dimensionless}
+      - {name: time, t: 1}
+      - {name: voltage, m: 1, l: 2, t: -3, i: -1}        
+      
 
 .. [Abbott1999] Abbott, L.~F. (1999).
    Lapicque's introduction of the integrate-and-fire model neuron (1907)}.

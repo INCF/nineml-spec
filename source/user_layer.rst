@@ -239,10 +239,11 @@ ArrayValue
 | ArrayValueRow | set          | no       |
 +---------------+--------------+----------+
 
-ArrayValue_ elements are used to represent an explicit array of values in
-XML. ArrayValue_ elements contain a set of ArrayValue_Row elements (i.e.
+ArrayValue_ elements are used to represent an explicit array of values.
+ArrayValue_ elements contain a set of ArrayValue_Row elements (i.e.
 unordered, since they are explicitly ordered by their *index*
-attribute). Since XML is significantly slower to parse than plain text
+attribute) in hierarchical data formats (see :ref:`Serialisation`).
+Since is significantly slower to parse than plain text
 and binary formats it is not recommended to use ArrayValue_ for large
 arrays, preferring ExternalArrayValue_ instead.
 
@@ -298,7 +299,7 @@ ExternalArrayValue
 +------------+-----------------------------------+----------+
 
 ExternalArrayValue_ elements are used to explicitly define large arrays
-of values. The array data are not stored in XML (which is slow to parse)
+of values. The array data are not stored within the hierarchical data format
 but more efficient text or binary `HDF5
 (http://www.hdfgroup.org/HDF5/) <http://www.hdfgroup.org/HDF5/>`__
 formats. As of version 1.0, the data in the external files are stored as
