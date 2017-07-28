@@ -726,6 +726,35 @@ and in YAML:
           Alias:
           - {MathInline: coba_g*(coba_vrev - iaf_V), name: coba_I}
 
+The connection probability component class in XML:
+
+.. code-block:: xml
+
+    <?xml version='1.0' encoding='UTF-8'?>
+    <NineML xmlns="http://nineml.net/9ML/1.0"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://nineml.net/9ML/1.0/NineML_v1.0.xsd">
+        <ComponentClass name="Probabilistic">
+            <Parameter dimension="dimensionless" name="probability"/>
+            <ConnectionRule standard_library="http://nineml.net/9ML/1.0/connectionrules/Probabilistic"/>
+        </ComponentClass>
+    </NineML>
+        
+and in YAML
+
+.. code-block:: yaml
+
+    NineML:
+      '@namespace': http://nineml.net/9ML/1.0
+      - name: Probabilistic
+        Parameter:
+        - {name: probability, dimension: dimensionless}
+        ConnectionRule: {standard_library: 'http://nineml.net/9ML/1.0/connectionrules/Probabilistic'}
+
+.. note::
+
+    More complex connection rules are planned for NineML v2.0
+
 The cell :ref:`Component` are parameterized and connected together in the User
 Layer via :ref:`Population`, :ref:`Selection` and :ref:`Projection` elements:
 
@@ -850,10 +879,6 @@ Layer via :ref:`Population`, :ref:`Selection` and :ref:`Projection` elements:
               <SingleValue>1.5</SingleValue>
             </Delay>
         </Projection>
-        <ComponentClass name="Probabilistic">
-            <Parameter dimension="dimensionless" name="probability"/>
-            <ConnectionRule standard_library="http://nineml.net/9ML/1.0/connectionrules/Probabilistic"/>
-        </ComponentClass>
         <Unit symbol="mV" dimension="voltage" power="-3"/>
         <Unit symbol="ms" dimension="time" power="-3"/>
         <Unit symbol="nF" dimension="capacitance" power="-9" />
@@ -874,25 +899,12 @@ and in YAML:
     NineML:
       '@namespace': http://nineml.net/9ML/1.0
       Component:
-      - Definition: {'@body': Probabilistic}
+      - name: ExcConnectProb
+        Definition: {'@body': Probabilistic}
         Property:
         - {name: probability, SingleValue: 0.02, units: unitless}
-        name: ExcConnectProb
-      - Definition: {'@body': IafCoba}
-        Property:
-        - {name: cobaExcit_q, SingleValue: 1.0, units: uF_per_cm2}
-        - {name: cobaExcit_tau, SingleValue: 2.0, units: ms}
-        - {name: cobaExcit_vrev, SingleValue: 0.0, units: mV}
-        - {name: iaf_cm, SingleValue: 0.02, units: nF}
-        - {name: iaf_gl, SingleValue: 0.1, units: mS}
-        - {name: iaf_taurefrac, SingleValue: 3.0, units: ms}
-        - {name: iaf_vreset, SingleValue: -70.0, units: mV}
-        - {name: iaf_vrest, SingleValue: -60.0, units: mV}
-        - {name: iaf_vthresh, SingleValue: 20.0, units: mV}
-        name: IaFCobaProperties
-        Initial:
-        - {name: iaf_V, SingleValue: -60.0, units: mV}
-      - Definition: {'@body': IaF}
+      - name: IaFProperties
+        Definition: {'@body': IaF}
         Property:
         - {name: iaf_cm, SingleValue: 0.2, units: nF}
         - {name: iaf_gl, SingleValue: 0.05, units: mS}
@@ -900,32 +912,22 @@ and in YAML:
         - {name: iaf_vreset, SingleValue: -60.0, units: mV}
         - {name: iaf_vrest, SingleValue: -60.0, units: mV}
         - {name: iaf_vthresh, SingleValue: -50.0, units: mV}
-        name: IaFProperties
-      - Definition: {'@body': CoBa}
+      - name: IaFSynapseExcitatory
+        Definition: {'@body': CoBa}
         Property:
         - {name: coba_q, SingleValue: 0.004, units: uF_per_cm2}
         - {name: coba_tau, SingleValue: 5.0, units: ms}
         - {name: coba_vrev, SingleValue: 0.0, units: mV}
-        name: IaFSynapseExcitatory
-      - Definition: {'@body': CoBa}
+      - name: IaFSynapseInhibitory
+        Definition: {'@body': CoBa}
         Property:
         - {name: coba_q, SingleValue: 0.051, units: uF_per_cm2}
         - {name: coba_tau, SingleValue: 5.0, units: ms}
         - {name: coba_vrev, SingleValue: -80.0, units: mV}
-        name: IaFSynapseInhibitory
-      - Definition: {'@body': Probabilistic}
+      - name: InhConnectProb
+        Definition: {'@body': Probabilistic}
         Property:
         - {name: probability, SingleValue: 0.02, units: unitless}
-        name: InhConnectProb
-      - Definition: {'@body': Izhikevich}
-        Property:
-        - {name: a, SingleValue: 0.02, units: per_s}
-        - {name: b, SingleValue: 0.2, units: per_V}
-        - {name: c, SingleValue: -65.0, units: mV}
-        - {name: d, SingleValue: 8.0, units: unitless}
-        - {name: iInj, SingleValue: 10.0, units: nA}
-        - {name: theta, SingleValue: 50.0, units: mV}
-        name: IzhikevichProperties
       Population:
       - name: Excitatory
         Cell:
