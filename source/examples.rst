@@ -208,7 +208,7 @@ User Layer description for the above example in XML:
 
 and in YAML:
 
-.. code-block: yaml
+.. code-block:: yaml
 
     NineML:
       '@namespace': http://nineml.net/9ML/1.0
