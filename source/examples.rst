@@ -45,7 +45,7 @@ The RegimeGraph is shown in Figure [fig:EX1\_RegimeGraph]
 
  
 
-Using this Abstraction Layer definition, as well as suitable parameters
+Using this *Abstraction Layer* definition, as well as suitable parameters
 from the user layer;
 :math:`a=0.02, b=0.2, c=-65, d= 8, i_{\mathrm{injected}}= 5.0`, we can
 simulate this, giving output as shown in Figure [fig:Ex1\_Output].
@@ -54,7 +54,7 @@ In Figure [fig:Ex1\_Output], we can see the value of the :ref:`StateVariable`
 :math:`V` over time. We can also see that when the value of
 :math:`V>theta` triggers the condition, we emit a spike, and the
 :ref:`StateAssignment` of :math:`V \leftarrow c` resets the value of :math:`V`.
-The corresponding Abstraction Layer description for this model is:
+The corresponding *Abstraction Layer* description for this model is:
 
 
 .. code-block:: yaml
@@ -107,7 +107,7 @@ The corresponding Abstraction Layer description for this model is:
       - {symbol: V, dimension: voltage, power: 0}
       - {symbol: s, dimension: time, power: 1}   
 
-User Layer description for the above example is:
+*User Layer* description for the above example is:
 
 
 .. code-block:: yaml
@@ -201,7 +201,7 @@ The corresponding :ref:`Regime` Graph is shown in Figure 5.
    RegimeGraph for the XML model in this section
 
 
-The resulting description for the Abstraction Layer is:
+The resulting description for the *Abstraction Layer* is:
 
 
 .. code-block:: yaml
@@ -272,7 +272,7 @@ The resulting description for the Abstraction Layer is:
       - {name: time, t: 1}
       - {name: voltage, m: 1, l: 2, t: -3, i: -1}
   
-The User Layer description for the above example is:
+The *User Layer* description for the above example is:
 
 .. code-block:: yaml
 
