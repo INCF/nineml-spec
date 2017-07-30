@@ -74,10 +74,107 @@ this case the '@' symbol, to escape the following special fields.
 .. note:: Future versions of NineML will be designed to minimise the need for
           the the *@body* field within the NineML object model. However,
           it will still be required to represent arbitrary annotations and
-          language extensions designed in XML.
+          language extensions designed in XML_.
 
-Example YAML_ code of a Izhikevich neuron model demonstrating the use of
-``@namespace`` and ``@body`` attributes.
+The following model of a Izhikevich neuron uses both shows an example of 
+how namespaces and body elements are represented natively in XML_.
+
+.. code-block:: xml
+
+    <?xml version='1.0' encoding='UTF-8'?>
+    <NineML xmlns="http://nineml.net/9ML/1.0">
+      <ComponentClass name="Izhikevich">
+        <Parameter name="C_m" dimension="capacitance"/>
+        <Parameter name="a" dimension="per_time"/>
+        <Parameter name="alpha" dimension="per_time_voltage"/>
+        <Parameter name="b" dimension="per_time"/>
+        <Parameter name="beta" dimension="per_time"/>
+        <Parameter name="c" dimension="voltage"/>
+        <Parameter name="d" dimension="voltage_per_time"/>
+        <Parameter name="theta" dimension="voltage"/>
+        <Parameter name="zeta" dimension="voltage_per_time"/>
+        <AnalogReducePort name="Isyn" dimension="current" operator="+"/>
+        <EventSendPort name="spike"/>
+        <AnalogSendPort name="V" dimension="voltage"/>
+        <Dynamics>
+          <StateVariable name="U" dimension="voltage_per_time"/>
+          <StateVariable name="V" dimension="voltage"/>
+          <Regime name="subthreshold_regime">
+            <TimeDerivative variable="U">
+              <MathInline>a*(-U + V*b)</MathInline>
+            </TimeDerivative>
+            <TimeDerivative variable="V">
+              <MathInline>-U + V*beta + alpha*(V*V) + zeta + Isyn/C_m</MathInline>
+            </TimeDerivative>
+            <OnCondition target_regime="subthreshold_regime">
+              <Trigger>
+                <MathInline>V &gt; theta</MathInline>
+              </Trigger>
+              <StateAssignment variable="U">
+                <MathInline>U + d</MathInline>
+              </StateAssignment>
+              <StateAssignment variable="V">
+                <MathInline>c</MathInline>
+              </StateAssignment>
+              <OutputEvent port="spike"/>
+            </OnCondition>
+          </Regime>
+        </Dynamics>
+        <Annotations>
+          <Validation xmlns="http://github.com/INCF/nineml-python" dimensionality="True"/>
+        </Annotations>
+      </ComponentClass>
+      <Component name="SampleIzhikevich">
+        <Definition>Izhikevich</Definition>
+        <Property name="C_m" units="pF">
+          <SingleValue>1.0</SingleValue>
+        </Property>
+        <Property name="a" units="per_ms">
+          <SingleValue>0.2</SingleValue>
+        </Property>
+        <Property name="alpha" units="per_mV_ms">
+          <SingleValue>0.04</SingleValue>
+        </Property>
+        <Property name="b" units="per_ms">
+          <SingleValue>0.025</SingleValue>
+        </Property>
+        <Property name="beta" units="per_ms">
+          <SingleValue>5.0</SingleValue>
+        </Property>
+        <Property name="c" units="mV">
+          <SingleValue>-75.0</SingleValue>
+        </Property>
+        <Property name="d" units="mV_per_ms">
+          <SingleValue>0.2</SingleValue>
+        </Property>
+        <Property name="theta" units="mV">
+          <SingleValue>-50.0</SingleValue>
+        </Property>
+        <Property name="zeta" units="mV_per_ms">
+          <SingleValue>140.0</SingleValue>
+        </Property>
+        <Initial name="U" units="mV_per_ms">
+          <SingleValue>-1.625</SingleValue>
+        </Initial>
+        <Initial name="V" units="mV">
+          <SingleValue>-70.0</SingleValue>
+        </Initial>
+      </Component>
+      <Dimension name="capacitance" m="-1" l="-2" t="4" i="2"/>
+      <Dimension name="current" i="1"/>
+      <Unit symbol="mV" dimension="voltage" power="-3"/>
+      <Unit symbol="mV_per_ms" dimension="voltage_per_time" power="0"/>
+      <Unit symbol="pF" dimension="capacitance" power="-12"/>
+      <Unit symbol="per_mV_ms" dimension="per_time_voltage" power="6"/>
+      <Unit symbol="per_ms" dimension="per_time" power="3"/>
+      <Dimension name="per_time" t="-1"/>
+      <Dimension name="per_time_voltage" m="-1" l="-2" t="2" i="1"/>
+      <Dimension name="voltage" m="1" l="2" t="-3" i="-1"/>
+      <Dimension name="voltage_per_time" m="1" l="2" t="-4" i="-1"/>
+    </NineML>
+
+whereas in YAML_ the ``@namespace`` and ``@body`` fields must be used in place
+of the ``xmlns`` attribute and body text.
 
 .. code-block:: yaml
 
