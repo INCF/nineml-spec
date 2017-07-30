@@ -125,7 +125,7 @@ how namespaces and body elements are represented natively in XML_.
         </Annotations>
       </ComponentClass>
       <Component name="SampleIzhikevich">
-        <Definition>Izhikevich</Definition>
+        <Definition url="./izhikevich.xml">Izhikevich</Definition>
         <Property name="C_m" units="pF">
           <SingleValue>1.0</SingleValue>
         </Property>
