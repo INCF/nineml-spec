@@ -72,10 +72,9 @@ this case the '@' symbol, to escape the following special fields.
     annotations.
 
 .. note:: Future versions of NineML will be designed to minimise the need for
-          these special fields within the NineML object model. However,
-          annotations and language extensions will still allow any object
-          hierarchies that map to valid XML, so special fields will
-          still be required.
+          the the *@body* field within the NineML object model. However,
+          it will still be required to represent arbitrary annotations and
+          language extensions designed in XML.
 
 Example YAML_ code of a Izhikevich neuron model demonstrating the use of
 ``@namespace`` and ``@body`` attributes.
