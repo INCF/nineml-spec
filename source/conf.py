@@ -50,14 +50,14 @@ master_doc = u'index'
 # built documents.
 #
 # The short X.Y version.
-version = u'1.0'
+version = u'1.1'
 
 # The full version, including alpha/beta/rc tags.
 release = u'1'
 
 
 # General information about the project.
-project = u'NineML Specification v{}'.format(version)
+project = u'NineML Specification'
 
 copyright = u'2017, The NineML Committee'
 author = u'The NineML Committee'
