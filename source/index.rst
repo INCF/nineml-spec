@@ -10,6 +10,6 @@ Network Interchange for Neuroscience Modeling Language (NineML) Specification v\
     general
     abstraction_layer
     user_layer
-    serialisation
+    serialization
     examples
     acknowledgements

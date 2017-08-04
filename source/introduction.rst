@@ -67,7 +67,7 @@ representations of all the instantiated elements in the network.
 A NineML object model representation can take multiple forms. A program
 can employ a concrete representation of the NineML objects in a specific
 programming language, convert an internal model representation to and
-from hierarchical data formats (see :ref:`Serialisation`), or use code
+from hierarchical data formats (see :ref:`Serialization`), or use code
 generation to produce a model representation for a target simulation
 environment.
 

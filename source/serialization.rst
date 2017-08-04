@@ -1,8 +1,8 @@
 *************
-Serialisation
+Serialization
 *************
 
-There are four officially supported data formats for serialising NineML:
+There are four officially supported data formats for serializing NineML:
 XML_, JSON_, YAML_, and HDF5_ (although it is possible to use other data
 formats). When referenced from another NineML document, the format of a NineML
 file is recognised by the extension of its filename, i.e:
@@ -24,7 +24,7 @@ file is recognised by the extension of its filename, i.e:
           be used to convert between the data formats listed above.
 
 NineML is intended to be an abstract object model that is independent of the
-choice of hierarchical data format used to serialise it. However, some aspects
+choice of hierarchical data format used to serialize it. However, some aspects
 of NineML were designed with XML in mind and there are some subtle differences
 between hierarchical data formats that prevent general mappings from XML.
 Therefore, in order to map the NineML object model onto non-XML data formats

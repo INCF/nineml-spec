@@ -242,7 +242,7 @@ ArrayValue
 ArrayValue_ elements are used to represent an explicit array of values.
 ArrayValue_ elements contain a set of ArrayValue_Row elements (i.e.
 unordered, since they are explicitly ordered by their *index*
-attribute) in hierarchical data formats (see :ref:`Serialisation`).
+attribute) in hierarchical data formats (see :ref:`Serialization`).
 Since is significantly slower to parse than plain text
 and binary formats it is not recommended to use ArrayValue_ for large
 arrays, preferring ExternalArrayValue_ instead.
