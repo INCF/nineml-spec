@@ -58,10 +58,12 @@ this case the '@' symbol, to escape the following special fields.
     Holds the namespace of the element as the special attribute xmlns does in
     XML_.
 @body:
-    Used to differentiate body text from other attributes in JSON_/YAML_
-    iff there are other attributes. Note that if the serial form of an element
-    only contains body text (e.g. :ref:`MathInline`) then this is "flattened"
-    to be the sole value of the element.
+    Used to differentiate body text from other attributes in JSON_/YAML_ and
+    HDF5_ iff there are other attributes (Datasets could technically be used as
+    body elements in HDF5 but they are designed to hold array data not single
+    values). Note that for JSON_/YAML_ and HDF5_ if the serial form of an
+    element only contains body text (e.g. :ref:`MathInline`) then this is
+    "flattened" to be the sole value of the element.
 @multiple:
     A HDF_ group that has a @multiple attribute equal to 'true', 
     contains multiple child elements of the given NineML type, which are stored
@@ -75,6 +77,10 @@ this case the '@' symbol, to escape the following special fields.
           the the *@body* field within the NineML object model. However,
           it will still be required to represent arbitrary annotations and
           language extensions designed in XML_.
+          
+          ArrayValues should also be stored within native data array structures
+          of the format (e.g. HDF5_ datasets) instead of within ArrayValueRow
+          elements.
 
 The following model of a Izhikevich neuron uses both shows an example of 
 how namespaces and body elements are represented natively in XML_.
