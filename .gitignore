@@ -3,6 +3,7 @@
 *.blg
 *.log
 *.out
+*.swp
 *.pdf
 *.synctex.gz
 *.toc
@@ -11,3 +12,9 @@
 /.sass-cache
 /.pydevproject
 .DS_Store
+/docs/_build
+/.settings/
+/.cproject
+/build/
+/images/
+/_config.yml.orig

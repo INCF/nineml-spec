@@ -181,7 +181,7 @@
             <xs:element name="SingleValue" type="SingleValue" minOccurs="1" maxOccurs="1"/>
             <xs:element name="ArrayValue" type="ArrayValue"/>
             <xs:element name="ExternalArrayValue" type="ExternalArrayValue"/>
-            <xs:element name="ComponentValue" type="ComponentValue"/>
+            <xs:element name="RandomDistributionValue" type="RandomDistributionValue"/>
         </xs:choice>
         <xs:attribute name="name" type="xs:string" use="required"/>
         <xs:attribute name="units" type="xs:string"/>
@@ -202,7 +202,7 @@
     <xs:complexType name="ArrayValueRow">
         <xs:attribute name="index" type="xs:integer"/>
     </xs:complexType>
-    <xs:complexType name="ComponentValue">
+    <xs:complexType name="RandomDistributionValue">
         <xs:choice>
             <xs:element name="Reference" type="Reference"/>
             <xs:element name="Component" type="Component"/>
