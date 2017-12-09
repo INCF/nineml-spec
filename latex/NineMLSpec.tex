@@ -36,7 +36,7 @@
 \newcommand{\TimeDerivative}{\defRef{\textbf{\class{TimeDerivative}}\xspace}{sec:TimeDerivative}}
 \newcommand{\Alias}{\defRef{\textbf{\class{Alias}}\xspace}{sec:Alias}}
 \newcommand{\Constant}{\defRef{\textbf{\class{Constant}}\xspace}{sec:Constant}}
-\newcommand{\StandardLibrary}{\defRef{\textbf{\class{StandardLibrary}}\xspace}{sec:StandardLibrary}}
+\newcommand{\StandardLibrary}{\defRef{\textbf{\class{Standard_library}}\xspace}{sec:Standard_library}}
 \newcommand{\Regime}{\defRef{\textbf{\class{Regime}}\xspace}{sec:Regime}}
 \newcommand{\Trigger}{\defRef{\textbf{\class{Trigger}}\xspace}{sec:Trigger}}
 \newcommand{\OutputEvent}{\defRef{\textbf{\class{OutputEvent}}\xspace}{sec:OutputEvent}}
@@ -138,7 +138,7 @@
 \vspace{0.5cm}
 \noindent{\large NineML Committee}\\
 \vspace{0.5cm}
-\noindent{\large Version: 1.0}
+\noindent{\large Version: 1.0.1}
 \end{center}
 
 \vspace*{0.5cm}
@@ -955,10 +955,7 @@ Each \StateVariable requires a \textit{dimension} attribute. This attribute spec
 
 A \Regime element represents a system of ODEs in time
 on \StateVariable.  As such, \Regime defines how the state variables
-change (propagate in time) between subsequent transitions. \Regime is
-must have non-vanishing temporal extent. Once construction of
-the \Regime is complete, it should have defined the following
-properties:
+change (propagate in time) between subsequent transitions.
 
 \subsubsection{Name attribute}
 Each \Regime requires a \textit{name} attribute, which is a valid \identifier and uniquely identifies the \Regime from all other elements in the \ComponentClass.
@@ -1168,7 +1165,7 @@ Values for a property across all elements in a container (e.g. cells in a popula
     \toprule
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
-    standardLibrary & \URL & yes\\
+    standard\_library & \URL & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
@@ -1188,18 +1185,14 @@ The names and parameters of the random distribution in the standard library matc
 \item GammaDistribution
 \item GeometricDistribution
 \item HypergeometricDistribution
-\item InverseGammaDistribution
 \item LaplaceDistribution
 \item LogisticDistribution
 \item LogNormalDistribution
-\item MixtureModel
 \item MultinomialDistribution
 \item NegativeBinomialDistribution
 \item NormalDistribution
-\item NormalInverseGammaDistribution
 \item ParetoDistribution
 \item PoissonDistribution
-\item StudentTDistribution
 \item UniformDistribution
 \item WeibullDistribution
 \end{itemize}
@@ -1207,8 +1200,8 @@ The names and parameters of the random distribution in the standard library matc
 
 \note{\textit{C} implementations of these distributions are available in the GNU Scientific Library, \href{http://www.gnu.org/software/gsl/}{http://www.gnu.org/software/gsl/}}
 
-\subsubsection{StandardLibrary attribute}
-The \textit{standardLibrary} attribute is required and should point to a \URL in the \href{http://www.uncertml.org/distributions/}{http://www.uncertml.org/distributions/} directory.
+\subsubsection{Standard\_library attribute}
+The \textit{standard\_library} attribute is required and should point to a \URL in the \href{http://www.uncertml.org/distributions/}{http://www.uncertml.org/distributions/} directory.
 
 \section{Network Connectivity}
 
@@ -1224,27 +1217,27 @@ The connection rule for cells in the source and destination populations of a \Pr
     \toprule
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
-    standardLibrary & \URL & yes\\
+    standard\_library & \URL & yes\\
     \bottomrule
   \end{edtable}
 \end{table}
 
-Connection rules must be one of 6 standard library types, \textit{all-to-all}, \textit{one-to-one}, \textit{probabilistic}, \textit{explicit}, \\\textit{random-fan-out} and \textit{random-fan-in}, provided to the \textit{standardLibarary} attribute.
+Connection rules must be one of 6 standard library types, \textit{all-to-all}, \textit{one-to-one}, \textit{probabilistic}, \textit{explicit}, \\\textit{random-fan-out} and \textit{random-fan-in}, provided to the \textit{standard\_libarary} attribute.
 
 \note{In future versions, built-in connectivity rules are to be replaced with mathematically expressed connection rules.}
 
-\subsubsection{StandardLibrary attribute}
-The \textit{standardLibrary} attribute is required and should point to the \URL in the \\\href{http://nineml.net/9ML/1.0/\-connectionrules/}{http://nineml.net/9ML/1.0/connectionrules/} directory that corresponds to the desired connection rule.
+\subsubsection{Standard\_library attribute}
+The \textit{standard\_library} attribute is required and should point to the \URL in the \\\href{http://nineml.net/9ML/1.0/\-connectionrules/}{http://nineml.net/9ML/1.0/connectionrules/} directory that corresponds to the desired connection rule.
 
-\subsubsubsection{http://nineml.net/9ML/1.0/connectionrules/alltoall}
+\subsubsubsection{http://nineml.net/9ML/1.0/connectionrules/AllToAll}
 
 All cells in the source population are connected to all cells in the destination population.
 
-\subsubsubsection{http://nineml.net/9ML/1.0/connectionrules/onetoone}
+\subsubsubsection{http://nineml.net/9ML/1.0/connectionrules/OneToOne}
 
 Each cell in the source population is connected to the cell in the destination population with the corresponding index. Note that this requires that the source and destination populations be the same size.
 
-\subsubsubsection{http://nineml.net/9ML/1.0/connectionrules/probabilistic}
+\subsubsubsection{http://nineml.net/9ML/1.0/connectionrules/Probabilistic}
 
 All cells in the source population are connected to cells in the destination population with a probability defined by a parameter, which should be named \textit{probability}. The properties supplied to the \textit{probability} parameter should either be a \SingleValue representing the probability of a connection between all source and destination cell pairs, or a \ArrayValue or \ExternalArrayValue of size $M{\times}N$, where $M$ and $N$ are the size of the source and destination populations respectively. \notice For array probabilities, the data in the \ArrayValue or \ExternalArrayValue are ordered by the indices
 
@@ -1253,7 +1246,7 @@ i_{\mathrm{prob}} = i_{\mathrm{source}} * N_{\mathrm{dest}} + i_{\mathrm{dest}}
 \end{equation}
 where $i_{\mathrm{prob}}$, $i_{\mathrm{source}}$ and $i_{\mathrm{dest}}$ are the indices of the probability entry, and the source and destination cells respectively, and $N_{\mathrm{dest}}$ is the size of the destination population.
 
-\subsubsubsection{http://nineml.net/9ML/1.0/connectionrules/explicit}
+\subsubsubsection{http://nineml.net/9ML/1.0/connectionrules/Explicit}
 
 Cells in the source population are connected to cells in the destination population as specified by an explicit arrays. The source and destination are defined via parameters, which should be named \textit{sourceIndicies} and \textit{destinationIndicies} parameters respectively.
 
@@ -1261,11 +1254,11 @@ The properties supplied to the \textit{sourceIndicies} parameter should be a \Ar
 
 The properties supplied to the \textit{destinationIndicies} parameter should be a \ArrayValue or \ExternalArrayValue drawn from the set $\{1,\ldots,N\}$ where $N$ is the size of the source population and be the same length as the property supplied to the \textit{source-indices} parameter.
 
-\subsubsubsection{http://nineml.net/9ML/1.0/connectionrules/randomfanout}
+\subsubsubsection{http://nineml.net/9ML/1.0/connectionrules/RandomFanOut}
 
 Each cell in the source population is connected to a fixed number of randomly selected cells in the destination population. The number of cells is specified by the parameter \textit{number}. The property supplied to the \textit{number} parameter should be a \SingleValue.
 
-\subsubsubsection{http://nineml.net/9ML/1.0/connectionrules/randomfanin}
+\subsubsubsection{http://nineml.net/9ML/1.0/connectionrules/RandomFanIn}
 
 Each cell in the destination population is connected to a fixed number of randomly selected cells in the source population. The number of cells is specified by the parameter \textit{number}. The property supplied to the \textit{number} parameter should be a \SingleValue.
 
