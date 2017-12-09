@@ -9,7 +9,7 @@ share: false
 ads: false
 ---
 
-#####All the latest updates and upcoming plans for 9ML:
+All the latest updates and upcoming plans for 9ML:
 
 <div class="tiles">
 {% for post in site.categories.news %}
