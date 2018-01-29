@@ -2,6 +2,10 @@
 NineML
 ======
 
+.. image:: https://readthedocs.org/projects/nineml-spec/badge/?version=latest
+    :target: http://nineml-spec.readthedocs.io/en/latest/?badge=latest
+    :alt: Documentation Status 
+
 Network Interchange for NEuroscience (NineML) is a simulator-independent
 language with the aim of providing an unambiguous description of neuronal
 network models for efficient model sharing and reusability
