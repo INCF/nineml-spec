@@ -144,10 +144,10 @@ MathInline
 
 MathInline_ blocks are used to specify mathematical expressions.
 Depending on the context, MathInline_ blocks should return an expression
-that evaluates to either a (when used as the trigger for OnCondition_
-objects) or a (when used as a right-hand-side for Alias_, TimeDerivative_
+that evaluates to either a bool (when used as the trigger for OnCondition_
+objects) or a real number (when used as a right-hand-side for Alias_, TimeDerivative_
 and StateAssignment_ objects). All numbers/variables in inline maths
-expressions are assumed to be .
+expressions are assumed to be real numbers.
 
 Body
 ^^^^

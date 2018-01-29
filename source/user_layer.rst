@@ -302,7 +302,7 @@ of values. The array data are not stored in XML (which is slow to parse)
 but more efficient text or binary `HDF5
 (http://www.hdfgroup.org/HDF5/) <http://www.hdfgroup.org/HDF5/>`__
 formats. As of version 1.0, the data in the external files are stored as
-dense or arrays. However, sparse-array formats are planned for future
+dense float or integer arrays. However, sparse-array formats are planned for future
 versions.
 
 The *columnName* attribute of the ExternalArrayValue_ elements allows
@@ -335,7 +335,7 @@ Currently, only two formats are supported
 
 -  ``application/vnd.nineml.externalvaluearray.hdf5`` - a
    `HDF5 <http://www.hdfgroup.org/HDF5/>`__ data file containing a
-   single level of named members of or type.
+   single level of named members of ``array->float`` or ``array->int`` type.
 
 ColumnName attribute
 ^^^^^^^^^^^^^^^^^^^^
@@ -422,7 +422,7 @@ features of the Population_.
 Body
 ^^^^
 
-The text of the Size_ element contains an representing the size of the
+The text of the Size_ element contains an integer representing the size of the
 population.
 
 Projections
