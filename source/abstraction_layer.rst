@@ -256,13 +256,11 @@ Alias
 An alias corresponds to an alternative name for a variable or part of an
 expression.
 
-**Alias_es** are motivated by two use cases:
+**Aliases** are motivated by two use cases:
 
 -  **substitution**: rather than writing long expressions for functions
    of state variables, we can split the expressions into a chain of
-   Alias_ objects, e.g.
-
-   ::
+   Alias_ objects, e.g.::
 
        m_alpha = (alphaA + alphaB * V)/(alphaC + exp((alphaD + V / alphaE)))
        m_beta = (betaA + betaB * V)/(betaC + exp((betaD + V / betaE)))

@@ -6,17 +6,17 @@ Document Layout
 ===============
 
 NineML documents must be enclosed within an NineML element, which should
-be in the ’http://nineml.net/9ML/1.0’ XML namespace.
+be in the ’http://nineml.net/9ML/1.0’ namespace.
 
 NineML
 ------
 
 
-+-----------+-----------------------------+----------+
-| Attribute | Type/Format                 | Required |
-+===========+=============================+==========+
-| xmlns     | ‘http://nineml.net/9ML/1.0’ | yes      |
-+-----------+-----------------------------+----------+
++-------------------------------+-----------------------------+----------+
+| Attribute                     | Type/Format                 | Required |
++===============================+=============================+==========+
+| namespace (i.e. xmlns in XML) | ‘http://nineml.net/9ML/1.0’ | yes      |
++-------------------------------+-----------------------------+----------+
 
 
 +-----------------------+--------------+----------+
@@ -38,20 +38,20 @@ NineML
 +-----------------------+--------------+----------+
 
 Seven *document-level* elements are allowed to reside directly within
-NineML elements: :ref:`Component`, :ref:`ComponentClass`, Unit_, Dimension_, :ref:`Population`,
-:ref:`Projection` and :ref:`Selection`. Each element should be uniquely identified by
-its *name* attribute within the scope of the document (see ).
+NineML elements: :ref:`Component`, :ref:`ComponentClass`, Unit_, Dimension_,
+:ref:`Population`, :ref:`Projection` and :ref:`Selection`. Each element
+should be uniquely identified by its *name* attribute within the scope of the
+document (see ).
 
 Unit_ and Dimension_ elements must be defined within the document they are
 referenced, whereas the remaining element types can also be referenced
 from other NineML documents (see :ref:`Reference` and :ref:`Definition`).
 
-Xmlns attribute
-^^^^^^^^^^^^^^^
+Namespace attribute
+^^^^^^^^^^^^^^^^^^^
 
-The *xmlns* attribute is required and should refer to the
-`URL <http://en.wikipedia.org/wiki/Uniform_resource_locator>`__\ corresponding
-to the correct NineML version, which for version 1.0 is
+The *namespace* attribute (xmlns in XML) is required and should refer to the
+URL_ corresponding to the correct NineML version, which for version 1.0 is
 ‘http://nineml.net/9ML/1.0’ (see http://www.w3.org/TR/REC-xml-names/).
 
 
@@ -238,8 +238,10 @@ Annotations
 +----------+--------------+----------+
 
 The Annotations_ element is the top-level of the annotations attached to
-a NineML element. They can be included within any NineML element (User
-Layer and Abstraction Layer) and any valid XML is allowed within them.
+a NineML element. They can be included at the top level of a document and
+within any NineML element (User Layer or Abstraction Layer), and may contain
+any object hierarchy that can be serialized to valid XML (although other
+hierarchical formats are supported, see :ref:`Serialization`). 
 
 
 .. [Cannon2014] Cannon, R.~C., Gleeson, P., Crook, S., Ganapathy, G.,
@@ -247,3 +249,5 @@ Layer and Abstraction Layer) and any valid XML is allowed within them.
    LEMS: a language for expressing complex biological models in concise
    and hierarchical form and its use in underpinning NeuroML 2.
    *Frontiers in neuroinformatics*, 8(September):79.
+
+.. _URL: http://en.wikipedia.org/wiki/Uniform_resource_locator

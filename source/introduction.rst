@@ -67,10 +67,9 @@ representations of all the instantiated elements in the network.
 A NineML object model representation can take multiple forms. A program
 can employ a concrete representation of the NineML objects in a specific
 programming language, convert an internal model representation to and
-from the NineML XML schema, or use code generation to produce a model
-representation for a target simulation environment. It is important to
-note that the NineML XML schema is isomorphic to the NineML object
-model.
+from hierarchical data formats (see :ref:`Serialization`), or use code
+generation to produce a model representation for a target simulation
+environment.
 
 The design of NineML is divided into two semantic layers:
 
