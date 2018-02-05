@@ -65,7 +65,7 @@ this case the '@' symbol, to escape the following special fields.
     element only contains body text (e.g. :ref:`MathInline`) then this is
     "flattened" to be the sole value of the element.
 @multiple:
-    A HDF_ group that has a @multiple attribute equal to 'true', 
+    A HDF5_ group that has a @multiple attribute equal to 'true', 
     contains multiple child elements of the given NineML type, which are stored
     as sub-groups named by arbitrary integer indices. Note that this is not
     strictly required for elements in the NineML specification (although it
