@@ -212,7 +212,7 @@ The following functions are built in and are defined as per ANSI C89:
 
 -  ``atanh(x)``
 
--  ``atan2(x)``
+-  ``atan2(y, x)``
 
 The following symbols are built in, and cannot be redefined,
 
