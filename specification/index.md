@@ -16,7 +16,7 @@ by the [NineML committee](http://nineml.net/committee) but have not
 been released.
 
 There is a corresponding
-[XML schema]({{site.url}}/9ML/1.0/NineML_v1.0.xsd) although
+[XML schema]({{ site.baseurl }}/9ML/1.0/NineML_v1.0.xsd) although
 the schema only validates the model hierarchy and basic
 types, i.e. not all the requirements described in the specification.
 
