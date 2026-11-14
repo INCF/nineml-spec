@@ -131,7 +131,7 @@ Site logo, used mostly as a default image that appears on Twitter Cards if a lar
 Example `logo: 120x120.gif`
 
 <figure>
-  <img src="{{ site.url }}/images/twitter-card-screenshot.jpg" alt="sample Twitter Card screenshot">
+  <img src="{{ site.baseurl }}/images/twitter-card-screenshot.jpg" alt="sample Twitter Card screenshot">
   <figcaption>Site logo is used for Twitter Cards when a feature image is not defined for the page.</figcaption>
 </figure>
 
@@ -248,7 +248,7 @@ image:
 Teaser images appear on archive pages in the post grid and are also used in the off-canvas menu. If you don't assign a teaser image for a specific post or page, the default one will be used. The default image can be set in `_config.yml` under site wide configuration `teaser: 400x250.gif`. Teaser images should be roughly 400 x 250 pixels to scale comfortably across screen sizes.
 
 <figure>
-  <img src="{{ site.url }}/images/teaser-screenshot.jpg" alt="teaser image screenshot">
+  <img src="{{ site.baseurl }}/images/teaser-screenshot.jpg" alt="teaser image screenshot">
   <figcaption>Images outlined in red show how teasers typically display</figcaption>
 </figure>
 
@@ -273,7 +273,7 @@ For longer posts you may find it beneficial to include a table of contents menu.
 To use Google Ads on your site create a [Google AdSense account](https://www.google.com/adsense/) and then add your `ad-client` and `ad-slot` variables to `_config.yml`. To show ads on a post/page add `ads: true` to the YAML Front Matter.
 
 <figure>
-  <img src="{{ site.url }}/images/google-adsense-responsive.jpg" alt="responsive type">
+  <img src="{{ site.baseurl }}/images/google-adsense-responsive.jpg" alt="responsive type">
 </figure>
 
 Select **responsive** for ad type, allowing it to display at various sizes. If you'd like to use a different ad network just edit the appropriate HTML and JavaScript found in `_includes/advertising.html`.
@@ -291,7 +291,7 @@ comments: true
 Social sharing links for Twitter, Facebook, and Google+ are included on posts/pages using the `article` and `media` layouts by default. To hide them on specific posts or pages add `share: false` to the YAML Front Matter. If you'd like to use different social networks modify `_includes/share-this.html` to your liking. Icons are set using [Font Awesome](http://fontawesome.io/).
 
 <figure>
-  <img src="{{ site.url }}/images/social-sharing-links-screenshot.jpg" alt="social sharing links screenshot">
+  <img src="{{ site.baseurl }}/images/social-sharing-links-screenshot.jpg" alt="social sharing links screenshot">
   <figcaption>Share links appear the below author details block.</figcaption>
 </figure>
 

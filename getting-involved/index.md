@@ -31,7 +31,7 @@ If you write a new abstraction layer component class that you think will be of w
 
 What is a language specification without software implementations?
 
-If you add 9ML support to your simulator/tool please add a short description of it and the nature of its 9ML support to our [software gallery]({{site.url}}/software/) to spread the word. See [instructions]({{site.url}}/software/add_your_tool.html) on how to open a pull-request to add your tool.
+If you add 9ML support to your simulator/tool please add a short description of it and the nature of its 9ML support to our [software gallery]({{ site.baseurl }}/software/) to spread the word. See [instructions]({{ site.baseurl }}/software/add_your_tool.html) on how to open a pull-request to add your tool.
 
 ## Write an extension
 

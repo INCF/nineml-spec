@@ -20,4 +20,4 @@ The 9ML committee has 7 active members:
 * Ivan Raikov
 * Paul Richmond
 
-Applications to join the committee are accepted although numbers are limited (see [by-laws]({{site.url}}/by-laws/)).
+Applications to join the committee are accepted although numbers are limited (see [by-laws]({{ site.baseurl }}/by-laws/)).

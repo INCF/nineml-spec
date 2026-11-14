@@ -5,11 +5,11 @@
       {% if link.url contains 'http' %}
         {% assign domain = '' %}
         {% else %}
-        {% assign domain = site.url %}
+        {% assign domain = site.baseurl %}
       {% endif %}
 			<li><a href="{{ domain }}{{ link.url }}" {% if link.url contains 'http' %}target="_blank"{% endif %}>{{ link.title }}</a></li>
 		{% endfor %}
 		</ul>
 	</nav><!-- /.bottom-menu -->
-	<p class="copyright">&#169; {{ site.time | date: '%Y' }} <a href="{{ site.url }}/committee">NineML Committee</a>.</p>
+	<p class="copyright">&#169; {{ site.time | date: '%Y' }} <a href="{{ site.baseurl }}/committee">NineML Committee</a>.</p>
 </footer>
